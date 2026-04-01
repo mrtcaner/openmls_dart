@@ -1,3 +1,15 @@
+## [1.3.0] - 2026-04-01
+
+### For Users
+
+#### Highlights
+
+- **openmls_frb v1.3.0 → v1.4.0** — update flutter_rust_bridge to v2.12.0
+
+#### Changed
+
+- Update `flutter_rust_bridge` from v2.11.1 to v2.12.0 — fixes codegen/runtime version mismatch when consumers resolve FRB 2.12.x ([#4](https://github.com/djx-y-z/openmls_dart/issues/4))
+
 ## [1.2.0] - 2026-02-18
 
 ### For Users
@@ -118,7 +130,8 @@
 - X.509 `x509()` documents that application layer must validate certificate chains
 - SECURITY.md: sensitive API table, known limitations, web deployment recommendations, vulnerability reporting via GitHub Security Advisories
 
-[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/djx-y-z/openmls_dart/compare/v1.0.0...v1.0.1
