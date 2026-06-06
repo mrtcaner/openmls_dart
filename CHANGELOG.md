@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.4.0] - 2026-06-06
 
 ### For Users
 
@@ -169,7 +169,8 @@
 - X.509 `x509()` documents that application layer must validate certificate chains
 - SECURITY.md: sensitive API table, known limitations, web deployment recommendations, vulnerability reporting via GitHub Security Advisories
 
-[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.0.1...v1.1.0
