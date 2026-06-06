@@ -2,6 +2,10 @@
 
 ### For Users
 
+#### Highlights
+
+- **openmls_frb v1.4.0 → v1.5.0** — experimental X-Wing post-quantum ciphersuite (hybrid ML-KEM-768 + X25519)
+
 #### Added
 
 - **Experimental post-quantum ciphersuite**: `MlsCiphersuite.mls256XwingChacha20Poly1305Sha256Ed25519` —
