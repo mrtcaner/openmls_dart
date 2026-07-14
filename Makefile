@@ -8,10 +8,16 @@
 # On Windows CI (Git Bash), use cmd to run fvm.bat from PATH:
 # Example: make build ARGS="--target x86_64-pc-windows-msvc" FVM="cmd //c fvm"
 
-.PHONY: help setup setup-fvm setup-rust-tools setup-android setup-web codegen regen build build-android build-web test coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets rust-audit rust-check doc publish publish-dry-run rust-update update-changelog
+.PHONY: help setup setup-fvm setup-rust-tools setup-frb-codegen setup-android setup-web setup-fuzz codegen regen build build-android build-web test coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets rust-audit rust-deny rust-check rust-clippy fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog
 
 # FVM command - can be overridden to provide full path on Windows CI
 FVM ?= fvm
+
+# Pinned flutter_rust_bridge_codegen version.
+# Must match the flutter_rust_bridge dependency in pubspec.yaml — a codegen
+# binary of a different version produces different bindings, which makes CI
+# and local codegen runs disagree.
+FRB_CODEGEN_VERSION ?= 2.12.0
 
 # Arguments are passed via ARGS variable
 ARGS ?=
@@ -33,6 +39,7 @@ help:
 	@echo "    make setup                        - Full setup (FVM + Rust tools)"
 	@echo "    make setup-fvm                    - Install FVM and project Flutter version only"
 	@echo "    make setup-rust-tools             - Install Rust tools (cargo-audit, frb codegen)"
+	@echo "    make setup-frb-codegen            - Install pinned flutter_rust_bridge_codegen"
 	@echo "    make setup-android                - Install Android build tools (cargo-ndk)"
 	@echo "    make setup-web                    - Install web build tools (wasm-pack)"
 	@echo ""
@@ -57,7 +64,15 @@ help:
 	@echo ""
 	@echo "  RUST QUALITY"
 	@echo "    make rust-check                   - Check Rust code compiles"
+	@echo "    make rust-clippy                  - Lint Rust code with clippy (warnings = errors)"
 	@echo "    make rust-audit                   - Audit Rust dependencies for vulnerabilities"
+	@echo "    make rust-deny                    - Check advisories/licenses/sources (cargo-deny)"
+	@echo ""
+	@echo "  FUZZING (requires nightly Rust; run 'make setup-fuzz' once)"
+	@echo "    make fuzz-list                    - List available fuzz targets"
+	@echo "    make fuzz-seed                    - Generate the seed corpus (rust/fuzz/corpus/)"
+	@echo "    make fuzz                         - Run a fuzz target"
+	@echo "                                        Example: make fuzz ARGS=\"mls_message -- -max_total_time=60\""
 	@echo ""
 	@echo "  DART QUALITY"
 	@echo "    make test                         - Run tests"
@@ -118,14 +133,37 @@ setup-rust-tools:
 	else \
 		echo "cargo-audit already installed"; \
 	fi
-	@if ! command -v flutter_rust_bridge_codegen >/dev/null 2>&1; then \
-		echo "Installing flutter_rust_bridge_codegen..."; \
-		cargo install flutter_rust_bridge_codegen; \
+	@$(MAKE) setup-frb-codegen
+	@if ! command -v cargo-deny >/dev/null 2>&1; then \
+		echo "Installing cargo-deny..."; \
+		cargo install cargo-deny --locked; \
 	else \
-		echo "flutter_rust_bridge_codegen already installed"; \
+		echo "cargo-deny already installed"; \
 	fi
 	@echo ""
 	@echo "Rust tools setup complete!"
+
+setup-frb-codegen:
+	@INSTALLED="$$(flutter_rust_bridge_codegen --version 2>/dev/null | awk '{print $$NF}')"; \
+	if [ "$$INSTALLED" = "$(FRB_CODEGEN_VERSION)" ]; then \
+		echo "flutter_rust_bridge_codegen $(FRB_CODEGEN_VERSION) already installed"; \
+	else \
+		echo "Installing flutter_rust_bridge_codegen $(FRB_CODEGEN_VERSION) (found: $${INSTALLED:-none})..."; \
+		cargo install flutter_rust_bridge_codegen --version $(FRB_CODEGEN_VERSION) --locked --force; \
+	fi
+
+setup-fuzz:
+	@echo "Installing fuzzing tools..."
+	@if ! command -v cargo-fuzz >/dev/null 2>&1; then \
+		echo "Installing cargo-fuzz..."; \
+		cargo install cargo-fuzz --locked; \
+	else \
+		echo "cargo-fuzz already installed"; \
+	fi
+	@echo "Installing nightly toolchain (required by cargo-fuzz)..."
+	rustup toolchain install nightly --profile minimal
+	@echo ""
+	@echo "Fuzzing setup complete! Try: make fuzz-list"
 
 setup-android:
 	@echo "Installing Android build tools..."
@@ -191,8 +229,43 @@ build-web:
 rust-check:
 	cargo check --manifest-path rust/Cargo.toml
 
+# Lint hand-written Rust with clippy; warnings are errors so CI fails on any lint.
+# --all-targets covers the lib, its tests, and examples of this crate.
+# The separate, nightly-only fuzz crate (rust/fuzz) is linted with
+# `cd rust/fuzz && cargo +nightly clippy`.
+rust-clippy:
+	cargo clippy --manifest-path rust/Cargo.toml --all-targets -- -D warnings
+
 rust-audit:
 	cargo audit --file rust/Cargo.lock
+
+rust-deny:
+	cargo deny --manifest-path rust/Cargo.toml check $(ARGS)
+
+# =============================================================================
+# Fuzzing (cargo-fuzz + libFuzzer, requires nightly - run 'make setup-fuzz')
+# =============================================================================
+
+# List the available libFuzzer targets.
+fuzz-list:
+	cd rust && cargo +nightly fuzz list
+
+# Run a fuzz target. Pass the target name (and libFuzzer flags) via ARGS.
+#   make fuzz ARGS="mls_message"
+#   make fuzz ARGS="mls_message -- -max_total_time=120"
+fuzz:
+	@if [ -z "$(ARGS)" ]; then \
+		echo "Usage: make fuzz ARGS=\"<target> [-- <libfuzzer-flags>]\""; \
+		echo "Available targets:"; \
+		cd rust && cargo +nightly fuzz list; \
+		exit 1; \
+	fi
+	cd rust && cargo +nightly fuzz run $(ARGS)
+
+# Generate the seed corpus (valid inputs) under rust/fuzz/corpus/<target>/.
+# Extend rust/fuzz/examples/gen_corpus.rs as you add fuzz targets.
+fuzz-seed:
+	cd rust/fuzz && cargo run --release --example gen_corpus
 
 # =============================================================================
 # CI / Version Checks

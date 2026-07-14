@@ -1,0 +1,42 @@
+[package]
+name = "openmls_frb-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+# Uncomment if you want structured (typed) fuzz inputs via #[derive(Arbitrary)]:
+# arbitrary = { version = "1", features = ["derive"] }
+
+[dependencies.openmls_frb]
+path = ".."
+
+# Keep overflow and debug-assertion checks on even for optimized fuzzing runs
+# so arithmetic bugs surface as crashes instead of silent wraparound.
+[profile.release]
+debug = 1
+overflow-checks = true
+debug-assertions = true
+
+# One [[bin]] per fuzz target. Add your own targets here (and a matching file in
+# fuzz_targets/) as you expose byte-parsing functions to fuzz.
+
+# MLS protocol-message parsers (routing helpers over untrusted wire bytes).
+[[bin]]
+name = "mls_message"
+path = "fuzz_targets/mls_message.rs"
+test = false
+doc = false
+bench = false
+
+# MLS credential TLS deserialization (peer credentials arrive over the wire).
+[[bin]]
+name = "credential"
+path = "fuzz_targets/credential.rs"
+test = false
+doc = false
+bench = false

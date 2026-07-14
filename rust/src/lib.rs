@@ -7,6 +7,12 @@
 mod encrypted_db;
 mod hybrid_crypto;
 mod snapshot_storage;
+// The FRB-generated bridge and a couple of hand-written modules
+// (snapshot_storage's interior-mutability shim, encrypted_db's WASM
+// `unsafe impl Send/Sync`) legitimately need unsafe; they carry their own
+// `#[allow(unsafe_code)]` / `#![allow(unsafe_code)]`. Everything else is
+// covered by `unsafe_code = "deny"` in Cargo.toml.
+#[allow(unsafe_code)]
 mod frb_generated;
 mod utils;
 

@@ -325,6 +325,7 @@ impl MlsEngine {
         Ok(CreateGroupResult { group_id: gid })
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub async fn create_group_with_builder(
         &self,
         config: MlsGroupConfig,
@@ -519,6 +520,7 @@ impl MlsEngine {
     }
 
     #[allow(deprecated)]
+    #[allow(clippy::too_many_arguments)]
     pub async fn join_group_external_commit(
         &self,
         config: MlsGroupConfig,
@@ -577,6 +579,7 @@ impl MlsEngine {
         })
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub async fn join_group_external_commit_v2(
         &self,
         config: MlsGroupConfig,

@@ -11,6 +11,10 @@
 //! CREATE TABLE db_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 //! ```
 
+// WASM's `WasmCryptoKey` newtype carries `unsafe impl Send + Sync` (sound
+// because WASM is single-threaded); it needs unsafe under `unsafe_code = "deny"`.
+#![allow(unsafe_code)]
+
 use zeroize::Zeroize;
 
 /// Current database schema version.

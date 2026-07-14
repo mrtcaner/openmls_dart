@@ -1,0 +1,97 @@
+# cargo-deny configuration for openmls_frb.
+#
+# Runs in CI (see .github/workflows/test-reusable.yml) and locally via
+# `make rust-deny`. Complements `cargo audit`:
+#   - advisories: fail on known RustSec vulnerabilities
+#   - licenses:   only allow licenses compatible with this package
+#   - bans:       flag duplicate/wildcard dependencies
+#   - sources:    only permit crates.io and explicitly-listed git repositories
+#
+# Schema reference: https://embarkstudios.github.io/cargo-deny/
+
+[graph]
+targets = []
+all-features = false
+
+[advisories]
+version = 2
+# Advisory IDs are ignored here only when the risk cannot be remediated (blocked
+# on an upstream semver pin) or is not applicable to how we build. Each entry
+# carries an inline justification.
+#
+# The three crypto vulnerabilities (RUSTSEC-2026-0124 / -0075 / -0073) mirror the
+# `[advisories].ignore` list in `.cargo/audit.toml` (the source of truth for the
+# reachability analysis); their non-libcrux routing is enforced by the
+# `classical_ops_do_not_init_libcrux` test in `rust/src/hybrid_crypto.rs`. Revisit
+# all of these when bumping to the next upstream OpenMLS release.
+ignore = [
+    # --- Crypto vulnerabilities (see .cargo/audit.toml for full justification) ---
+    # libcrux-chacha20poly1305 DoS-class panic on overlong ciphertext buffer.
+    # Enters the tree only via the X-Wing path (openmls_libcrux_crypto →
+    # hpke-rs-libcrux); trigger structurally unreachable (exact-size buffers +
+    # length check). Message-layer AEAD routes to RustCrypto. Pinned by
+    # hpke-rs-libcrux 0.6.1 → libcrux-aead =0.0.7, not fixable via cargo update.
+    "RUSTSEC-2026-0124",
+    # libcrux-ed25519 all-zero key gen after 100 consecutive CSPRNG failures.
+    # Unreachable: HybridCrypto routes all signature ops to RustCrypto/dalek.
+    # Fixed in upstream OpenMLS main (libcrux-ed25519 0.0.7), unreleased.
+    "RUSTSEC-2026-0075",
+    # libcrux-poly1305 panic in the STANDALONE mac() fn only; use via
+    # chacha20poly1305 is unaffected (per the advisory) and the standalone API
+    # is never called from our tree.
+    "RUSTSEC-2026-0073",
+
+    # --- Unmaintained transitive dev/build dependencies (informational) ---
+    # cargo-deny flags unmaintained advisories that `cargo audit` does not fail
+    # on. These crates are pulled transitively by upstream (openmls_test / proc
+    # macros / the WASM timer shim), are not in the shipped crypto path, and
+    # have no available upgrade we can pin. Kept explicit (not a blanket policy)
+    # so any newly-appearing unmaintained crate still surfaces for review.
+    "RUSTSEC-2021-0139", # ansi_term — via openmls_test (test-utils feature)
+    "RUSTSEC-2024-0384", # instant — via fluvio-wasm-timer (openmls WASM time shim)
+    "RUSTSEC-2026-0173", # proc-macro-error2 — via hax-lib-macros (libcrux/X-Wing build-time proc-macro)
+]
+
+[licenses]
+version = 2
+confidence-threshold = 0.9
+# The project's own license plus the permissive licenses commonly found in a
+# Rust dependency tree. Extend this list if `cargo deny check licenses` reports
+# a license it did not encounter (that is expected the first time you build).
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Zlib",
+    "MPL-2.0",
+    "Unicode-3.0",
+    "Unicode-DFS-2016",
+    "CC0-1.0",
+    "0BSD",
+]
+exceptions = []
+
+[bans]
+# Diamond dependencies are common in crypto/WASM trees, so duplicates warn.
+multiple-versions = "warn"
+# Git dependencies pinned by tag (with no version requirement) are reported as
+# wildcards, so wildcards warn rather than fail; a genuinely sloppy `"*"`
+# crates.io dependency still shows up in the log.
+wildcards = "warn"
+allow = []
+deny = []
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = [
+    # Upstream crate repository (pinned by tag in Cargo.toml, by commit in Cargo.lock).
+    "https://github.com/openmls/openmls",
+    # Add any additional git dependency repositories here. Transitive git deps
+    # (a crate the upstream itself pulls from git) must be listed explicitly or
+    # `cargo deny check sources` will fail.
+]

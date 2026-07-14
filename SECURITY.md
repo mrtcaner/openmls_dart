@@ -117,15 +117,18 @@ The library returns errors for protocol violations. Handle them appropriately ra
 
 ## Supply Chain Security
 
-- **SHA256 Checksums**: All pre-built native libraries are verified against checksums before use
-- **Signed Releases**: GitHub Releases include checksum files for verification
-- **Dependency Auditing**: `cargo audit` is run in CI to detect known vulnerabilities in Rust dependencies
+- **SHA256 Checksums (fail-closed)**: pre-built native libraries are verified against a checksums file published in the same GitHub Release. Verification is **fail-closed** — if the checksums cannot be fetched or lack an entry for the archive, the build hook (`hook/build.dart`) **aborts** rather than loading an unverified binary. The escape hatch `OPENMLS_ALLOW_UNVERIFIED_DOWNLOAD=1` exists only for older releases with no checksums file.
+- **Dependency Auditing**: `cargo audit` (`make rust-audit`) and `cargo deny` (`make rust-deny`) run in CI. `cargo-deny` enforces RustSec advisories, an allowed-license list, and a source allow-list restricted to crates.io and explicitly-listed git repositories (see `rust/deny.toml`).
+
+> **Note (authenticity):** SHA256 verifies *integrity* but not *authenticity* — the checksums file ships in the same release as the archive. A detached signature (minisign/cosign) with a public key pinned in `hook/build.dart`, plus SLSA build provenance, is the recommended next step for high-assurance use.
 
 ## Build Security
 
 - **Reproducible Builds**: CI builds are automated and reproducible
 - **Minimal Dependencies**: We keep dependencies minimal and well-audited
 - **LTO and Stripping**: Release builds use Link-Time Optimization and symbol stripping
+- **Hardened profile**: the wrapper crate is compiled with `overflow-checks` (integer overflow panics instead of wrapping) and `unsafe_code = "deny"` on hand-written code
+- **Static Analysis**: Dart (`dart analyze --fatal-infos`) and Rust (`cargo clippy`, warnings treated as errors) run in CI
 
 ## What's Handled by Rust/FRB
 
@@ -261,6 +264,25 @@ When reviewing code changes, verify:
 - [ ] Sensitive data in Dart uses `SecureBytes` or `.zeroize()` extension
 - [ ] No hardcoded keys or secrets
 - [ ] Web deployments use strict CSP headers
+
+## Fuzzing
+
+A `cargo-fuzz` harness lives under `rust/fuzz/`. Add one target per byte-parsing
+entry point that handles untrusted input (deserializers, message parsers,
+decryptors). A `Fuzz` workflow builds and runs every target on `rust/**` pull
+requests and on a weekly schedule.
+
+Seed the corpus with valid inputs so fuzzing starts from structurally-correct
+data instead of discovering your formats blind: extend
+`rust/fuzz/examples/gen_corpus.rs` whenever you add a target. CI regenerates
+the corpus (`make fuzz-seed`) before every run.
+
+```bash
+make setup-fuzz                          # one-time: nightly toolchain + cargo-fuzz
+make fuzz-list                           # list targets
+make fuzz-seed                           # generate seed corpus under rust/fuzz/corpus/
+make fuzz ARGS="mls_message -- -max_total_time=60"
+```
 
 ## Upstream Security
 

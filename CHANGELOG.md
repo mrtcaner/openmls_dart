@@ -1,3 +1,59 @@
+## [Unreleased]
+
+### For Users
+
+#### Highlights
+
+- **Hardened release binary & fail-closed supply chain** — the shipped native
+  library is now compiled with `overflow-checks` and `unsafe_code = "deny"`, and
+  the download hook refuses to load a binary whose SHA256 checksum cannot be
+  verified.
+
+#### Security
+
+- **Hardened release binary** — the wrapper crate is now compiled with
+  `overflow-checks` (integer overflow panics instead of wrapping silently) and
+  `unsafe_code = "deny"` on all hand-written Rust. The few modules that
+  legitimately need `unsafe` (the interior-mutability storage shim and the WASM
+  `WasmCryptoKey` `Send + Sync` impl) opt in explicitly; the FRB-generated
+  bridge is exempt.
+- **Fail-closed download verification** — the native-library build hook now
+  **aborts** if the SHA256 checksums cannot be fetched or lack an entry for the
+  archive, instead of loading an unverified binary. An
+  `OPENMLS_ALLOW_UNVERIFIED_DOWNLOAD=1` escape hatch is provided for older
+  releases published without a checksums file.
+
+### For Contributors
+
+#### Added
+
+- **cargo-deny** (`rust/deny.toml`, `make rust-deny`, CI `deny` job) — enforces
+  RustSec advisories, an allowed-license list, and a source allow-list.
+  Remediated RUSTSEC-2026-0204 (`crossbeam-epoch` 0.9.18 → 0.9.20); six
+  unremediable/inapplicable advisories are ignored with inline justifications
+  (the three libcrux crypto advisories mirror `.cargo/audit.toml`).
+- **cargo-fuzz harness** (`rust/fuzz/`, `Fuzz` workflow, `make fuzz*`) with two
+  targets over untrusted wire bytes — `mls_message` (MLS protocol-message
+  parsers) and `credential` (`MlsCredential::deserialize`) — plus a seed-corpus
+  generator (`make fuzz-seed`).
+- **Rust clippy in CI** (`make rust-clippy`, `-D warnings`) and a pinned FRB
+  codegen installer (`make setup-frb-codegen`) so CI and local codegen produce
+  identical bindings.
+- Download-cache tests (`test/hook/build_hook_test.dart`).
+
+#### Changed
+
+- Adopt copier template v2.4.0 → v2.5.1
+  - Fixed the download cache key (crate version + full platform variant) so iOS
+    device and simulator builds no longer poison each other's cache on
+    Apple-silicon hosts
+  - Update scripts: `check_updates.dart --update` now bumps the wrapper crate
+    version, `update_changelog.dart` classifies update severity and accepts
+    `--from`, and the update workflow skips regeneration when an open PR for the
+    same version already exists
+  - Fixed pre-existing clippy findings (`CryptoError` Copy deref;
+    `too_many_arguments` on external-commit APIs)
+
 ## [1.4.0] - 2026-06-06
 
 ### For Users

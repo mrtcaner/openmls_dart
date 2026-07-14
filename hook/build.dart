@@ -82,6 +82,7 @@ void main(List<String> args) async {
     final codeConfig = input.config.code;
     final targetOS = codeConfig.targetOS;
     final targetArch = codeConfig.targetArchitecture;
+    final iosSdk = targetOS == OS.iOS ? codeConfig.iOS.targetSdk : null;
 
     // Read version from rust/Cargo.toml
     final version = await _readVersion(packageRoot);
@@ -103,42 +104,37 @@ void main(List<String> args) async {
     }
 
     // For native platforms, download from GitHub Releases and bundle with the app
-    final assetInfo = _resolveAssetInfo(codeConfig, version);
+    final assetInfo = _resolveAssetInfo(
+      targetOS: targetOS,
+      targetArch: targetArch,
+      iosSdk: iosSdk,
+      version: version,
+    );
 
     // Output directory for cached downloads
-    // Use architecture-specific subdirectory for each platform/arch combination
-    final archSubdir = '${targetOS.name}-${targetArch.name}';
+    final archSubdir = downloadCacheSubdir(
+      version: version,
+      targetOS: targetOS,
+      targetArchitecture: targetArch,
+      iosSdk: iosSdk,
+    );
     final cacheDir = input.outputDirectoryShared.resolve('$archSubdir/');
     final libFile = File.fromUri(cacheDir.resolve(assetInfo.fileName));
 
     // Download if not cached
     if (!libFile.existsSync()) {
-      // Download checksums file for SHA256 verification (supply chain security)
       final baseUrl =
           'https://github.com/$_githubRepo/releases/download/$_crateName-$version';
-      Map<String, String>? checksums;
-      String? expectedChecksum;
 
-      try {
-        checksums = await _downloadChecksums(baseUrl, version);
-        expectedChecksum = checksums[assetInfo.archiveFileName];
-
-        if (expectedChecksum == null) {
-          throw HookException(
-            'Checksum not found for ${assetInfo.archiveFileName} in checksums file. '
-            'Available files: ${checksums.keys.join(', ')}',
-          );
-        }
-      } catch (e) {
-        // If checksums download fails, log warning but continue
-        // This allows builds to work even if checksums file is missing
-        // (e.g., for older releases or local development)
-        // ignore: avoid_print
-        print(
-          'Warning: Could not verify SHA256 checksum: $e\n'
-          'Proceeding without verification (not recommended for production).',
-        );
-      }
+      // SECURITY: resolve the expected SHA256 before fetching the binary.
+      // Fail-closed — if a trusted checksum cannot be obtained the build aborts
+      // (unless explicitly overridden), so a failed/interfered checksum fetch
+      // cannot silently downgrade to running an unverified native library.
+      final expectedChecksum = await _resolveExpectedChecksum(
+        baseUrl,
+        version,
+        assetInfo.archiveFileName,
+      );
 
       await _downloadAndExtract(
         assetInfo.downloadUrl,
@@ -266,29 +262,22 @@ Future<void> _handleWebBuild(BuildInput input, Uri packageRoot) async {
       'https://github.com/$_githubRepo/releases/download/$_crateName-$version';
   final cacheDir = input.outputDirectoryShared.resolve('web/');
 
-  // Download checksums for verification
-  Map<String, String>? checksums;
-  try {
-    checksums = await _downloadChecksums(baseUrl, version);
-  } catch (e) {
-    // ignore: avoid_print
-    print(
-      'Warning: Could not download checksums for web assets: $e\n'
-      'Proceeding without verification.',
-    );
-  }
-
   // Download WASM files to cache
   final archiveFileName = '$_crateName-$version-wasm32.tar.gz';
+
+  // SECURITY: resolve the expected SHA256 up front (fail-closed, see the
+  // native path above). The WASM assets are shipped in a single archive, so
+  // one checksum covers every file extracted from it.
+  final expectedChecksum = await _resolveExpectedChecksum(
+    baseUrl,
+    version,
+    archiveFileName,
+  );
+
   for (final fileName in _wasmFiles) {
     final file = File.fromUri(cacheDir.resolve(fileName));
 
     if (!file.existsSync()) {
-      String? expectedChecksum;
-      if (checksums != null) {
-        expectedChecksum = checksums[archiveFileName];
-      }
-
       await _downloadAndExtract(
         '$baseUrl/$archiveFileName',
         cacheDir,
@@ -439,14 +428,17 @@ class _AssetInfo {
 }
 
 /// Resolves asset information for the target platform.
-_AssetInfo _resolveAssetInfo(CodeConfig codeConfig, String version) {
+_AssetInfo _resolveAssetInfo({
+  required OS targetOS,
+  required Architecture targetArch,
+  required IOSSdk? iosSdk,
+  required String version,
+}) {
   final baseUrl =
       'https://github.com/$_githubRepo/releases/download/$_crateName-$version';
-  final targetOS = codeConfig.targetOS;
-  final targetArch = codeConfig.targetArchitecture;
 
   final fileName = _getLibraryFileName(targetOS);
-  final platformArch = _getPlatformArchName(codeConfig);
+  final platformArch = _getPlatformArchName(targetOS, targetArch, iosSdk);
 
   final archiveFileName = '$_crateName-$version-$platformArch.tar.gz';
 
@@ -457,11 +449,32 @@ _AssetInfo _resolveAssetInfo(CodeConfig codeConfig, String version) {
   );
 }
 
-/// Gets platform-architecture name for download URL.
-String _getPlatformArchName(CodeConfig codeConfig) {
-  final targetOS = codeConfig.targetOS;
-  final targetArch = codeConfig.targetArchitecture;
+/// Computes the subdirectory of the shared output directory in which a
+/// downloaded library is cached.
+///
+/// The shared output directory is reused across build configurations
+/// (`package:hooks` requires hooks to sub-key it by every config field that
+/// influences their output). The returned key must therefore include every
+/// input that changes which artifact is downloaded: the crate [version] and
+/// the full platform variant — notably iOS device vs. simulator, which share
+/// [targetOS] and [targetArchitecture] on Apple-silicon hosts.
+///
+/// Top-level and public so the hook tests can exercise it.
+String downloadCacheSubdir({
+  required String version,
+  required OS targetOS,
+  required Architecture targetArchitecture,
+  IOSSdk? iosSdk,
+}) {
+  return '$version-${_getPlatformArchName(targetOS, targetArchitecture, iosSdk)}';
+}
 
+/// Gets platform-architecture name for download URL.
+String _getPlatformArchName(
+  OS targetOS,
+  Architecture targetArch,
+  IOSSdk? iosSdk,
+) {
   switch (targetOS) {
     case OS.linux:
       return 'linux-${_archName(targetArch)}';
@@ -472,8 +485,7 @@ String _getPlatformArchName(CodeConfig codeConfig) {
     case OS.android:
       return 'android-${_androidAbi(targetArch)}';
     case OS.iOS:
-      final isSimulator = codeConfig.iOS.targetSdk == IOSSdk.iPhoneSimulator;
-      if (isSimulator) {
+      if (iosSdk == IOSSdk.iPhoneSimulator) {
         return 'ios-simulator-${_archName(targetArch)}';
       }
       return 'ios-device-arm64';
@@ -645,6 +657,72 @@ Future<void> _extractZip(File archive, Directory outDir) async {
   if (result.exitCode != 0) {
     throw HookException('Failed to extract zip archive: ${result.stderr}');
   }
+}
+
+/// Environment variable that downgrades a missing/unfetchable checksum from a
+/// hard build failure to a warning. Unset by default, so verification is
+/// fail-closed: a network problem or an interfered checksum fetch aborts the
+/// build instead of silently loading an unverified native library.
+const _allowUnverifiedEnv = 'OPENMLS_ALLOW_UNVERIFIED_DOWNLOAD';
+
+/// Whether the developer has explicitly opted out of checksum verification.
+bool _allowUnverifiedDownload() {
+  final value = Platform.environment[_allowUnverifiedEnv]?.trim().toLowerCase();
+  return value == '1' || value == 'true' || value == 'yes';
+}
+
+/// Resolves the expected SHA256 for [archiveFileName] from the release's
+/// checksums file.
+///
+/// Fail-closed: throws a [HookException] if the checksums file cannot be
+/// downloaded or has no entry for the archive, so an unverified binary is never
+/// used. Returns `null` (verification skipped, with a warning) only when the
+/// [_allowUnverifiedEnv] escape hatch is set.
+Future<String?> _resolveExpectedChecksum(
+  String baseUrl,
+  String version,
+  String archiveFileName,
+) async {
+  Map<String, String> checksums;
+  try {
+    checksums = await _downloadChecksums(baseUrl, version);
+  } catch (e) {
+    if (_allowUnverifiedDownload()) {
+      // ignore: avoid_print
+      print(
+        'Warning: could not download SHA256 checksums: $e\n'
+        '$_allowUnverifiedEnv is set — proceeding WITHOUT verification.',
+      );
+      return null;
+    }
+    throw HookException(
+      'Refusing to use an unverified native library: failed to download the '
+      'SHA256 checksums file for $_crateName-$version.\n'
+      'Cause: $e\n'
+      'This guards against a corrupted or tampered download. If you are '
+      'deliberately building against a release with no checksums file, set '
+      '$_allowUnverifiedEnv=1 to override (NOT recommended for production).',
+    );
+  }
+
+  final expected = checksums[archiveFileName];
+  if (expected == null) {
+    if (_allowUnverifiedDownload()) {
+      // ignore: avoid_print
+      print(
+        'Warning: no checksum entry for $archiveFileName.\n'
+        '$_allowUnverifiedEnv is set — proceeding WITHOUT verification.',
+      );
+      return null;
+    }
+    throw HookException(
+      'Refusing to use an unverified native library: the checksums file for '
+      '$_crateName-$version has no entry for $archiveFileName.\n'
+      'Available entries: ${checksums.keys.join(', ')}\n'
+      'Set $_allowUnverifiedEnv=1 to override (NOT recommended for production).',
+    );
+  }
+  return expected;
 }
 
 /// Downloads and verifies checksums file from GitHub Release.

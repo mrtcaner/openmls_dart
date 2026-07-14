@@ -6,6 +6,10 @@
 //!
 //! Key format matches MemoryStorage: `[LABEL || serde_json(key) || VERSION_BE_U16]`
 
+// The StorageProvider trait methods take `&self` but need interior mutation of
+// the snapshot HashMap; this module uses a small `unsafe` reborrow shim for that.
+#![allow(unsafe_code)]
+
 use std::collections::HashMap;
 use openmls_traits::storage::{traits, CURRENT_VERSION, StorageProvider};
 use openmls_traits::OpenMlsProvider;

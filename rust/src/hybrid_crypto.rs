@@ -50,7 +50,7 @@ impl HybridCrypto {
         self.libcrux
             .get_or_init(openmls_libcrux_crypto::CryptoProvider::new)
             .as_ref()
-            .map_err(|e| e.clone())
+            .map_err(|e| *e)
     }
 }
 
