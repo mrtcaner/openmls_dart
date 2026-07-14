@@ -8,6 +8,9 @@
   library is now compiled with `overflow-checks` and `unsafe_code = "deny"`, and
   the download hook refuses to load a binary whose SHA256 checksum cannot be
   verified.
+- **openmls** — unchanged this release (openmls-v0.8.1)
+- **openmls_frb v1.5.0 → v1.5.1** — Rust FFI bindings (release binary rebuilt
+  with `overflow-checks`; no API or behavior change in normal use)
 
 #### Security
 
