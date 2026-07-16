@@ -1,3 +1,29 @@
+## [Unreleased]
+
+### For Users
+
+#### Fixed
+
+- **Web build hook now refreshes stale WASM on upgrade** — the web build hook
+  records the provisioned crate version in `web/pkg/.wasm-version` and
+  re-downloads when it changes, instead of skipping whenever the two WASM files
+  merely exist. Previously, upgrading the package kept the prior version's WASM
+  in the app's `web/pkg/` (it survives `flutter clean`), so on web any FRB entry
+  calling Dart store callbacks could panic with an argument-count mismatch
+  (`called Option::unwrap() on a None value`) once the wire signature changed
+  between versions. The download cache is now version-keyed (`web/<version>/`),
+  WASM files are copied unconditionally (the old mtime guard skipped a
+  fresh-but-older source on downgrade), and `rust/Cargo.toml` is a declared
+  web-build dependency so a version bump re-runs the hook. Native platforms were
+  unaffected.
+
+### For Contributors
+
+#### Changed
+
+- **Adopt copier template v2.5.1 → v2.5.2** — source of the web build hook fix
+  above.
+
 ## [1.4.1] - 2026-07-14
 
 ### For Users
