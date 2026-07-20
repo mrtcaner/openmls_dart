@@ -2,6 +2,10 @@
 
 ### For Users
 
+#### ✨ Highlights
+
+- **openmls_frb v1.5.2** — Rust FFI bindings
+
 #### Security
 
 - **Hardened MLS message parsing against malformed input** — incoming MLS
