@@ -35,7 +35,7 @@ const _nativeAssetId = 'package:openmls/openmls';
 ///
 /// 1. **Custom path** (if provided via [libraryPath] parameter)
 /// 2. **Build hook locations** (JIT: .dart_tool/lib/, AOT: ../lib/)
-/// 3. **FRB default**: For Flutter apps with Cargokit
+/// 3. **FRB default**: flutter_rust_bridge's default loader
 ///
 /// ### For Web
 ///
@@ -44,7 +44,7 @@ const _nativeAssetId = 'package:openmls/openmls';
 ///
 /// ### For Flutter apps
 ///
-/// Cargokit automatically builds the native library or WASM module.
+/// The build hook downloads the native library or WASM module automatically.
 /// No manual setup required.
 ///
 /// ### For pure Dart CLI apps
@@ -99,7 +99,7 @@ class Openmls {
   /// Loading order:
   /// 1. Custom path (if provided via [libraryPath] parameter)
   /// 2. Build hook locations (JIT: .dart_tool/lib/, AOT: ../lib/)
-  /// 3. FRB default (Flutter with Cargokit)
+  /// 3. FRB default (flutter_rust_bridge's default loader)
   static Future<ExternalLibrary> _loadLibrary(String? customPath) async {
     // coverage:ignore-start
     // On web, always use the default WASM loading
@@ -124,7 +124,7 @@ class Openmls {
     }
 
     // coverage:ignore-start
-    // 3. Fall back to FRB's default loading (Flutter with Cargokit)
+    // 3. Fall back to FRB's default loading
     return await loadExternalLibrary(
       RustLib.kDefaultExternalLibraryLoaderConfig,
     );

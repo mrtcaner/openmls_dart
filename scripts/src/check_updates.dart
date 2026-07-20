@@ -55,7 +55,6 @@ class PerformUpdateResult {
     required this.checkResult,
     required this.updated,
     this.updatedFiles = const [],
-    this.crateVersionBefore,
   });
 
   /// The update check result.
@@ -66,22 +65,13 @@ class PerformUpdateResult {
 
   /// List of files that were updated.
   final List<String> updatedFiles;
-
-  /// The openmls_frb version before the automatic bump, or null when no
-  /// bump was applied. Passed to the AI changelog step so it can re-classify
-  /// the bump severity from the actual upstream changes.
-  final String? crateVersionBefore;
 }
 
 /// Result of [updateVersionFiles].
 class UpdateFilesResult {
-  const UpdateFilesResult({
-    required this.updatedFiles,
-    this.crateVersionBefore,
-  });
+  const UpdateFilesResult({required this.updatedFiles});
 
   final List<String> updatedFiles;
-  final String? crateVersionBefore;
 }
 
 /// Checks for updates from upstream GitHub releases.
@@ -120,6 +110,16 @@ Future<UpdateCheckResult> checkForUpdates({
     }
     final release = await _fetchLatestRelease();
     latestVersion = release['tag_name'] as String;
+    // The tag name is attacker-controlled upstream data that ends up in
+    // GITHUB_OUTPUT and, from there, in workflow shell commands and branch
+    // names. Reject anything that is not a plain semver-ish tag.
+    if (!RegExp(
+      r'^v?\d+\.\d+\.\d+(-[A-Za-z0-9.]+)?$',
+    ).hasMatch(latestVersion)) {
+      throw Exception(
+        'Refusing unexpected upstream tag_name format: "$latestVersion"',
+      );
+    }
     isPrerelease = release['prerelease'] as bool? ?? false;
     releaseUrl =
         release['html_url'] as String? ??
@@ -142,32 +142,6 @@ Future<UpdateCheckResult> checkForUpdates({
     isPrerelease: isPrerelease,
     releaseUrl: releaseUrl,
   );
-}
-
-/// Determines which SemVer component changed between two upstream versions:
-/// 0 = major, 1 = minor, 2 = patch.
-///
-/// Falls back to a patch bump when either version doesn't parse as X.Y.Z
-/// (e.g. prereleases with unusual formats).
-int _upstreamBumpIndex(String oldVersion, String newVersion) {
-  final oldParts = _versionParts(_normalizeVersion(oldVersion));
-  final newParts = _versionParts(_normalizeVersion(newVersion));
-  if (oldParts == null || newParts == null) return 2;
-  if (newParts[0] != oldParts[0]) return 0;
-  if (newParts[1] != oldParts[1]) return 1;
-  return 2;
-}
-
-/// Parses the leading X.Y.Z of a normalized version, or null if it doesn't
-/// match.
-List<int>? _versionParts(String version) {
-  final match = RegExp(r'^(\d+)\.(\d+)\.(\d+)').firstMatch(version);
-  if (match == null) return null;
-  return [
-    int.parse(match.group(1)!),
-    int.parse(match.group(2)!),
-    int.parse(match.group(3)!),
-  ];
 }
 
 /// Normalize version by removing the tag prefix for comparison.
@@ -223,13 +197,17 @@ Future<Map<String, dynamic>> _fetchLatestRelease() async {
 /// Update upstream version in all relevant files.
 ///
 /// Updates:
-/// - rust/Cargo.toml (upstream dependency tag + openmls_frb patch bump)
+/// - rust/Cargo.toml (upstream dependency tags only)
 /// - README.md (badge) - if exists
 /// - CLAUDE.md (example) - if exists (enable_claude=true)
 /// - .copier-answers.yml (upstream_version) - if exists
 ///
-/// Returns the list of updated file names and the crate version before the
-/// automatic bump.
+/// Does NOT bump the `openmls_frb` crate version: that is a deliberate
+/// release decision made later via `make release-frb` (which bumps the crate
+/// and pushes the `openmls_frb-v*` tag that triggers the native build). See
+/// the two-stage release flow in CLAUDE.md.
+///
+/// Returns the list of updated file names.
 Future<UpdateFilesResult> updateVersionFiles({
   required String newVersion,
   required String oldVersion,
@@ -237,7 +215,6 @@ Future<UpdateFilesResult> updateVersionFiles({
 }) async {
   final packageDir = getPackageDir();
   final updatedFiles = <String>[];
-  String? crateVersionBefore;
   // 1. Update rust/Cargo.toml (upstream dependency tags)
   if (!silent) logStep('Updating rust/Cargo.toml...');
   final cargoFile = File('${packageDir.path}/rust/Cargo.toml');
@@ -286,49 +263,10 @@ Future<UpdateFilesResult> updateVersionFiles({
     (match) => '${match.group(1)}$newVersion${match.group(2)}',
   );
 
-  // Bump the openmls_frb crate version so the native library release
-  // workflow publishes binaries for the new upstream version. The bump
-  // mirrors the upstream SemVer delta (upstream minor bump -> crate minor
-  // bump, etc.), with lower components reset to zero. Skipping this used to
-  // be a manual "Before Merge" step in every update PR.
-  final crateVersionPattern = RegExp(
-    r'^(version\s*=\s*")(\d+)\.(\d+)\.(\d+)(")',
-    multiLine: true,
-  );
-  final crateVersionMatch = crateVersionPattern.firstMatch(cargoContent);
-  if (crateVersionMatch != null) {
-    crateVersionBefore =
-        '${crateVersionMatch.group(2)}.${crateVersionMatch.group(3)}.'
-        '${crateVersionMatch.group(4)}';
-    final bumpIndex = _upstreamBumpIndex(oldVersion, newVersion);
-    final parts = [
-      int.parse(crateVersionMatch.group(2)!),
-      int.parse(crateVersionMatch.group(3)!),
-      int.parse(crateVersionMatch.group(4)!),
-    ];
-    parts[bumpIndex]++;
-    for (var i = bumpIndex + 1; i < parts.length; i++) {
-      parts[i] = 0;
-    }
-    final bumped = parts.join('.');
-    cargoContent = cargoContent.replaceFirst(
-      crateVersionPattern,
-      '${crateVersionMatch.group(1)}$bumped${crateVersionMatch.group(5)}',
-    );
-    if (!silent) {
-      const bumpNames = ['major', 'minor', 'patch'];
-      logInfo(
-        'Bumped openmls_frb version to $bumped '
-        '(${bumpNames[bumpIndex]} bump, mirroring upstream '
-        '$oldVersion -> $newVersion)',
-      );
-    }
-  } else if (!silent) {
-    logWarning(
-      'Could not bump openmls_frb version: '
-      'version field not found or not plain X.Y.Z — bump it manually',
-    );
-  }
+  // NOTE: the `openmls_frb` crate version is intentionally left untouched
+  // here. It is bumped as a deliberate release step (`make release-frb`), not
+  // on every upstream dependency update, so that intermediate updates can
+  // accumulate on main without publishing a throwaway native binary.
 
   await cargoFile.writeAsString(cargoContent);
   updatedFiles.add('rust/Cargo.toml');
@@ -387,10 +325,7 @@ Future<UpdateFilesResult> updateVersionFiles({
     }
   }
 
-  return UpdateFilesResult(
-    updatedFiles: updatedFiles,
-    crateVersionBefore: crateVersionBefore,
-  );
+  return UpdateFilesResult(updatedFiles: updatedFiles);
 }
 
 /// Perform full update check with optional update.
@@ -417,7 +352,6 @@ Future<PerformUpdateResult> performUpdateCheck({
     checkResult: checkResult,
     updated: filesResult.updatedFiles.isNotEmpty,
     updatedFiles: filesResult.updatedFiles,
-    crateVersionBefore: filesResult.crateVersionBefore,
   );
 }
 
@@ -425,7 +359,6 @@ Future<PerformUpdateResult> performUpdateCheck({
 Future<void> writeGitHubOutputs({
   required UpdateCheckResult checkResult,
   required bool updated,
-  String? crateVersionBefore,
 }) async {
   final githubOutput = Platform.environment['GITHUB_OUTPUT'];
   if (githubOutput == null) return;
@@ -438,9 +371,6 @@ Future<void> writeGitHubOutputs({
     ..writeln('is_prerelease=${checkResult.isPrerelease}')
     ..writeln('release_url=${checkResult.releaseUrl}')
     ..writeln('updated=$updated');
-  if (crateVersionBefore != null) {
-    buffer.writeln('crate_version_before=$crateVersionBefore');
-  }
 
   file.writeAsStringSync(buffer.toString(), mode: FileMode.append);
 }

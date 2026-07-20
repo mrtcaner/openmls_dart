@@ -32,9 +32,10 @@ on:
 jobs:
   check-updates:
     runs-on: ubuntu-latest
+    # All writes (checkout push, PR creation, branch push) go through the App
+    # token; the default GITHUB_TOKEN needs no write access here.
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
 
     steps:
       - name: Generate GitHub App Token
@@ -53,15 +54,18 @@ jobs:
 
       - name: Check for updates
         id: check
+        env:
+          TARGET_VERSION: ${{ inputs.target_version }}
+          FORCE_UPDATE: ${{ inputs.force_update }}
         run: |
           # Build arguments
           ARGS="--ci"
 
-          if [ -n "${{ inputs.target_version }}" ]; then
-            ARGS="$ARGS --version ${{ inputs.target_version }}"
+          if [ -n "$TARGET_VERSION" ]; then
+            ARGS="$ARGS --version $TARGET_VERSION"
           fi
 
-          if [ "${{ inputs.force_update }}" = "true" ]; then
+          if [ "$FORCE_UPDATE" = "true" ]; then
             ARGS="$ARGS --force"
           fi
 
@@ -81,10 +85,12 @@ jobs:
         if: steps.check.outputs.needs_update == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          LATEST_VERSION: ${{ steps.check.outputs.latest_version }}
+          FORCE_UPDATE: ${{ inputs.force_update }}
         run: |
-          BRANCH="update-openmls-${{ steps.check.outputs.latest_version }}"
+          BRANCH="update-openmls-${LATEST_VERSION}"
           OPEN_PRS=$(gh pr list --head "$BRANCH" --state open --json number --jq 'length')
-          if [ "$OPEN_PRS" != "0" ] && [ "${{ inputs.force_update }}" != "true" ]; then
+          if [ "$OPEN_PRS" != "0" ] && [ "$FORCE_UPDATE" != "true" ]; then
             echo "skip=true" >> $GITHUB_OUTPUT
             echo "::notice::Open update PR for branch $BRANCH already exists — skipping to avoid force-pushing over it."
           else
@@ -94,15 +100,18 @@ jobs:
       - name: Update rust/Cargo.toml
         id: cargo-toml
         if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
+        env:
+          TARGET_VERSION: ${{ inputs.target_version }}
+          FORCE_UPDATE: ${{ inputs.force_update }}
         run: |
           # Build arguments for update
           ARGS="--update --ci"
 
-          if [ -n "${{ inputs.target_version }}" ]; then
-            ARGS="$ARGS --version ${{ inputs.target_version }}"
+          if [ -n "$TARGET_VERSION" ]; then
+            ARGS="$ARGS --version $TARGET_VERSION"
           fi
 
-          if [ "${{ inputs.force_update }}" = "true" ]; then
+          if [ "$FORCE_UPDATE" = "true" ]; then
             ARGS="$ARGS --force"
           fi
 
@@ -114,16 +123,18 @@ jobs:
             echo "::error::Failed to update rust/Cargo.toml"
           fi
 
-      # Runs before Cargo.lock is updated: the AI may raise the crate version
-      # above the SemVer-mirror bump (0.x upstreams ship breaking changes in
-      # minor releases), and the lock file must be generated afterwards.
+      # Records the openmls dependency change (openmls Highlight + Changed).
+      # Does NOT touch the openmls_frb crate version — that is bumped later at
+      # release time (`make release-frb`), which also stamps the frb Highlight.
       - name: Update CHANGELOG.md
         id: changelog
         if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
         env:
           AI_MODELS_TOKEN: ${{ secrets.AI_MODELS_TOKEN }}
+          LATEST_VERSION: ${{ steps.check.outputs.latest_version }}
+          CURRENT_VERSION: ${{ steps.check.outputs.current_version }}
         run: |
-          if make update-changelog ARGS="--version ${{ steps.check.outputs.latest_version }} --from ${{ steps.check.outputs.current_version }} --crate-version-before ${{ steps.cargo-toml.outputs.crate_version_before }} --ci"; then
+          if make update-changelog ARGS="--version $LATEST_VERSION --from $CURRENT_VERSION --ci"; then
             echo "success=true" >> $GITHUB_OUTPUT
           else
             echo "success=false" >> $GITHUB_OUTPUT
@@ -173,7 +184,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ steps.app-token.outputs.token }}
           sign-commits: true
@@ -201,11 +212,11 @@ jobs:
 
             ${{ steps.changelog.outputs.success == 'false' && '> **Warning**: AI changelog update failed. Please update CHANGELOG.md manually.' || '' }}
 
-            ${{ (steps.changelog.outputs.success == 'false' || steps.changelog.outputs.bump_verified == 'false') && '> ⚠️ **Crate version bump is UNVERIFIED** — the AI severity check did not run, so the bump only mirrors the upstream SemVer delta. 0.x upstreams often ship BREAKING changes in minor releases: review the upstream changes and raise the `openmls_frb` major version manually if needed.' || '' }}
+            > **Note**: This PR does NOT bump the `openmls_frb` crate version and does NOT build native binaries. It only updates the openmls dependency. Cut a native release later with `make release-frb` (stage 1), then the Dart release (stage 2). See CLAUDE.md → Release Flow.
 
             ### Files Updated Automatically
 
-            - `rust/Cargo.toml` — ${{ steps.cargo-toml.outputs.success == 'true' && 'openmls dependency tags + `openmls_frb` version bump (mirrors upstream SemVer delta)' || '**NOT UPDATED** (update failed)' }}
+            - `rust/Cargo.toml` — ${{ steps.cargo-toml.outputs.success == 'true' && 'openmls dependency tags only (the `openmls_frb` crate version is intentionally NOT bumped here)' || '**NOT UPDATED** (update failed)' }}
             - `rust/Cargo.lock` — ${{ steps.cargo-lock.outputs.success == 'true' && 'updated dependencies' || '**NOT UPDATED** (cargo update failed)' }}
             - `lib/src/rust/` — ${{ steps.codegen.outputs.success == 'true' && 'regenerated FRB bindings' || '**NOT UPDATED** (codegen failed, manual update required)' }}
             - `CHANGELOG.md` — ${{ steps.changelog.outputs.success == 'true' && 'AI-generated entry (GitHub Models)' || '**NOT UPDATED** (AI failed, manual update required)' }}
@@ -232,9 +243,12 @@ jobs:
                make test
                ```
 
-            2. **Bump Dart package version** (if releasing to pub.dev):
-               - Update `version` in `pubspec.yaml`
-               - Move CHANGELOG `[Unreleased]` to version number
+            2. This update accumulates on `main` with no new native binary. When
+               you are ready to ship, run the two-stage release:
+               - **Stage 1 — native crate:** `make release-frb ARGS="--version X.Y.Z"`
+                 (bumps `openmls_frb`, tags `openmls_frb-X.Y.Z`, builds binaries)
+               - **Stage 2 — Dart package:** bump `pubspec.yaml`, move CHANGELOG
+                 `[Unreleased]` → version, tag `vX.Y.Z` (release-package skill)
 
             ---
             *This PR was created automatically by the openmls update checker.*
@@ -248,49 +262,56 @@ jobs:
             ${{ steps.cargo-lock.outputs.success == 'false' && 'cargo-lock-failed' || '' }}
             ${{ steps.codegen.outputs.success == 'false' && 'codegen-failed' || '' }}
             ${{ steps.changelog.outputs.success == 'false' && 'changelog-needed' || '' }}
-            ${{ (steps.changelog.outputs.success == 'false' || steps.changelog.outputs.bump_verified == 'false') && 'bump-unverified' || '' }}
 
       - name: Summary
+        env:
+          LATEST_VERSION: ${{ steps.check.outputs.latest_version }}
+          CURRENT_VERSION: ${{ steps.check.outputs.current_version }}
+          IS_PRERELEASE: ${{ steps.check.outputs.is_prerelease }}
+          NEEDS_UPDATE: ${{ steps.check.outputs.needs_update }}
+          SKIP_EXISTING: ${{ steps.existing.outputs.skip }}
+          CARGO_TOML_OK: ${{ steps.cargo-toml.outputs.success }}
+          CARGO_LOCK_OK: ${{ steps.cargo-lock.outputs.success }}
+          CODEGEN_OK: ${{ steps.codegen.outputs.success }}
+          CHANGELOG_OK: ${{ steps.changelog.outputs.success }}
         run: |
-          if [ "${{ steps.existing.outputs.skip }}" = "true" ]; then
+          if [ "$SKIP_EXISTING" = "true" ]; then
             echo "## Update PR Already Open" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "An open PR for **${{ steps.check.outputs.latest_version }}** already exists — nothing to do." >> $GITHUB_STEP_SUMMARY
+            echo "An open PR for **${LATEST_VERSION}** already exists — nothing to do." >> $GITHUB_STEP_SUMMARY
             echo "Re-run with \`force_update\` to regenerate it (this force-pushes the PR branch)." >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ steps.check.outputs.needs_update }}" = "true" ]; then
+          elif [ "$NEEDS_UPDATE" = "true" ]; then
             echo "## Update Available" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
             echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
-            echo "| Current openmls | ${{ steps.check.outputs.current_version }} |" >> $GITHUB_STEP_SUMMARY
-            echo "| New openmls | ${{ steps.check.outputs.latest_version }} |" >> $GITHUB_STEP_SUMMARY
-            echo "| Pre-release | ${{ steps.check.outputs.is_prerelease }} |" >> $GITHUB_STEP_SUMMARY
-            echo "| Cargo.toml | ${{ steps.cargo-toml.outputs.success }} |" >> $GITHUB_STEP_SUMMARY
-            echo "| Cargo.lock | ${{ steps.cargo-lock.outputs.success }} |" >> $GITHUB_STEP_SUMMARY
-            echo "| FRB Codegen | ${{ steps.codegen.outputs.success }} |" >> $GITHUB_STEP_SUMMARY
-            echo "| AI Changelog | ${{ steps.changelog.outputs.success }} |" >> $GITHUB_STEP_SUMMARY
-            echo "| Bump AI-verified | ${{ steps.changelog.outputs.bump_verified }} |" >> $GITHUB_STEP_SUMMARY
-            echo "| Crate version | ${{ steps.changelog.outputs.crate_version }} |" >> $GITHUB_STEP_SUMMARY
+            echo "| Current openmls | ${CURRENT_VERSION} |" >> $GITHUB_STEP_SUMMARY
+            echo "| New openmls | ${LATEST_VERSION} |" >> $GITHUB_STEP_SUMMARY
+            echo "| Pre-release | ${IS_PRERELEASE} |" >> $GITHUB_STEP_SUMMARY
+            echo "| Cargo.toml | ${CARGO_TOML_OK} |" >> $GITHUB_STEP_SUMMARY
+            echo "| Cargo.lock | ${CARGO_LOCK_OK} |" >> $GITHUB_STEP_SUMMARY
+            echo "| FRB Codegen | ${CODEGEN_OK} |" >> $GITHUB_STEP_SUMMARY
+            echo "| AI Changelog | ${CHANGELOG_OK} |" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "A pull request has been created for review." >> $GITHUB_STEP_SUMMARY
-            if [ "${{ steps.cargo-toml.outputs.success }}" = "false" ]; then
+            if [ "$CARGO_TOML_OK" = "false" ]; then
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "> **Critical**: Failed to update rust/Cargo.toml. Manual update required." >> $GITHUB_STEP_SUMMARY
             fi
-            if [ "${{ steps.cargo-lock.outputs.success }}" = "false" ]; then
+            if [ "$CARGO_LOCK_OK" = "false" ]; then
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "> **Warning**: Failed to update Cargo.lock. Run \`make rust-update\` manually." >> $GITHUB_STEP_SUMMARY
             fi
-            if [ "${{ steps.codegen.outputs.success }}" = "false" ]; then
+            if [ "$CODEGEN_OK" = "false" ]; then
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "> **Error**: FRB codegen failed. openmls API may have changed. Manual intervention required." >> $GITHUB_STEP_SUMMARY
             fi
-            if [ "${{ steps.changelog.outputs.success }}" = "false" ]; then
+            if [ "$CHANGELOG_OK" = "false" ]; then
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "> **Warning**: AI changelog update failed. Please update CHANGELOG.md manually." >> $GITHUB_STEP_SUMMARY
             fi
           else
             echo "## Up to Date" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Current version **${{ steps.check.outputs.current_version }}** is the latest." >> $GITHUB_STEP_SUMMARY
+            echo "Current version **${CURRENT_VERSION}** is the latest." >> $GITHUB_STEP_SUMMARY
           fi

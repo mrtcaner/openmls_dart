@@ -157,6 +157,69 @@ String getCrateVersion() {
   return versionMatch.group(1)!.trim();
 }
 
+/// Gets the crate name from rust/Cargo.toml `[package]` section.
+///
+/// This is the `[[package]]` name used in `rust/Cargo.lock`, needed to keep the
+/// lockfile's own version stanza in sync when the crate version is bumped.
+String getCrateName() {
+  final packageDir = getPackageDir();
+  final cargoPath = '${packageDir.path}/rust/Cargo.toml';
+  final cargoFile = File(cargoPath);
+
+  if (!cargoFile.existsSync()) {
+    throw Exception('rust/Cargo.toml not found at: $cargoPath');
+  }
+
+  final content = cargoFile.readAsStringSync();
+
+  final nameMatch = RegExp(
+    r'^name\s*=\s*"([^"]+)"',
+    multiLine: true,
+  ).firstMatch(content);
+
+  if (nameMatch == null) {
+    throw Exception(
+      'name field not found in rust/Cargo.toml\n'
+      'File: $cargoPath\n'
+      'Expected format: name = "crate_name"',
+    );
+  }
+
+  return nameMatch.group(1)!.trim();
+}
+
+/// Gets the package version from the pubspec.yaml `version:` field.
+///
+/// This is the version of the published Dart package, used for pub.dev releases
+/// (stage 2). Distinct from [getCrateVersion] (the native `openmls_frb`
+/// crate, stage 1).
+String getPackageVersion() {
+  final packageDir = getPackageDir();
+  final pubspecPath = '${packageDir.path}/pubspec.yaml';
+  final pubspecFile = File(pubspecPath);
+
+  if (!pubspecFile.existsSync()) {
+    throw Exception('pubspec.yaml not found at: $pubspecPath');
+  }
+
+  final content = pubspecFile.readAsStringSync();
+
+  final versionMatch = RegExp(
+    r'^version:\s*(.+)$',
+    multiLine: true,
+  ).firstMatch(content);
+
+  if (versionMatch == null) {
+    throw Exception(
+      'version field not found in pubspec.yaml\n'
+      'File: $pubspecPath\n'
+      'Expected format: version: X.Y.Z',
+    );
+  }
+
+  return versionMatch.group(1)!.trim();
+}
+
 /// Gets the upstream version (git tag) from rust/Cargo.toml.
 ///
 /// Parses the tag from the first crate: openmls = { git = "...", tag = "vX.Y.Z" }

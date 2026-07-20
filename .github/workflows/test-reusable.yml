@@ -134,6 +134,15 @@ jobs:
         run: make format-check
         shell: bash
 
+      # Deployment-target consistency (iOS/macOS/Android min versions across the
+      # CI build env vars, example Xcode projects and README). Platform-independent, so it
+      # runs once on Linux x86_64 (like clippy). Fails on drift (exit 1); fix with
+      # `make check-targets ARGS="--ios --set X.Y"` (or --macos/--android).
+      - name: Check deployment targets
+        if: matrix.name == 'Linux x86_64'
+        run: make check-targets
+        shell: bash
+
       # Run tests without coverage (non-Linux or coverage disabled)
       - name: Run tests
         if: matrix.coverage == false || !inputs.run-coverage
@@ -168,7 +177,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Update coverage badge
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        uses: schneegans/dynamic-badges-action@e9a478b16159b4d31420099ba146cdc50f134483 # v1.7.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: ${{ vars.COVERAGE_GIST_ID }}

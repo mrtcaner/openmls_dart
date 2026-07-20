@@ -11,6 +11,30 @@ This library uses **Flutter Rust Bridge (FRB)** with the **OpenMLS** Rust crate.
 - **No manual memory management** in Dart - FRB handles all cleanup automatically
 - **No `dispose()` calls needed** - Rust drops resources when they go out of scope (except `MlsEngine.close()` for deterministic key release)
 
+## Security Scope
+
+### In Scope
+
+This package provides Dart bindings to openmls via Flutter Rust Bridge. The security scope covers:
+
+- **Memory safety** of the FRB wrapper and the hand-written Rust in `rust/src/api/`
+- **Correct API usage** of the underlying openmls primitives
+- **Secret handling** across the FFI boundary (deterministic `dispose()`, keeping secrets in Rust where possible)
+- **Supply-chain integrity** of the prebuilt native binaries (build pipeline, fail-closed download verification, release/tag protections)
+
+### Out of Scope
+
+The core cryptography / functionality is implemented and maintained upstream in openmls — the algorithm implementations, their constant-time / side-channel resistance, and protocol design. Report those to the upstream project (see **Upstream Security** below).
+
+### Threat Model Limitations
+
+Out of scope for this wrapper:
+
+- **Physical side-channels** (power analysis, electromagnetic emissions)
+- **Fault injection** (Rowhammer, voltage/clock glitching)
+- **Hardware vulnerabilities**
+- **Compromised host** — secrets that cross into Dart's GC heap cannot be reliably erased
+
 ## Security Considerations
 
 ### A: Memory Safety (Rust-handled)
@@ -120,7 +144,20 @@ The library returns errors for protocol violations. Handle them appropriately ra
 - **SHA256 Checksums (fail-closed)**: pre-built native libraries are verified against a checksums file published in the same GitHub Release. Verification is **fail-closed** — if the checksums cannot be fetched or lack an entry for the archive, the build hook (`hook/build.dart`) **aborts** rather than loading an unverified binary. The escape hatch `OPENMLS_ALLOW_UNVERIFIED_DOWNLOAD=1` exists only for older releases with no checksums file.
 - **Dependency Auditing**: `cargo audit` (`make rust-audit`) and `cargo deny` (`make rust-deny`) run in CI. `cargo-deny` enforces RustSec advisories, an allowed-license list, and a source allow-list restricted to crates.io and explicitly-listed git repositories (see `rust/deny.toml`).
 
-> **Note (authenticity):** SHA256 verifies *integrity* but not *authenticity* — the checksums file ships in the same release as the archive. A detached signature (minisign/cosign) with a public key pinned in `hook/build.dart`, plus SLSA build provenance, is the recommended next step for high-assurance use.
+- **Build Provenance (authenticity)**: SHA256 verifies *integrity* but not *authenticity* — the checksums file ships in the same release as the archive. To break that self-trust, every release archive is attested with [GitHub Artifact Attestations](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations) (Sigstore, SLSA Build L2): CI signs a provenance statement proving each archive was built by this repository's tag-triggered `build-openmls.yml` workflow from a specific commit. Verify a downloaded archive with `gh attestation verify openmls_frb-<version>-<platform>.tar.gz --repo djx-y-z/openmls_dart`; for fully offline verification use the attached `openmls_frb-<version>.sigstore.jsonl` bundle with `--bundle` and a pre-fetched `gh attestation trusted-root`.
+
+> **Known limitation:** attestation verification is manual — the build hook verifies SHA256 only (there is no Sigstore/DSSE implementation for Dart). Automatic (opt-in) verification via an installed `gh` CLI is a possible future hardening step.
+
+### Release & build-trigger protection
+
+The native binaries above are published by `build-openmls.yml`, triggered by a `openmls_frb-*` tag push or by manual dispatch. Two controls restrict who can cause a publish, mirroring the `pub.dev` environment that gates the pub.dev publish:
+
+- **Tag protection** — a repository ruleset restricts creating, moving, and deleting **all tags** to Admins/Maintainers (and requires them signed), so a plain `write` collaborator cannot mint a release tag (`openmls_frb-*` / `v*`) or any other tag.
+- **Approval gate** — the publishing job runs in the `native-build` environment, whose required reviewers must approve before any binary is released. Unlike the tag ruleset, this also covers the `workflow_dispatch` path.
+
+Setup, the exact `gh` commands to apply / verify / roll back, and residual risks are in [`.github/rulesets/README.md`](.github/rulesets/README.md).
+
+CI workflows run with a least-privilege `GITHUB_TOKEN` (`contents: read` by default; only the release-publishing jobs get the specific writes they need), third-party actions are pinned to commit SHAs, and pub.dev publishing uses OIDC — no long-lived publishing tokens exist.
 
 ## Build Security
 

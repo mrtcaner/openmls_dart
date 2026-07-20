@@ -30,10 +30,10 @@ on:
         type: boolean
         default: true
 
-# Required for OIDC authentication with pub.dev
+# Least privilege by default; the publish job opts up to id-token: write
+# (OIDC for pub.dev) and the release job to contents: write (GitHub Release).
 permissions:
-  contents: write      # Create tags and releases
-  id-token: write      # OIDC token for pub.dev
+  contents: read
 
 jobs:
   # ============================================
@@ -163,6 +163,9 @@ jobs:
     needs: [validate, test, validate-package]
     runs-on: ubuntu-latest
     environment: pub.dev
+    permissions:
+      contents: read
+      id-token: write      # OIDC token for pub.dev
     steps:
       - uses: actions/checkout@v4
 
@@ -192,23 +195,29 @@ jobs:
     needs: [validate, publish]
     if: github.ref_type == 'tag' && !inputs.dry-run
     runs-on: ubuntu-latest
+    permissions:
+      contents: write      # gh release create
     steps:
       - uses: actions/checkout@v4
 
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.validate.outputs.version }}
+          CHANGELOG: ${{ needs.validate.outputs.changelog }}
         run: |
-          gh release create "v${{ needs.validate.outputs.version }}" \
-            --title "v${{ needs.validate.outputs.version }}" \
-            --notes "$(cat <<'EOF'
-          ## Changes
-
-          ${{ needs.validate.outputs.changelog }}
-
-          ---
-
-          **pub.dev:** https://pub.dev/packages/openmls/versions/${{ needs.validate.outputs.version }}
-          EOF
-          )"
+          # Write the notes via env + printf (no shell re-parsing of the
+          # changelog body: a literal `EOF` line in it can't break out).
+          {
+            echo "## Changes"
+            echo
+            printf '%s\n' "$CHANGELOG"
+            echo
+            echo "---"
+            echo
+            echo "**pub.dev:** https://pub.dev/packages/openmls/versions/$VERSION"
+          } > release-notes.md
+          gh release create "v$VERSION" \
+            --title "v$VERSION" \
+            --notes-file release-notes.md
         shell: bash

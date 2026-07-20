@@ -282,12 +282,6 @@ List<_FileCheck> _buildChecks(Platform platform, String expected) {
 List<_FileCheck> _buildIosChecks(String expected) {
   return [
     _FileCheck(
-      label: 'iOS podspec',
-      relativePath: 'ios/openmls.podspec',
-      pattern: RegExp(r"s\.platform\s*=\s*:ios,\s*'([^']+)'"),
-      replacement: (v) => "s.platform = :ios, '$v'",
-    ),
-    _FileCheck(
       label: 'iOS CI workflow',
       relativePath: '.github/workflows/build-openmls.yml',
       pattern: RegExp(r"IPHONEOS_DEPLOYMENT_TARGET:\s*'([^']+)'"),
@@ -321,10 +315,10 @@ List<_FileCheck> _buildIosChecks(String expected) {
 List<_FileCheck> _buildMacosChecks() {
   return [
     _FileCheck(
-      label: 'macOS podspec',
-      relativePath: 'macos/openmls.podspec',
-      pattern: RegExp(r"s\.platform\s*=\s*:osx,\s*'([^']+)'"),
-      replacement: (v) => "s.platform = :osx, '$v'",
+      label: 'macOS CI workflow',
+      relativePath: '.github/workflows/build-openmls.yml',
+      pattern: RegExp(r"MACOSX_DEPLOYMENT_TARGET:\s*'([^']+)'"),
+      replacement: (v) => "MACOSX_DEPLOYMENT_TARGET: '$v'",
     ),
     _FileCheck(
       label: 'macOS Xcode project',
@@ -348,10 +342,10 @@ List<_FileCheck> _buildMacosChecks() {
 List<_FileCheck> _buildAndroidChecks(String expected) {
   return [
     _FileCheck(
-      label: 'Android build.gradle',
-      relativePath: 'android/build.gradle',
-      pattern: RegExp(r'minSdk\s*=\s*(\d+)'),
-      replacement: (v) => 'minSdk = $v',
+      label: 'Android CI workflow',
+      relativePath: '.github/workflows/build-openmls.yml',
+      pattern: RegExp(r'--platform\s+(\d+)'),
+      replacement: (v) => '--platform $v',
     ),
     _FileCheck(
       label: 'README Android version',
@@ -372,17 +366,32 @@ _CheckResult _checkFile(_FileCheck check, String expected) {
   final packageDir = getPackageDir();
   final file = File('${packageDir.path}/${check.relativePath}');
 
+  // Fail closed: every configured location is expected to exist and match.
+  // Treating a missing file or a vanished pattern as "skipped/ok" would let the
+  // drift gate go green after a rename/removal (e.g. the CI deployment-target
+  // env var being refactored away), silently reverting the binaries to rustc's
+  // per-target defaults — exactly the regression this check exists to catch.
   if (!file.existsSync()) {
-    logWarn('File not found: ${check.relativePath} (skipped)');
-    return _CheckResult(check: check, ok: true, expectedVersion: expected);
+    logError('File not found: ${check.relativePath}');
+    return _CheckResult(
+      check: check,
+      ok: false,
+      expectedVersion: expected,
+      foundVersion: '<file not found>',
+    );
   }
 
   final content = file.readAsStringSync();
   final matches = check.pattern.allMatches(content).toList();
 
   if (matches.isEmpty) {
-    logWarn('Pattern not found in ${check.relativePath} (skipped)');
-    return _CheckResult(check: check, ok: true, expectedVersion: expected);
+    logError('Pattern not found in ${check.relativePath}');
+    return _CheckResult(
+      check: check,
+      ok: false,
+      expectedVersion: expected,
+      foundVersion: '<pattern not found>',
+    );
   }
 
   for (final match in matches) {
@@ -465,19 +474,18 @@ Examples:
 
 Files checked:
   iOS (ios_min_version):
-    1. ios/openmls.podspec
-    2. .github/workflows/build-openmls.yml
-    3. example/ios/Runner.xcodeproj/project.pbxproj
-    4. example/ios/Flutter/AppFrameworkInfo.plist
-    5. README.md platform table
+    1. .github/workflows/build-openmls.yml (IPHONEOS_DEPLOYMENT_TARGET)
+    2. example/ios/Runner.xcodeproj/project.pbxproj
+    3. example/ios/Flutter/AppFrameworkInfo.plist
+    4. README.md platform table
 
   macOS (macos_min_version):
-    1. macos/openmls.podspec
+    1. .github/workflows/build-openmls.yml (MACOSX_DEPLOYMENT_TARGET)
     2. example/macos/Runner.xcodeproj/project.pbxproj
     3. README.md platform table
 
   Android (android_min_sdk):
-    1. android/build.gradle
+    1. .github/workflows/build-openmls.yml (cargo ndk --platform)
     2. README.md platform table
 
 Exit codes:

@@ -12,20 +12,39 @@
 # - Web (WASM)
 #
 # Trigger:
-# - Manual dispatch (workflow_dispatch) - for first run or force rebuild
-# - Push to main when rust/Cargo.toml changes (contains version)
+# - Push of a `openmls_frb-<version>` tag (created by `make release-frb`) -
+#   this is the normal path: a openmls dependency update merges
+#   to main WITHOUT bumping the crate, then a deliberate release bumps
+#   rust/Cargo.toml and pushes the matching tag, which builds and publishes the
+#   native binaries.
+# - Manual dispatch (workflow_dispatch) - a retry path for a build that failed
+#   AFTER its tag was already pushed. It reads the crate version from
+#   rust/Cargo.toml on the DISPATCHED ref (whatever ref you dispatch on, not
+#   necessarily the default branch). Note: dispatch cannot bootstrap a brand-new
+#   release — `check-release` skips the whole run once the release for that crate
+#   version exists, and the `protect-release-tags` ruleset blocks this workflow
+#   from creating the tag itself. To (re)build a version, push the signed tag via
+#   `make release-frb`; to rebuild an already-released version, delete its
+#   GitHub Release and tag first.
 #
-# After successful build, creates/updates GitHub Release with native library archives.
+# The tag name must equal `openmls_frb-<crate version in rust/Cargo.toml>`
+# (validated below). The GitHub Release is created on that same tag, so the tag
+# you push IS the release tag (no duplicate tags).
+#
+# After a successful build, creates the GitHub Release with native library
+# archives (fail-loud: it never deletes/overwrites an existing release).
 
 name: Build openmls FRB Libraries
 
 on:
   workflow_dispatch:
   push:
-    branches: [main]
-    paths:
-      - 'rust/Cargo.toml'
-      - 'rust/src/**'
+    tags:
+      - 'openmls_frb-*'
+
+# Least privilege by default; only create-release opts up to contents: write.
+permissions:
+  contents: read
 
 concurrency:
   group: build-openmls_frb-${{ github.ref }}
@@ -55,6 +74,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: make check-exists-openmls-frb-release ARGS="--ci"
+
+      # On a tag push, the tag must equal `openmls_frb-<crate version>`. This
+      # guards against tagging a commit whose rust/Cargo.toml wasn't bumped to
+      # match (mirrors publish.yml's tag/pubspec validation).
+      - name: Validate tag matches crate version
+        if: github.ref_type == 'tag'
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#openmls_frb-}"
+          CRATE_VERSION="${{ steps.check.outputs.version }}"
+          if [ "$TAG_VERSION" != "$CRATE_VERSION" ]; then
+            echo "::error::Tag '$GITHUB_REF_NAME' (version '$TAG_VERSION') does not match rust/Cargo.toml crate version '$CRATE_VERSION'. Bump rust/Cargo.toml and tag 'openmls_frb-$CRATE_VERSION', or use 'make release-frb'."
+            exit 1
+          fi
+          echo "Tag matches crate version: $CRATE_VERSION"
 
   # ============================================
   # Linux (x86_64 + arm64 on separate runners)
@@ -116,6 +149,11 @@ jobs:
           targets: ${{ matrix.rust_target }}
 
       - name: Build for macOS ${{ matrix.arch }}
+        env:
+          # Make the shipped dylib's minimum macOS version explicit instead of
+          # relying on rustc's per-target default (10.12 for x86_64). rustc
+          # clamps arm64 to 11.0 (first Apple-silicon macOS) automatically.
+          MACOSX_DEPLOYMENT_TARGET: '10.15'
         run: |
           cd rust
           cargo build --release --target ${{ matrix.rust_target }}
@@ -197,7 +235,7 @@ jobs:
           targets: ${{ matrix.rust_target }}
 
       - name: Setup Android NDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3.2.2
 
       - name: Install NDK
         run: |
@@ -209,8 +247,11 @@ jobs:
 
       - name: Build for Android ${{ matrix.abi }}
         run: |
+          # --platform pins the Android API level the .so links against
+          # (matches the package's documented minSdk; cargo-ndk would
+          # otherwise use its own default).
           cd rust
-          cargo ndk -t ${{ matrix.rust_target }} build --release
+          cargo ndk -t ${{ matrix.rust_target }} --platform 24 build --release
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -234,7 +275,7 @@ jobs:
           targets: x86_64-pc-windows-msvc
 
       - name: Setup MSVC
-        uses: ilammy/msvc-dev-cmd@v1.13.0
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
 
       - name: Build for Windows
         shell: pwsh
@@ -304,11 +345,22 @@ jobs:
       - build-wasm
     if: needs.check-release.outputs.skip != 'true'
     runs-on: ubuntu-latest
+    # Supply-chain gate: publishing the consumer-downloaded native binaries
+    # requires a human to approve the `native-build` environment deployment.
+    # This mirrors publish.yml's `pub.dev` environment and is the ONLY control
+    # that also covers the workflow_dispatch trigger — a tag ruleset cannot gate
+    # a dispatch-triggered run. Configure required reviewers at
+    # Settings → Environments → native-build; until then the gate is inactive
+    # (the environment auto-creates with no protection and does not block).
+    # See .github/rulesets/README.md.
+    environment: native-build
     env:
       VERSION: ${{ needs.check-release.outputs.version }}
       NATIVE_VERSION: ${{ needs.check-release.outputs.openmls_version }}
     permissions:
       contents: write
+      id-token: write       # Sigstore OIDC identity for build provenance
+      attestations: write   # store the attestation in the repo
     steps:
       - uses: actions/checkout@v4
 
@@ -371,6 +423,24 @@ jobs:
 
           ls -lh release-archives/
 
+      # Sigstore build-provenance attestation (SLSA Build L2) for every release
+      # archive. subject-checksums reuses the just-generated SHA256 file, so the
+      # attested digests are exactly the ones the build hook verifies. The
+      # resulting bundle is attached to the release below so consumers can
+      # verify fully offline (see SECURITY.md → Authenticity).
+      - name: Attest build provenance
+        id: attest
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-checksums: release-archives/openmls_frb-${{ env.VERSION }}-checksums.sha256
+
+      - name: Attach attestation bundle to release assets
+        env:
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}
+        run: |
+          cp "$BUNDLE_PATH" "release-archives/openmls_frb-${VERSION}.sigstore.jsonl"
+          ls -lh "release-archives/openmls_frb-${VERSION}.sigstore.jsonl"
+
       - name: Create Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -379,8 +449,12 @@ jobs:
           TAG="openmls_frb-${VERSION}"
           TITLE="openmls_frb ${VERSION} - Native Libraries"
 
-          # Delete existing release if it exists (for rebuild scenarios)
-          gh release delete "$TAG" --yes 2>/dev/null || true
+          # No delete-then-recreate: check-release skips the whole run when the
+          # release for this crate version already exists, and if a dispatch/tag
+          # race slips past that check the slower `gh release create` fails
+          # loudly instead of silently clobbering already-published binaries
+          # that consumers' build hooks download. To intentionally rebuild the
+          # same version, delete the release and its tag manually first.
 
           # Create release with all assets
           gh release create "$TAG" \
@@ -412,6 +486,13 @@ jobs:
 
           ### Checksums
           SHA256 checksums are available in \`openmls_frb-${VERSION}-checksums.sha256\`
+
+          ### Build Provenance
+          Every archive is attested with [GitHub Artifact Attestations](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations) (Sigstore). Verify:
+          \`\`\`bash
+          gh attestation verify openmls_frb-${VERSION}-<platform>.tar.gz --repo ${GITHUB_REPOSITORY}
+          \`\`\`
+          Offline verification: use the attached \`openmls_frb-${VERSION}.sigstore.jsonl\` bundle with \`--bundle\` (see SECURITY.md).
           EOF
           )" \
             release-archives/openmls_frb-${VERSION}-linux-x86_64.tar.gz \
@@ -426,4 +507,5 @@ jobs:
             release-archives/openmls_frb-${VERSION}-ios-simulator-arm64.tar.gz \
             release-archives/openmls_frb-${VERSION}-ios-simulator-x86_64.tar.gz \
             release-archives/openmls_frb-${VERSION}-wasm32.tar.gz \
-            release-archives/openmls_frb-${VERSION}-checksums.sha256
+            release-archives/openmls_frb-${VERSION}-checksums.sha256 \
+            release-archives/openmls_frb-${VERSION}.sigstore.jsonl
