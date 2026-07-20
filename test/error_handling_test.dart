@@ -72,5 +72,38 @@ void main() {
         throwsA(isA<Object>()),
       );
     });
+
+    // Regression: a malformed message must make the routing parsers return an
+    // error, not abort the process. Input found by fuzzing (259 bytes).
+    test('malformed message throws instead of aborting', () {
+      final crash = Uint8List.fromList(const [
+        0, 1, 0, 4, 6, 236, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 55, 55, 55,
+        55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 54, 55, 55, 55, 55, 55, 55, 55,
+        55, 55, 58, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
+        55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 51, 55, 55, 55,
+        55, 55, 55, 48, 48, 51, 48, 53, 52, 49, 50, 54, 54, 56, 49, 57, 55, 54,
+        54, 48, 57, 57, 48, 54, 64, 0, 0, 0, 0, 0, 0, 0, 0, 64, 64, 64, 64, 64,
+        64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+        64, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 64, 64, 64,
+        64, 64, 64, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 54, 52, 52, 55, 64,
+        64, 64, 64, 66, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+        64, 144, 0, 194, 0, 0, 0, 64, 48, 55, 55, 55, 55, 54, 55, 55, 55, 55,
+        55, 55, 55, 55, 55, 5, 0, 62, 0, 5, 0, 0, 53, 55, 49, 51, 49, 5,
+      ]);
+
+      expect(
+        () => mlsMessageExtractGroupId(messageBytes: crash),
+        throwsA(isA<Object>()),
+      );
+      expect(
+        () => mlsMessageExtractEpoch(messageBytes: crash),
+        throwsA(isA<Object>()),
+      );
+      expect(
+        () => mlsMessageContentType(messageBytes: crash),
+        throwsA(isA<Object>()),
+      );
+    });
   });
 }

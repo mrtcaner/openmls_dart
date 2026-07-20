@@ -2,6 +2,16 @@
 
 ### For Users
 
+#### Security
+
+- **Hardened MLS message parsing against malformed input** — incoming MLS
+  messages (`mlsMessageExtractGroupId` / `mlsMessageExtractEpoch` /
+  `mlsMessageContentType`, plus Welcome / GroupInfo / process-message decoding)
+  are now decoded via the `Read`-based path and reject trailing bytes
+  explicitly, so a malformed message returns an error instead of aborting the
+  process. Reported upstream; this local guard will be removed once we depend on
+  a fixed openmls release.
+
 #### Fixed
 
 - **Web build hook now refreshes stale WASM on upgrade** — the web build hook

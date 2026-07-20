@@ -8,7 +8,10 @@
 //! IndexedDB on WASM).
 
 use openmls::prelude::*;
-use openmls::prelude::tls_codec::{DeserializeBytes as TlsDeserializeBytes, Serialize as TlsSerialize};
+use openmls::prelude::tls_codec::{
+    Deserialize as TlsDeserialize, DeserializeBytes as TlsDeserializeBytes,
+    Error as TlsCodecError, Serialize as TlsSerialize,
+};
 use openmls::ciphersuite::hash_ref::ProposalRef;
 use openmls::schedule::PreSharedKeyId;
 use openmls_traits::OpenMlsProvider;
@@ -44,6 +47,27 @@ fn build_credential_with_key(
         credential,
         signature_key: SignaturePublicKey::from(signer_public_key.to_vec()),
     })
+}
+
+/// Deserialize an `MlsMessageIn` from exact wire bytes — same contract as
+/// `tls_deserialize_exact_bytes` (every byte must be consumed) but WITHOUT its
+/// panic risk.
+///
+/// Some openmls versions can panic while decoding certain malformed
+/// `MlsMessageIn` wire bytes. The `Read`-based `tls_deserialize` avoids that
+/// path, so we drive it directly and enforce "no trailing bytes" ourselves —
+/// malformed input yields an error instead of aborting the process.
+///
+/// Reported upstream; drop this helper and go back to
+/// `MlsMessageIn::tls_deserialize_exact_bytes` once we depend on a fixed openmls
+/// release. See `TODO.md` for details.
+fn mls_message_from_exact_bytes(bytes: &[u8]) -> Result<MlsMessageIn, TlsCodecError> {
+    let mut reader = bytes;
+    let message = MlsMessageIn::tls_deserialize(&mut reader)?;
+    if !reader.is_empty() {
+        return Err(TlsCodecError::TrailingData);
+    }
+    Ok(message)
 }
 
 /// Load an MlsGroup from the provider's storage.
@@ -415,7 +439,7 @@ impl MlsEngine {
             .store(provider.storage())
             .map_err(|e| format!("Failed to store signer: {}", e))?;
 
-        let welcome_msg = MlsMessageIn::tls_deserialize_exact_bytes(&welcome_bytes)
+        let welcome_msg = mls_message_from_exact_bytes(&welcome_bytes)
             .map_err(|e| format!("Failed to deserialize welcome: {}", e))?;
         let welcome = match welcome_msg.extract() {
             MlsMessageBodyIn::Welcome(w) => w,
@@ -458,7 +482,7 @@ impl MlsEngine {
             .store(provider.storage())
             .map_err(|e| format!("Failed to store signer: {}", e))?;
 
-        let welcome_msg = MlsMessageIn::tls_deserialize_exact_bytes(&welcome_bytes)
+        let welcome_msg = mls_message_from_exact_bytes(&welcome_bytes)
             .map_err(|e| format!("Failed to deserialize welcome: {}", e))?;
         let welcome = match welcome_msg.extract() {
             MlsMessageBodyIn::Welcome(w) => w,
@@ -499,7 +523,7 @@ impl MlsEngine {
     ) -> Result<WelcomeInspectResult, String> {
         let provider = self.load_global().await?;
 
-        let welcome_msg = MlsMessageIn::tls_deserialize_exact_bytes(&welcome_bytes)
+        let welcome_msg = mls_message_from_exact_bytes(&welcome_bytes)
             .map_err(|e| format!("Failed to deserialize welcome: {}", e))?;
         let welcome = match welcome_msg.extract() {
             MlsMessageBodyIn::Welcome(w) => w,
@@ -541,7 +565,7 @@ impl MlsEngine {
             .store(provider.storage())
             .map_err(|e| format!("Failed to store signer: {}", e))?;
 
-        let gi_msg = MlsMessageIn::tls_deserialize_exact_bytes(&group_info_bytes)
+        let gi_msg = mls_message_from_exact_bytes(&group_info_bytes)
             .map_err(|e| format!("Failed to deserialize group info: {}", e))?;
         let verifiable_group_info = match gi_msg.extract() {
             MlsMessageBodyIn::GroupInfo(gi) => gi,
@@ -602,7 +626,7 @@ impl MlsEngine {
             .store(provider.storage())
             .map_err(|e| format!("Failed to store signer: {}", e))?;
 
-        let gi_msg = MlsMessageIn::tls_deserialize_exact_bytes(&group_info_bytes)
+        let gi_msg = mls_message_from_exact_bytes(&group_info_bytes)
             .map_err(|e| format!("Failed to deserialize group info: {}", e))?;
         let verifiable_group_info = match gi_msg.extract() {
             MlsMessageBodyIn::GroupInfo(gi) => gi,
@@ -1542,7 +1566,7 @@ impl MlsEngine {
         let provider = self.load_for_group(&group_id_bytes).await?;
         let mut group = load_group(&group_id_bytes, &provider)?;
 
-        let msg_in = MlsMessageIn::tls_deserialize_exact_bytes(&message_bytes)
+        let msg_in = mls_message_from_exact_bytes(&message_bytes)
             .map_err(|e| format!("Failed to deserialize message: {}", e))?;
         let protocol_msg = msg_in.try_into_protocol_message()
             .map_err(|e| format!("Not a protocol message: {}", e))?;
@@ -1599,7 +1623,7 @@ impl MlsEngine {
         let provider = self.load_for_group(&group_id_bytes).await?;
         let mut group = load_group(&group_id_bytes, &provider)?;
 
-        let msg_in = MlsMessageIn::tls_deserialize_exact_bytes(&message_bytes)
+        let msg_in = mls_message_from_exact_bytes(&message_bytes)
             .map_err(|e| format!("Failed to deserialize message: {}", e))?;
         let protocol_msg = msg_in.try_into_protocol_message()
             .map_err(|e| format!("Not a protocol message: {}", e))?;
@@ -1788,7 +1812,7 @@ impl MlsEngine {
 /// message (i.e. it's a Welcome, GroupInfo, or KeyPackage).
 #[flutter_rust_bridge::frb(sync)]
 pub fn mls_message_extract_group_id(message_bytes: Vec<u8>) -> Result<Vec<u8>, String> {
-    let msg_in = MlsMessageIn::tls_deserialize_exact_bytes(&message_bytes)
+    let msg_in = mls_message_from_exact_bytes(&message_bytes)
         .map_err(|e| format!("Failed to deserialize message: {}", e))?;
     let protocol_msg = msg_in
         .try_into_protocol_message()
@@ -1801,7 +1825,7 @@ pub fn mls_message_extract_group_id(message_bytes: Vec<u8>) -> Result<Vec<u8>, S
 /// Returns an error if the message is not a protocol message.
 #[flutter_rust_bridge::frb(sync)]
 pub fn mls_message_extract_epoch(message_bytes: Vec<u8>) -> Result<u64, String> {
-    let msg_in = MlsMessageIn::tls_deserialize_exact_bytes(&message_bytes)
+    let msg_in = mls_message_from_exact_bytes(&message_bytes)
         .map_err(|e| format!("Failed to deserialize message: {}", e))?;
     let protocol_msg = msg_in
         .try_into_protocol_message()
@@ -1815,7 +1839,7 @@ pub fn mls_message_extract_epoch(message_bytes: Vec<u8>) -> Result<u64, String> 
 /// Returns an error if the message is not a protocol message.
 #[flutter_rust_bridge::frb(sync)]
 pub fn mls_message_content_type(message_bytes: Vec<u8>) -> Result<String, String> {
-    let msg_in = MlsMessageIn::tls_deserialize_exact_bytes(&message_bytes)
+    let msg_in = mls_message_from_exact_bytes(&message_bytes)
         .map_err(|e| format!("Failed to deserialize message: {}", e))?;
     let protocol_msg = msg_in
         .try_into_protocol_message()
