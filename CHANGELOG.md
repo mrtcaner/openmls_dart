@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+### For Users
+
+#### ✨ Highlights
+
+- **openmls_frb v1.5.3** — Rust FFI bindings
+
 ### Added
 
 - Operation-scoped caller-owned MLS storage API with versioned opaque entries,
