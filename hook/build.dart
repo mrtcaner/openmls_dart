@@ -50,7 +50,7 @@ const _packageName = 'openmls';
 const _assetId = 'openmls';
 
 /// GitHub repository for downloading releases.
-const _githubRepo = 'djx-y-z/openmls_dart';
+const _githubRepo = 'mrtcaner/openmls_dart';
 
 /// Rust crate name (used for library filenames and release tags).
 const _crateName = 'openmls_frb';

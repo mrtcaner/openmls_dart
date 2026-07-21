@@ -8,6 +8,7 @@ import 'api/credential.dart';
 import 'api/engine.dart';
 import 'api/init.dart';
 import 'api/keys.dart';
+import 'api/storage.dart';
 import 'api/types.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -69,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => 585923240;
+  int get rustContentHash => -784004091;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -546,9 +547,65 @@ abstract class RustLibApi extends BaseApi {
     required MlsSignatureKeyPair that,
   });
 
+  Future<AddMembersWithStorageResult> crateApiStorageAddMembersWithStorage({
+    required List<int> groupId,
+    required List<int> signerBytes,
+    required List<Uint8List> keyPackagesBytes,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  });
+
+  Future<CreateGroupWithStorageResult> crateApiStorageCreateGroupWithStorage({
+    required MlsGroupConfig config,
+    required List<int> signerBytes,
+    required List<int> credentialIdentity,
+    required List<int> signerPublicKey,
+    Uint8List? groupId,
+    Uint8List? credentialBytes,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  });
+
+  Future<CreateKeyPackageWithStorageResult>
+  crateApiStorageCreateKeyPackageWithStorage({
+    required MlsCiphersuite ciphersuite,
+    required List<int> signerBytes,
+    required List<int> credentialIdentity,
+    required List<int> signerPublicKey,
+    Uint8List? credentialBytes,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  });
+
+  Future<CreateMessageWithStorageResult>
+  crateApiStorageCreateMessageWithStorage({
+    required List<int> groupId,
+    required List<int> signerBytes,
+    required List<int> message,
+    Uint8List? aad,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  });
+
+  Future<MlsStorageBatch> crateApiStorageDeleteGroupWithStorage({
+    required List<int> groupId,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  });
+
   void crateApiInitInitOpenmls({required String libraryPath});
 
   bool crateApiInitIsOpenmlsInitialized();
+
+  Future<JoinGroupWithStorageResult>
+  crateApiStorageJoinGroupFromWelcomeWithStorage({
+    required MlsGroupConfig config,
+    required List<int> welcomeBytes,
+    Uint8List? ratchetTreeBytes,
+    required List<int> signerBytes,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  });
 
   MlsGroupConfig crateApiConfigMlsGroupConfigDefaultConfig({
     required MlsCiphersuite ciphersuite,
@@ -562,6 +619,16 @@ abstract class RustLibApi extends BaseApi {
 
   Uint8List crateApiEngineMlsMessageExtractGroupId({
     required List<int> messageBytes,
+  });
+
+  int crateApiStorageMlsStorageFormatVersion();
+
+  Future<ProcessMessageWithStorageResult>
+  crateApiStorageProcessMessageWithStorage({
+    required List<int> groupId,
+    required List<int> messageBytes,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
   });
 
   Uint8List crateApiKeysSerializeSigner({
@@ -3794,6 +3861,291 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<AddMembersWithStorageResult> crateApiStorageAddMembersWithStorage({
+    required List<int> groupId,
+    required List<int> signerBytes,
+    required List<Uint8List> keyPackagesBytes,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_list_prim_u_8_loose(groupId);
+          var arg1 = cst_encode_list_prim_u_8_loose(signerBytes);
+          var arg2 = cst_encode_list_list_prim_u_8_strict(keyPackagesBytes);
+          var arg3 = cst_encode_list_mls_storage_entry(storageEntries);
+          var arg4 = cst_encode_u_32(storageFormatVersion);
+          return wire.wire__crate__api__storage__add_members_with_storage(
+            port_,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+          );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_add_members_with_storage_result,
+          decodeErrorData: dco_decode_String,
+        ),
+        constMeta: kCrateApiStorageAddMembersWithStorageConstMeta,
+        argValues: [
+          groupId,
+          signerBytes,
+          keyPackagesBytes,
+          storageEntries,
+          storageFormatVersion,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiStorageAddMembersWithStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "add_members_with_storage",
+        argNames: [
+          "groupId",
+          "signerBytes",
+          "keyPackagesBytes",
+          "storageEntries",
+          "storageFormatVersion",
+        ],
+      );
+
+  @override
+  Future<CreateGroupWithStorageResult> crateApiStorageCreateGroupWithStorage({
+    required MlsGroupConfig config,
+    required List<int> signerBytes,
+    required List<int> credentialIdentity,
+    required List<int> signerPublicKey,
+    Uint8List? groupId,
+    Uint8List? credentialBytes,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_box_autoadd_mls_group_config(config);
+          var arg1 = cst_encode_list_prim_u_8_loose(signerBytes);
+          var arg2 = cst_encode_list_prim_u_8_loose(credentialIdentity);
+          var arg3 = cst_encode_list_prim_u_8_loose(signerPublicKey);
+          var arg4 = cst_encode_opt_list_prim_u_8_strict(groupId);
+          var arg5 = cst_encode_opt_list_prim_u_8_strict(credentialBytes);
+          var arg6 = cst_encode_list_mls_storage_entry(storageEntries);
+          var arg7 = cst_encode_u_32(storageFormatVersion);
+          return wire.wire__crate__api__storage__create_group_with_storage(
+            port_,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+          );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_create_group_with_storage_result,
+          decodeErrorData: dco_decode_String,
+        ),
+        constMeta: kCrateApiStorageCreateGroupWithStorageConstMeta,
+        argValues: [
+          config,
+          signerBytes,
+          credentialIdentity,
+          signerPublicKey,
+          groupId,
+          credentialBytes,
+          storageEntries,
+          storageFormatVersion,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiStorageCreateGroupWithStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "create_group_with_storage",
+        argNames: [
+          "config",
+          "signerBytes",
+          "credentialIdentity",
+          "signerPublicKey",
+          "groupId",
+          "credentialBytes",
+          "storageEntries",
+          "storageFormatVersion",
+        ],
+      );
+
+  @override
+  Future<CreateKeyPackageWithStorageResult>
+  crateApiStorageCreateKeyPackageWithStorage({
+    required MlsCiphersuite ciphersuite,
+    required List<int> signerBytes,
+    required List<int> credentialIdentity,
+    required List<int> signerPublicKey,
+    Uint8List? credentialBytes,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_mls_ciphersuite(ciphersuite);
+          var arg1 = cst_encode_list_prim_u_8_loose(signerBytes);
+          var arg2 = cst_encode_list_prim_u_8_loose(credentialIdentity);
+          var arg3 = cst_encode_list_prim_u_8_loose(signerPublicKey);
+          var arg4 = cst_encode_opt_list_prim_u_8_strict(credentialBytes);
+          var arg5 = cst_encode_list_mls_storage_entry(storageEntries);
+          var arg6 = cst_encode_u_32(storageFormatVersion);
+          return wire
+              .wire__crate__api__storage__create_key_package_with_storage(
+                port_,
+                arg0,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5,
+                arg6,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_create_key_package_with_storage_result,
+          decodeErrorData: dco_decode_String,
+        ),
+        constMeta: kCrateApiStorageCreateKeyPackageWithStorageConstMeta,
+        argValues: [
+          ciphersuite,
+          signerBytes,
+          credentialIdentity,
+          signerPublicKey,
+          credentialBytes,
+          storageEntries,
+          storageFormatVersion,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiStorageCreateKeyPackageWithStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "create_key_package_with_storage",
+        argNames: [
+          "ciphersuite",
+          "signerBytes",
+          "credentialIdentity",
+          "signerPublicKey",
+          "credentialBytes",
+          "storageEntries",
+          "storageFormatVersion",
+        ],
+      );
+
+  @override
+  Future<CreateMessageWithStorageResult>
+  crateApiStorageCreateMessageWithStorage({
+    required List<int> groupId,
+    required List<int> signerBytes,
+    required List<int> message,
+    Uint8List? aad,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_list_prim_u_8_loose(groupId);
+          var arg1 = cst_encode_list_prim_u_8_loose(signerBytes);
+          var arg2 = cst_encode_list_prim_u_8_loose(message);
+          var arg3 = cst_encode_opt_list_prim_u_8_strict(aad);
+          var arg4 = cst_encode_list_mls_storage_entry(storageEntries);
+          var arg5 = cst_encode_u_32(storageFormatVersion);
+          return wire.wire__crate__api__storage__create_message_with_storage(
+            port_,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+          );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_create_message_with_storage_result,
+          decodeErrorData: dco_decode_String,
+        ),
+        constMeta: kCrateApiStorageCreateMessageWithStorageConstMeta,
+        argValues: [
+          groupId,
+          signerBytes,
+          message,
+          aad,
+          storageEntries,
+          storageFormatVersion,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiStorageCreateMessageWithStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "create_message_with_storage",
+        argNames: [
+          "groupId",
+          "signerBytes",
+          "message",
+          "aad",
+          "storageEntries",
+          "storageFormatVersion",
+        ],
+      );
+
+  @override
+  Future<MlsStorageBatch> crateApiStorageDeleteGroupWithStorage({
+    required List<int> groupId,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_list_prim_u_8_loose(groupId);
+          var arg1 = cst_encode_list_mls_storage_entry(storageEntries);
+          var arg2 = cst_encode_u_32(storageFormatVersion);
+          return wire.wire__crate__api__storage__delete_group_with_storage(
+            port_,
+            arg0,
+            arg1,
+            arg2,
+          );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_mls_storage_batch,
+          decodeErrorData: dco_decode_String,
+        ),
+        constMeta: kCrateApiStorageDeleteGroupWithStorageConstMeta,
+        argValues: [groupId, storageEntries, storageFormatVersion],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiStorageDeleteGroupWithStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "delete_group_with_storage",
+        argNames: ["groupId", "storageEntries", "storageFormatVersion"],
+      );
+
+  @override
   void crateApiInitInitOpenmls({required String libraryPath}) {
     return handler.executeSync(
       SyncTask(
@@ -3835,6 +4187,67 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiInitIsOpenmlsInitializedConstMeta =>
       const TaskConstMeta(debugName: "is_openmls_initialized", argNames: []);
+
+  @override
+  Future<JoinGroupWithStorageResult>
+  crateApiStorageJoinGroupFromWelcomeWithStorage({
+    required MlsGroupConfig config,
+    required List<int> welcomeBytes,
+    Uint8List? ratchetTreeBytes,
+    required List<int> signerBytes,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_box_autoadd_mls_group_config(config);
+          var arg1 = cst_encode_list_prim_u_8_loose(welcomeBytes);
+          var arg2 = cst_encode_opt_list_prim_u_8_strict(ratchetTreeBytes);
+          var arg3 = cst_encode_list_prim_u_8_loose(signerBytes);
+          var arg4 = cst_encode_list_mls_storage_entry(storageEntries);
+          var arg5 = cst_encode_u_32(storageFormatVersion);
+          return wire
+              .wire__crate__api__storage__join_group_from_welcome_with_storage(
+                port_,
+                arg0,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_join_group_with_storage_result,
+          decodeErrorData: dco_decode_String,
+        ),
+        constMeta: kCrateApiStorageJoinGroupFromWelcomeWithStorageConstMeta,
+        argValues: [
+          config,
+          welcomeBytes,
+          ratchetTreeBytes,
+          signerBytes,
+          storageEntries,
+          storageFormatVersion,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiStorageJoinGroupFromWelcomeWithStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "join_group_from_welcome_with_storage",
+        argNames: [
+          "config",
+          "welcomeBytes",
+          "ratchetTreeBytes",
+          "signerBytes",
+          "storageEntries",
+          "storageFormatVersion",
+        ],
+      );
 
   @override
   MlsGroupConfig crateApiConfigMlsGroupConfigDefaultConfig({
@@ -3946,6 +4359,80 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "mls_message_extract_group_id",
         argNames: ["messageBytes"],
+      );
+
+  @override
+  int crateApiStorageMlsStorageFormatVersion() {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          return wire.wire__crate__api__storage__mls_storage_format_version();
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_u_32,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiStorageMlsStorageFormatVersionConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiStorageMlsStorageFormatVersionConstMeta =>
+      const TaskConstMeta(
+        debugName: "mls_storage_format_version",
+        argNames: [],
+      );
+
+  @override
+  Future<ProcessMessageWithStorageResult>
+  crateApiStorageProcessMessageWithStorage({
+    required List<int> groupId,
+    required List<int> messageBytes,
+    required List<MlsStorageEntry> storageEntries,
+    required int storageFormatVersion,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_list_prim_u_8_loose(groupId);
+          var arg1 = cst_encode_list_prim_u_8_loose(messageBytes);
+          var arg2 = cst_encode_list_mls_storage_entry(storageEntries);
+          var arg3 = cst_encode_u_32(storageFormatVersion);
+          return wire.wire__crate__api__storage__process_message_with_storage(
+            port_,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+          );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_process_message_with_storage_result,
+          decodeErrorData: dco_decode_String,
+        ),
+        constMeta: kCrateApiStorageProcessMessageWithStorageConstMeta,
+        argValues: [
+          groupId,
+          messageBytes,
+          storageEntries,
+          storageFormatVersion,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiStorageProcessMessageWithStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "process_message_with_storage",
+        argNames: [
+          "groupId",
+          "messageBytes",
+          "storageEntries",
+          "storageFormatVersion",
+        ],
       );
 
   @override
@@ -4129,6 +4616,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AddMembersWithStorageResult dco_decode_add_members_with_storage_result(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return AddMembersWithStorageResult(
+      commit: dco_decode_list_prim_u_8_strict(arr[0]),
+      welcome: dco_decode_list_prim_u_8_strict(arr[1]),
+      groupInfo: dco_decode_opt_list_prim_u_8_strict(arr[2]),
+      storageBatch: dco_decode_mls_storage_batch(arr[3]),
+    );
+  }
+
+  @protected
   bool dco_decode_bool(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as bool;
@@ -4213,6 +4716,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  CreateGroupWithStorageResult dco_decode_create_group_with_storage_result(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return CreateGroupWithStorageResult(
+      groupId: dco_decode_list_prim_u_8_strict(arr[0]),
+      storageBatch: dco_decode_mls_storage_batch(arr[1]),
+    );
+  }
+
+  @protected
+  CreateKeyPackageWithStorageResult
+  dco_decode_create_key_package_with_storage_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return CreateKeyPackageWithStorageResult(
+      keyPackageBytes: dco_decode_list_prim_u_8_strict(arr[0]),
+      storageBatch: dco_decode_mls_storage_batch(arr[1]),
+    );
+  }
+
+  @protected
   CreateMessageResult dco_decode_create_message_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -4220,6 +4750,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
     return CreateMessageResult(
       ciphertext: dco_decode_list_prim_u_8_strict(arr[0]),
+    );
+  }
+
+  @protected
+  CreateMessageWithStorageResult dco_decode_create_message_with_storage_result(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return CreateMessageWithStorageResult(
+      ciphertext: dco_decode_list_prim_u_8_strict(arr[0]),
+      storageBatch: dco_decode_mls_storage_batch(arr[1]),
     );
   }
 
@@ -4282,6 +4826,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (arr.length != 1)
       throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
     return JoinGroupResult(groupId: dco_decode_list_prim_u_8_strict(arr[0]));
+  }
+
+  @protected
+  JoinGroupWithStorageResult dco_decode_join_group_with_storage_result(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return JoinGroupWithStorageResult(
+      groupId: dco_decode_list_prim_u_8_strict(arr[0]),
+      storageBatch: dco_decode_mls_storage_batch(arr[1]),
+    );
   }
 
   @protected
@@ -4351,6 +4909,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return (raw as List<dynamic>)
         .map(dco_decode_mls_pending_proposal_info)
         .toList();
+  }
+
+  @protected
+  List<MlsStorageEntry> dco_decode_list_mls_storage_entry(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_mls_storage_entry).toList();
   }
 
   @protected
@@ -4497,6 +5061,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MlsStorageBatch dco_decode_mls_storage_batch(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return MlsStorageBatch(
+      upserts: dco_decode_list_mls_storage_entry(arr[0]),
+      deletes: dco_decode_list_list_prim_u_8_strict(arr[1]),
+      deletedGroupIds: dco_decode_list_list_prim_u_8_strict(arr[2]),
+      storageFormatVersion: dco_decode_u_32(arr[3]),
+    );
+  }
+
+  @protected
+  MlsStorageEntry dco_decode_mls_storage_entry(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return MlsStorageEntry(
+      key: dco_decode_list_prim_u_8_strict(arr[0]),
+      value: dco_decode_list_prim_u_8_strict(arr[1]),
+      groupId: dco_decode_opt_list_prim_u_8_strict(arr[2]),
+    );
+  }
+
+  @protected
   MlsWireFormatPolicy dco_decode_mls_wire_format_policy(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return MlsWireFormatPolicy.values[raw as int];
@@ -4548,6 +5139,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_list_prim_u_8_strict(raw);
+  }
+
+  @protected
+  ProcessMessageWithStorageResult
+  dco_decode_process_message_with_storage_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    return ProcessMessageWithStorageResult(
+      messageType: dco_decode_processed_message_type(arr[0]),
+      senderIndex: dco_decode_opt_box_autoadd_u_32(arr[1]),
+      epoch: dco_decode_u_64(arr[2]),
+      applicationMessage: dco_decode_opt_list_prim_u_8_strict(arr[3]),
+      hasStagedCommit: dco_decode_bool(arr[4]),
+      hasProposal: dco_decode_bool(arr[5]),
+      proposalType: dco_decode_opt_box_autoadd_mls_proposal_type(arr[6]),
+      storageBatch: dco_decode_mls_storage_batch(arr[7]),
+    );
   }
 
   @protected
@@ -4796,6 +5406,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AddMembersWithStorageResult sse_decode_add_members_with_storage_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_commit = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_welcome = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_groupInfo = sse_decode_opt_list_prim_u_8_strict(deserializer);
+    var var_storageBatch = sse_decode_mls_storage_batch(deserializer);
+    return AddMembersWithStorageResult(
+      commit: var_commit,
+      welcome: var_welcome,
+      groupInfo: var_groupInfo,
+      storageBatch: var_storageBatch,
+    );
+  }
+
+  @protected
   bool sse_decode_bool(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8() != 0;
@@ -4892,12 +5519,52 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  CreateGroupWithStorageResult sse_decode_create_group_with_storage_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_groupId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_storageBatch = sse_decode_mls_storage_batch(deserializer);
+    return CreateGroupWithStorageResult(
+      groupId: var_groupId,
+      storageBatch: var_storageBatch,
+    );
+  }
+
+  @protected
+  CreateKeyPackageWithStorageResult
+  sse_decode_create_key_package_with_storage_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_keyPackageBytes = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_storageBatch = sse_decode_mls_storage_batch(deserializer);
+    return CreateKeyPackageWithStorageResult(
+      keyPackageBytes: var_keyPackageBytes,
+      storageBatch: var_storageBatch,
+    );
+  }
+
+  @protected
   CreateMessageResult sse_decode_create_message_result(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_ciphertext = sse_decode_list_prim_u_8_strict(deserializer);
     return CreateMessageResult(ciphertext: var_ciphertext);
+  }
+
+  @protected
+  CreateMessageWithStorageResult sse_decode_create_message_with_storage_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_ciphertext = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_storageBatch = sse_decode_mls_storage_batch(deserializer);
+    return CreateMessageWithStorageResult(
+      ciphertext: var_ciphertext,
+      storageBatch: var_storageBatch,
+    );
   }
 
   @protected
@@ -4972,6 +5639,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_groupId = sse_decode_list_prim_u_8_strict(deserializer);
     return JoinGroupResult(groupId: var_groupId);
+  }
+
+  @protected
+  JoinGroupWithStorageResult sse_decode_join_group_with_storage_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_groupId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_storageBatch = sse_decode_mls_storage_batch(deserializer);
+    return JoinGroupWithStorageResult(
+      groupId: var_groupId,
+      storageBatch: var_storageBatch,
+    );
   }
 
   @protected
@@ -5079,6 +5759,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <MlsPendingProposalInfo>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_mls_pending_proposal_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<MlsStorageEntry> sse_decode_list_mls_storage_entry(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <MlsStorageEntry>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_mls_storage_entry(deserializer));
     }
     return ans_;
   }
@@ -5247,6 +5941,36 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MlsStorageBatch sse_decode_mls_storage_batch(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_upserts = sse_decode_list_mls_storage_entry(deserializer);
+    var var_deletes = sse_decode_list_list_prim_u_8_strict(deserializer);
+    var var_deletedGroupIds = sse_decode_list_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_storageFormatVersion = sse_decode_u_32(deserializer);
+    return MlsStorageBatch(
+      upserts: var_upserts,
+      deletes: var_deletes,
+      deletedGroupIds: var_deletedGroupIds,
+      storageFormatVersion: var_storageFormatVersion,
+    );
+  }
+
+  @protected
+  MlsStorageEntry sse_decode_mls_storage_entry(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_key = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_value = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_groupId = sse_decode_opt_list_prim_u_8_strict(deserializer);
+    return MlsStorageEntry(
+      key: var_key,
+      value: var_value,
+      groupId: var_groupId,
+    );
+  }
+
+  @protected
   MlsWireFormatPolicy sse_decode_mls_wire_format_policy(
     SseDeserializer deserializer,
   ) {
@@ -5351,6 +6075,34 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     } else {
       return null;
     }
+  }
+
+  @protected
+  ProcessMessageWithStorageResult
+  sse_decode_process_message_with_storage_result(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_messageType = sse_decode_processed_message_type(deserializer);
+    var var_senderIndex = sse_decode_opt_box_autoadd_u_32(deserializer);
+    var var_epoch = sse_decode_u_64(deserializer);
+    var var_applicationMessage = sse_decode_opt_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_hasStagedCommit = sse_decode_bool(deserializer);
+    var var_hasProposal = sse_decode_bool(deserializer);
+    var var_proposalType = sse_decode_opt_box_autoadd_mls_proposal_type(
+      deserializer,
+    );
+    var var_storageBatch = sse_decode_mls_storage_batch(deserializer);
+    return ProcessMessageWithStorageResult(
+      messageType: var_messageType,
+      senderIndex: var_senderIndex,
+      epoch: var_epoch,
+      applicationMessage: var_applicationMessage,
+      hasStagedCommit: var_hasStagedCommit,
+      hasProposal: var_hasProposal,
+      proposalType: var_proposalType,
+      storageBatch: var_storageBatch,
+    );
   }
 
   @protected
@@ -5777,6 +6529,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_add_members_with_storage_result(
+    AddMembersWithStorageResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.commit, serializer);
+    sse_encode_list_prim_u_8_strict(self.welcome, serializer);
+    sse_encode_opt_list_prim_u_8_strict(self.groupInfo, serializer);
+    sse_encode_mls_storage_batch(self.storageBatch, serializer);
+  }
+
+  @protected
   void sse_encode_bool(bool self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self ? 1 : 0);
@@ -5875,12 +6639,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_create_group_with_storage_result(
+    CreateGroupWithStorageResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.groupId, serializer);
+    sse_encode_mls_storage_batch(self.storageBatch, serializer);
+  }
+
+  @protected
+  void sse_encode_create_key_package_with_storage_result(
+    CreateKeyPackageWithStorageResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.keyPackageBytes, serializer);
+    sse_encode_mls_storage_batch(self.storageBatch, serializer);
+  }
+
+  @protected
   void sse_encode_create_message_result(
     CreateMessageResult self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_prim_u_8_strict(self.ciphertext, serializer);
+  }
+
+  @protected
+  void sse_encode_create_message_with_storage_result(
+    CreateMessageWithStorageResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.ciphertext, serializer);
+    sse_encode_mls_storage_batch(self.storageBatch, serializer);
   }
 
   @protected
@@ -5936,6 +6730,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_prim_u_8_strict(self.groupId, serializer);
+  }
+
+  @protected
+  void sse_encode_join_group_with_storage_result(
+    JoinGroupWithStorageResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.groupId, serializer);
+    sse_encode_mls_storage_batch(self.storageBatch, serializer);
   }
 
   @protected
@@ -6026,6 +6830,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_mls_pending_proposal_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_mls_storage_entry(
+    List<MlsStorageEntry> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_mls_storage_entry(item, serializer);
     }
   }
 
@@ -6186,6 +7002,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_mls_storage_batch(
+    MlsStorageBatch self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_mls_storage_entry(self.upserts, serializer);
+    sse_encode_list_list_prim_u_8_strict(self.deletes, serializer);
+    sse_encode_list_list_prim_u_8_strict(self.deletedGroupIds, serializer);
+    sse_encode_u_32(self.storageFormatVersion, serializer);
+  }
+
+  @protected
+  void sse_encode_mls_storage_entry(
+    MlsStorageEntry self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.key, serializer);
+    sse_encode_list_prim_u_8_strict(self.value, serializer);
+    sse_encode_opt_list_prim_u_8_strict(self.groupId, serializer);
+  }
+
+  @protected
   void sse_encode_mls_wire_format_policy(
     MlsWireFormatPolicy self,
     SseSerializer serializer,
@@ -6290,6 +7129,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (self != null) {
       sse_encode_list_prim_u_8_strict(self, serializer);
     }
+  }
+
+  @protected
+  void sse_encode_process_message_with_storage_result(
+    ProcessMessageWithStorageResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_processed_message_type(self.messageType, serializer);
+    sse_encode_opt_box_autoadd_u_32(self.senderIndex, serializer);
+    sse_encode_u_64(self.epoch, serializer);
+    sse_encode_opt_list_prim_u_8_strict(self.applicationMessage, serializer);
+    sse_encode_bool(self.hasStagedCommit, serializer);
+    sse_encode_bool(self.hasProposal, serializer);
+    sse_encode_opt_box_autoadd_mls_proposal_type(self.proposalType, serializer);
+    sse_encode_mls_storage_batch(self.storageBatch, serializer);
   }
 
   @protected

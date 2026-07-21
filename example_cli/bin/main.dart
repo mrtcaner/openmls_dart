@@ -3,7 +3,6 @@ import 'package:openmls_example_cli/demos/advanced_groups_demo.dart';
 import 'package:openmls_example_cli/demos/advanced_proposals_demo.dart';
 import 'package:openmls_example_cli/demos/groups_demo.dart';
 import 'package:openmls_example_cli/demos/keys_demo.dart';
-import 'package:openmls_example_cli/demos/post_quantum_demo.dart';
 import 'package:openmls_example_cli/demos/proposals_demo.dart';
 import 'package:openmls_example_cli/demos/state_demo.dart';
 
@@ -22,7 +21,6 @@ void main() async {
     await runProposalsDemo();
     await runAdvancedGroupsDemo();
     await runAdvancedProposalsDemo();
-    await runPostQuantumDemo();
 
     print('');
     print('All demos completed successfully!');

@@ -3,9 +3,9 @@ description: Dart wrapper for OpenMLS — a Rust implementation of the Messaging
 
 version: 1.4.2
 license: MIT
-repository: https://github.com/djx-y-z/openmls_dart
-homepage: https://github.com/djx-y-z/openmls_dart
-issue_tracker: https://github.com/djx-y-z/openmls_dart/issues
+repository: https://github.com/mrtcaner/openmls_dart
+homepage: https://github.com/mrtcaner/openmls_dart
+issue_tracker: https://github.com/mrtcaner/openmls_dart/issues
 
 environment:
   sdk: ^3.10.0

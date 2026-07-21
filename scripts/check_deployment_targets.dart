@@ -282,6 +282,12 @@ List<_FileCheck> _buildChecks(Platform platform, String expected) {
 List<_FileCheck> _buildIosChecks(String expected) {
   return [
     _FileCheck(
+      label: 'iOS local Make build',
+      relativePath: 'Makefile',
+      pattern: RegExp(r'IOS_DEPLOYMENT_TARGET\s*\?=\s*([0-9.]+)'),
+      replacement: (v) => 'IOS_DEPLOYMENT_TARGET ?= $v',
+    ),
+    _FileCheck(
       label: 'iOS CI workflow',
       relativePath: '.github/workflows/build-openmls.yml',
       pattern: RegExp(r"IPHONEOS_DEPLOYMENT_TARGET:\s*'([^']+)'"),

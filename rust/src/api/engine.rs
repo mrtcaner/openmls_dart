@@ -33,7 +33,7 @@ use crate::snapshot_storage::{SnapshotOpenMlsProvider, SnapshotStorageProvider};
 
 /// Build a `CredentialWithKey` either from a TLS-serialized `Credential` (for X.509 or custom
 /// credential types) or by creating a `BasicCredential` from the identity bytes.
-fn build_credential_with_key(
+pub(crate) fn build_credential_with_key(
     credential_identity: &[u8],
     signer_public_key: &[u8],
     credential_bytes: Option<&[u8]>,
@@ -61,7 +61,7 @@ fn build_credential_with_key(
 /// Reported upstream; drop this helper and go back to
 /// `MlsMessageIn::tls_deserialize_exact_bytes` once we depend on a fixed openmls
 /// release. See `TODO.md` for details.
-fn mls_message_from_exact_bytes(bytes: &[u8]) -> Result<MlsMessageIn, TlsCodecError> {
+pub(crate) fn mls_message_from_exact_bytes(bytes: &[u8]) -> Result<MlsMessageIn, TlsCodecError> {
     let mut reader = bytes;
     let message = MlsMessageIn::tls_deserialize(&mut reader)?;
     if !reader.is_empty() {
@@ -71,7 +71,7 @@ fn mls_message_from_exact_bytes(bytes: &[u8]) -> Result<MlsMessageIn, TlsCodecEr
 }
 
 /// Load an MlsGroup from the provider's storage.
-fn load_group(group_id: &[u8], provider: &SnapshotOpenMlsProvider) -> Result<MlsGroup, String> {
+pub(crate) fn load_group(group_id: &[u8], provider: &SnapshotOpenMlsProvider) -> Result<MlsGroup, String> {
     let gid = GroupId::from_slice(group_id);
     MlsGroup::load(provider.storage(), &gid)
         .map_err(|e| format!("Failed to load group: {}", e))?

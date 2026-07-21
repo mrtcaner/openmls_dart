@@ -1,3 +1,24 @@
+## [Unreleased]
+
+### Added
+
+- Operation-scoped caller-owned MLS storage API with versioned opaque entries,
+  atomic mutation batches, complete create/add/join/message/commit flow, and
+  explicit group deletion.
+
+### Changed
+
+- Snapshot storage now uses safe interior mutability and zeroizes Rust-owned
+  values on replacement, deletion, validation failure, conversion failure, and
+  drop.
+- Native release downloads and package metadata now point to this fork's public
+  releases and remain checksum-verified.
+
+### Removed
+
+- Experimental expired-draft X-Wing support and its explicit libcrux provider.
+  The public API now exposes only the three standard RustCrypto ciphersuites.
+
 ## [1.4.2] - 2026-07-21
 
 ### For Users
@@ -280,7 +301,7 @@
 - X.509 `x509()` documents that application layer must validate certificate chains
 - SECURITY.md: sensitive API table, known limitations, web deployment recommendations, vulnerability reporting via GitHub Security Advisories
 
-[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.2...HEAD
+[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/v1.4.2...HEAD
 [1.4.2]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.3.0...v1.4.0
