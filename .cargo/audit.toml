@@ -2,10 +2,13 @@
 #
 # Each ignored advisory below is blocked on upstream semver pins (openmls
 # tag openmls-v0.8.1 → hpke-rs-libcrux/libcrux exact-version pins); the
-# reachability justification is inline on each entry, and the non-libcrux
-# routing they depend on is enforced by the `classical_ops_do_not_init_libcrux`
-# test in rust/src/hybrid_crypto.rs. Remove these entries when bumping to the
-# next upstream OpenMLS release — `make rust-audit` will then re-check them.
+# reachability justification is inline on each entry. Most are structurally
+# unreachable (the non-libcrux routing they depend on is enforced by the
+# `classical_ops_do_not_init_libcrux` test in rust/src/hybrid_crypto.rs); the
+# one exception (RUSTSEC-2026-0212) is an explicitly accepted availability-only
+# risk on the experimental X-Wing path — see its inline note. Remove these
+# entries when bumping to the next upstream OpenMLS release — `make rust-audit`
+# will then re-check them.
 
 [advisories]
 ignore = [
@@ -35,4 +38,50 @@ ignore = [
     # Per the advisory itself, use via libcrux-chacha20poly1305 is unaffected,
     # and this crate's standalone API is never called from our tree.
     "RUSTSEC-2026-0073",
+
+    # --- 2026-07-21 batch: new libcrux advisories (openmls-v0.8.1 transitive) ---
+
+    # libcrux-sha3 0.0.8: incorrect output of the INCREMENTAL portable SHAKE XOF
+    # squeeze() API. The advisory states it "does NOT affect one-shot SHA3/SHAKE
+    # hashing or libcrux-ml-kem/libcrux-ml-dsa". We reach libcrux-sha3 only
+    # transitively via libcrux-ml-kem (the X-Wing PQ KEM) — the path the advisory
+    # explicitly excludes — never the incremental Shake*Xof::squeeze API.
+    # Structurally unreachable. Fixed in 0.0.10 but pinned ^0.0.8 (=0.0.8 for a
+    # 0.0.x crate) by hpke-rs 0.6.1; not fixable via `cargo update`.
+    "RUSTSEC-2026-0207",
+
+    # libcrux-sha3 0.0.8: OOB panic in the AVX2 (x86-64-only) SHAKE-256 when the
+    # output buffer length is >32 and not a multiple of 8. The advisory states it
+    # "does not affect ML-KEM or ML-DSA usage because their output buffer lengths
+    # are always divisible by 8". Our only use of libcrux-sha3 is via ML-KEM.
+    # Structurally unreachable (and DoS-class, not secrecy). Same 0.0.10 pin.
+    "RUSTSEC-2026-0208",
+
+    # libcrux-aesgcm 0.0.7: AES-GCM did not enforce the NIST AAD-length limit
+    # (2^64-1 bits). libcrux-aesgcm is compiled into the tree but NEVER invoked:
+    # the only X-Wing suite is MLS_256_XWING_CHACHA20POLY1305 (ChaCha20Poly1305
+    # AEAD), and classical AES-GCM suites route to RustCrypto, not libcrux
+    # (enforced by classical_ops_do_not_init_libcrux). Also physically
+    # unreachable (needs >2^61-byte AAD). No fixed upgrade available.
+    "RUSTSEC-2026-0209",
+
+    # libcrux-aesgcm 0.0.7: non-constant-time AES-GCM authentication-tag check
+    # (timing oracle → forgery). Same reachability as 0209: libcrux-aesgcm is
+    # never invoked (the only X-Wing suite is ChaCha20Poly1305; classical AES-GCM
+    # routes to RustCrypto). Dead code. No fixed upgrade available.
+    "RUSTSEC-2026-0211",
+
+    # libcrux-secrets 0.0.5: incorrect constant-time swap/select on aarch64.
+    # NOT structurally unreachable — ACCEPTED RISK. libcrux-secrets underlies
+    # ML-KEM's constant-time ops, so this IS reachable on aarch64 during an
+    # X-Wing operation. Accepted because the impact is availability-only:
+    # CVSS 4.0 vector CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:H/... —
+    # VC:N (no confidentiality) and VI:N (no integrity). Worst case an X-Wing op
+    # on an ARM host returns incorrect swap/select output "in certain
+    # circumstances" and the operation FAILS; it cannot leak key material or
+    # forge. X-Wing is experimental and opt-in (libcrux is lazy-initialized only
+    # on X-Wing use; classical suites are unaffected). Fixed in libcrux-secrets
+    # 0.0.6 but pinned =0.0.5 by openmls-v0.8.1's libcrux-aead; clears on the
+    # next upstream OpenMLS bump.
+    "RUSTSEC-2026-0212",
 ]

@@ -15,6 +15,18 @@
   explicitly, so a malformed message returns an error instead of aborting the
   process. Reported upstream; this local guard will be removed once we depend on
   a fixed openmls release.
+- **Triaged new libcrux advisories in the X-Wing PQ dependency tree
+  (RUSTSEC-2026-0207/-0208/-0209/-0210/-0211/-0212)** — these advisories were
+  published against libcrux crates that reach our tree only transitively via the
+  experimental X-Wing ciphersuite (pinned by openmls-v0.8.1, so not fixable via
+  `cargo update`). Five are structurally unreachable (the SHA3 ones explicitly
+  exclude ML-KEM; the AES-GCM ones are dead code — the only X-Wing suite is
+  ChaCha20Poly1305); the sixth (-0212, libcrux-secrets constant-time swap on
+  aarch64) is an accepted availability-only risk (CVSS `VC:N/VI:N/VA:H` — a wrong
+  ML-KEM result makes an X-Wing operation fail, never a key leak). Per-advisory
+  reachability analysis is documented inline in `.cargo/audit.toml` /
+  `rust/deny.toml`; all clear on the next upstream OpenMLS bump. Classical
+  (non-PQ) ciphersuites are unaffected.
 
 #### Fixed
 

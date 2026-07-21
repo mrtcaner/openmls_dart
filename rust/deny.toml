@@ -41,6 +41,26 @@ ignore = [
     # is never called from our tree.
     "RUSTSEC-2026-0073",
 
+    # --- 2026-07-21 batch: new libcrux advisories (see .cargo/audit.toml) ---
+    # libcrux-sha3 incremental SHAKE squeeze bug; advisory explicitly does NOT
+    # affect libcrux-ml-kem, which is our only path to libcrux-sha3. Unreachable.
+    "RUSTSEC-2026-0207",
+    # libcrux-sha3 AVX2 (x86-64-only) SHAKE-256 panic; advisory: does not affect
+    # ML-KEM (buffers always divisible by 8). Unreachable, DoS-class.
+    "RUSTSEC-2026-0208",
+    # libcrux-aesgcm AAD-length limit; libcrux-aesgcm is never invoked (the only
+    # X-Wing suite is ChaCha20Poly1305; classical AES-GCM routes to RustCrypto).
+    "RUSTSEC-2026-0209",
+    # libcrux-aesgcm non-constant-time tag check; same reachability as 0209 —
+    # libcrux-aesgcm is dead code in our tree.
+    "RUSTSEC-2026-0211",
+    # libcrux-secrets incorrect constant-time swap/select on aarch64. NOT
+    # unreachable — ACCEPTED availability-only risk (CVSS 4.0 VC:N/VI:N/VA:H): on
+    # ARM an X-Wing op may return incorrect output and FAIL; it cannot leak keys
+    # or forge. X-Wing is experimental/opt-in. Fixed in libcrux-secrets 0.0.6,
+    # pinned =0.0.5 by openmls-v0.8.1. See .cargo/audit.toml for the full note.
+    "RUSTSEC-2026-0212",
+
     # --- Unmaintained transitive dev/build dependencies (informational) ---
     # cargo-deny flags unmaintained advisories that `cargo audit` does not fail
     # on. These crates are pulled transitively by upstream (openmls_test / proc
@@ -50,6 +70,7 @@ ignore = [
     "RUSTSEC-2021-0139", # ansi_term — via openmls_test (test-utils feature)
     "RUSTSEC-2024-0384", # instant — via fluvio-wasm-timer (openmls WASM time shim)
     "RUSTSEC-2026-0173", # proc-macro-error2 — via hax-lib-macros (libcrux/X-Wing build-time proc-macro)
+    "RUSTSEC-2026-0210", # libcrux-aesgcm renamed to libcrux-aes; the crate is dead code in our tree (see the 0209/0211 notes above)
 ]
 
 [licenses]
