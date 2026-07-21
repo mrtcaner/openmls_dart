@@ -144,7 +144,7 @@ The library returns errors for protocol violations. Handle them appropriately ra
 - **SHA256 Checksums (fail-closed)**: pre-built native libraries are verified against a checksums file published in the same GitHub Release. Verification is **fail-closed** — if the checksums cannot be fetched or lack an entry for the archive, the build hook (`hook/build.dart`) **aborts** rather than loading an unverified binary. The escape hatch `OPENMLS_ALLOW_UNVERIFIED_DOWNLOAD=1` exists only for older releases with no checksums file.
 - **Dependency Auditing**: `cargo audit` (`make rust-audit`) and `cargo deny` (`make rust-deny`) run in CI. `cargo-deny` enforces RustSec advisories, an allowed-license list, and a source allow-list restricted to crates.io and explicitly-listed git repositories (see `rust/deny.toml`).
 
-- **Build Provenance (authenticity)**: SHA256 verifies *integrity* but not *authenticity* — the checksums file ships in the same release as the archive. To break that self-trust, every release archive is attested with [GitHub Artifact Attestations](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations) (Sigstore, SLSA Build L2): CI signs a provenance statement proving each archive was built by this repository's tag-triggered `build-openmls.yml` workflow from a specific commit. Verify a downloaded archive with `gh attestation verify openmls_frb-<version>-<platform>.tar.gz --repo djx-y-z/openmls_dart`; for fully offline verification use the attached `openmls_frb-<version>.sigstore.jsonl` bundle with `--bundle` and a pre-fetched `gh attestation trusted-root`.
+- **Build Provenance (authenticity)**: SHA256 verifies *integrity* but not *authenticity* — the checksums file ships in the same release as the archive. To break that self-trust, every release archive is attested with [GitHub Artifact Attestations](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations) (Sigstore, SLSA Build L2): CI signs a provenance statement proving each archive was built by this repository's tag-triggered `build-openmls.yml` workflow from a specific commit. Verify a downloaded archive with `gh attestation verify openmls_frb-<version>-<platform>.tar.gz --repo mrtcaner/openmls_dart`; for fully offline verification use the attached `openmls_frb-<version>.sigstore.jsonl` bundle with `--bundle` and a pre-fetched `gh attestation trusted-root`.
 
 > **Known limitation:** attestation verification is manual — the build hook verifies SHA256 only (there is no Sigstore/DSSE implementation for Dart). Automatic (opt-in) verification via an installed `gh` CLI is a possible future hardening step.
 
@@ -333,7 +333,7 @@ This package wraps OpenMLS. For security issues in the underlying library:
 If you discover a security vulnerability, please report it responsibly:
 
 1. **Do NOT** open a public GitHub issue for security vulnerabilities
-2. Use [GitHub's private vulnerability reporting](https://github.com/djx-y-z/openmls_dart/security/advisories/new) to report the issue
+2. Use [GitHub's private vulnerability reporting](https://github.com/mrtcaner/openmls_dart/security/advisories/new) to report the issue
 3. Include as much detail as possible:
    - Description of the vulnerability
    - Steps to reproduce

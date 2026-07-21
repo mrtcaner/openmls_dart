@@ -40,6 +40,7 @@ export 'src/rust/api/config.dart';
 export 'src/rust/api/credential.dart';
 export 'src/rust/api/engine.dart';
 export 'src/rust/api/keys.dart';
+export 'src/rust/api/storage.dart';
 export 'src/rust/api/types.dart';
 export 'src/security/secure_bytes.dart';
 export 'src/security/secure_uint8list.dart';

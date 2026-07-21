@@ -26,6 +26,7 @@ make setup-fvm                    # Install FVM + Flutter only
 make setup-rust-tools             # Install Rust tools (cargo-audit, frb_codegen)
 make setup-web                    # Install web build tools (wasm-pack)
 make setup-android                # Install Android build tools (cargo-ndk)
+make setup-mobile-rust-targets    # Install all Android and iOS Rust targets
 ```
 
 ### Code Generation
@@ -41,12 +42,16 @@ make build                              # Build for current platform (always rel
 make build ARGS="--target <target>"     # Build for specific Rust target
 make build-android                      # Build for Android (all ABIs)
 make build-android ARGS="--target arm64-v8a"  # Build for specific Android ABI
+make build-ios                              # Build iOS device arm64
+make build-ios IOS_RUST_TARGET=aarch64-apple-ios-sim  # iOS simulator arm64
 make build-web                          # Build WASM for web
+make build-example-web                  # Build WASM + Flutter Web example
 ```
 
 ### Rust Quality
 ```bash
 make rust-check                   # Check Rust code compiles
+make rust-test                    # Run Rust unit tests
 make rust-clippy                  # Lint Rust code with clippy (warnings = errors)
 make rust-audit                   # Audit Rust dependencies for vulnerabilities
 make rust-deny                    # Check advisories/licenses/sources (cargo-deny)
@@ -293,7 +298,6 @@ This project uses a **snapshot pattern** for MLS storage (vs Wire's 18+ entity t
 | `rust/src/snapshot_storage.rs` | SnapshotStorageProvider (HashMap-based StorageProvider impl) |
 | `rust/src/encrypted_db.rs` | EncryptedDb (SQLCipher native, IDB+AES-GCM WASM) |
 | `rust/src/api/engine.rs` | MlsEngine (load → operate → commit cycle) |
-| `rust/src/hybrid_crypto.rs` | HybridCrypto (RustCrypto for classical suites; X-Wing PQ KEM → libcrux, lazy init) |
 
 ### Native vs WASM loading
 

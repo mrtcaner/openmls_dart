@@ -68,6 +68,29 @@ jobs:
       - name: Run cargo deny
         run: make rust-deny
 
+  web:
+    name: Test (Web dart2js)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: ./.github/actions/setup-rust
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Setup FVM and Flutter
+        uses: ./.github/actions/setup-fvm
+
+      - name: Get dependencies
+        run: make get
+
+      - name: Setup Web build tools
+        run: make setup-web
+
+      - name: Build Flutter Web example
+        run: make build-example-web
+
   test:
     strategy:
       fail-fast: false
@@ -113,6 +136,11 @@ jobs:
       # Build Rust library - FRB loads from rust/target/release/ automatically
       - name: Build Rust library
         run: make build
+        shell: bash
+
+      - name: Rust unit tests
+        if: matrix.name == 'Linux x86_64'
+        run: make rust-test
         shell: bash
 
       # Lint hand-written Rust with clippy (warnings = errors). Runs once, on

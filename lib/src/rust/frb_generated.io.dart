@@ -8,6 +8,7 @@ import 'api/credential.dart';
 import 'api/engine.dart';
 import 'api/init.dart';
 import 'api/keys.dart';
+import 'api/storage.dart';
 import 'api/types.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -96,6 +97,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AddMembersResult dco_decode_add_members_result(dynamic raw);
 
   @protected
+  AddMembersWithStorageResult dco_decode_add_members_with_storage_result(
+    dynamic raw,
+  );
+
+  @protected
   bool dco_decode_bool(dynamic raw);
 
   @protected
@@ -134,7 +140,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CreateGroupResult dco_decode_create_group_result(dynamic raw);
 
   @protected
+  CreateGroupWithStorageResult dco_decode_create_group_with_storage_result(
+    dynamic raw,
+  );
+
+  @protected
+  CreateKeyPackageWithStorageResult
+  dco_decode_create_key_package_with_storage_result(dynamic raw);
+
+  @protected
   CreateMessageResult dco_decode_create_message_result(dynamic raw);
+
+  @protected
+  CreateMessageWithStorageResult dco_decode_create_message_with_storage_result(
+    dynamic raw,
+  );
 
   @protected
   ExternalJoinResult dco_decode_external_join_result(dynamic raw);
@@ -150,6 +170,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   JoinGroupResult dco_decode_join_group_result(dynamic raw);
+
+  @protected
+  JoinGroupWithStorageResult dco_decode_join_group_with_storage_result(
+    dynamic raw,
+  );
 
   @protected
   KeyPackageOptions dco_decode_key_package_options(dynamic raw);
@@ -176,6 +201,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<MlsPendingProposalInfo> dco_decode_list_mls_pending_proposal_info(
     dynamic raw,
   );
+
+  @protected
+  List<MlsStorageEntry> dco_decode_list_mls_storage_entry(dynamic raw);
 
   @protected
   Uint16List dco_decode_list_prim_u_16_strict(dynamic raw);
@@ -220,6 +248,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsProposalType dco_decode_mls_proposal_type(dynamic raw);
 
   @protected
+  MlsStorageBatch dco_decode_mls_storage_batch(dynamic raw);
+
+  @protected
+  MlsStorageEntry dco_decode_mls_storage_entry(dynamic raw);
+
+  @protected
   MlsWireFormatPolicy dco_decode_mls_wire_format_policy(dynamic raw);
 
   @protected
@@ -245,6 +279,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw);
+
+  @protected
+  ProcessMessageWithStorageResult
+  dco_decode_process_message_with_storage_result(dynamic raw);
 
   @protected
   ProcessedMessageInspectResult dco_decode_processed_message_inspect_result(
@@ -345,6 +383,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AddMembersResult sse_decode_add_members_result(SseDeserializer deserializer);
 
   @protected
+  AddMembersWithStorageResult sse_decode_add_members_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
@@ -397,7 +440,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  CreateGroupWithStorageResult sse_decode_create_group_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  CreateKeyPackageWithStorageResult
+  sse_decode_create_key_package_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   CreateMessageResult sse_decode_create_message_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  CreateMessageWithStorageResult sse_decode_create_message_with_storage_result(
     SseDeserializer deserializer,
   );
 
@@ -421,6 +480,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   JoinGroupResult sse_decode_join_group_result(SseDeserializer deserializer);
+
+  @protected
+  JoinGroupWithStorageResult sse_decode_join_group_with_storage_result(
+    SseDeserializer deserializer,
+  );
 
   @protected
   KeyPackageOptions sse_decode_key_package_options(
@@ -455,6 +519,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<MlsPendingProposalInfo> sse_decode_list_mls_pending_proposal_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<MlsStorageEntry> sse_decode_list_mls_storage_entry(
     SseDeserializer deserializer,
   );
 
@@ -505,6 +574,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsProposalType sse_decode_mls_proposal_type(SseDeserializer deserializer);
 
   @protected
+  MlsStorageBatch sse_decode_mls_storage_batch(SseDeserializer deserializer);
+
+  @protected
+  MlsStorageEntry sse_decode_mls_storage_entry(SseDeserializer deserializer);
+
+  @protected
   MlsWireFormatPolicy sse_decode_mls_wire_format_policy(
     SseDeserializer deserializer,
   );
@@ -542,6 +617,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
+  ProcessMessageWithStorageResult
+  sse_decode_process_message_with_storage_result(SseDeserializer deserializer);
 
   @protected
   ProcessedMessageInspectResult sse_decode_processed_message_inspect_result(
@@ -729,6 +808,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  ffi.Pointer<wire_cst_list_mls_storage_entry>
+  cst_encode_list_mls_storage_entry(List<MlsStorageEntry> raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ans = wire.cst_new_list_mls_storage_entry(raw.length);
+    for (var i = 0; i < raw.length; ++i) {
+      cst_api_fill_to_wire_mls_storage_entry(raw[i], ans.ref.ptr[i]);
+    }
+    return ans;
+  }
+
+  @protected
   ffi.Pointer<wire_cst_list_prim_u_16_strict> cst_encode_list_prim_u_16_strict(
     Uint16List raw,
   ) {
@@ -865,6 +955,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_add_members_with_storage_result(
+    AddMembersWithStorageResult apiObj,
+    wire_cst_add_members_with_storage_result wireObj,
+  ) {
+    wireObj.commit = cst_encode_list_prim_u_8_strict(apiObj.commit);
+    wireObj.welcome = cst_encode_list_prim_u_8_strict(apiObj.welcome);
+    wireObj.group_info = cst_encode_opt_list_prim_u_8_strict(apiObj.groupInfo);
+    cst_api_fill_to_wire_mls_storage_batch(
+      apiObj.storageBatch,
+      wireObj.storage_batch,
+    );
+  }
+
+  @protected
   void cst_api_fill_to_wire_box_autoadd_flexible_commit_options(
     FlexibleCommitOptions apiObj,
     ffi.Pointer<wire_cst_flexible_commit_options> wireObj,
@@ -931,11 +1035,49 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_create_group_with_storage_result(
+    CreateGroupWithStorageResult apiObj,
+    wire_cst_create_group_with_storage_result wireObj,
+  ) {
+    wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
+    cst_api_fill_to_wire_mls_storage_batch(
+      apiObj.storageBatch,
+      wireObj.storage_batch,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_create_key_package_with_storage_result(
+    CreateKeyPackageWithStorageResult apiObj,
+    wire_cst_create_key_package_with_storage_result wireObj,
+  ) {
+    wireObj.key_package_bytes = cst_encode_list_prim_u_8_strict(
+      apiObj.keyPackageBytes,
+    );
+    cst_api_fill_to_wire_mls_storage_batch(
+      apiObj.storageBatch,
+      wireObj.storage_batch,
+    );
+  }
+
+  @protected
   void cst_api_fill_to_wire_create_message_result(
     CreateMessageResult apiObj,
     wire_cst_create_message_result wireObj,
   ) {
     wireObj.ciphertext = cst_encode_list_prim_u_8_strict(apiObj.ciphertext);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_create_message_with_storage_result(
+    CreateMessageWithStorageResult apiObj,
+    wire_cst_create_message_with_storage_result wireObj,
+  ) {
+    wireObj.ciphertext = cst_encode_list_prim_u_8_strict(apiObj.ciphertext);
+    cst_api_fill_to_wire_mls_storage_batch(
+      apiObj.storageBatch,
+      wireObj.storage_batch,
+    );
   }
 
   @protected
@@ -997,6 +1139,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     wire_cst_join_group_result wireObj,
   ) {
     wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_join_group_with_storage_result(
+    JoinGroupWithStorageResult apiObj,
+    wire_cst_join_group_with_storage_result wireObj,
+  ) {
+    wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
+    cst_api_fill_to_wire_mls_storage_batch(
+      apiObj.storageBatch,
+      wireObj.storage_batch,
+    );
   }
 
   @protected
@@ -1138,6 +1292,55 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ) {
     wireObj.proposal_type = cst_encode_mls_proposal_type(apiObj.proposalType);
     wireObj.sender_index = cst_encode_opt_box_autoadd_u_32(apiObj.senderIndex);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_mls_storage_batch(
+    MlsStorageBatch apiObj,
+    wire_cst_mls_storage_batch wireObj,
+  ) {
+    wireObj.upserts = cst_encode_list_mls_storage_entry(apiObj.upserts);
+    wireObj.deletes = cst_encode_list_list_prim_u_8_strict(apiObj.deletes);
+    wireObj.deleted_group_ids = cst_encode_list_list_prim_u_8_strict(
+      apiObj.deletedGroupIds,
+    );
+    wireObj.storage_format_version = cst_encode_u_32(
+      apiObj.storageFormatVersion,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_mls_storage_entry(
+    MlsStorageEntry apiObj,
+    wire_cst_mls_storage_entry wireObj,
+  ) {
+    wireObj.key = cst_encode_list_prim_u_8_strict(apiObj.key);
+    wireObj.value = cst_encode_list_prim_u_8_strict(apiObj.value);
+    wireObj.group_id = cst_encode_opt_list_prim_u_8_strict(apiObj.groupId);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_process_message_with_storage_result(
+    ProcessMessageWithStorageResult apiObj,
+    wire_cst_process_message_with_storage_result wireObj,
+  ) {
+    wireObj.message_type = cst_encode_processed_message_type(
+      apiObj.messageType,
+    );
+    wireObj.sender_index = cst_encode_opt_box_autoadd_u_32(apiObj.senderIndex);
+    wireObj.epoch = cst_encode_u_64(apiObj.epoch);
+    wireObj.application_message = cst_encode_opt_list_prim_u_8_strict(
+      apiObj.applicationMessage,
+    );
+    wireObj.has_staged_commit = cst_encode_bool(apiObj.hasStagedCommit);
+    wireObj.has_proposal = cst_encode_bool(apiObj.hasProposal);
+    wireObj.proposal_type = cst_encode_opt_box_autoadd_mls_proposal_type(
+      apiObj.proposalType,
+    );
+    cst_api_fill_to_wire_mls_storage_batch(
+      apiObj.storageBatch,
+      wireObj.storage_batch,
+    );
   }
 
   @protected
@@ -1375,6 +1578,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_add_members_with_storage_result(
+    AddMembersWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
@@ -1435,8 +1644,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_create_group_with_storage_result(
+    CreateGroupWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_create_key_package_with_storage_result(
+    CreateKeyPackageWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_create_message_result(
     CreateMessageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_create_message_with_storage_result(
+    CreateMessageWithStorageResult self,
     SseSerializer serializer,
   );
 
@@ -1464,6 +1691,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_join_group_result(
     JoinGroupResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_join_group_with_storage_result(
+    JoinGroupWithStorageResult self,
     SseSerializer serializer,
   );
 
@@ -1512,6 +1745,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_mls_pending_proposal_info(
     List<MlsPendingProposalInfo> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_mls_storage_entry(
+    List<MlsStorageEntry> self,
     SseSerializer serializer,
   );
 
@@ -1591,6 +1830,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_mls_storage_batch(
+    MlsStorageBatch self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_storage_entry(
+    MlsStorageEntry self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_mls_wire_format_policy(
     MlsWireFormatPolicy self,
     SseSerializer serializer,
@@ -1635,6 +1886,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_list_prim_u_8_strict(
     Uint8List? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_process_message_with_storage_result(
+    ProcessMessageWithStorageResult self,
     SseSerializer serializer,
   );
 
@@ -4296,6 +4553,246 @@ class RustLibWire implements BaseWire {
       _wire__crate__api__keys__MlsSignatureKeyPair_signature_schemePtr
           .asFunction<WireSyncRust2DartDco Function(int)>();
 
+  void wire__crate__api__storage__add_members_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
+    ffi.Pointer<wire_cst_list_list_prim_u_8_strict> key_packages_bytes,
+    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
+    int storage_format_version,
+  ) {
+    return _wire__crate__api__storage__add_members_with_storage(
+      port_,
+      group_id,
+      signer_bytes,
+      key_packages_bytes,
+      storage_entries,
+      storage_format_version,
+    );
+  }
+
+  late final _wire__crate__api__storage__add_members_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_mls_storage_entry>,
+            ffi.Uint32,
+          )
+        >
+      >('frbgen_openmls_wire__crate__api__storage__add_members_with_storage');
+  late final _wire__crate__api__storage__add_members_with_storage =
+      _wire__crate__api__storage__add_members_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_mls_storage_entry>,
+              int,
+            )
+          >();
+
+  void wire__crate__api__storage__create_group_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_mls_group_config> config,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> credential_identity,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_public_key,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> credential_bytes,
+    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
+    int storage_format_version,
+  ) {
+    return _wire__crate__api__storage__create_group_with_storage(
+      port_,
+      config,
+      signer_bytes,
+      credential_identity,
+      signer_public_key,
+      group_id,
+      credential_bytes,
+      storage_entries,
+      storage_format_version,
+    );
+  }
+
+  late final _wire__crate__api__storage__create_group_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_config>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_mls_storage_entry>,
+            ffi.Uint32,
+          )
+        >
+      >('frbgen_openmls_wire__crate__api__storage__create_group_with_storage');
+  late final _wire__crate__api__storage__create_group_with_storage =
+      _wire__crate__api__storage__create_group_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_mls_group_config>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_mls_storage_entry>,
+              int,
+            )
+          >();
+
+  void wire__crate__api__storage__create_key_package_with_storage(
+    int port_,
+    int ciphersuite,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> credential_identity,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_public_key,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> credential_bytes,
+    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
+    int storage_format_version,
+  ) {
+    return _wire__crate__api__storage__create_key_package_with_storage(
+      port_,
+      ciphersuite,
+      signer_bytes,
+      credential_identity,
+      signer_public_key,
+      credential_bytes,
+      storage_entries,
+      storage_format_version,
+    );
+  }
+
+  late final _wire__crate__api__storage__create_key_package_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Int32,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_mls_storage_entry>,
+            ffi.Uint32,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__storage__create_key_package_with_storage',
+      );
+  late final _wire__crate__api__storage__create_key_package_with_storage =
+      _wire__crate__api__storage__create_key_package_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_mls_storage_entry>,
+              int,
+            )
+          >();
+
+  void wire__crate__api__storage__create_message_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> message,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> aad,
+    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
+    int storage_format_version,
+  ) {
+    return _wire__crate__api__storage__create_message_with_storage(
+      port_,
+      group_id,
+      signer_bytes,
+      message,
+      aad,
+      storage_entries,
+      storage_format_version,
+    );
+  }
+
+  late final _wire__crate__api__storage__create_message_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_mls_storage_entry>,
+            ffi.Uint32,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__storage__create_message_with_storage',
+      );
+  late final _wire__crate__api__storage__create_message_with_storage =
+      _wire__crate__api__storage__create_message_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_mls_storage_entry>,
+              int,
+            )
+          >();
+
+  void wire__crate__api__storage__delete_group_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
+    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
+    int storage_format_version,
+  ) {
+    return _wire__crate__api__storage__delete_group_with_storage(
+      port_,
+      group_id,
+      storage_entries,
+      storage_format_version,
+    );
+  }
+
+  late final _wire__crate__api__storage__delete_group_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_mls_storage_entry>,
+            ffi.Uint32,
+          )
+        >
+      >('frbgen_openmls_wire__crate__api__storage__delete_group_with_storage');
+  late final _wire__crate__api__storage__delete_group_with_storage =
+      _wire__crate__api__storage__delete_group_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_mls_storage_entry>,
+              int,
+            )
+          >();
+
   WireSyncRust2DartDco wire__crate__api__init__init_openmls(
     ffi.Pointer<wire_cst_list_prim_u_8_strict> _library_path,
   ) {
@@ -4329,6 +4826,56 @@ class RustLibWire implements BaseWire {
   late final _wire__crate__api__init__is_openmls_initialized =
       _wire__crate__api__init__is_openmls_initializedPtr
           .asFunction<WireSyncRust2DartDco Function()>();
+
+  void wire__crate__api__storage__join_group_from_welcome_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_mls_group_config> config,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> welcome_bytes,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> ratchet_tree_bytes,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
+    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
+    int storage_format_version,
+  ) {
+    return _wire__crate__api__storage__join_group_from_welcome_with_storage(
+      port_,
+      config,
+      welcome_bytes,
+      ratchet_tree_bytes,
+      signer_bytes,
+      storage_entries,
+      storage_format_version,
+    );
+  }
+
+  late final _wire__crate__api__storage__join_group_from_welcome_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_config>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_mls_storage_entry>,
+            ffi.Uint32,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__storage__join_group_from_welcome_with_storage',
+      );
+  late final _wire__crate__api__storage__join_group_from_welcome_with_storage =
+      _wire__crate__api__storage__join_group_from_welcome_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_mls_group_config>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_mls_storage_entry>,
+              int,
+            )
+          >();
 
   WireSyncRust2DartDco
   wire__crate__api__config__mls_group_config_default_config(int ciphersuite) {
@@ -4412,6 +4959,60 @@ class RustLibWire implements BaseWire {
           .asFunction<
             WireSyncRust2DartDco Function(
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            )
+          >();
+
+  WireSyncRust2DartDco wire__crate__api__storage__mls_storage_format_version() {
+    return _wire__crate__api__storage__mls_storage_format_version();
+  }
+
+  late final _wire__crate__api__storage__mls_storage_format_versionPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function()>>(
+        'frbgen_openmls_wire__crate__api__storage__mls_storage_format_version',
+      );
+  late final _wire__crate__api__storage__mls_storage_format_version =
+      _wire__crate__api__storage__mls_storage_format_versionPtr
+          .asFunction<WireSyncRust2DartDco Function()>();
+
+  void wire__crate__api__storage__process_message_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> message_bytes,
+    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
+    int storage_format_version,
+  ) {
+    return _wire__crate__api__storage__process_message_with_storage(
+      port_,
+      group_id,
+      message_bytes,
+      storage_entries,
+      storage_format_version,
+    );
+  }
+
+  late final _wire__crate__api__storage__process_message_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_mls_storage_entry>,
+            ffi.Uint32,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__storage__process_message_with_storage',
+      );
+  late final _wire__crate__api__storage__process_message_with_storage =
+      _wire__crate__api__storage__process_message_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_mls_storage_entry>,
+              int,
             )
           >();
 
@@ -4755,6 +5356,24 @@ class RustLibWire implements BaseWire {
             ffi.Pointer<wire_cst_list_mls_pending_proposal_info> Function(int)
           >();
 
+  ffi.Pointer<wire_cst_list_mls_storage_entry> cst_new_list_mls_storage_entry(
+    int len,
+  ) {
+    return _cst_new_list_mls_storage_entry(len);
+  }
+
+  late final _cst_new_list_mls_storage_entryPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_list_mls_storage_entry> Function(ffi.Int32)
+        >
+      >('frbgen_openmls_cst_new_list_mls_storage_entry');
+  late final _cst_new_list_mls_storage_entry =
+      _cst_new_list_mls_storage_entryPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_list_mls_storage_entry> Function(int)
+          >();
+
   ffi.Pointer<wire_cst_list_prim_u_16_strict> cst_new_list_prim_u_16_strict(
     int len,
   ) {
@@ -4980,6 +5599,21 @@ final class wire_cst_list_prim_u_32_loose extends ffi.Struct {
   external int len;
 }
 
+final class wire_cst_mls_storage_entry extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> key;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> value;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+}
+
+final class wire_cst_list_mls_storage_entry extends ffi.Struct {
+  external ffi.Pointer<wire_cst_mls_storage_entry> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
 final class wire_cst_mls_member_info extends ffi.Struct {
   @ffi.Uint32()
   external int index;
@@ -5040,6 +5674,27 @@ final class wire_cst_add_members_result extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info;
 }
 
+final class wire_cst_mls_storage_batch extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_mls_storage_entry> upserts;
+
+  external ffi.Pointer<wire_cst_list_list_prim_u_8_strict> deletes;
+
+  external ffi.Pointer<wire_cst_list_list_prim_u_8_strict> deleted_group_ids;
+
+  @ffi.Uint32()
+  external int storage_format_version;
+}
+
+final class wire_cst_add_members_with_storage_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> welcome;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
 final class wire_cst_commit_result extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit;
 
@@ -5052,8 +5707,26 @@ final class wire_cst_create_group_result extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
 }
 
+final class wire_cst_create_group_with_storage_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
+final class wire_cst_create_key_package_with_storage_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> key_package_bytes;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
 final class wire_cst_create_message_result extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> ciphertext;
+}
+
+final class wire_cst_create_message_with_storage_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> ciphertext;
+
+  external wire_cst_mls_storage_batch storage_batch;
 }
 
 final class wire_cst_external_join_result extends ffi.Struct {
@@ -5083,6 +5756,12 @@ final class wire_cst_group_configuration_result extends ffi.Struct {
 
 final class wire_cst_join_group_result extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+}
+
+final class wire_cst_join_group_with_storage_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+
+  external wire_cst_mls_storage_batch storage_batch;
 }
 
 final class wire_cst_key_package_result extends ffi.Struct {
@@ -5119,6 +5798,28 @@ final class wire_cst_mls_leaf_node_info extends ffi.Struct {
   external wire_cst_mls_capabilities capabilities;
 
   external ffi.Pointer<wire_cst_list_mls_extension> extensions;
+}
+
+final class wire_cst_process_message_with_storage_result extends ffi.Struct {
+  @ffi.Int32()
+  external int message_type;
+
+  external ffi.Pointer<ffi.Uint32> sender_index;
+
+  @ffi.Uint64()
+  external int epoch;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> application_message;
+
+  @ffi.Bool()
+  external bool has_staged_commit;
+
+  @ffi.Bool()
+  external bool has_proposal;
+
+  external ffi.Pointer<ffi.Int32> proposal_type;
+
+  external wire_cst_mls_storage_batch storage_batch;
 }
 
 final class wire_cst_processed_message_inspect_result extends ffi.Struct {
@@ -5173,3 +5874,5 @@ final class wire_cst_welcome_inspect_result extends ffi.Struct {
   @ffi.Uint64()
   external int epoch;
 }
+
+const int MLS_STORAGE_FORMAT_VERSION = 1;

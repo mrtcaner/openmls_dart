@@ -9,8 +9,7 @@ final ciphersuite = MlsCiphersuite.mls128DhkemX25519Aes128GcmSha256Ed25519;
 
 /// Create a default group config for tests.
 ///
-/// Pass [suite] to build a config for a non-default ciphersuite
-/// (e.g. the experimental X-Wing suite).
+/// Pass [suite] to build a config for a non-default supported ciphersuite.
 MlsGroupConfig defaultConfig({MlsCiphersuite? suite}) =>
     MlsGroupConfig.defaultConfig(ciphersuite: suite ?? ciphersuite);
 

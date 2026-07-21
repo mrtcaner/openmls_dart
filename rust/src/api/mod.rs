@@ -5,4 +5,5 @@ pub mod credential;
 pub mod init;
 pub mod keys;
 pub mod engine;
+pub mod storage;
 pub mod types;

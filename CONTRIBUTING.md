@@ -412,7 +412,7 @@ The publish workflow uses OIDC authentication to publish to pub.dev without toke
 2. Navigate to your publisher page (or create one)
 3. Go to **Admin** → **Automated publishing**
 4. Click **Enable automated publishing**
-5. Add your GitHub repository: `djx-y-z/openmls_dart`
+5. Add your GitHub repository: `mrtcaner/openmls_dart`
 6. Set **Publishing from**: **GitHub Actions with tag** → tag pattern: `v*`
 
 See [dart.dev/tools/pub/automated-publishing](https://dart.dev/tools/pub/automated-publishing) for details.

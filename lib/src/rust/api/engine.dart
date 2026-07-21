@@ -8,7 +8,7 @@ import 'config.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
-// These functions are ignored because they are not marked as `pub`: `build_credential_with_key`, `commit`, `db`, `load_for_group`, `load_global`, `load_group`
+// These functions are ignored because they are not marked as `pub`: `build_credential_with_key`, `commit`, `db`, `load_for_group`, `load_global`, `load_group`, `mls_message_from_exact_bytes`
 
 /// Extract the group ID from an MLS protocol message.
 ///

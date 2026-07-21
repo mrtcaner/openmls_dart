@@ -8,16 +8,29 @@
 # On Windows CI (Git Bash), use cmd to run fvm.bat from PATH:
 # Example: make build ARGS="--target x86_64-pc-windows-msvc" FVM="cmd //c fvm"
 
-.PHONY: help setup setup-fvm setup-rust-tools setup-frb-codegen setup-android setup-web setup-fuzz codegen regen build build-android build-web test coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets rust-audit rust-deny rust-check rust-clippy fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
+.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
 
 # FVM command - can be overridden to provide full path on Windows CI
 FVM ?= fvm
+CARGO ?= cargo
+RUSTUP ?= rustup
+CARGO_CLIPPY ?= $(CARGO) clippy
+CARGO_NDK ?= $(CARGO) ndk
+RUSTFMT ?= rustfmt
+CARGO_AUDIT ?= cargo-audit
+CARGO_DENY ?= cargo-deny
+WASM_PACK ?= wasm-pack
+DART ?= $(FVM) dart
+FLUTTER ?= $(FVM) flutter
+IOS_DEPLOYMENT_TARGET ?= 13.0
+IOS_RUST_TARGET ?= aarch64-apple-ios
 
 # Pinned flutter_rust_bridge_codegen version.
 # Must match the flutter_rust_bridge dependency in pubspec.yaml — a codegen
 # binary of a different version produces different bindings, which makes CI
 # and local codegen runs disagree.
 FRB_CODEGEN_VERSION ?= 2.12.0
+FRB_CODEGEN ?= flutter_rust_bridge_codegen
 
 # Arguments are passed via ARGS variable
 ARGS ?=
@@ -39,8 +52,10 @@ help:
 	@echo "    make setup                        - Full setup (FVM + Rust tools)"
 	@echo "    make setup-fvm                    - Install FVM and project Flutter version only"
 	@echo "    make setup-rust-tools             - Install Rust tools (cargo-audit, frb codegen)"
+	@echo "    make setup-rust-components        - Install clippy and rustfmt components"
 	@echo "    make setup-frb-codegen            - Install pinned flutter_rust_bridge_codegen"
 	@echo "    make setup-android                - Install Android build tools (cargo-ndk)"
+	@echo "    make setup-mobile-rust-targets    - Install all Android and iOS Rust targets"
 	@echo "    make setup-web                    - Install web build tools (wasm-pack)"
 	@echo "    make setup-repo-protections       - Apply GitHub rulesets + native-build env (one-time, needs gh admin)"
 	@echo ""
@@ -50,7 +65,9 @@ help:
 	@echo "                                        Example: make build ARGS=\"--target aarch64-apple-darwin\""
 	@echo "    make build-android                - Build for Android (all ABIs)"
 	@echo "                                        Example: make build-android ARGS=\"--target arm64-v8a\""
+	@echo "    make build-ios                    - Build for an arm64 iOS device"
 	@echo "    make build-web                    - Build WASM for web platform"
+	@echo "    make build-example-web            - Build WASM and the Flutter Web example"
 	@echo ""
 	@echo "  CI / VERSION CHECKS"
 	@echo "    make check-new-openmls-version  - Check for new upstream openmls version"
@@ -65,7 +82,10 @@ help:
 	@echo ""
 	@echo "  RUST QUALITY"
 	@echo "    make rust-check                   - Check Rust code compiles"
+	@echo "    make rust-test                    - Run Rust unit tests"
 	@echo "    make rust-clippy                  - Lint Rust code with clippy (warnings = errors)"
+	@echo "    make rust-format-files            - Format Rust files listed in ARGS"
+	@echo "    make rust-tree                    - Inspect the resolved Rust dependency tree"
 	@echo "    make rust-audit                   - Audit Rust dependencies for vulnerabilities"
 	@echo "    make rust-deny                    - Check advisories/licenses/sources (cargo-deny)"
 	@echo ""
@@ -134,24 +154,27 @@ setup-fvm:
 
 setup-rust-tools:
 	@echo "Installing Rust tools..."
-	@if ! command -v cargo-audit >/dev/null 2>&1; then \
+	@if ! $(CARGO_AUDIT) --version >/dev/null 2>&1; then \
 		echo "Installing cargo-audit..."; \
-		cargo install cargo-audit; \
+		$(CARGO) install cargo-audit; \
 	else \
 		echo "cargo-audit already installed"; \
 	fi
 	@$(MAKE) setup-frb-codegen
-	@if ! command -v cargo-deny >/dev/null 2>&1; then \
+	@if ! $(CARGO_DENY) --version >/dev/null 2>&1; then \
 		echo "Installing cargo-deny..."; \
-		cargo install cargo-deny --locked; \
+		$(CARGO) install cargo-deny --locked; \
 	else \
 		echo "cargo-deny already installed"; \
 	fi
 	@echo ""
 	@echo "Rust tools setup complete!"
 
+setup-rust-components:
+	$(RUSTUP) component add clippy rustfmt
+
 setup-frb-codegen:
-	@INSTALLED="$$(flutter_rust_bridge_codegen --version 2>/dev/null | awk '{print $$NF}')"; \
+	@INSTALLED="$$($(FRB_CODEGEN) --version 2>/dev/null | awk '{print $$NF}')"; \
 	if [ "$$INSTALLED" = "$(FRB_CODEGEN_VERSION)" ]; then \
 		echo "flutter_rust_bridge_codegen $(FRB_CODEGEN_VERSION) already installed"; \
 	else \
@@ -176,22 +199,27 @@ setup-android:
 	@echo "Installing Android build tools..."
 	@if ! command -v cargo-ndk >/dev/null 2>&1; then \
 		echo "Installing cargo-ndk..."; \
-		cargo install cargo-ndk; \
+		$(CARGO) install cargo-ndk; \
 	else \
 		echo "cargo-ndk already installed"; \
 	fi
 	@echo ""
 	@echo "Android setup complete!"
 	@echo "Make sure you have Android NDK installed via Android Studio or sdkmanager."
+
+setup-mobile-rust-targets:
+	$(RUSTUP) target add \
+		aarch64-linux-android armv7-linux-androideabi x86_64-linux-android \
+		aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
 setup-web:
 	@echo "Installing web build tools..."
-	@if ! command -v wasm-pack >/dev/null 2>&1; then \
+	@if ! $(WASM_PACK) --version >/dev/null 2>&1; then \
 		echo "Installing wasm-pack..."; \
-		cargo install wasm-pack; \
+		$(CARGO) install wasm-pack; \
 	else \
 		echo "wasm-pack already installed"; \
 	fi
-	rustup target add wasm32-unknown-unknown
+	$(RUSTUP) target add wasm32-unknown-unknown
 	@echo ""
 	@echo "Web setup complete!"
 
@@ -209,7 +237,7 @@ setup-repo-protections:
 
 codegen:
 	@touch .skip_openmls_hook
-	@flutter_rust_bridge_codegen generate $(ARGS); ret=$$?; rm -f .skip_openmls_hook; exit $$ret
+	@$(FRB_CODEGEN) generate $(ARGS); ret=$$?; rm -f .skip_openmls_hook; exit $$ret
 
 # Alias for codegen (common shorthand)
 regen: codegen
@@ -220,42 +248,63 @@ regen: codegen
 
 build:
 	@echo "Building Rust library..."
-	cargo build --release --manifest-path rust/Cargo.toml $(ARGS)
+	$(CARGO) build --release --manifest-path rust/Cargo.toml $(ARGS)
 	@echo ""
 	@echo "Build complete! Library at: rust/target/"
 
 build-android:
 	@echo "Building Rust library for Android..."
-	@PLATFORM=$$(dart scripts/get_android_min_sdk.dart) && \
-		cd rust && cargo ndk --platform $$PLATFORM build --release $(ARGS)
+	@PLATFORM=$$($(DART) scripts/get_android_min_sdk.dart) && \
+		cd rust && $(CARGO_NDK) --platform $$PLATFORM build --release $(ARGS)
 	@echo ""
 	@echo "Build complete! Library at: rust/target/<arch>/release/"
+
+build-ios:
+	@echo "Building Rust library for iOS target $(IOS_RUST_TARGET)..."
+	IPHONEOS_DEPLOYMENT_TARGET=$(IOS_DEPLOYMENT_TARGET) $(CARGO) build --release \
+		--manifest-path rust/Cargo.toml --target $(IOS_RUST_TARGET) $(ARGS)
+	@echo ""
+	@echo "Build complete! Library at: rust/target/$(IOS_RUST_TARGET)/release/"
+
 build-web:
 	@echo "Building WASM for web..."
-	cd rust && wasm-pack build --target no-modules --release \
+	cd rust && $(WASM_PACK) build --target no-modules --release \
 		--out-dir target/wasm32 --out-name openmls_frb --no-typescript
 	@rm -f rust/target/wasm32/.gitignore rust/target/wasm32/package.json
 	@echo ""
 	@echo "Build complete! WASM files at: rust/target/wasm32/"
+
+build-example-web: build-web
+	cd example && $(FLUTTER) build web $(ARGS)
 # =============================================================================
 # Rust Quality
 # =============================================================================
 
 rust-check:
-	cargo check --manifest-path rust/Cargo.toml
+	$(CARGO) check --manifest-path rust/Cargo.toml $(ARGS)
+
+rust-test:
+	$(CARGO) test --manifest-path rust/Cargo.toml
 
 # Lint hand-written Rust with clippy; warnings are errors so CI fails on any lint.
 # --all-targets covers the lib, its tests, and examples of this crate.
 # The separate, nightly-only fuzz crate (rust/fuzz) is linted with
 # `cd rust/fuzz && cargo +nightly clippy`.
 rust-clippy:
-	cargo clippy --manifest-path rust/Cargo.toml --all-targets -- -D warnings
+	$(CARGO_CLIPPY) --manifest-path rust/Cargo.toml --all-targets -- -D warnings
+
+rust-format-files:
+	@test -n "$(ARGS)" || (echo 'Pass Rust file paths with ARGS="..."' && exit 1)
+	$(RUSTFMT) --edition 2024 $(ARGS)
+
+rust-tree:
+	$(CARGO) tree --manifest-path rust/Cargo.toml $(ARGS)
 
 rust-audit:
-	cargo audit --file rust/Cargo.lock
+	$(CARGO_AUDIT) audit --file rust/Cargo.lock
 
 rust-deny:
-	cargo deny --manifest-path rust/Cargo.toml check $(ARGS)
+	$(CARGO_DENY) --manifest-path rust/Cargo.toml check $(ARGS)
 
 # =============================================================================
 # Fuzzing (cargo-fuzz + libFuzzer, requires nightly - run 'make setup-fuzz')
@@ -296,11 +345,11 @@ check-template-updates:
 	@$(FVM) dart scripts/check_template_updates.dart $(ARGS)
 
 check-targets:
-	@$(FVM) dart scripts/check_deployment_targets.dart $(ARGS)
+	@$(DART) scripts/check_deployment_targets.dart $(ARGS)
 
 rust-update:
 	@echo "Updating Cargo.lock..."
-	@cd rust && cargo update
+	@$(CARGO) update --manifest-path rust/Cargo.toml $(ARGS)
 	@echo ""
 	@echo "Cargo.lock updated!"
 
@@ -333,7 +382,7 @@ release:
 # =============================================================================
 
 test:
-	$(FVM) dart test $(ARGS)
+	$(DART) test $(ARGS)
 
 coverage:
 	$(FVM) dart test --coverage=coverage
@@ -341,13 +390,13 @@ coverage:
 	lcov --summary coverage/lcov.info
 
 analyze:
-	$(FVM) flutter analyze $(ARGS)
+	$(FLUTTER) analyze $(ARGS)
 
 format:
-	$(FVM) dart format . $(ARGS)
+	$(DART) format . $(ARGS)
 
 format-check:
-	$(FVM) dart format --set-exit-if-changed . $(ARGS)
+	$(DART) format --set-exit-if-changed . $(ARGS)
 
 doc:
 	@touch .skip_openmls_hook
