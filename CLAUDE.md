@@ -202,10 +202,11 @@ make release ARGS="--version X.Y.Z"   # verify frb binary + bump + finalize
                                       # CHANGELOG + dry-run + signed commit/tag/push
 ```
 
-Verifies the stage-1 `openmls_frb-<crate>` release exists, bumps
-`pubspec.yaml`, finalizes the CHANGELOG (`[Unreleased]` → `[X.Y.Z]` + a fresh
-`[Unreleased]` + compare links), runs `make publish-dry-run`, then signs a commit
-+ tag `vX.Y.Z` and pushes — `publish.yml` publishes to pub.dev.
+Verifies the stage-1 `openmls_frb-<crate>` release exists, runs
+`make publish-dry-run` (on the clean, pre-bump tree), bumps `pubspec.yaml`,
+finalizes the CHANGELOG (`[Unreleased]` → `[X.Y.Z]` + compare links; no empty
+`[Unreleased]` is left behind), then signs a commit + tag `vX.Y.Z` and pushes —
+`publish.yml` publishes to pub.dev.
 
 Repository rulesets restrict who can create the `openmls_frb-*` / `v*` release
 tags, and a required-reviewer `native-build` environment gates the native publish.
