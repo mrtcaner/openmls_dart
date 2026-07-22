@@ -367,6 +367,9 @@ jobs:
       - name: Setup FVM and Flutter
         uses: ./.github/actions/setup-fvm
 
+      - name: Get Dart dependencies
+        run: make get
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
