@@ -3775,6 +3775,7 @@ fn wire__crate__api__storage__add_members_with_storage_impl(
     group_id: impl CstDecode<Vec<u8>>,
     signer_bytes: impl CstDecode<Vec<u8>>,
     key_packages_bytes: impl CstDecode<Vec<Vec<u8>>>,
+    expected_credential_identities: impl CstDecode<Vec<Vec<u8>>>,
     storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
     storage_format_version: impl CstDecode<u32>,
 ) {
@@ -3788,6 +3789,7 @@ fn wire__crate__api__storage__add_members_with_storage_impl(
             let api_group_id = group_id.cst_decode();
             let api_signer_bytes = signer_bytes.cst_decode();
             let api_key_packages_bytes = key_packages_bytes.cst_decode();
+            let api_expected_credential_identities = expected_credential_identities.cst_decode();
             let api_storage_entries = storage_entries.cst_decode();
             let api_storage_format_version = storage_format_version.cst_decode();
             move |context| {
@@ -3796,6 +3798,7 @@ fn wire__crate__api__storage__add_members_with_storage_impl(
                         api_group_id,
                         api_signer_bytes,
                         api_key_packages_bytes,
+                        api_expected_credential_identities,
                         api_storage_entries,
                         api_storage_format_version,
                     )?;
@@ -4125,6 +4128,7 @@ fn wire__crate__api__storage__process_message_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     group_id: impl CstDecode<Vec<u8>>,
     message_bytes: impl CstDecode<Vec<u8>>,
+    expected_aad: impl CstDecode<Option<Vec<u8>>>,
     storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
     storage_format_version: impl CstDecode<u32>,
 ) {
@@ -4137,6 +4141,7 @@ fn wire__crate__api__storage__process_message_with_storage_impl(
         move || {
             let api_group_id = group_id.cst_decode();
             let api_message_bytes = message_bytes.cst_decode();
+            let api_expected_aad = expected_aad.cst_decode();
             let api_storage_entries = storage_entries.cst_decode();
             let api_storage_format_version = storage_format_version.cst_decode();
             move |context| {
@@ -4144,6 +4149,7 @@ fn wire__crate__api__storage__process_message_with_storage_impl(
                     let output_ok = crate::api::storage::process_message_with_storage(
                         api_group_id,
                         api_message_bytes,
+                        api_expected_aad,
                         api_storage_entries,
                         api_storage_format_version,
                     )?;
@@ -8794,6 +8800,7 @@ mod io {
         group_id: *mut wire_cst_list_prim_u_8_loose,
         signer_bytes: *mut wire_cst_list_prim_u_8_loose,
         key_packages_bytes: *mut wire_cst_list_list_prim_u_8_strict,
+        expected_credential_identities: *mut wire_cst_list_list_prim_u_8_strict,
         storage_entries: *mut wire_cst_list_mls_storage_entry,
         storage_format_version: u32,
     ) {
@@ -8802,6 +8809,7 @@ mod io {
             group_id,
             signer_bytes,
             key_packages_bytes,
+            expected_credential_identities,
             storage_entries,
             storage_format_version,
         )
@@ -8964,6 +8972,7 @@ mod io {
         port_: i64,
         group_id: *mut wire_cst_list_prim_u_8_loose,
         message_bytes: *mut wire_cst_list_prim_u_8_loose,
+        expected_aad: *mut wire_cst_list_prim_u_8_strict,
         storage_entries: *mut wire_cst_list_mls_storage_entry,
         storage_format_version: u32,
     ) {
@@ -8971,6 +8980,7 @@ mod io {
             port_,
             group_id,
             message_bytes,
+            expected_aad,
             storage_entries,
             storage_format_version,
         )
@@ -11569,6 +11579,7 @@ mod web {
         group_id: Box<[u8]>,
         signer_bytes: Box<[u8]>,
         key_packages_bytes: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_credential_identities: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         storage_format_version: u32,
     ) {
@@ -11577,6 +11588,7 @@ mod web {
             group_id,
             signer_bytes,
             key_packages_bytes,
+            expected_credential_identities,
             storage_entries,
             storage_format_version,
         )
@@ -11739,6 +11751,7 @@ mod web {
         port_: flutter_rust_bridge::for_generated::MessagePort,
         group_id: Box<[u8]>,
         message_bytes: Box<[u8]>,
+        expected_aad: Option<Box<[u8]>>,
         storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         storage_format_version: u32,
     ) {
@@ -11746,6 +11759,7 @@ mod web {
             port_,
             group_id,
             message_bytes,
+            expected_aad,
             storage_entries,
             storage_format_version,
         )

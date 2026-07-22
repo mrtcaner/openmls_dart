@@ -11,6 +11,11 @@
 - Operation-scoped caller-owned MLS storage API with versioned opaque entries,
   atomic mutation batches, complete create/add/join/message/commit flow, and
   explicit group deletion.
+- Caller-supplied expected-AAD validation when processing messages. A mismatch
+  fails before any storage mutation batch is returned.
+- Caller-supplied Basic Credential identity validation for KeyPackages passed
+  to the caller-owned storage API. Mismatched identities and list lengths are
+  rejected before a member-add commit is created.
 
 ### Changed
 

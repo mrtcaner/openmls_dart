@@ -551,6 +551,7 @@ abstract class RustLibApi extends BaseApi {
     required List<int> groupId,
     required List<int> signerBytes,
     required List<Uint8List> keyPackagesBytes,
+    required List<Uint8List> expectedCredentialIdentities,
     required List<MlsStorageEntry> storageEntries,
     required int storageFormatVersion,
   });
@@ -627,6 +628,7 @@ abstract class RustLibApi extends BaseApi {
   crateApiStorageProcessMessageWithStorage({
     required List<int> groupId,
     required List<int> messageBytes,
+    Uint8List? expectedAad,
     required List<MlsStorageEntry> storageEntries,
     required int storageFormatVersion,
   });
@@ -3865,6 +3867,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     required List<int> groupId,
     required List<int> signerBytes,
     required List<Uint8List> keyPackagesBytes,
+    required List<Uint8List> expectedCredentialIdentities,
     required List<MlsStorageEntry> storageEntries,
     required int storageFormatVersion,
   }) {
@@ -3874,8 +3877,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           var arg0 = cst_encode_list_prim_u_8_loose(groupId);
           var arg1 = cst_encode_list_prim_u_8_loose(signerBytes);
           var arg2 = cst_encode_list_list_prim_u_8_strict(keyPackagesBytes);
-          var arg3 = cst_encode_list_mls_storage_entry(storageEntries);
-          var arg4 = cst_encode_u_32(storageFormatVersion);
+          var arg3 = cst_encode_list_list_prim_u_8_strict(
+            expectedCredentialIdentities,
+          );
+          var arg4 = cst_encode_list_mls_storage_entry(storageEntries);
+          var arg5 = cst_encode_u_32(storageFormatVersion);
           return wire.wire__crate__api__storage__add_members_with_storage(
             port_,
             arg0,
@@ -3883,6 +3889,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             arg2,
             arg3,
             arg4,
+            arg5,
           );
         },
         codec: DcoCodec(
@@ -3894,6 +3901,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           groupId,
           signerBytes,
           keyPackagesBytes,
+          expectedCredentialIdentities,
           storageEntries,
           storageFormatVersion,
         ],
@@ -3909,6 +3917,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           "groupId",
           "signerBytes",
           "keyPackagesBytes",
+          "expectedCredentialIdentities",
           "storageEntries",
           "storageFormatVersion",
         ],
@@ -4390,6 +4399,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   crateApiStorageProcessMessageWithStorage({
     required List<int> groupId,
     required List<int> messageBytes,
+    Uint8List? expectedAad,
     required List<MlsStorageEntry> storageEntries,
     required int storageFormatVersion,
   }) {
@@ -4398,14 +4408,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           var arg0 = cst_encode_list_prim_u_8_loose(groupId);
           var arg1 = cst_encode_list_prim_u_8_loose(messageBytes);
-          var arg2 = cst_encode_list_mls_storage_entry(storageEntries);
-          var arg3 = cst_encode_u_32(storageFormatVersion);
+          var arg2 = cst_encode_opt_list_prim_u_8_strict(expectedAad);
+          var arg3 = cst_encode_list_mls_storage_entry(storageEntries);
+          var arg4 = cst_encode_u_32(storageFormatVersion);
           return wire.wire__crate__api__storage__process_message_with_storage(
             port_,
             arg0,
             arg1,
             arg2,
             arg3,
+            arg4,
           );
         },
         codec: DcoCodec(
@@ -4416,6 +4428,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         argValues: [
           groupId,
           messageBytes,
+          expectedAad,
           storageEntries,
           storageFormatVersion,
         ],
@@ -4430,6 +4443,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         argNames: [
           "groupId",
           "messageBytes",
+          "expectedAad",
           "storageEntries",
           "storageFormatVersion",
         ],

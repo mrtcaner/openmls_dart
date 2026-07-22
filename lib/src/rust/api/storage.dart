@@ -58,16 +58,22 @@ Future<CreateGroupWithStorageResult> createGroupWithStorage({
 );
 
 /// Add members and merge the pending commit against caller-owned group state.
+///
+/// Each validated KeyPackage must contain a Basic Credential whose identity
+/// exactly matches the corresponding caller-supplied expected identity. A
+/// mismatch fails before group state changes are returned.
 Future<AddMembersWithStorageResult> addMembersWithStorage({
   required List<int> groupId,
   required List<int> signerBytes,
   required List<Uint8List> keyPackagesBytes,
+  required List<Uint8List> expectedCredentialIdentities,
   required List<MlsStorageEntry> storageEntries,
   required int storageFormatVersion,
 }) => RustLib.instance.api.crateApiStorageAddMembersWithStorage(
   groupId: groupId,
   signerBytes: signerBytes,
   keyPackagesBytes: keyPackagesBytes,
+  expectedCredentialIdentities: expectedCredentialIdentities,
   storageEntries: storageEntries,
   storageFormatVersion: storageFormatVersion,
 );
@@ -107,14 +113,19 @@ Future<CreateMessageWithStorageResult> createMessageWithStorage({
 );
 
 /// Process an application, proposal, or commit message against caller state.
+///
+/// When `expected_aad` is present, the authenticated message AAD must match it
+/// byte-for-byte. A mismatch returns no storage batch.
 Future<ProcessMessageWithStorageResult> processMessageWithStorage({
   required List<int> groupId,
   required List<int> messageBytes,
+  Uint8List? expectedAad,
   required List<MlsStorageEntry> storageEntries,
   required int storageFormatVersion,
 }) => RustLib.instance.api.crateApiStorageProcessMessageWithStorage(
   groupId: groupId,
   messageBytes: messageBytes,
+  expectedAad: expectedAad,
   storageEntries: storageEntries,
   storageFormatVersion: storageFormatVersion,
 );
