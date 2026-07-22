@@ -51,7 +51,8 @@ jobs:
     uses: ./.github/workflows/test-reusable.yml
     with:
       run-coverage: true
-      # Coverage is still calculated on Linux x86_64. Badge publication stays
-      # disabled until README contains a badge and both GIST_TOKEN and
-      # COVERAGE_GIST_ID are deliberately configured.
-      update-badge: false
+      # Publish only after a successful main-branch run. Pull requests calculate
+      # coverage but cannot write to the public badge Gist.
+      update-badge: ${{ github.ref == 'refs/heads/main' }}
+    secrets:
+      GIST_TOKEN: ${{ secrets.GIST_TOKEN }}

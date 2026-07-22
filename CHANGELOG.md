@@ -28,9 +28,9 @@
   from the caller-owned storage/transaction API, documents the 1.5.4 validation
   guarantees and exact fork pin, and reports repository protection status
   accurately.
-- CI continues to calculate coverage but no longer attempts to publish an
-  unconfigured Gist badge. Badge publication remains opt-in after its token,
-  Gist ID, and README badge are configured together.
+- CI continues to calculate coverage on pull requests and publishes the README
+  badge only after successful `main` runs, using a dedicated Gist token and the
+  configured public coverage Gist.
 
 ### Removed
 

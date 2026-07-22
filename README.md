@@ -7,6 +7,7 @@
 [![Flutter](https://img.shields.io/badge/flutter-%3E%3D3.38.0-blue.svg)](https://flutter.dev)
 [![openmls](https://img.shields.io/badge/openmls-v0.8.1-orange.svg)](https://github.com/openmls/openmls)
 [![native bridge](https://img.shields.io/badge/openmls__frb-1.5.4-purple.svg)](https://github.com/mrtcaner/openmls_dart/releases/tag/openmls_frb-1.5.4)
+[![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/mrtcaner/8ff33d8b0975fa90bc0e9249a70e5b17/raw/coverage.json)](https://github.com/mrtcaner/openmls_dart/actions/workflows/test.yml)
 
 Dart bindings for [OpenMLS](https://github.com/openmls/openmls), providing a Rust implementation of the Messaging Layer Security (MLS) protocol ([RFC 9420](https://www.rfc-editor.org/rfc/rfc9420.html)) for secure group messaging.
 

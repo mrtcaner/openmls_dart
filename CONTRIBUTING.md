@@ -406,10 +406,9 @@ To enable AI-powered changelog generation in CI:
 
 ### Setting up Coverage Badge
 
-CI measures test coverage, but badge publication is currently disabled in
-`.github/workflows/test.yml`. The previous configuration failed because this
-fork had no `GIST_TOKEN` or `COVERAGE_GIST_ID`, and the README had no badge.
-To enable publication deliberately:
+CI measures test coverage and updates the README badge after successful pushes
+to `main`. The badge uses a public Gist while its write token remains an Actions
+secret. To recreate or rotate the configuration:
 
 1. Create a **public** GitHub Gist at https://gist.github.com
    - Filename: `coverage.json`
@@ -419,8 +418,11 @@ To enable publication deliberately:
    - Required permission: **Gists → Read and write**
 4. Add as repository secret: Settings → Secrets and variables → Actions → New repository secret → `GIST_TOKEN`
 5. Add as repository variable: Settings → Secrets and variables → Actions → Variables → New repository variable → `COVERAGE_GIST_ID` (value: the Gist ID from step 2)
-6. Add the matching badge to `README.md`
-7. Change the workflow's `update-badge` input from `false` to the intended branch condition
+6. Add the matching Shields endpoint badge to `README.md`
+7. Keep the workflow's `update-badge` input limited to `refs/heads/main`
+
+Use a dedicated classic token with only the `gist` scope. Do not reuse a broad
+GitHub CLI or repository token for this cosmetic job.
 
 ### Setting up pub.dev Publishing
 
