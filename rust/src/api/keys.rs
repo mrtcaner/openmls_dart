@@ -7,7 +7,7 @@ use openmls::prelude::*;
 use openmls_basic_credential::SignatureKeyPair;
 use zeroize::Zeroize;
 
-use super::types::{ciphersuite_to_native, MlsCiphersuite};
+use super::types::{MlsCiphersuite, ciphersuite_to_native};
 
 /// An opaque wrapper around an OpenMLS SignatureKeyPair.
 pub struct MlsSignatureKeyPair {
@@ -96,8 +96,8 @@ impl MlsSignatureKeyPair {
     /// a full key pair with private key, use `from_raw()`.
     #[flutter_rust_bridge::frb(sync)]
     pub fn deserialize_public(bytes: Vec<u8>) -> Result<MlsSignatureKeyPair, String> {
-        let skp: SerializableKeyPair =
-            serde_json::from_slice(&bytes).map_err(|e| format!("Failed to deserialize key pair: {}", e))?;
+        let skp: SerializableKeyPair = serde_json::from_slice(&bytes)
+            .map_err(|e| format!("Failed to deserialize key pair: {}", e))?;
         let scheme = SignatureScheme::try_from(skp.scheme)
             .map_err(|_| format!("Invalid signature scheme: {}", skp.scheme))?;
         // Reconstruct with empty private key — only use for public key operations
@@ -137,8 +137,8 @@ pub fn serialize_signer(
         public: public_key,
         scheme: cs.signature_algorithm() as u16,
     };
-    let result = serde_json::to_vec(&signer)
-        .map_err(|e| format!("Failed to serialize signer: {}", e));
+    let result =
+        serde_json::to_vec(&signer).map_err(|e| format!("Failed to serialize signer: {}", e));
     drop(signer);
     result
 }

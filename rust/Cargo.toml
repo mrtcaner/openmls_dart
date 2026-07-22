@@ -28,9 +28,6 @@ openmls_basic_credential = { git = "https://github.com/openmls/openmls", tag = "
 openmls_traits = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
 
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-rusqlite = { version = "0.34", features = ["bundled-sqlcipher-vendored-openssl"] }
-
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 # OpenMLS requires `js` feature for WASM: enables fluvio_wasm_timer for time access
 # Cargo merges features from [dependencies] and [target.*.dependencies]
@@ -39,15 +36,10 @@ openmls = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1", 
 # Both need to be configured for WASM to work correctly
 getrandom_02 = { package = "getrandom", version = "0.2", features = ["js"] }
 getrandom = { version = "0.3", features = ["wasm_js"] }
-idb = "0.6"
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 js-sys = "0.3"
-web-sys = { version = "0.3", features = [
-    "console", "Window", "Performance",
-    "Crypto", "SubtleCrypto", "CryptoKey",
-    "AesGcmParams",
-] }
+web-sys = { version = "0.3", features = ["console", "Window", "Performance"] }
 
 [profile.release]
 lto = true
@@ -65,8 +57,6 @@ overflow-checks = true
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ["cfg(frb_expand)"] }
-# Hand-written code denies unsafe by default. The few modules that legitimately
-# need it opt out explicitly: the FRB-generated bridge (#[allow] in lib.rs)
-# and encrypted_db's WASM `unsafe impl Send + Sync` (via module-level
-# #![allow(unsafe_code)]).
+# Hand-written code denies unsafe by default. The generated FRB bridge is the
+# only module that opts out (with an explicit allow in lib.rs).
 unsafe_code = "deny"

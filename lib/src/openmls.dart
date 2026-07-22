@@ -11,8 +11,8 @@ import 'rust/frb_generated.dart';
 /// Native asset ID for the openmls library.
 /// Format: package:openmls/openmls
 ///
-/// When the build hook registers a CodeAsset with this ID,
-/// Dart allows loading it via DynamicLibrary.open() with this ID.
+/// The build hook registers a CodeAsset with this ID. Flutter host tests expose
+/// its resolved path through their generated native-assets manifest.
 const _nativeAssetId = 'package:openmls/openmls';
 
 /// Main API class for openmls.
@@ -34,8 +34,9 @@ const _nativeAssetId = 'package:openmls/openmls';
 /// ### For Native Platforms (iOS, Android, macOS, Linux, Windows)
 ///
 /// 1. **Custom path** (if provided via [libraryPath] parameter)
-/// 2. **Build hook locations** (JIT: .dart_tool/lib/, AOT: ../lib/)
-/// 3. **FRB default**: flutter_rust_bridge's default loader
+/// 2. **Flutter host-test native-assets manifest**
+/// 3. **Build hook locations** (JIT: .dart_tool/lib/, AOT: ../lib/)
+/// 4. **FRB default**: flutter_rust_bridge's default loader
 ///
 /// ### For Web
 ///
@@ -98,8 +99,9 @@ class Openmls {
   ///
   /// Loading order:
   /// 1. Custom path (if provided via [libraryPath] parameter)
-  /// 2. Build hook locations (JIT: .dart_tool/lib/, AOT: ../lib/)
-  /// 3. FRB default (flutter_rust_bridge's default loader)
+  /// 2. Flutter host-test native-assets manifest
+  /// 3. Build hook locations (JIT: .dart_tool/lib/, AOT: ../lib/)
+  /// 4. FRB default (flutter_rust_bridge's default loader)
   static Future<ExternalLibrary> _loadLibrary(String? customPath) async {
     // coverage:ignore-start
     // On web, always use the default WASM loading
@@ -154,9 +156,6 @@ class Openmls {
   ///
   /// For CLI applications that are exiting, set [dispose] to `true` to
   /// also dispose the Flutter Rust Bridge runtime.
-  ///
-  /// **Important:** Close all [MlsEngine] instances before calling this
-  /// method with `dispose: true`, as the Rust runtime will be shut down.
   ///
   /// **Note:** After `cleanup(dispose: true)`, you cannot reinitialize
   /// in the same process (FRB limitation).

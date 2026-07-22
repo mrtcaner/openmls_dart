@@ -2,10 +2,10 @@
 //!
 //! Wraps `BasicCredential`, X.509, and `Credential` types.
 
-use openmls::prelude::*;
 use openmls::prelude::tls_codec::{
     DeserializeBytes as TlsDeserializeBytes, Serialize as TlsSerialize,
 };
+use openmls::prelude::*;
 
 /// An opaque wrapper around an OpenMLS Credential.
 pub struct MlsCredential {

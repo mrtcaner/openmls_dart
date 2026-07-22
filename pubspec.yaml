@@ -15,8 +15,8 @@ dependencies:
   # SHA256 verification for native library downloads
   crypto: ^3.0.7
   # Build hooks for automatic native library download
-  hooks: ^1.0.0
-  code_assets: ^1.0.0
+  hooks: ^2.0.0
+  code_assets: ^1.2.1
 
 dev_dependencies:
   lints: ^6.0.0

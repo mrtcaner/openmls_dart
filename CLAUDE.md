@@ -282,39 +282,29 @@ AI_MODELS_TOKEN=xxx make update-changelog ARGS="--version v1.0.0"
 
 ## Storage Architecture
 
-This project exposes two separate storage authorities. An application must
-choose one authority for a given MLS state.
-
-### `MlsEngine` snapshot storage
-
-`MlsEngine` uses a snapshot pattern for MLS storage (vs Wire's 18+ entity tables
-with direct SQL per method).
+This fork exposes one storage authority: the caller. The removed `MlsEngine`
+and embedded SQLCipher/IndexedDB implementation must not be reintroduced without
+an explicit, reviewed architecture decision and a new breaking ABI release.
 
 ### How it works
 
 ```
-1. load_for_group(gid)  → DB query → Vec<(key, value)> → HashMap (initial + current clone)
+1. caller entries        → Vec<(key, value)> → HashMap (initial + current clone)
 2. OpenMLS operates      → reads/writes on `current` HashMap
-3. commit(provider)      → diff(initial, current) → upserts + deletes → DB write
+3. into_updates(provider)→ diff(initial, current) → complete mutation batch
 4. Drop                  → zeroize() all values in both HashMaps → memory freed
 ```
 
-**No MLS snapshot is held in memory between `MlsEngine` calls.** Only the
-`EncryptedDb` handle persists.
+No MLS snapshot is retained by Rust between calls.
 
 ### Key files
 
 | File | Purpose |
 |------|---------|
 | `rust/src/snapshot_storage.rs` | SnapshotStorageProvider (HashMap-based StorageProvider impl) |
-| `rust/src/encrypted_db.rs` | EncryptedDb (SQLCipher native, IDB+AES-GCM WASM) |
-| `rust/src/api/engine.rs` | MlsEngine (load → operate → commit cycle) |
 | `rust/src/api/storage.rs` | Caller-owned operation boundary (opaque entries → mutation batch) |
-
-### Native vs WASM loading
-
-- **Native (SQLCipher)**: Loads only target group's data + global data (key packages, signature keypairs). Other groups' data is NOT loaded.
-- **WASM (IndexedDB)**: Loads ALL entries (IDB has no WHERE clause). Same user/key trust boundary — no security impact.
+| `rust/src/api/support.rs` | Internal parsing/credential/group-loading helpers |
+| `rust/src/api/message.rs` | Standalone protocol-message routing helpers |
 
 ### Scalability
 
@@ -326,12 +316,12 @@ The ratchet tree is the only entry scaling with members (~500 bytes per member).
 - Both HashMaps zeroized on Drop (`snapshot_storage.rs`)
 - Security profile identical to Wire's direct-DB approach (both must hold plaintext while OpenMLS operates)
 
-### Why snapshot over Wire's multi-table approach
+### Why an opaque snapshot boundary
 
-1. **Only MLS** — no need for separate protocol tables (Wire also has Proteus + E2EI)
-2. **Decouples DB schema from OpenMLS internals** — far fewer migrations needed on upgrades
-3. **MLS data is small** — full group load is negligible for realistic group sizes
-4. **Simpler code** — one table, one load, one diff, one save
+1. It lets the application keep one encrypted database authority.
+2. It decouples the application schema from OpenMLS internals.
+3. It makes the application transaction the atomic commit/rollback boundary.
+4. It avoids a second database engine and its native dependencies.
 
 ### Caller-owned storage
 
@@ -341,19 +331,16 @@ not open a database or retain state. The host owns encryption at rest, serialize
 writes, atomic apply/discard, rollback, and backup policy. Keep this surface
 operation-scoped and do not decode or manufacture its opaque rows.
 
-The caller-owned API is deliberately smaller than `MlsEngine`. Before extending
-it, add an explicit operation and tests instead of attempting to emulate missing
-behavior by editing storage entries.
-
-### Database migrations
-
-Schema version tracked in `LATEST_SCHEMA_VERSION` constant (`encrypted_db.rs`). Migrations run automatically on `EncryptedDb::open()`. Use the `/add-db-migration` skill when changing storage schema or data format.
+Before extending the API, add an explicit operation and tests instead of
+attempting to emulate missing behavior by editing storage entries. A storage
+format change requires a reviewed version bump and migration contract for
+callers; there is no fork-owned database migration layer.
 
 ## FVM (Flutter Version Management)
 
 This project uses FVM for consistent Flutter/Dart versions.
 
-**Version:** Flutter 3.38.4
+**Version:** Flutter 3.44.6
 
 FVM is automatically installed by `make setup`.
 

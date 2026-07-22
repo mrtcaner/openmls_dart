@@ -4,7 +4,7 @@
 
 #### ✨ Highlights
 
-- **openmls_frb v1.5.5** — Rust FFI bindings
+- **openmls_frb v2.0.0** — lean caller-owned-storage ABI (**breaking**)
 
 ### Added
 
@@ -22,14 +22,22 @@
 
 ### Changed
 
+- Flutter host tests resolve the build-hook asset from Flutter's generated
+  `NativeAssetsManifest.json`; consumers no longer need an explicit native
+  library path.
+- Native Assets dependencies now use `code_assets` 1.2.x and `hooks` 2.x.
+- The hook declares `.skip_openmls_hook` only while that marker exists. Normal
+  builds no longer trigger hooks_runner's repeated "File modified during
+  build" retry.
+- Every platform archive includes the fork license and deterministic,
+  deduplicated native dependency attribution generated from `Cargo.lock`.
 - Snapshot storage now uses safe interior mutability and zeroizes Rust-owned
   values on replacement, deletion, validation failure, conversion failure, and
   drop.
 - Native release downloads and package metadata now point to this fork's public
   releases and remain checksum-verified.
-- Public documentation now distinguishes the Rust-owned `MlsEngine` database
-  from the caller-owned storage/transaction API, documents the 1.5.5 validation
-  guarantees and exact fork pin, and reports repository protection status
+- Public documentation and examples now describe only the supported
+  caller-owned storage/transaction API and report repository protection status
   accurately.
 - CI continues to calculate coverage on pull requests and publishes the README
   badge only after successful `main` runs, using a dedicated Gist token and the
@@ -40,10 +48,14 @@
 
 These caller-owned API changes are intentionally breaking and require a new
 matching native bridge release. They are tracked publicly in
-[`mrtcaner/openmls_dart#4`](https://github.com/mrtcaner/openmls_dart/issues/4).
+[`mrtcaner/openmls_dart#4`](https://github.com/mrtcaner/openmls_dart/issues/4)
+and [`#7`](https://github.com/mrtcaner/openmls_dart/issues/7).
 
 ### Removed
 
+- `MlsEngine`, the fork-owned encrypted database, SQLCipher/OpenSSL native
+  dependencies, and IndexedDB/WebCrypto storage dependencies. Standalone wire
+  parsers and all caller-owned `*WithStorage` operations remain supported.
 - Experimental expired-draft X-Wing support and its explicit libcrux provider.
   The public API now exposes only the three standard RustCrypto ciphersuites.
 

@@ -255,7 +255,12 @@ build:
 build-android:
 	@echo "Building Rust library for Android..."
 	@PLATFORM=$$($(DART) scripts/get_android_min_sdk.dart) && \
-		cd rust && $(CARGO_NDK) --platform $$PLATFORM build --release $(ARGS)
+		cd rust && if [ -n "$(ARGS)" ]; then \
+			$(CARGO_NDK) --platform $$PLATFORM build --release $(ARGS); \
+		else \
+			$(CARGO_NDK) --platform $$PLATFORM \
+				-t armeabi-v7a -t arm64-v8a -t x86_64 build --release; \
+		fi
 	@echo ""
 	@echo "Build complete! Library at: rust/target/<arch>/release/"
 
@@ -299,6 +304,11 @@ rust-format-files:
 
 rust-tree:
 	$(CARGO) tree --manifest-path rust/Cargo.toml $(ARGS)
+
+# Generate deterministic license/notice attribution for the complete locked
+# Cargo resolution. Release archives embed this file next to the native binary.
+third-party-notices:
+	@$(DART) scripts/generate_third_party_notices.dart $(ARGS)
 
 rust-audit:
 	$(CARGO_AUDIT) audit --file rust/Cargo.lock
@@ -383,6 +393,22 @@ release:
 
 test:
 	$(DART) test $(ARGS)
+
+# Run tests through Flutter's host test runner. This specifically exercises the
+# NativeAssetsManifest path used by Flutter applications on macOS/Linux/Windows.
+flutter-test:
+	$(FLUTTER) test $(ARGS)
+
+example-get:
+	cd example && $(FLUTTER) pub get
+	cd example_cli && $(DART) pub get
+
+example-test:
+	cd example && $(FLUTTER) test $(ARGS)
+
+example-analyze:
+	cd example && $(FLUTTER) analyze $(ARGS)
+	cd example_cli && $(DART) analyze $(ARGS)
 
 coverage:
 	$(FVM) dart test --coverage=coverage

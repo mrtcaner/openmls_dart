@@ -1,8 +1,8 @@
 //! SnapshotStorageProvider — HashMap-based OpenMLS StorageProvider.
 //!
-//! Loaded from an EncryptedDb snapshot, provides sync read/write/delete
+//! Loaded from caller-owned storage entries, provides sync read/write/delete
 //! on an in-memory HashMap. After OpenMLS operations, diff the initial
-//! vs current state to produce StorageUpdates for persistence.
+//! vs current state to produce StorageUpdates for the caller to persist.
 //!
 //! Key format matches MemoryStorage: `[LABEL || serde_json(key) || VERSION_BE_U16]`
 
@@ -12,7 +12,24 @@ use parking_lot::Mutex;
 use std::collections::HashMap;
 use zeroize::Zeroize;
 
-use crate::encrypted_db::StorageUpdates;
+/// Updates produced by diffing an MLS operation's input and output snapshots.
+pub(crate) struct StorageUpdates {
+    pub upserts: Vec<(Vec<u8>, Vec<u8>)>,
+    pub deletes: Vec<Vec<u8>>,
+}
+
+/// Labels for installation-global keys (not tied to a specific group).
+const GLOBAL_LABELS: &[&[u8]] = &[
+    b"KeyPackage",
+    b"Psk",
+    b"EncryptionKeyPair",
+    b"SignatureKeyPair",
+];
+
+/// Whether a storage key belongs to installation-global state.
+pub(crate) fn is_global_key(key: &[u8]) -> bool {
+    GLOBAL_LABELS.iter().any(|label| key.starts_with(label))
+}
 
 // ═══════════════════════════════════════════════════════════════
 // ERROR TYPE

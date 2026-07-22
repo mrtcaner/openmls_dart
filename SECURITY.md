@@ -1,395 +1,106 @@
 # Security
 
-## Architecture Overview
+## Scope
 
-This library uses **Flutter Rust Bridge (FRB)** with the **OpenMLS** Rust crate.
+This package is a Flutter Rust Bridge wrapper around OpenMLS. The fork is responsible for its FFI surface, operation sequencing, caller-storage boundary, native delivery hook, and release supply chain. OpenMLS and RustCrypto remain responsible for the underlying MLS and cryptographic implementations.
 
-**Key security properties:**
+Physical side channels, fault injection, hardware flaws, a compromised host, and reliable erasure from Dart’s garbage-collected heap are outside this wrapper’s guarantees.
 
-- **Memory safety** is handled by Rust's ownership system
-- **Cryptographic operations** are implemented in OpenMLS (with RustCrypto backend)
-- **No manual memory management** in Dart - FRB handles all cleanup automatically
-- **No `dispose()` calls needed** - Rust drops resources when they go out of scope (except `MlsEngine.close()` for deterministic key release)
+## Storage authority
 
-## Security Scope
+The fork has one storage model: the application owns persistence.
 
-### In Scope
+The `*WithStorage` functions reconstruct temporary OpenMLS state from caller-supplied opaque entries, perform one operation, and return a complete `MlsStorageBatch`. They do not open a database or retain a second durable copy. The former `MlsEngine`, SQLCipher, IndexedDB, and WebCrypto storage implementation are not part of the lean ABI.
 
-This package provides Dart bindings to openmls via Flutter Rust Bridge. The security scope covers:
+The caller must:
 
-- **Memory safety** of the FRB wrapper and the hand-written Rust in `rust/src/api/`
-- **Correct API usage** of the underlying openmls primitives
-- **Secret handling** across the FFI boundary (deterministic `dispose()`, keeping secrets in Rust where possible)
-- **Supply-chain integrity** of the prebuilt native binaries (build pipeline, fail-closed download verification, release/tag protections)
+- encrypt MLS entries at rest and protect its database key;
+- serialize operations for the same installation/group;
+- read from a consistent snapshot;
+- atomically apply the complete batch with the related application record, or discard both;
+- retain installation-global rows (`groupId == null`) and group rows without editing their bytes;
+- preserve and validate `mlsStorageFormatVersion()`;
+- protect against database rollback and stale backup restoration;
+- never decode, manufacture, or log opaque keys or values.
 
-### Out of Scope
+Snapshot values are zeroized in Rust when the temporary provider is dropped. Values also cross the FFI boundary, where Dart may copy them; Dart-side zeroization is defence in depth, not a guarantee.
 
-The core cryptography / functionality is implemented and maintained upstream in openmls — the algorithm implementations, their constant-time / side-channel resistance, and protocol design. Report those to the upstream project (see **Upstream Security** below).
+## Authenticated context and identity
 
-### Threat Model Limitations
+`addMembersWithStorage()` validates every supplied KeyPackage and requires its Basic Credential identity to match the corresponding trusted expected identity. It also authenticates caller-supplied AAD in the generated Commit.
 
-Out of scope for this wrapper:
+`processMessageWithStorage()` compares the message AAD with caller-supplied expected AAD before returning state changes. Derive expected identities and AAD from authenticated application/backend context, not untrusted client metadata.
 
-- **Physical side-channels** (power analysis, electromagnetic emissions)
-- **Fault injection** (Rowhammer, voltage/clock glitching)
-- **Hardware vulnerabilities**
-- **Compromised host** — secrets that cross into Dart's GC heap cannot be reliably erased
+An MLS Welcome does not carry the same application AAD field. The application must bind a Welcome to authenticated bootstrap metadata—conversation identity, group incarnation, intended recipient/installation, and the related accepted membership transition—before joining.
 
-## Security Considerations
+These checks establish cryptographic binding; they do not replace application authorization or abuse policy.
 
-### A: Memory Safety (Rust-handled)
+## Ordering and recovery
 
-With FRB, memory management is handled automatically:
+MLS Commits are ordered epoch transitions. Process them in order. If a required Commit is unavailable after the application’s replay/retention window, later ciphertext cannot reconstruct the missing epoch. Terminate that group incarnation and bootstrap a new one.
 
-```dart
-// FRB Architecture - no cleanup needed
-final keyPair = MlsSignatureKeyPair.generate(ciphersuite: ciphersuite);
-final signerBytes = serializeSigner(
-  ciphersuite: ciphersuite,
-  privateKey: keyPair.privateKey(),
-  publicKey: keyPair.publicKey(),
-);
-// keyPair is automatically cleaned up when no longer referenced
-```
+`createMessageWithStorage()` advances sender state in its returned batch. If the caller commits that batch but terminally rejects the ciphertext, later messages can only bridge the generation gap within the group’s sender-ratchet limits. Consumers must test both the configured boundary and the first failure beyond it.
 
-Rust's ownership system ensures:
-- No use-after-free
-- No double-free
-- No memory leaks
-- Deterministic cleanup
+Do not replay successful mutation batches, process the same message twice, or restore stale MLS rows independently of related application state.
 
-### B: Key Material Handling
+## Key handling
 
-Never expose key material in logs or errors:
+Never log signer bytes, private keys, storage values, plaintext, or derived secrets. Keep Dart-side copies short-lived. `SecureBytes` and `zeroize()` can reduce exposure but cannot prevent garbage-collector copies.
 
-```dart
-// WRONG - exposes key material
-print('Signer key: $signerBytes');
-throw Exception('Failed with key: $keyBytes');
+The APIs returning highest-risk material include:
 
-// CORRECT - no key material in logs
-print('Generated new signing key pair');
-throw Exception('Key operation failed');
-```
+- `MlsSignatureKeyPair.privateKey()`;
+- `serializeSigner()`;
+- `MlsStorageEntry.value` and every mutation batch.
 
-### C: Encrypted Storage (MlsEngine)
+X.509 construction/deserialization does not validate certificate chains, expiration, revocation, or trust anchors. Applications must perform that validation before trusting such credentials.
 
-`MlsEngine` stores all MLS state in an encrypted database. Encryption is handled automatically:
+## Native delivery
 
-| Platform | Backend | Encryption |
-|----------|---------|------------|
-| Native | SQLCipher | AES-256 full-database encryption |
-| Web (WASM) | IndexedDB | AES-256-GCM per-value encryption via `crypto.subtle` |
+The build hook downloads the exact `openmls_frb-<version>` archive selected by `rust/Cargo.toml`. It verifies the archive against the release checksum and fails closed when a checksum cannot be obtained. `OPENMLS_ALLOW_UNVERIFIED_DOWNLOAD=1` is only a legacy escape hatch and must not be used for production builds.
 
-```dart
-// Provide a 32-byte encryption key. Store it in platform secure storage
-// (Keychain, Android Keystore, flutter_secure_storage).
-final engine = await MlsEngine.create(
-  dbPath: 'mls_data.db',    // file path on native, IDB name on web
-  encryptionKey: myKey,       // 32-byte AES-256 key
-);
+Every release archive:
 
-// Use ":memory:" for ephemeral storage (testing only, data lost on drop)
-final testEngine = await MlsEngine.create(
-  dbPath: ':memory:',
-  encryptionKey: testKey,
-);
-```
+- is built by the all-platform GitHub Actions matrix;
+- has a SHA256 entry;
+- is covered by GitHub Artifact Attestations/Sigstore provenance;
+- contains deterministic `THIRD_PARTY_NOTICES.txt` attribution.
 
-**Engine lifecycle:**
-
-```dart
-// Close the engine to release the DB connection and encryption key resources.
-// After close, all operations fail immediately with "MlsEngine is closed".
-await engine.close();
-assert(engine.isClosed()); // synchronous check
-
-// Re-create from platform secure storage on unlock
-engine = await MlsEngine.create(dbPath: 'mls_data.db', encryptionKey: myKey);
-```
-
-`close()` is idempotent (safe to call multiple times) and provides deterministic resource release — the app controls exactly when the DB connection is closed, rather than relying on Dart's garbage collector. This is useful for screen lock / app background scenarios where encryption key material should be released from memory as soon as possible.
-
-**Note:** `close()` does not guarantee cryptographic zeroization of key material. On native, SQLCipher manages its own key memory; on WASM, the `CryptoKey` becomes eligible for browser GC. See [Known Limitations](#known-limitations).
-
-**Key management requirements:**
-
-- **Secure key storage** - the 32-byte encryption key must be stored in platform secure storage, not in plain files
-- **Access control** - only the app should read/write MLS state
-- **Backup considerations** - MLS state includes forward-secrecy keys; restoring old state breaks protocol guarantees
-
-### D: Caller-Owned Storage Boundary
-
-The top-level `*WithStorage` functions do not encrypt or persist MLS state.
-They accept opaque `MlsStorageEntry` values for one operation and return an
-`MlsStorageBatch` only when the operation succeeds. The host application must:
-
-- encrypt opaque values at rest and protect its database key
-- serialize operations for the same group
-- atomically apply the complete batch with related application state, or discard
-  both
-- preserve both global and group-scoped entries and the exact
-  `mlsStorageFormatVersion()` value
-- derive required application/Commit AAD and receive-side expected AAD from
-  authenticated application context
-- never decode, edit, log, or manufacture opaque keys and values
-- treat backups and rollback as security-sensitive MLS state
-
-Release `openmls_frb-1.5.4` requires the caller to supply expected authenticated
-data when processing a message and expected Basic Credential identities when
-adding KeyPackages. A mismatch fails before a mutation batch is returned. These
-checks bind transport context and claimed identity to the MLS operation; they do
-not replace application authorization.
-
-Opaque entries and batches cross into Dart memory. Dart's garbage collector may
-copy them, so reliable zeroization cannot be guaranteed. Minimize their lifetime
-and avoid unnecessary copies.
-
-### E: Initialization
-
-Always initialize the library before use:
-
-```dart
-void main() async {
-  await Openmls.init();  // Initialize FRB runtime
-  runApp(MyApp());
-}
-```
-
-### F: Group State Integrity
-
-MLS group state must be consistent. Avoid:
-
-- Processing the same message twice (replay)
-- Skipping messages (causes epoch mismatch)
-- Restoring old group state from backup (breaks forward secrecy)
-
-The library returns errors for protocol violations. Handle them appropriately rather than silently ignoring.
-
-## Supply Chain Security
-
-- **SHA256 Checksums (fail-closed)**: pre-built native libraries are verified against a checksums file published in the same GitHub Release. Verification is **fail-closed** — if the checksums cannot be fetched or lack an entry for the archive, the build hook (`hook/build.dart`) **aborts** rather than loading an unverified binary. The escape hatch `OPENMLS_ALLOW_UNVERIFIED_DOWNLOAD=1` exists only for older releases with no checksums file.
-- **Dependency Auditing**: `cargo audit` (`make rust-audit`) and `cargo deny` (`make rust-deny`) run in CI. `cargo-deny` enforces RustSec advisories, an allowed-license list, and a source allow-list restricted to crates.io and explicitly-listed git repositories (see `rust/deny.toml`).
-
-- **Build Provenance (authenticity)**: SHA256 verifies *integrity* but not *authenticity* — the checksums file ships in the same release as the archive. To break that self-trust, every release archive is attested with [GitHub Artifact Attestations](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations) (Sigstore, SLSA Build L2): CI signs a provenance statement proving each archive was built by this repository's tag-triggered `build-openmls.yml` workflow from a specific commit. Verify a downloaded archive with `gh attestation verify openmls_frb-<version>-<platform>.tar.gz --repo mrtcaner/openmls_dart`; for fully offline verification use the attached `openmls_frb-<version>.sigstore.jsonl` bundle with `--bundle` and a pre-fetched `gh attestation trusted-root`.
-
-> **Known limitation:** attestation verification is manual — the build hook verifies SHA256 only (there is no Sigstore/DSSE implementation for Dart). Automatic (opt-in) verification via an installed `gh` CLI is a possible future hardening step.
-
-### Release & build-trigger protection
-
-The native binaries above are published by `build-openmls.yml`, triggered by an
-`openmls_frb-*` tag push or by manual dispatch. The repository contains intended
-ruleset definitions and a setup command for restricting tag creation and adding
-a required-reviewer gate to the `native-build` environment.
-
-**Current status (verified 2026-07-22):** those controls are not active on the
-live fork. GitHub reports no repository rulesets, and the `native-build`
-environment has no protection rules, required reviewers, or deployment-branch
-policy. Signed release commits/tags, checksum verification, and artifact
-attestations remain useful controls, but they do not prevent an authorized
-writer from triggering an unreviewed native release.
-
-Do not describe the release path as protected until the live settings have been
-applied and verified. Setup, verification, rollback, and residual risks are in
-[`.github/rulesets/README.md`](.github/rulesets/README.md).
-
-CI workflows run with a least-privilege `GITHUB_TOKEN` (`contents: read` by default; only the release-publishing jobs get the specific writes they need), third-party actions are pinned to commit SHAs, and pub.dev publishing uses OIDC — no long-lived publishing tokens exist.
-
-## Build Security
-
-- **Reproducible Builds**: CI builds are automated and reproducible
-- **Minimal Dependencies**: We keep dependencies minimal and well-audited
-- **LTO and Stripping**: Release builds use Link-Time Optimization and symbol stripping
-- **Hardened profile**: the wrapper crate is compiled with `overflow-checks` (integer overflow panics instead of wrapping) and `unsafe_code = "deny"` on hand-written code
-- **Static Analysis**: Dart (`dart analyze --fatal-infos`) and Rust (`cargo clippy`, warnings treated as errors) run in CI
-
-## What's Handled by Rust/FRB
-
-These concerns are handled automatically by the architecture:
-
-| Concern | Handled By |
-|---------|------------|
-| FFI pointer management | Rust ownership |
-| Resource cleanup | Rust drop semantics |
-| Double-free prevention | Rust borrow checker |
-| Buffer overflow prevention | Rust bounds checking |
-| Use-after-free | Rust ownership |
-| Cryptographic operations | OpenMLS + RustCrypto |
-| Key zeroization | Rust (zeroize crate) |
-| Encryption at rest (native) | SQLCipher |
-| Encryption at rest (WASM) | Web Crypto API (`crypto.subtle`) |
-| Key protection (WASM) | Non-extractable `CryptoKey` |
-
-## Zeroing Sensitive Data
-
-### SecureBytes wrapper (automatic zeroing)
-
-```dart
-// Wrap takes ownership - no extra copy
-final secureData = SecureBytes.wrap(sensitiveBytes);
-try {
-  // ... use secureData.bytes ...
-} finally {
-  secureData.dispose(); // Immediate zeroing (recommended)
-}
-
-// Copy constructor - original NOT zeroed (caller responsible)
-final secureCopy = SecureBytes(sensitiveBytes);
-sensitiveBytes.zeroize(); // Zero the original yourself
-```
-
-### Manual zeroing extension
-
-```dart
-final sensitiveList = Uint8List.fromList([...]);
-try {
-  // ... use sensitiveList ...
-} finally {
-  sensitiveList.zeroize(); // Zero all bytes
-}
-```
-
-### APIs that Return Sensitive Data
-
-The following APIs return data that should be zeroized after use (via `SecureBytes.wrap()` or `.zeroize()`):
-
-| API | Returns | Sensitivity |
-|-----|---------|-------------|
-| `MlsSignatureKeyPair.privateKey()` | Private signing key | HIGH — long-term key material |
-| `serializeSigner()` | JSON with private key | HIGH — contains private key bytes |
-| `engine.exportSecret()` | MLS exporter secret | HIGH — derived secret |
-| `engine.getPastResumptionPsk()` | Resumption PSK | HIGH — pre-shared key |
-| Caller-owned `MlsStorageEntry.value` / mutation batches | Opaque MLS state | HIGH — may contain long-lived and epoch secrets |
-
-These return `Uint8List` or `List<int>` due to FRB signature constraints. Callers must zeroize.
-
-### Limitations
-
-- Dart's garbage collector may copy data before zeroing occurs
-- These utilities provide defence-in-depth, not absolute security guarantees
-- For critical secrets, prefer keeping them in Rust (opaque types with `zeroize` crate)
-
-## Web (WASM) Security
-
-### Web Crypto API
-
-On WASM, the database encryption key is imported as a **non-extractable `CryptoKey`** via `crypto.subtle.importKey()`. The raw key bytes are zeroized from WASM memory immediately after import.
-
-**What this protects against:**
-- Key extraction via `WebAssembly.Memory` inspection (key is not in WASM linear memory)
-- Key extraction via JavaScript API (`crypto.subtle.exportKey()` fails for non-extractable keys)
-
-**What this does NOT protect against:**
-- Monkey-patching `crypto.subtle.encrypt/decrypt` to intercept plaintext (requires XSS)
-- Browser extensions with page access
-- Browser-level attacks (compromised browser binary)
-
-### Web Deployment Recommendations
-
-Since `crypto.subtle` protects the key but not the plaintext at the API boundary, preventing XSS is critical:
-
-1. **Content Security Policy (CSP)** - Enable strict CSP headers:
-   ```
-   Content-Security-Policy: script-src 'self'; object-src 'none';
-   ```
-2. **HTTPS** - Required for `crypto.subtle` (also works on `localhost` for development)
-3. **Minimize third-party scripts** - Each script on the page is a potential attack vector
-4. **Subresource Integrity (SRI)** - Pin hashes of loaded scripts
-
-### Secure Context Requirement
-
-`crypto.subtle` requires a [secure context](https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts) (HTTPS or localhost). The library returns a clear error if `crypto.subtle` is unavailable.
-
-## Known Limitations
-
-1. **Dart VM memory:** Dart's garbage collector may copy data before Rust can zero it. This is a platform limitation. OpenMLS uses the `zeroize` crate for sensitive data on the Rust side.
-
-2. **In-memory storage:** `MlsEngine.create(dbPath: ':memory:', ...)` creates an ephemeral in-memory database. All state is lost when the engine is dropped. Use a file path in production.
-
-3. **Minimal `unsafe` code:** The wrapper layer has one `unsafe` usage: `Send + Sync` impl for `WasmCryptoKey` (wrapping `web_sys::CryptoKey`), which is safe because WASM is single-threaded. All other `unsafe` usage is in upstream OpenMLS, RustCrypto, and `web-sys` crates.
-
-4. **Concurrency:** There is no internal synchronization for concurrent access to the same MLS group. Callers must serialize operations on the same group (e.g., process messages in order from a single async task).
-
-5. **Storage atomicity:** `MlsEngine` snapshot commits are not transactional. If
-   the app crashes mid-operation, storage may be left inconsistent. Its database
-   migrations are transactional. The caller-owned API instead returns one
-   mutation batch; atomic application of that complete batch is the host's
-   responsibility.
-
-6. **`test-utils` feature dependency:** The `openmls` and `openmls_basic_credential` crates are compiled with the `test-utils` feature enabled. This is required for `SignatureKeyPair::private()`, which powers the `privateKey()` API. The feature only enables accessor methods — no test-only code paths are activated in production.
-
-7. **Automatic commit merging:** `processMessage` and `processMessageWithInspect` automatically merge staged commits after processing. There is no mechanism to inspect a commit and then reject it — this is by design, as MLS requires commits to be applied in order. `processMessageWithInspect` returns commit details (adds, removes, updates) for logging/UI purposes.
-
-8. **Unconditional proposal acceptance:** `flexibleCommit` and `joinGroupExternalCommitV2` accept all pending proposals unconditionally (the internal proposal filter callback returns `true` for all proposals). Applications should validate proposals at the application layer before calling commit operations, or use `removePendingProposal` to reject unwanted proposals first.
-
-9. **X.509 certificate chain validation:** The `MlsCredential.x509()` function does not validate certificate chains (expiration, signatures, revocation, trust anchors). The application layer must validate X.509 chains before use.
-
-10. **serde_json intermediate buffers:** During signer serialization/deserialization, `serde_json` creates temporary `Vec<u8>` buffers containing sensitive data. These are dropped without zeroization. This is a platform limitation — Rust's allocator does not guarantee memory is not copied, so zeroizing every intermediate buffer provides limited benefit.
-
-11. **Web Crypto plaintext visibility:** On WASM, while the encryption key is protected as a non-extractable `CryptoKey`, plaintext is briefly visible during `crypto.subtle.encrypt/decrypt` calls. An attacker with XSS could monkey-patch these methods. Mitigate with strict CSP headers (see [Web Deployment Recommendations](#web-deployment-recommendations)).
-
-## Code Review Security Checklist
-
-When reviewing code changes, verify:
-
-- [ ] No `':memory:'` databases in production code
-- [ ] No key material in logs or error messages
-- [ ] `Openmls.init()` called before any operations
-- [ ] `engine.close()` called on screen lock / app background
-- [ ] Encryption key stored in platform secure storage (not hardcoded)
-- [ ] Error handling doesn't leak sensitive information
-- [ ] MLS protocol messages processed in order
-- [ ] Sensitive data in Dart uses `SecureBytes` or `.zeroize()` extension
-- [ ] Caller-owned storage batches are encrypted, serialized, and committed atomically
-- [ ] Required AAD and Basic Credential identities come from trusted application context
-- [ ] No hardcoded keys or secrets
-- [ ] Web deployments use strict CSP headers
-
-## Fuzzing
-
-A `cargo-fuzz` harness lives under `rust/fuzz/`. Add one target per byte-parsing
-entry point that handles untrusted input (deserializers, message parsers,
-decryptors). A `Fuzz` workflow builds and runs every target on `rust/**` pull
-requests and on a weekly schedule.
-
-Seed the corpus with valid inputs so fuzzing starts from structurally-correct
-data instead of discovering your formats blind: extend
-`rust/fuzz/examples/gen_corpus.rs` whenever you add a target. CI regenerates
-the corpus (`make fuzz-seed`) before every run.
+Verify an archive with:
 
 ```bash
-make setup-fuzz                          # one-time: nightly toolchain + cargo-fuzz
-make fuzz-list                           # list targets
-make fuzz-seed                           # generate seed corpus under rust/fuzz/corpus/
-make fuzz ARGS="mls_message -- -max_total_time=60"
+gh attestation verify openmls_frb-<version>-<platform>.tar.gz \
+  --repo mrtcaner/openmls_dart
 ```
 
-## Upstream Security
+The repository contains ruleset/environment definitions, but live GitHub protection must be verified rather than assumed. See [`.github/rulesets/README.md`](.github/rulesets/README.md).
 
-This package wraps OpenMLS. For security issues in the underlying library:
+## Build hardening
 
-- Check the upstream repository: [openmls/openmls](https://github.com/openmls/openmls)
-- Security advisories may be published there first
+- Release builds use LTO, size optimization, stripping, and overflow checks for hand-written wrapper code.
+- Hand-written Rust denies unsafe code; generated FRB code has the explicit exception.
+- `make rust-audit` and `make rust-deny` check advisories, licenses, and sources.
+- `make rust-clippy` treats warnings as errors.
+- Untrusted wire parsers have cargo-fuzz targets under `rust/fuzz/`.
 
-## Reporting a Vulnerability
+## Web
 
-If you discover a security vulnerability, please report it responsibly:
+The Web build exposes the same caller-owned storage API through WASM. This fork does not encrypt IndexedDB or persist MLS state in the browser. The Web application owns storage encryption and must also use HTTPS, a strict Content Security Policy, and minimal trusted scripts to reduce XSS exposure.
 
-1. **Do NOT** open a public GitHub issue for security vulnerabilities
-2. Use [GitHub's private vulnerability reporting](https://github.com/mrtcaner/openmls_dart/security/advisories/new) to report the issue
-3. Include as much detail as possible:
-   - Description of the vulnerability
-   - Steps to reproduce
-   - Potential impact
-   - Suggested fix (if any)
+## Review checklist
 
-## Response Timeline
+- No secrets, storage values, plaintext, or keys in logs/errors.
+- Same-group operations are serialized.
+- Batches and related application records commit atomically.
+- Expected AAD and credential identities come from trusted context.
+- Commit replay/recovery and group-incarnation replacement are defined.
+- Terminally rejected sends are tested at sender-ratchet limits.
+- Exact fork commit and native archive version are pinned.
+- All six platform families remain in the release matrix.
+- Release checksums, provenance, and notices are present.
 
-- **Acknowledgment**: Within 48 hours
-- **Initial Assessment**: Within 1 week
-- **Fix Development**: Depends on severity and complexity
-- **Public Disclosure**: Coordinated with reporter after fix is available
+## Reporting
 
-## Security Updates
+Do not open a public issue for a vulnerability. Use [GitHub private vulnerability reporting](https://github.com/mrtcaner/openmls_dart/security/advisories/new) with reproduction details, affected versions/commits, platform, and impact.
 
-Subscribe to releases on this repository to receive notifications about security updates.
+For defects in OpenMLS itself, also consult the [upstream OpenMLS repository](https://github.com/openmls/openmls).

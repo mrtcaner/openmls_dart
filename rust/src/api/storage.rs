@@ -11,11 +11,12 @@ use openmls::prelude::*;
 use zeroize::Zeroize;
 
 use super::config::MlsGroupConfig;
-use super::engine::{build_credential_with_key, load_group, mls_message_from_exact_bytes};
 use super::keys::signer_from_bytes;
+use super::support::{build_credential_with_key, load_group, mls_message_from_exact_bytes};
 use super::types::{MlsCiphersuite, MlsProposalType, ProcessedMessageType, ciphersuite_to_native};
-use crate::encrypted_db::{StorageUpdates, is_global_key};
-use crate::snapshot_storage::{SnapshotOpenMlsProvider, SnapshotStorageProvider};
+use crate::snapshot_storage::{
+    SnapshotOpenMlsProvider, SnapshotStorageProvider, StorageUpdates, is_global_key,
+};
 
 /// Version of the opaque OpenMLS key/value representation used by this API.
 ///

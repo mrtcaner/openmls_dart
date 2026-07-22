@@ -6,6 +6,8 @@ import 'dart:isolate';
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+import 'native_asset_manifest.dart';
+
 /// Whether we're running on web.
 const bool kIsWeb = false;
 
@@ -15,6 +17,7 @@ int getIsolateId() => Isolate.current.hashCode;
 /// Try to load library via native assets build hook.
 ///
 /// The build hook (hook/build.dart) places the library in predictable locations:
+/// - Flutter host tests: `UNIT_TEST_ASSETS/NativeAssetsManifest.json`
 /// - JIT mode (dart run): .dart_tool/lib/
 /// - AOT mode (dart build cli): bundle/lib/ (relative to executable)
 ///
@@ -23,8 +26,27 @@ int getIsolateId() => Isolate.current.hashCode;
 /// resolve the actual file path ourselves.
 // ignore: avoid_unused_constructor_parameters
 ExternalLibrary? tryLoadNativeAsset(String assetId) {
-  // The assetId parameter is kept for API compatibility but not used.
-  // We know where the build hook puts the library.
+  // Flutter builds a host-native-assets manifest for `flutter test`, but the
+  // FRB dynamic loader cannot resolve a package asset ID on its own. Resolve
+  // the exact absolute path Flutter generated instead of requiring callers to
+  // pass a build-directory path.
+  final testAssetsDirectory = Platform.environment['UNIT_TEST_ASSETS'];
+  if (Platform.environment['FLUTTER_TEST'] == 'true' &&
+      testAssetsDirectory != null &&
+      testAssetsDirectory.isNotEmpty) {
+    final manifest = File('$testAssetsDirectory/NativeAssetsManifest.json');
+    if (manifest.existsSync()) {
+      try {
+        final path = resolveFlutterTestNativeAssetPath(
+          manifest.readAsStringSync(),
+          assetId,
+        );
+        if (path != null && File(path).existsSync()) {
+          return ExternalLibrary.open(path);
+        }
+      } catch (_) {}
+    }
+  }
 
   final libraryName = getLibraryName();
 

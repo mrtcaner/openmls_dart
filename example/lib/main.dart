@@ -1,86 +1,84 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:openmls/openmls.dart';
 
-import 'demos/advanced_groups_demo.dart';
-import 'demos/advanced_proposals_demo.dart';
-import 'demos/groups_demo.dart';
-import 'demos/keys_demo.dart';
-import 'demos/proposals_demo.dart';
-import 'demos/state_demo.dart';
+void main() => runApp(const MyApp());
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) => MaterialApp(
+    title: 'openmls Example',
+    theme: ThemeData(
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+      useMaterial3: true,
+    ),
+    home: const _CallerStorageDemo(),
+  );
 }
 
-class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  bool _isInitialized = false;
+class _CallerStorageDemo extends StatefulWidget {
+  const _CallerStorageDemo();
 
   @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 6, vsync: this);
-    _initOpenmls();
-  }
+  State<_CallerStorageDemo> createState() => _CallerStorageDemoState();
+}
 
-  Future<void> _initOpenmls() async {
-    await Openmls.init();
-    setState(() => _isInitialized = true);
+class _CallerStorageDemoState extends State<_CallerStorageDemo> {
+  String _status = 'Ready';
+
+  Future<void> _createKeyPackage() async {
+    setState(() => _status = 'Creating…');
+    try {
+      await Openmls.init();
+      const suite = MlsCiphersuite.mls128DhkemX25519Aes128GcmSha256Ed25519;
+      final keyPair = MlsSignatureKeyPair.generate(ciphersuite: suite);
+      final signer = serializeSigner(
+        ciphersuite: suite,
+        privateKey: keyPair.privateKey(),
+        publicKey: keyPair.publicKey(),
+      );
+      final result = await createKeyPackageWithStorage(
+        ciphersuite: suite,
+        signerBytes: signer,
+        credentialIdentity: utf8.encode('example-installation'),
+        signerPublicKey: keyPair.publicKey(),
+        storageEntries: const [],
+        storageFormatVersion: mlsStorageFormatVersion(),
+      );
+      setState(
+        () => _status =
+            'Created ${result.keyPackageBytes.length} bytes and '
+            '${result.storageBatch.upserts.length} caller-owned mutations.',
+      );
+    } catch (error) {
+      setState(() => _status = 'Failed: $error');
+    }
   }
 
   @override
-  void dispose() {
-    _tabController.dispose();
-    Openmls.cleanup();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'openmls Example',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('openmls Example'),
-          centerTitle: true,
-          bottom: TabBar(
-            controller: _tabController,
-            isScrollable: true,
-            tabs: const [
-              Tab(icon: Icon(Icons.key), text: 'Keys'),
-              Tab(icon: Icon(Icons.group), text: 'Groups'),
-              Tab(icon: Icon(Icons.info_outline), text: 'State'),
-              Tab(icon: Icon(Icons.send), text: 'Proposals'),
-              Tab(icon: Icon(Icons.group_work), text: 'Adv Groups'),
-              Tab(icon: Icon(Icons.tune), text: 'Adv Proposals'),
-            ],
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('openmls Example')),
+    body: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'This example creates one KeyPackage without opening a database. '
+            'A real app atomically stores the returned opaque mutation batch.',
           ),
-        ),
-        body: _isInitialized
-            ? TabBarView(
-                controller: _tabController,
-                children: const [
-                  KeysDemoTab(),
-                  GroupsDemoTab(),
-                  StateDemoTab(),
-                  ProposalsDemoTab(),
-                  AdvancedGroupsDemoTab(),
-                  AdvancedProposalsDemoTab(),
-                ],
-              )
-            : const Center(child: CircularProgressIndicator()),
+          const SizedBox(height: 24),
+          FilledButton(
+            onPressed: _createKeyPackage,
+            child: const Text('Create KeyPackage'),
+          ),
+          const SizedBox(height: 16),
+          Text(_status),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }
