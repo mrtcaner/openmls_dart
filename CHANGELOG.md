@@ -4,7 +4,7 @@
 
 #### ✨ Highlights
 
-- **openmls_frb v1.5.3** — Rust FFI bindings
+- **openmls_frb v1.5.4** — Rust FFI bindings
 
 ### Added
 
