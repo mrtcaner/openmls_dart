@@ -24,6 +24,13 @@
   drop.
 - Native release downloads and package metadata now point to this fork's public
   releases and remain checksum-verified.
+- Public documentation now distinguishes the Rust-owned `MlsEngine` database
+  from the caller-owned storage/transaction API, documents the 1.5.4 validation
+  guarantees and exact fork pin, and reports repository protection status
+  accurately.
+- CI continues to calculate coverage but no longer attempts to publish an
+  unconfigured Gist badge. Badge publication remains opt-in after its token,
+  Gist ID, and README badge are configured together.
 
 ### Removed
 

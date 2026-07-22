@@ -1,16 +1,13 @@
-# example
+# Flutter example
 
-A new Flutter project.
+This app demonstrates the Rust-owned `MlsEngine` API across the package's
+supported Flutter platforms. Its screens cover group lifecycle, messages,
+proposals, commits, queries, and advanced operations.
 
-## Getting Started
+From the repository root, prepare dependencies and native code with `make
+setup` and `make build`. Use `make build-example-web` for the JavaScript Web
+build. The package's `flutter build web --wasm` limitation also applies here.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+For the operation-scoped caller-owned storage boundary, see
+[`test/external_storage_test.dart`](../test/external_storage_test.dart); this
+Flutter example intentionally uses only one storage authority.

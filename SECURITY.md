@@ -118,7 +118,32 @@ engine = await MlsEngine.create(dbPath: 'mls_data.db', encryptionKey: myKey);
 - **Access control** - only the app should read/write MLS state
 - **Backup considerations** - MLS state includes forward-secrecy keys; restoring old state breaks protocol guarantees
 
-### D: Initialization
+### D: Caller-Owned Storage Boundary
+
+The top-level `*WithStorage` functions do not encrypt or persist MLS state.
+They accept opaque `MlsStorageEntry` values for one operation and return an
+`MlsStorageBatch` only when the operation succeeds. The host application must:
+
+- encrypt opaque values at rest and protect its database key
+- serialize operations for the same group
+- atomically apply the complete batch with related application state, or discard
+  both
+- preserve both global and group-scoped entries and the exact
+  `mlsStorageFormatVersion()` value
+- never decode, edit, log, or manufacture opaque keys and values
+- treat backups and rollback as security-sensitive MLS state
+
+Release `openmls_frb-1.5.4` requires the caller to supply expected authenticated
+data when processing a message and expected Basic Credential identities when
+adding KeyPackages. A mismatch fails before a mutation batch is returned. These
+checks bind transport context and claimed identity to the MLS operation; they do
+not replace application authorization.
+
+Opaque entries and batches cross into Dart memory. Dart's garbage collector may
+copy them, so reliable zeroization cannot be guaranteed. Minimize their lifetime
+and avoid unnecessary copies.
+
+### E: Initialization
 
 Always initialize the library before use:
 
@@ -129,7 +154,7 @@ void main() async {
 }
 ```
 
-### E: Group State Integrity
+### F: Group State Integrity
 
 MLS group state must be consistent. Avoid:
 
@@ -150,12 +175,21 @@ The library returns errors for protocol violations. Handle them appropriately ra
 
 ### Release & build-trigger protection
 
-The native binaries above are published by `build-openmls.yml`, triggered by a `openmls_frb-*` tag push or by manual dispatch. Two controls restrict who can cause a publish, mirroring the `pub.dev` environment that gates the pub.dev publish:
+The native binaries above are published by `build-openmls.yml`, triggered by an
+`openmls_frb-*` tag push or by manual dispatch. The repository contains intended
+ruleset definitions and a setup command for restricting tag creation and adding
+a required-reviewer gate to the `native-build` environment.
 
-- **Tag protection** — a repository ruleset restricts creating, moving, and deleting **all tags** to Admins/Maintainers (and requires them signed), so a plain `write` collaborator cannot mint a release tag (`openmls_frb-*` / `v*`) or any other tag.
-- **Approval gate** — the publishing job runs in the `native-build` environment, whose required reviewers must approve before any binary is released. Unlike the tag ruleset, this also covers the `workflow_dispatch` path.
+**Current status (verified 2026-07-22):** those controls are not active on the
+live fork. GitHub reports no repository rulesets, and the `native-build`
+environment has no protection rules, required reviewers, or deployment-branch
+policy. Signed release commits/tags, checksum verification, and artifact
+attestations remain useful controls, but they do not prevent an authorized
+writer from triggering an unreviewed native release.
 
-Setup, the exact `gh` commands to apply / verify / roll back, and residual risks are in [`.github/rulesets/README.md`](.github/rulesets/README.md).
+Do not describe the release path as protected until the live settings have been
+applied and verified. Setup, verification, rollback, and residual risks are in
+[`.github/rulesets/README.md`](.github/rulesets/README.md).
 
 CI workflows run with a least-privilege `GITHUB_TOKEN` (`contents: read` by default; only the release-publishing jobs get the specific writes they need), third-party actions are pinned to commit SHAs, and pub.dev publishing uses OIDC — no long-lived publishing tokens exist.
 
@@ -223,6 +257,7 @@ The following APIs return data that should be zeroized after use (via `SecureByt
 | `serializeSigner()` | JSON with private key | HIGH — contains private key bytes |
 | `engine.exportSecret()` | MLS exporter secret | HIGH — derived secret |
 | `engine.getPastResumptionPsk()` | Resumption PSK | HIGH — pre-shared key |
+| Caller-owned `MlsStorageEntry.value` / mutation batches | Opaque MLS state | HIGH — may contain long-lived and epoch secrets |
 
 These return `Uint8List` or `List<int>` due to FRB signature constraints. Callers must zeroize.
 
@@ -273,7 +308,11 @@ Since `crypto.subtle` protects the key but not the plaintext at the API boundary
 
 4. **Concurrency:** There is no internal synchronization for concurrent access to the same MLS group. Callers must serialize operations on the same group (e.g., process messages in order from a single async task).
 
-5. **Storage atomicity:** Regular storage operations (snapshot commit) are not transactional. If the app crashes mid-operation, storage may be left in an inconsistent state. However, database **migrations** are transactional — each migration runs in its own SQL transaction (native) or IDB transaction (WASM), with the version written atomically inside the same transaction. A failed migration is fully rolled back.
+5. **Storage atomicity:** `MlsEngine` snapshot commits are not transactional. If
+   the app crashes mid-operation, storage may be left inconsistent. Its database
+   migrations are transactional. The caller-owned API instead returns one
+   mutation batch; atomic application of that complete batch is the host's
+   responsibility.
 
 6. **`test-utils` feature dependency:** The `openmls` and `openmls_basic_credential` crates are compiled with the `test-utils` feature enabled. This is required for `SignatureKeyPair::private()`, which powers the `privateKey()` API. The feature only enables accessor methods — no test-only code paths are activated in production.
 
@@ -299,6 +338,8 @@ When reviewing code changes, verify:
 - [ ] Error handling doesn't leak sensitive information
 - [ ] MLS protocol messages processed in order
 - [ ] Sensitive data in Dart uses `SecureBytes` or `.zeroize()` extension
+- [ ] Caller-owned storage batches are encrypted, serialized, and committed atomically
+- [ ] Expected AAD and Basic Credential identities come from trusted application context
 - [ ] No hardcoded keys or secrets
 - [ ] Web deployments use strict CSP headers
 
