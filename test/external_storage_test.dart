@@ -119,6 +119,7 @@ void main() {
           signerBytes: alice.signerBytes,
           keyPackagesBytes: [bobKeyPackage.keyPackageBytes],
           expectedCredentialIdentities: [alice.credentialIdentity],
+          aad: utf8.encode('credential-check/add-member'),
           storageEntries: aliceStore.forGroup(created.groupId),
           storageFormatVersion: aliceStore.formatVersion,
         ),
@@ -138,6 +139,7 @@ void main() {
           signerBytes: alice.signerBytes,
           keyPackagesBytes: [bobKeyPackage.keyPackageBytes],
           expectedCredentialIdentities: const [],
+          aad: utf8.encode('credential-check/add-member'),
           storageEntries: aliceStore.forGroup(created.groupId),
           storageFormatVersion: aliceStore.formatVersion,
         ),
@@ -181,6 +183,7 @@ void main() {
         signerBytes: alice.signerBytes,
         keyPackagesBytes: [bobKeyPackage.keyPackageBytes],
         expectedCredentialIdentities: [bob.credentialIdentity],
+        aad: utf8.encode('conversation-1/add-bob'),
         storageEntries: aliceStore.forGroup(created.groupId),
         storageFormatVersion: aliceStore.formatVersion,
       );
@@ -201,6 +204,7 @@ void main() {
         groupId: created.groupId,
         signerBytes: alice.signerBytes,
         message: utf8.encode('discard me'),
+        aad: utf8.encode('conversation-1/discarded-before-apply'),
         storageEntries: aliceStore.forGroup(created.groupId),
         storageFormatVersion: aliceStore.formatVersion,
       );
@@ -245,13 +249,51 @@ void main() {
       );
       expect(receivedByBob.messageType, ProcessedMessageType.application);
       expect(utf8.decode(receivedByBob.applicationMessage!), 'hello bob');
+      expect(receivedByBob.previousEpoch, BigInt.one);
+      expect(receivedByBob.resultingEpoch, BigInt.one);
       bobStore.apply(receivedByBob.storageBatch);
+
+      final appliedButUndelivered = await createMessageWithStorage(
+        groupId: created.groupId,
+        signerBytes: alice.signerBytes,
+        message: utf8.encode('terminally rejected'),
+        aad: utf8.encode('conversation-1/message-2'),
+        storageEntries: aliceStore.forGroup(created.groupId),
+        storageFormatVersion: aliceStore.formatVersion,
+      );
+      aliceStore.apply(appliedButUndelivered.storageBatch);
+
+      final sentAfterGap = await createMessageWithStorage(
+        groupId: created.groupId,
+        signerBytes: alice.signerBytes,
+        message: utf8.encode('after rejected message'),
+        aad: utf8.encode('conversation-1/message-3'),
+        storageEntries: aliceStore.forGroup(created.groupId),
+        storageFormatVersion: aliceStore.formatVersion,
+      );
+      aliceStore.apply(sentAfterGap.storageBatch);
+
+      final receivedAfterGap = await processMessageWithStorage(
+        groupId: created.groupId,
+        messageBytes: sentAfterGap.ciphertext,
+        expectedAad: utf8.encode('conversation-1/message-3'),
+        storageEntries: bobStore.forGroup(created.groupId),
+        storageFormatVersion: bobStore.formatVersion,
+      );
+      expect(
+        utf8.decode(receivedAfterGap.applicationMessage!),
+        'after rejected message',
+      );
+      expect(receivedAfterGap.previousEpoch, BigInt.one);
+      expect(receivedAfterGap.resultingEpoch, BigInt.one);
+      bobStore.apply(receivedAfterGap.storageBatch);
 
       final bobBeforeError = bobStore.fingerprint;
       await expectLater(
         processMessageWithStorage(
           groupId: created.groupId,
           messageBytes: const [1, 2, 3],
+          expectedAad: const [],
           storageEntries: bobStore.forGroup(created.groupId),
           storageFormatVersion: bobStore.formatVersion,
         ),
@@ -270,24 +312,48 @@ void main() {
       );
       charlieStore.apply(charlieKeyPackage.storageBatch);
 
+      final charlieCommitAad = utf8.encode('conversation-1/add-charlie');
       final addedCharlie = await addMembersWithStorage(
         groupId: created.groupId,
         signerBytes: alice.signerBytes,
         keyPackagesBytes: [charlieKeyPackage.keyPackageBytes],
         expectedCredentialIdentities: [charlie.credentialIdentity],
+        aad: charlieCommitAad,
         storageEntries: aliceStore.forGroup(created.groupId),
         storageFormatVersion: aliceStore.formatVersion,
       );
       aliceStore.apply(addedCharlie.storageBatch);
 
+      final bobBeforeCommitAadMismatch = bobStore.fingerprint;
+      await expectLater(
+        processMessageWithStorage(
+          groupId: created.groupId,
+          messageBytes: addedCharlie.commit,
+          expectedAad: utf8.encode('conversation-1/wrong-add-charlie'),
+          storageEntries: bobStore.forGroup(created.groupId),
+          storageFormatVersion: bobStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'Message AAD does not match the expected AAD',
+            ),
+          ),
+        ),
+      );
+      expect(bobStore.fingerprint, bobBeforeCommitAadMismatch);
+
       final bobProcessedCommit = await processMessageWithStorage(
         groupId: created.groupId,
         messageBytes: addedCharlie.commit,
+        expectedAad: charlieCommitAad,
         storageEntries: bobStore.forGroup(created.groupId),
         storageFormatVersion: bobStore.formatVersion,
       );
       expect(bobProcessedCommit.messageType, ProcessedMessageType.stagedCommit);
       expect(bobProcessedCommit.hasStagedCommit, isTrue);
+      expect(bobProcessedCommit.previousEpoch, BigInt.one);
+      expect(bobProcessedCommit.resultingEpoch, BigInt.two);
       bobStore.apply(bobProcessedCommit.storageBatch);
 
       final joinedCharlie = await joinGroupFromWelcomeWithStorage(
@@ -304,6 +370,7 @@ void main() {
         groupId: created.groupId,
         signerBytes: bob.signerBytes,
         message: utf8.encode('hello group'),
+        aad: utf8.encode('conversation-1/message-4'),
         storageEntries: bobStore.forGroup(created.groupId),
         storageFormatVersion: bobStore.formatVersion,
       );
@@ -312,17 +379,23 @@ void main() {
       final receivedByAlice = await processMessageWithStorage(
         groupId: created.groupId,
         messageBytes: sentToGroup.ciphertext,
+        expectedAad: utf8.encode('conversation-1/message-4'),
         storageEntries: aliceStore.forGroup(created.groupId),
         storageFormatVersion: aliceStore.formatVersion,
       );
       final receivedByCharlie = await processMessageWithStorage(
         groupId: created.groupId,
         messageBytes: sentToGroup.ciphertext,
+        expectedAad: utf8.encode('conversation-1/message-4'),
         storageEntries: charlieStore.forGroup(created.groupId),
         storageFormatVersion: charlieStore.formatVersion,
       );
       expect(utf8.decode(receivedByAlice.applicationMessage!), 'hello group');
       expect(utf8.decode(receivedByCharlie.applicationMessage!), 'hello group');
+      expect(receivedByAlice.previousEpoch, BigInt.two);
+      expect(receivedByAlice.resultingEpoch, BigInt.two);
+      expect(receivedByCharlie.previousEpoch, BigInt.two);
+      expect(receivedByCharlie.resultingEpoch, BigInt.two);
       aliceStore.apply(receivedByAlice.storageBatch);
       charlieStore.apply(receivedByCharlie.storageBatch);
 
@@ -344,7 +417,166 @@ void main() {
         reason: 'deleting a group must retain installation-global state',
       );
     });
+
+    test('enforces the sender-ratchet forward-distance boundary', () async {
+      const maximumForwardDistance = 2;
+      final config = _configWithForwardDistance(maximumForwardDistance);
+
+      final atLimit = await _createTwoMemberSession('at-limit', config);
+      late CreateMessageWithStorageResult atLimitMessage;
+      for (
+        var generation = 0;
+        generation <= maximumForwardDistance;
+        generation++
+      ) {
+        atLimitMessage = await _createAndApplyMessage(atLimit, generation);
+      }
+
+      final receivedAtLimit = await processMessageWithStorage(
+        groupId: atLimit.groupId,
+        messageBytes: atLimitMessage.ciphertext,
+        expectedAad: utf8.encode('at-limit/message-2'),
+        storageEntries: atLimit.receiverStore.forGroup(atLimit.groupId),
+        storageFormatVersion: atLimit.receiverStore.formatVersion,
+      );
+      expect(utf8.decode(receivedAtLimit.applicationMessage!), 'message 2');
+      atLimit.receiverStore.apply(receivedAtLimit.storageBatch);
+
+      final beyondLimit = await _createTwoMemberSession('beyond-limit', config);
+      late CreateMessageWithStorageResult beyondLimitMessage;
+      for (
+        var generation = 0;
+        generation <= maximumForwardDistance + 1;
+        generation++
+      ) {
+        beyondLimitMessage = await _createAndApplyMessage(
+          beyondLimit,
+          generation,
+        );
+      }
+
+      final receiverBeforeFailure = beyondLimit.receiverStore.fingerprint;
+      await expectLater(
+        processMessageWithStorage(
+          groupId: beyondLimit.groupId,
+          messageBytes: beyondLimitMessage.ciphertext,
+          expectedAad: utf8.encode('beyond-limit/message-3'),
+          storageEntries: beyondLimit.receiverStore.forGroup(
+            beyondLimit.groupId,
+          ),
+          storageFormatVersion: beyondLimit.receiverStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'Generation is too far in the future to be processed',
+            ),
+          ),
+        ),
+      );
+      expect(beyondLimit.receiverStore.fingerprint, receiverBeforeFailure);
+    });
   });
+}
+
+MlsGroupConfig _configWithForwardDistance(int maximumForwardDistance) {
+  final defaults = defaultConfig();
+  return MlsGroupConfig(
+    ciphersuite: defaults.ciphersuite,
+    wireFormatPolicy: defaults.wireFormatPolicy,
+    useRatchetTreeExtension: defaults.useRatchetTreeExtension,
+    maxPastEpochs: defaults.maxPastEpochs,
+    paddingSize: defaults.paddingSize,
+    senderRatchetMaxOutOfOrder: defaults.senderRatchetMaxOutOfOrder,
+    senderRatchetMaxForwardDistance: maximumForwardDistance,
+    numberOfResumptionPsks: defaults.numberOfResumptionPsks,
+  );
+}
+
+Future<_TwoMemberSession> _createTwoMemberSession(
+  String label,
+  MlsGroupConfig config,
+) async {
+  final sender = TestIdentity.create('$label-sender');
+  final receiver = TestIdentity.create('$label-receiver');
+  final senderStore = _MemoryMlsStore();
+  final receiverStore = _MemoryMlsStore();
+
+  final receiverKeyPackage = await _createKeyPackage(
+    receiver,
+    receiverStore.globalSnapshot,
+  );
+  receiverStore.apply(receiverKeyPackage.storageBatch);
+
+  final created = await createGroupWithStorage(
+    config: config,
+    signerBytes: sender.signerBytes,
+    credentialIdentity: sender.credentialIdentity,
+    signerPublicKey: sender.publicKey,
+    storageEntries: senderStore.globalSnapshot,
+    storageFormatVersion: senderStore.formatVersion,
+  );
+  senderStore.apply(created.storageBatch);
+
+  final added = await addMembersWithStorage(
+    groupId: created.groupId,
+    signerBytes: sender.signerBytes,
+    keyPackagesBytes: [receiverKeyPackage.keyPackageBytes],
+    expectedCredentialIdentities: [receiver.credentialIdentity],
+    aad: utf8.encode('$label/add-receiver'),
+    storageEntries: senderStore.forGroup(created.groupId),
+    storageFormatVersion: senderStore.formatVersion,
+  );
+  senderStore.apply(added.storageBatch);
+
+  final joined = await joinGroupFromWelcomeWithStorage(
+    config: config,
+    welcomeBytes: added.welcome,
+    signerBytes: receiver.signerBytes,
+    storageEntries: receiverStore.globalSnapshot,
+    storageFormatVersion: receiverStore.formatVersion,
+  );
+  receiverStore.apply(joined.storageBatch);
+
+  return _TwoMemberSession(
+    label: label,
+    sender: sender,
+    senderStore: senderStore,
+    receiverStore: receiverStore,
+    groupId: created.groupId,
+  );
+}
+
+Future<CreateMessageWithStorageResult> _createAndApplyMessage(
+  _TwoMemberSession session,
+  int generation,
+) async {
+  final message = await createMessageWithStorage(
+    groupId: session.groupId,
+    signerBytes: session.sender.signerBytes,
+    message: utf8.encode('message $generation'),
+    aad: utf8.encode('${session.label}/message-$generation'),
+    storageEntries: session.senderStore.forGroup(session.groupId),
+    storageFormatVersion: session.senderStore.formatVersion,
+  );
+  session.senderStore.apply(message.storageBatch);
+  return message;
+}
+
+class _TwoMemberSession {
+  const _TwoMemberSession({
+    required this.label,
+    required this.sender,
+    required this.senderStore,
+    required this.receiverStore,
+    required this.groupId,
+  });
+
+  final String label;
+  final TestIdentity sender;
+  final _MemoryMlsStore senderStore;
+  final _MemoryMlsStore receiverStore;
+  final List<int> groupId;
 }
 
 Future<CreateKeyPackageWithStorageResult> _createKeyPackage(

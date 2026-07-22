@@ -1328,7 +1328,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       apiObj.messageType,
     );
     wireObj.sender_index = cst_encode_opt_box_autoadd_u_32(apiObj.senderIndex);
-    wireObj.epoch = cst_encode_u_64(apiObj.epoch);
+    wireObj.previous_epoch = cst_encode_u_64(apiObj.previousEpoch);
+    wireObj.resulting_epoch = cst_encode_u_64(apiObj.resultingEpoch);
     wireObj.application_message = cst_encode_opt_list_prim_u_8_strict(
       apiObj.applicationMessage,
     );
@@ -4560,6 +4561,7 @@ class RustLibWire implements BaseWire {
     ffi.Pointer<wire_cst_list_list_prim_u_8_strict> key_packages_bytes,
     ffi.Pointer<wire_cst_list_list_prim_u_8_strict>
     expected_credential_identities,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> aad,
     ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
     int storage_format_version,
   ) {
@@ -4569,6 +4571,7 @@ class RustLibWire implements BaseWire {
       signer_bytes,
       key_packages_bytes,
       expected_credential_identities,
+      aad,
       storage_entries,
       storage_format_version,
     );
@@ -4583,6 +4586,7 @@ class RustLibWire implements BaseWire {
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
             ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_mls_storage_entry>,
             ffi.Uint32,
           )
@@ -4597,6 +4601,7 @@ class RustLibWire implements BaseWire {
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
               ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_mls_storage_entry>,
               int,
             )
@@ -4717,7 +4722,7 @@ class RustLibWire implements BaseWire {
     ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> message,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> aad,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> aad,
     ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
     int storage_format_version,
   ) {
@@ -4740,7 +4745,7 @@ class RustLibWire implements BaseWire {
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_mls_storage_entry>,
             ffi.Uint32,
           )
@@ -4756,7 +4761,7 @@ class RustLibWire implements BaseWire {
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_mls_storage_entry>,
               int,
             )
@@ -4983,7 +4988,7 @@ class RustLibWire implements BaseWire {
     int port_,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> message_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> expected_aad,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> expected_aad,
     ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
     int storage_format_version,
   ) {
@@ -5004,7 +5009,7 @@ class RustLibWire implements BaseWire {
             ffi.Int64,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_mls_storage_entry>,
             ffi.Uint32,
           )
@@ -5019,7 +5024,7 @@ class RustLibWire implements BaseWire {
               int,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_mls_storage_entry>,
               int,
             )
@@ -5816,7 +5821,10 @@ final class wire_cst_process_message_with_storage_result extends ffi.Struct {
   external ffi.Pointer<ffi.Uint32> sender_index;
 
   @ffi.Uint64()
-  external int epoch;
+  external int previous_epoch;
+
+  @ffi.Uint64()
+  external int resulting_epoch;
 
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> application_message;
 

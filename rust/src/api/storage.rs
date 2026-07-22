@@ -69,7 +69,10 @@ pub struct CreateMessageWithStorageResult {
 pub struct ProcessMessageWithStorageResult {
     pub message_type: ProcessedMessageType,
     pub sender_index: Option<u32>,
-    pub epoch: u64,
+    /// Group epoch before applying this processed message's state transition.
+    pub previous_epoch: u64,
+    /// Group epoch represented by the returned storage batch.
+    pub resulting_epoch: u64,
     pub application_message: Option<Vec<u8>>,
     pub has_staged_commit: bool,
     pub has_proposal: bool,
@@ -176,12 +179,14 @@ pub fn create_group_with_storage(
 ///
 /// Each validated KeyPackage must contain a Basic Credential whose identity
 /// exactly matches the corresponding caller-supplied expected identity. A
-/// mismatch fails before group state changes are returned.
+/// mismatch fails before group state changes are returned. `aad` is
+/// authenticated as part of the add-member Commit.
 pub fn add_members_with_storage(
     group_id: Vec<u8>,
     signer_bytes: Vec<u8>,
     key_packages_bytes: Vec<Vec<u8>>,
     expected_credential_identities: Vec<Vec<u8>>,
+    aad: Vec<u8>,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
 ) -> Result<AddMembersWithStorageResult, String> {
@@ -217,6 +222,7 @@ pub fn add_members_with_storage(
         key_packages.push(key_package);
     }
 
+    group.set_aad(aad);
     let (commit, welcome, group_info) = group
         .add_members(&provider, &signer, &key_packages)
         .map_err(|e| format!("Failed to add members: {e}"))?;
@@ -293,7 +299,7 @@ pub fn create_message_with_storage(
     group_id: Vec<u8>,
     signer_bytes: Vec<u8>,
     message: Vec<u8>,
-    aad: Option<Vec<u8>>,
+    aad: Vec<u8>,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
 ) -> Result<CreateMessageWithStorageResult, String> {
@@ -301,9 +307,7 @@ pub fn create_message_with_storage(
     let signer = signer_from_bytes(signer_bytes)?;
     let mut group = load_group(&group_id, &provider)?;
 
-    if let Some(aad) = aad {
-        group.set_aad(aad);
-    }
+    group.set_aad(aad);
 
     let ciphertext = group
         .create_message(&provider, &signer, &message)
@@ -320,12 +324,12 @@ pub fn create_message_with_storage(
 
 /// Process an application, proposal, or commit message against caller state.
 ///
-/// When `expected_aad` is present, the authenticated message AAD must match it
-/// byte-for-byte. A mismatch returns no storage batch.
+/// The authenticated message AAD must match `expected_aad` byte-for-byte. A
+/// mismatch returns no storage batch.
 pub fn process_message_with_storage(
     group_id: Vec<u8>,
     message_bytes: Vec<u8>,
-    expected_aad: Option<Vec<u8>>,
+    expected_aad: Vec<u8>,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
 ) -> Result<ProcessMessageWithStorageResult, String> {
@@ -339,9 +343,7 @@ pub fn process_message_with_storage(
         .process_message(&provider, message)
         .map_err(|e| format!("Failed to process message: {e}"))?;
 
-    if let Some(expected_aad) = expected_aad
-        && processed.aad() != expected_aad
-    {
+    if processed.aad() != expected_aad {
         return Err("Message AAD does not match the expected AAD".to_string());
     }
 
@@ -349,7 +351,7 @@ pub fn process_message_with_storage(
         Sender::Member(index) => Some(index.u32()),
         _ => None,
     };
-    let epoch = group.epoch().as_u64();
+    let previous_epoch = group.epoch().as_u64();
     let (message_type, application_message, has_staged_commit, has_proposal, proposal_type) =
         match processed.into_content() {
             ProcessedMessageContent::ApplicationMessage(message) => (
@@ -389,12 +391,14 @@ pub fn process_message_with_storage(
             }
             _ => return Err("Unknown processed message content type".to_string()),
         };
+    let resulting_epoch = group.epoch().as_u64();
     let storage_batch = batch_from_provider(provider, Some(group_id), Vec::new())?;
 
     Ok(ProcessMessageWithStorageResult {
         message_type,
         sender_index,
-        epoch,
+        previous_epoch,
+        resulting_epoch,
         application_message,
         has_staged_commit,
         has_proposal,

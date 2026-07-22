@@ -130,6 +130,8 @@ They accept opaque `MlsStorageEntry` values for one operation and return an
   both
 - preserve both global and group-scoped entries and the exact
   `mlsStorageFormatVersion()` value
+- derive required application/Commit AAD and receive-side expected AAD from
+  authenticated application context
 - never decode, edit, log, or manufacture opaque keys and values
 - treat backups and rollback as security-sensitive MLS state
 
@@ -339,7 +341,7 @@ When reviewing code changes, verify:
 - [ ] MLS protocol messages processed in order
 - [ ] Sensitive data in Dart uses `SecureBytes` or `.zeroize()` extension
 - [ ] Caller-owned storage batches are encrypted, serialized, and committed atomically
-- [ ] Expected AAD and Basic Credential identities come from trusted application context
+- [ ] Required AAD and Basic Credential identities come from trusted application context
 - [ ] No hardcoded keys or secrets
 - [ ] Web deployments use strict CSP headers
 

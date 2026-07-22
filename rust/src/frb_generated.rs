@@ -3776,6 +3776,7 @@ fn wire__crate__api__storage__add_members_with_storage_impl(
     signer_bytes: impl CstDecode<Vec<u8>>,
     key_packages_bytes: impl CstDecode<Vec<Vec<u8>>>,
     expected_credential_identities: impl CstDecode<Vec<Vec<u8>>>,
+    aad: impl CstDecode<Vec<u8>>,
     storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
     storage_format_version: impl CstDecode<u32>,
 ) {
@@ -3790,6 +3791,7 @@ fn wire__crate__api__storage__add_members_with_storage_impl(
             let api_signer_bytes = signer_bytes.cst_decode();
             let api_key_packages_bytes = key_packages_bytes.cst_decode();
             let api_expected_credential_identities = expected_credential_identities.cst_decode();
+            let api_aad = aad.cst_decode();
             let api_storage_entries = storage_entries.cst_decode();
             let api_storage_format_version = storage_format_version.cst_decode();
             move |context| {
@@ -3799,6 +3801,7 @@ fn wire__crate__api__storage__add_members_with_storage_impl(
                         api_signer_bytes,
                         api_key_packages_bytes,
                         api_expected_credential_identities,
+                        api_aad,
                         api_storage_entries,
                         api_storage_format_version,
                     )?;
@@ -3898,7 +3901,7 @@ fn wire__crate__api__storage__create_message_with_storage_impl(
     group_id: impl CstDecode<Vec<u8>>,
     signer_bytes: impl CstDecode<Vec<u8>>,
     message: impl CstDecode<Vec<u8>>,
-    aad: impl CstDecode<Option<Vec<u8>>>,
+    aad: impl CstDecode<Vec<u8>>,
     storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
     storage_format_version: impl CstDecode<u32>,
 ) {
@@ -4128,7 +4131,7 @@ fn wire__crate__api__storage__process_message_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     group_id: impl CstDecode<Vec<u8>>,
     message_bytes: impl CstDecode<Vec<u8>>,
-    expected_aad: impl CstDecode<Option<Vec<u8>>>,
+    expected_aad: impl CstDecode<Vec<u8>>,
     storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
     storage_format_version: impl CstDecode<u32>,
 ) {
@@ -5005,7 +5008,8 @@ impl SseDecode for crate::api::storage::ProcessMessageWithStorageResult {
         let mut var_messageType =
             <crate::api::types::ProcessedMessageType>::sse_decode(deserializer);
         let mut var_senderIndex = <Option<u32>>::sse_decode(deserializer);
-        let mut var_epoch = <u64>::sse_decode(deserializer);
+        let mut var_previousEpoch = <u64>::sse_decode(deserializer);
+        let mut var_resultingEpoch = <u64>::sse_decode(deserializer);
         let mut var_applicationMessage = <Option<Vec<u8>>>::sse_decode(deserializer);
         let mut var_hasStagedCommit = <bool>::sse_decode(deserializer);
         let mut var_hasProposal = <bool>::sse_decode(deserializer);
@@ -5015,7 +5019,8 @@ impl SseDecode for crate::api::storage::ProcessMessageWithStorageResult {
         return crate::api::storage::ProcessMessageWithStorageResult {
             message_type: var_messageType,
             sender_index: var_senderIndex,
-            epoch: var_epoch,
+            previous_epoch: var_previousEpoch,
+            resulting_epoch: var_resultingEpoch,
             application_message: var_applicationMessage,
             has_staged_commit: var_hasStagedCommit,
             has_proposal: var_hasProposal,
@@ -5870,7 +5875,8 @@ impl flutter_rust_bridge::IntoDart for crate::api::storage::ProcessMessageWithSt
         [
             self.message_type.into_into_dart().into_dart(),
             self.sender_index.into_into_dart().into_dart(),
-            self.epoch.into_into_dart().into_dart(),
+            self.previous_epoch.into_into_dart().into_dart(),
+            self.resulting_epoch.into_into_dart().into_dart(),
             self.application_message.into_into_dart().into_dart(),
             self.has_staged_commit.into_into_dart().into_dart(),
             self.has_proposal.into_into_dart().into_dart(),
@@ -6568,7 +6574,8 @@ impl SseEncode for crate::api::storage::ProcessMessageWithStorageResult {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <crate::api::types::ProcessedMessageType>::sse_encode(self.message_type, serializer);
         <Option<u32>>::sse_encode(self.sender_index, serializer);
-        <u64>::sse_encode(self.epoch, serializer);
+        <u64>::sse_encode(self.previous_epoch, serializer);
+        <u64>::sse_encode(self.resulting_epoch, serializer);
         <Option<Vec<u8>>>::sse_encode(self.application_message, serializer);
         <bool>::sse_encode(self.has_staged_commit, serializer);
         <bool>::sse_encode(self.has_proposal, serializer);
@@ -7247,7 +7254,8 @@ mod io {
             crate::api::storage::ProcessMessageWithStorageResult {
                 message_type: self.message_type.cst_decode(),
                 sender_index: self.sender_index.cst_decode(),
-                epoch: self.epoch.cst_decode(),
+                previous_epoch: self.previous_epoch.cst_decode(),
+                resulting_epoch: self.resulting_epoch.cst_decode(),
                 application_message: self.application_message.cst_decode(),
                 has_staged_commit: self.has_staged_commit.cst_decode(),
                 has_proposal: self.has_proposal.cst_decode(),
@@ -7678,7 +7686,8 @@ mod io {
             Self {
                 message_type: Default::default(),
                 sender_index: core::ptr::null_mut(),
-                epoch: Default::default(),
+                previous_epoch: Default::default(),
+                resulting_epoch: Default::default(),
                 application_message: core::ptr::null_mut(),
                 has_staged_commit: Default::default(),
                 has_proposal: Default::default(),
@@ -8801,6 +8810,7 @@ mod io {
         signer_bytes: *mut wire_cst_list_prim_u_8_loose,
         key_packages_bytes: *mut wire_cst_list_list_prim_u_8_strict,
         expected_credential_identities: *mut wire_cst_list_list_prim_u_8_strict,
+        aad: *mut wire_cst_list_prim_u_8_loose,
         storage_entries: *mut wire_cst_list_mls_storage_entry,
         storage_format_version: u32,
     ) {
@@ -8810,6 +8820,7 @@ mod io {
             signer_bytes,
             key_packages_bytes,
             expected_credential_identities,
+            aad,
             storage_entries,
             storage_format_version,
         )
@@ -8869,7 +8880,7 @@ mod io {
         group_id: *mut wire_cst_list_prim_u_8_loose,
         signer_bytes: *mut wire_cst_list_prim_u_8_loose,
         message: *mut wire_cst_list_prim_u_8_loose,
-        aad: *mut wire_cst_list_prim_u_8_strict,
+        aad: *mut wire_cst_list_prim_u_8_loose,
         storage_entries: *mut wire_cst_list_mls_storage_entry,
         storage_format_version: u32,
     ) {
@@ -8972,7 +8983,7 @@ mod io {
         port_: i64,
         group_id: *mut wire_cst_list_prim_u_8_loose,
         message_bytes: *mut wire_cst_list_prim_u_8_loose,
-        expected_aad: *mut wire_cst_list_prim_u_8_strict,
+        expected_aad: *mut wire_cst_list_prim_u_8_loose,
         storage_entries: *mut wire_cst_list_mls_storage_entry,
         storage_format_version: u32,
     ) {
@@ -9507,7 +9518,8 @@ mod io {
     pub struct wire_cst_process_message_with_storage_result {
         message_type: i32,
         sender_index: *mut u32,
-        epoch: u64,
+        previous_epoch: u64,
+        resulting_epoch: u64,
         application_message: *mut wire_cst_list_prim_u_8_strict,
         has_staged_commit: bool,
         has_proposal: bool,
@@ -10229,19 +10241,20 @@ mod web {
                 .unwrap();
             assert_eq!(
                 self_.length(),
-                8,
-                "Expected 8 elements, got {}",
+                9,
+                "Expected 9 elements, got {}",
                 self_.length()
             );
             crate::api::storage::ProcessMessageWithStorageResult {
                 message_type: self_.get(0).cst_decode(),
                 sender_index: self_.get(1).cst_decode(),
-                epoch: self_.get(2).cst_decode(),
-                application_message: self_.get(3).cst_decode(),
-                has_staged_commit: self_.get(4).cst_decode(),
-                has_proposal: self_.get(5).cst_decode(),
-                proposal_type: self_.get(6).cst_decode(),
-                storage_batch: self_.get(7).cst_decode(),
+                previous_epoch: self_.get(2).cst_decode(),
+                resulting_epoch: self_.get(3).cst_decode(),
+                application_message: self_.get(4).cst_decode(),
+                has_staged_commit: self_.get(5).cst_decode(),
+                has_proposal: self_.get(6).cst_decode(),
+                proposal_type: self_.get(7).cst_decode(),
+                storage_batch: self_.get(8).cst_decode(),
             }
         }
     }
@@ -11580,6 +11593,7 @@ mod web {
         signer_bytes: Box<[u8]>,
         key_packages_bytes: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         expected_credential_identities: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        aad: Box<[u8]>,
         storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         storage_format_version: u32,
     ) {
@@ -11589,6 +11603,7 @@ mod web {
             signer_bytes,
             key_packages_bytes,
             expected_credential_identities,
+            aad,
             storage_entries,
             storage_format_version,
         )
@@ -11648,7 +11663,7 @@ mod web {
         group_id: Box<[u8]>,
         signer_bytes: Box<[u8]>,
         message: Box<[u8]>,
-        aad: Option<Box<[u8]>>,
+        aad: Box<[u8]>,
         storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         storage_format_version: u32,
     ) {
@@ -11751,7 +11766,7 @@ mod web {
         port_: flutter_rust_bridge::for_generated::MessagePort,
         group_id: Box<[u8]>,
         message_bytes: Box<[u8]>,
-        expected_aad: Option<Box<[u8]>>,
+        expected_aad: Box<[u8]>,
         storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         storage_format_version: u32,
     ) {

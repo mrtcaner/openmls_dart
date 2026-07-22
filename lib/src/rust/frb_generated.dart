@@ -552,6 +552,7 @@ abstract class RustLibApi extends BaseApi {
     required List<int> signerBytes,
     required List<Uint8List> keyPackagesBytes,
     required List<Uint8List> expectedCredentialIdentities,
+    required List<int> aad,
     required List<MlsStorageEntry> storageEntries,
     required int storageFormatVersion,
   });
@@ -583,7 +584,7 @@ abstract class RustLibApi extends BaseApi {
     required List<int> groupId,
     required List<int> signerBytes,
     required List<int> message,
-    Uint8List? aad,
+    required List<int> aad,
     required List<MlsStorageEntry> storageEntries,
     required int storageFormatVersion,
   });
@@ -628,7 +629,7 @@ abstract class RustLibApi extends BaseApi {
   crateApiStorageProcessMessageWithStorage({
     required List<int> groupId,
     required List<int> messageBytes,
-    Uint8List? expectedAad,
+    required List<int> expectedAad,
     required List<MlsStorageEntry> storageEntries,
     required int storageFormatVersion,
   });
@@ -3868,6 +3869,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     required List<int> signerBytes,
     required List<Uint8List> keyPackagesBytes,
     required List<Uint8List> expectedCredentialIdentities,
+    required List<int> aad,
     required List<MlsStorageEntry> storageEntries,
     required int storageFormatVersion,
   }) {
@@ -3880,8 +3882,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           var arg3 = cst_encode_list_list_prim_u_8_strict(
             expectedCredentialIdentities,
           );
-          var arg4 = cst_encode_list_mls_storage_entry(storageEntries);
-          var arg5 = cst_encode_u_32(storageFormatVersion);
+          var arg4 = cst_encode_list_prim_u_8_loose(aad);
+          var arg5 = cst_encode_list_mls_storage_entry(storageEntries);
+          var arg6 = cst_encode_u_32(storageFormatVersion);
           return wire.wire__crate__api__storage__add_members_with_storage(
             port_,
             arg0,
@@ -3890,6 +3893,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             arg3,
             arg4,
             arg5,
+            arg6,
           );
         },
         codec: DcoCodec(
@@ -3902,6 +3906,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           signerBytes,
           keyPackagesBytes,
           expectedCredentialIdentities,
+          aad,
           storageEntries,
           storageFormatVersion,
         ],
@@ -3918,6 +3923,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           "signerBytes",
           "keyPackagesBytes",
           "expectedCredentialIdentities",
+          "aad",
           "storageEntries",
           "storageFormatVersion",
         ],
@@ -4064,7 +4070,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     required List<int> groupId,
     required List<int> signerBytes,
     required List<int> message,
-    Uint8List? aad,
+    required List<int> aad,
     required List<MlsStorageEntry> storageEntries,
     required int storageFormatVersion,
   }) {
@@ -4074,7 +4080,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           var arg0 = cst_encode_list_prim_u_8_loose(groupId);
           var arg1 = cst_encode_list_prim_u_8_loose(signerBytes);
           var arg2 = cst_encode_list_prim_u_8_loose(message);
-          var arg3 = cst_encode_opt_list_prim_u_8_strict(aad);
+          var arg3 = cst_encode_list_prim_u_8_loose(aad);
           var arg4 = cst_encode_list_mls_storage_entry(storageEntries);
           var arg5 = cst_encode_u_32(storageFormatVersion);
           return wire.wire__crate__api__storage__create_message_with_storage(
@@ -4399,7 +4405,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   crateApiStorageProcessMessageWithStorage({
     required List<int> groupId,
     required List<int> messageBytes,
-    Uint8List? expectedAad,
+    required List<int> expectedAad,
     required List<MlsStorageEntry> storageEntries,
     required int storageFormatVersion,
   }) {
@@ -4408,7 +4414,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           var arg0 = cst_encode_list_prim_u_8_loose(groupId);
           var arg1 = cst_encode_list_prim_u_8_loose(messageBytes);
-          var arg2 = cst_encode_opt_list_prim_u_8_strict(expectedAad);
+          var arg2 = cst_encode_list_prim_u_8_loose(expectedAad);
           var arg3 = cst_encode_list_mls_storage_entry(storageEntries);
           var arg4 = cst_encode_u_32(storageFormatVersion);
           return wire.wire__crate__api__storage__process_message_with_storage(
@@ -5160,17 +5166,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   dco_decode_process_message_with_storage_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 8)
-      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    if (arr.length != 9)
+      throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
     return ProcessMessageWithStorageResult(
       messageType: dco_decode_processed_message_type(arr[0]),
       senderIndex: dco_decode_opt_box_autoadd_u_32(arr[1]),
-      epoch: dco_decode_u_64(arr[2]),
-      applicationMessage: dco_decode_opt_list_prim_u_8_strict(arr[3]),
-      hasStagedCommit: dco_decode_bool(arr[4]),
-      hasProposal: dco_decode_bool(arr[5]),
-      proposalType: dco_decode_opt_box_autoadd_mls_proposal_type(arr[6]),
-      storageBatch: dco_decode_mls_storage_batch(arr[7]),
+      previousEpoch: dco_decode_u_64(arr[2]),
+      resultingEpoch: dco_decode_u_64(arr[3]),
+      applicationMessage: dco_decode_opt_list_prim_u_8_strict(arr[4]),
+      hasStagedCommit: dco_decode_bool(arr[5]),
+      hasProposal: dco_decode_bool(arr[6]),
+      proposalType: dco_decode_opt_box_autoadd_mls_proposal_type(arr[7]),
+      storageBatch: dco_decode_mls_storage_batch(arr[8]),
     );
   }
 
@@ -6097,7 +6104,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_messageType = sse_decode_processed_message_type(deserializer);
     var var_senderIndex = sse_decode_opt_box_autoadd_u_32(deserializer);
-    var var_epoch = sse_decode_u_64(deserializer);
+    var var_previousEpoch = sse_decode_u_64(deserializer);
+    var var_resultingEpoch = sse_decode_u_64(deserializer);
     var var_applicationMessage = sse_decode_opt_list_prim_u_8_strict(
       deserializer,
     );
@@ -6110,7 +6118,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return ProcessMessageWithStorageResult(
       messageType: var_messageType,
       senderIndex: var_senderIndex,
-      epoch: var_epoch,
+      previousEpoch: var_previousEpoch,
+      resultingEpoch: var_resultingEpoch,
       applicationMessage: var_applicationMessage,
       hasStagedCommit: var_hasStagedCommit,
       hasProposal: var_hasProposal,
@@ -7153,7 +7162,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_processed_message_type(self.messageType, serializer);
     sse_encode_opt_box_autoadd_u_32(self.senderIndex, serializer);
-    sse_encode_u_64(self.epoch, serializer);
+    sse_encode_u_64(self.previousEpoch, serializer);
+    sse_encode_u_64(self.resultingEpoch, serializer);
     sse_encode_opt_list_prim_u_8_strict(self.applicationMessage, serializer);
     sse_encode_bool(self.hasStagedCommit, serializer);
     sse_encode_bool(self.hasProposal, serializer);
