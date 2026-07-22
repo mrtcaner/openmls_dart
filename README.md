@@ -20,14 +20,10 @@ The former `MlsEngine` API and its embedded SQLCipher/IndexedDB storage were rem
 
 ## Platforms
 
-| Platform | Release targets |
-|---|---|
-| Android | arm64-v8a, armeabi-v7a, x86_64 |
-| iOS | device arm64, simulator arm64/x86_64 |
-| macOS | arm64, x86_64 |
-| Linux | arm64, x86_64 |
-| Windows | x86_64 |
-| Web | wasm32 |
+| | Android | iOS | macOS | Linux | Windows | Web |
+|---|---|---|---|---|---|---|
+| **Support** | SDK 24+ | 13.0+ | 10.15+ | arm64, x64 | x64 | WASM |
+| **Release targets** | arm64-v8a, armeabi-v7a, x86_64 | device arm64; simulator arm64, x86_64 | arm64, x86_64 | arm64, x86_64 | x86_64 | wasm32 |
 
 Every native release must contain every target above. The build hook selects and verifies the matching archive automatically.
 
