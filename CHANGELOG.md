@@ -4,7 +4,7 @@
 
 #### ✨ Highlights
 
-- **openmls_frb v2.0.0** — lean caller-owned-storage ABI (**breaking**)
+- **openmls_frb v2.0.0** — Rust FFI bindings
 
 ### Added
 

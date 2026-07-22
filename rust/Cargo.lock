@@ -1427,7 +1427,7 @@ dependencies = [
 
 [[package]]
 name = "openmls_frb"
-version = "1.5.5"
+version = "2.0.0"
 dependencies = [
  "flutter_rust_bridge",
  "futures",
