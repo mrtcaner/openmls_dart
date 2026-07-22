@@ -6,7 +6,7 @@
 [![Dart](https://img.shields.io/badge/dart-%3E%3D3.10.0-brightgreen.svg)](https://dart.dev)
 [![Flutter](https://img.shields.io/badge/flutter-%3E%3D3.38.0-blue.svg)](https://flutter.dev)
 [![openmls](https://img.shields.io/badge/openmls-v0.8.1-orange.svg)](https://github.com/openmls/openmls)
-[![native bridge](https://img.shields.io/badge/openmls__frb-1.5.4-purple.svg)](https://github.com/mrtcaner/openmls_dart/releases/tag/openmls_frb-1.5.4)
+[![native bridge](https://img.shields.io/badge/openmls__frb-1.5.5-purple.svg)](https://github.com/mrtcaner/openmls_dart/releases/tag/openmls_frb-1.5.5)
 [![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/mrtcaner/8ff33d8b0975fa90bc0e9249a70e5b17/raw/coverage.json)](https://github.com/mrtcaner/openmls_dart/actions/workflows/test.yml)
 
 Dart bindings for [OpenMLS](https://github.com/openmls/openmls), providing a Rust implementation of the Messaging Layer Security (MLS) protocol ([RFC 9420](https://www.rfc-editor.org/rfc/rfc9420.html)) for secure group messaging.
@@ -82,23 +82,24 @@ dependencies:
   openmls:
     git:
       url: https://github.com/mrtcaner/openmls_dart.git
-      ref: 84b389d03fcefc2f1c0b209b9690950fdf7d4d11
+      ref: b0e9cba5fc5f665a5e20bd32ac1c100c85940079
 ```
 
 Do not use an unpinned branch for an application that persists MLS state. The
 pub.dev Dart package remains version `1.4.2`; the fork changes documented here
 have not been published as a newer Dart package.
 
-The pinned 1.5.4 bridge is the last published baseline. It does not contain the
-required Commit-AAD and explicit epoch-transition changes tracked in
-[`mrtcaner/openmls_dart#4`](https://github.com/mrtcaner/openmls_dart/issues/4).
-Consumers that require those guarantees must wait for and pin the complete
-replacement bridge release.
+The pinned 1.5.5 bridge is the complete replacement release for the
+caller-owned storage boundary. It contains the Commit-AAD and explicit
+epoch-transition changes tracked in
+[`mrtcaner/openmls_dart#4`](https://github.com/mrtcaner/openmls_dart/issues/4),
+and its Android, iOS, macOS, Linux, Windows, and Web archives were built from
+the exact commit above.
 
 | Component | Pinned version |
 |-----------|----------------|
 | Dart package metadata | `1.4.2` |
-| Native bridge and release assets | `openmls_frb-1.5.4` |
+| Native bridge and release assets | `openmls_frb-1.5.5` |
 | Upstream OpenMLS | `openmls-v0.8.1` |
 
 Native libraries are downloaded automatically during build via Dart build hooks.
@@ -204,7 +205,9 @@ and need MLS changes to share that database's transaction. The host is
 responsible for encryption at rest, serialized writes, rollback, backup policy,
 and avoiding logs or unnecessary copies of opaque values.
 
-Release `openmls_frb-1.5.4` added two receive/admission checks to this boundary:
+Release `openmls_frb-1.5.5` is the current caller-owned storage boundary. It
+contains the receive/admission checks first published in 1.5.4 and the
+protocol-alignment changes tracked in issue #4:
 
 - `processMessageWithStorage(expectedAad: ...)` rejects an authenticated AAD
   mismatch before returning a storage batch.
@@ -212,13 +215,14 @@ Release `openmls_frb-1.5.4` added two receive/admission checks to this boundary:
   validated KeyPackage to contain a Basic Credential with the corresponding
   expected identity. Count, credential-type, and identity mismatches fail before
   a member-add commit is created.
+- `createMessageWithStorage`, `addMembersWithStorage`, and
+  `processMessageWithStorage` require AAD. Add-member Commits authenticate the
+  supplied AAD.
+- Message processing returns `previousEpoch` and `resultingEpoch`;
+  `resultingEpoch` is the group epoch represented by the returned storage batch
+  after any staged Commit merge.
 
-The next bridge release makes AAD required on
-`createMessageWithStorage`, `addMembersWithStorage`, and
-`processMessageWithStorage`. Add-member Commits authenticate the supplied AAD.
-Processing returns `previousEpoch` and `resultingEpoch`; `resultingEpoch` is the
-group epoch represented by the returned storage batch after any staged Commit
-merge. Welcome has no MLS AAD field and is not given a wrapper substitute.
+Welcome has no MLS AAD field and is not given a wrapper substitute.
 
 See [`test/external_storage_test.dart`](test/external_storage_test.dart) for a
 complete create/add/join/message/commit flow that recreates the provider from

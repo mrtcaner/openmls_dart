@@ -28,7 +28,7 @@
 - Native release downloads and package metadata now point to this fork's public
   releases and remain checksum-verified.
 - Public documentation now distinguishes the Rust-owned `MlsEngine` database
-  from the caller-owned storage/transaction API, documents the 1.5.4 validation
+  from the caller-owned storage/transaction API, documents the 1.5.5 validation
   guarantees and exact fork pin, and reports repository protection status
   accurately.
 - CI continues to calculate coverage on pull requests and publishes the README
