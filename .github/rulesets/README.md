@@ -1,8 +1,15 @@
 # Repository rulesets & release protection
 
-This directory holds the GitHub **repository rulesets** as committed JSON — the
-source of truth, visible and editable in-repo — plus this runbook. Apply them
-with:
+This directory holds the intended GitHub **repository rulesets** as committed
+JSON, plus this runbook. The live GitHub configuration is authoritative because
+GitHub does not apply these files automatically.
+
+> **Current status (2026-07-22):** this fork has no live repository rulesets.
+> The `native-build` environment exists but has no protection rules, required
+> reviewers, or deployment-branch policy. Native release triggers are therefore
+> not protected by the controls described below.
+
+Apply the intended controls with:
 
 ```bash
 make setup-repo-protections
@@ -18,7 +25,7 @@ manual `gh api` calls below) pushes them there, so run it **after the GitHub rep
 exists** (first push). A wrong bypass actor can lock a maintainer out of
 releasing, so review before applying. All commands assume the
 [`gh`](https://cli.github.com) CLI authenticated as a repo **admin**; replace
-`djx-y-z/openmls_dart` if you renamed the repo.
+`mrtcaner/openmls_dart` if you renamed the repo.
 
 ## Why this exists (the supply-chain gap)
 
@@ -67,15 +74,15 @@ make setup-repo-protections ARGS="--no-environment"   # rulesets only
 Manual equivalent (per file), if you can't use the script:
 
 ```bash
-gh api --method POST repos/djx-y-z/openmls_dart/rulesets \
+gh api --method POST repos/mrtcaner/openmls_dart/rulesets \
   --input .github/rulesets/protect-release-tags.json
 ```
 
 **Verify / roll back:**
 
 ```bash
-gh api repos/djx-y-z/openmls_dart/rulesets --jq '.[] | "\(.id)\t\(.name)"'
-gh api --method DELETE repos/djx-y-z/openmls_dart/rulesets/<ID>   # roll back one
+gh api repos/mrtcaner/openmls_dart/rulesets --jq '.[] | "\(.id)\t\(.name)"'
+gh api --method DELETE repos/mrtcaner/openmls_dart/rulesets/<ID>   # roll back one
 ```
 
 Prefer a dry run? Set `"enforcement": "evaluate"` in a JSON file, apply, watch the
@@ -87,7 +94,8 @@ A tag ruleset does **not** cover the `workflow_dispatch` path, so
 `build-openmls.yml`'s `create-release` job runs in the `native-build`
 environment. `make setup-repo-protections` creates that environment and adds you
 as a required reviewer; until reviewers exist the gate is inactive (GitHub
-auto-creates the environment unprotected, which is safe). To also forbid entering
+auto-creates the environment unprotected, which does not block a release). To
+also forbid entering
 it off an arbitrary ref, add a deployment-branch policy allowing only
 `openmls_frb-*` (Settings → Environments → native-build).
 
@@ -102,7 +110,7 @@ it off an arbitrary ref, add a deployment-branch policy allowing only
   a bypass entry only when it pushes *unsigned* refs. Find its Integration id and
   add it to `bypass_actors`:
   ```bash
-  gh api repos/djx-y-z/openmls_dart/installations --jq '.installations[].app_id'
+  gh api repos/mrtcaner/openmls_dart/installations --jq '.installations[].app_id'
   ```
   ```json
   { "actor_id": <APP_ID>, "actor_type": "Integration", "bypass_mode": "always" }

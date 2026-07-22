@@ -6,6 +6,8 @@
 [![Dart](https://img.shields.io/badge/dart-%3E%3D3.10.0-brightgreen.svg)](https://dart.dev)
 [![Flutter](https://img.shields.io/badge/flutter-%3E%3D3.38.0-blue.svg)](https://flutter.dev)
 [![openmls](https://img.shields.io/badge/openmls-v0.8.1-orange.svg)](https://github.com/openmls/openmls)
+[![native bridge](https://img.shields.io/badge/openmls__frb-1.5.4-purple.svg)](https://github.com/mrtcaner/openmls_dart/releases/tag/openmls_frb-1.5.4)
+[![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/mrtcaner/8ff33d8b0975fa90bc0e9249a70e5b17/raw/coverage.json)](https://github.com/mrtcaner/openmls_dart/actions/workflows/test.yml)
 
 Dart bindings for [OpenMLS](https://github.com/openmls/openmls), providing a Rust implementation of the Messaging Layer Security (MLS) protocol ([RFC 9420](https://www.rfc-editor.org/rfc/rfc9420.html)) for secure group messaging.
 
@@ -14,14 +16,18 @@ Dart bindings for [OpenMLS](https://github.com/openmls/openmls), providing a Rus
 |             | Android | iOS   | macOS  | Linux      | Windows | Web |
 |-------------|---------|-------|--------|------------|---------|-----|
 | **Support** | SDK 24+ | 13.0+ | 10.15+ | arm64, x64 | x64     | WASM |
-| **Arch**    | arm64, armv7, x64 | arm64 | arm64, x64 | arm64, x64 | x64 | wasm32 |
+| **Arch**    | arm64, armv7, x64 | device arm64; simulator arm64, x64 | arm64, x64 | arm64, x64 | x64 | wasm32 |
 
 ## Features
 
 - **MLS Protocol (RFC 9420)**: Secure group messaging with forward secrecy and post-compromise security
 - **Group Key Agreement**: Efficient tree-based group key agreement (TreeKEM)
-- **Encrypted Storage**: All MLS state encrypted at rest — SQLCipher on native, Web Crypto AES-256-GCM on WASM
-- **Basic & X.509 Credentials**: Support for both credential types
+- **Two Storage Modes**: Rust-owned encrypted storage through `MlsEngine`, or
+  operation-scoped caller-owned state for integration with an existing
+  transaction authority
+- **Basic & X.509 Credentials**: Support for both credential types in the
+  `MlsEngine` API; caller-owned member admission currently validates Basic
+  Credential identities
 - **Flutter & CLI Support**: Works with Flutter apps and standalone Dart CLI applications
 - **Automatic Builds**: Native libraries downloaded automatically via build hooks
 - **High Performance**: Direct Rust integration via Flutter Rust Bridge
@@ -38,10 +44,11 @@ Dart bindings for [OpenMLS](https://github.com/openmls/openmls), providing a Rus
 | Key Packages | Done | Create with options (lifetime, last-resort) |
 | Credentials | Done | Basic and X.509 credential types |
 | State Queries | Done | Members, epoch, extensions, ratchet tree, group info, PSK export |
-| Storage | Done | Encrypted at rest via `MlsEngine` (SQLCipher / Web Crypto) |
+| Rust-owned storage | Done | `MlsEngine` with SQLCipher on native and Web Crypto on WASM |
+| Caller-owned storage | Done | Versioned opaque entries and atomic mutation batches; the host owns encryption and transactions |
 
 <details>
-<summary>Full API reference</summary>
+<summary>API overview</summary>
 
 **Key Packages**: `createKeyPackage`, `createKeyPackageWithOptions`
 
@@ -57,23 +64,43 @@ Dart bindings for [OpenMLS](https://github.com/openmls/openmls), providing a Rus
 
 **Messages**: `createMessage`, `processMessage`, `processMessageWithInspect`, `mlsMessageExtractGroupId`, `mlsMessageExtractEpoch`, `mlsMessageContentType`
 
+**Caller-owned storage**: `mlsStorageFormatVersion`,
+`createKeyPackageWithStorage`, `createGroupWithStorage`,
+`addMembersWithStorage`, `joinGroupFromWelcomeWithStorage`,
+`createMessageWithStorage`, `processMessageWithStorage`,
+`deleteGroupWithStorage`, `MlsStorageEntry`, `MlsStorageBatch`
+
 </details>
 
 ## Installation
 
-Add to your `pubspec.yaml`:
+The caller-owned storage API and its matching native bridge are currently
+consumed from this fork at an exact reviewed commit:
 
 ```yaml
 dependencies:
-  openmls: ^x.x.x
+  openmls:
+    git:
+      url: https://github.com/mrtcaner/openmls_dart.git
+      ref: 84b389d03fcefc2f1c0b209b9690950fdf7d4d11
 ```
+
+Do not use an unpinned branch for an application that persists MLS state. The
+pub.dev Dart package remains version `1.4.2`; the fork changes documented here
+have not been published as a newer Dart package.
+
+| Component | Pinned version |
+|-----------|----------------|
+| Dart package metadata | `1.4.2` |
+| Native bridge and release assets | `openmls_frb-1.5.4` |
+| Upstream OpenMLS | `openmls-v0.8.1` |
 
 Native libraries are downloaded automatically during build via Dart build hooks.
 
 **No Rust required** for end users - precompiled binaries are downloaded from GitHub Releases.
 Downloads require a matching SHA256 entry from this fork's public release.
 
-## Usage
+## Usage: Rust-owned encrypted storage
 
 ```dart
 import 'dart:convert';
@@ -121,9 +148,14 @@ void main() async {
 }
 ```
 
-## Storage
+## Storage Modes
 
-All MLS state is stored in a Rust-owned encrypted database via `MlsEngine`:
+Choose one durable authority for an application. Do not combine both modes for
+the same MLS state.
+
+### `MlsEngine`: Rust-owned encrypted database
+
+`MlsEngine` owns persistence and encrypts its database automatically:
 
 | Platform | Backend | Encryption |
 |----------|---------|------------|
@@ -152,6 +184,38 @@ final engine2 = await MlsEngine.create(dbPath: 'mls_data.db', encryptionKey: myK
 ```
 
 On WASM, the encryption key is imported as a **non-extractable `CryptoKey`** via the Web Crypto API. Raw key bytes are zeroized from WASM memory immediately after import.
+
+### Caller-owned storage and transactions
+
+The top-level `*WithStorage` functions do not open a database or retain a group
+object. Each call accepts opaque `MlsStorageEntry` values and the current
+`mlsStorageFormatVersion()`. A successful mutation returns one
+`MlsStorageBatch`; the caller must atomically apply the entire batch with its
+related application state, or discard both. A failed call returns no batch.
+
+This mode is intended for applications that already have an encrypted database
+and need MLS changes to share that database's transaction. The host is
+responsible for encryption at rest, serialized writes, rollback, backup policy,
+and avoiding logs or unnecessary copies of opaque values.
+
+Release `openmls_frb-1.5.4` adds two receive/admission checks to this boundary:
+
+- `processMessageWithStorage(expectedAad: ...)` rejects an authenticated AAD
+  mismatch before returning a storage batch.
+- `addMembersWithStorage(expectedCredentialIdentities: ...)` requires each
+  validated KeyPackage to contain a Basic Credential with the corresponding
+  expected identity. Count, credential-type, and identity mismatches fail before
+  a member-add commit is created.
+
+See [`test/external_storage_test.dart`](test/external_storage_test.dart) for a
+complete create/add/join/message/commit flow that recreates the provider from
+caller state for every operation and tests discard, mismatch, and retry.
+
+The caller-owned boundary deliberately has a smaller surface than `MlsEngine`.
+It currently does not expose member removal, member swapping, arbitrary
+proposals, external commits, or explicit retirement of an abandoned KeyPackage.
+Do not decode or manufacture opaque storage rows to simulate a missing
+operation.
 
 ## Known Limitations
 
@@ -296,13 +360,13 @@ It also checks for copier template updates daily and creates notification PRs wi
 ┌─────────────────────────────────────────────────┐
 │          OpenMLS (Rust crate)                    │  Core MLS implementation
 ├─────────────────────────────────────────────────┤
-│     MlsEngine + EncryptedDb (Rust)              │  Encrypted storage layer
+│  MlsEngine + EncryptedDb  OR  *WithStorage API  │  One selected storage mode
 ├─────────────────────────────────────────────────┤
 │       rust/src/api/*.rs (Rust wrappers)         │  FRB-annotated functions
 ├─────────────────────────────────────────────────┤
 │      lib/src/rust/*.dart (FRB generated)        │  Auto-generated Dart API
 ├─────────────────────────────────────────────────┤
-│           Your Dart application code            │  Uses MlsEngine
+│           Your Dart application code            │  Owns integration boundary
 └─────────────────────────────────────────────────┘
 ```
 
@@ -311,7 +375,8 @@ It also checks for copier template updates daily and creates notification PRs wi
 **Key Properties:**
 - **MLS Protocol (RFC 9420)** - Standardized group key agreement with forward secrecy and post-compromise security
 - **Rust Implementation** - All cryptographic operations run in Rust using OpenMLS with the RustCrypto backend
-- **Encrypted at Rest** - All MLS state encrypted via SQLCipher (native) or Web Crypto AES-256-GCM (WASM)
+- **Encryption at Rest** - `MlsEngine` uses SQLCipher or Web Crypto; callers of
+  `*WithStorage` must provide equivalent protection in their own durable store
 - **Web Crypto on WASM** - Encryption key stored as non-extractable `CryptoKey` via `crypto.subtle` — raw bytes never persist in WASM memory
 - **Memory Safety** - Rust's ownership model prevents memory-related vulnerabilities
 - **No `unsafe` code** in the wrapper layer (except `Send + Sync` for `CryptoKey` on single-threaded WASM)

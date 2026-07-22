@@ -8,8 +8,14 @@
 ///
 /// ```yaml
 /// dependencies:
-///   openmls: ^1.0.0
+///   openmls:
+///     git:
+///       url: https://github.com/mrtcaner/openmls_dart.git
+///       ref: 84b389d03fcefc2f1c0b209b9690950fdf7d4d11
 /// ```
+///
+/// Pin an exact reviewed commit when persisted MLS state depends on this fork's
+/// caller-owned storage format. See the repository README for version details.
 ///
 /// Native libraries are downloaded automatically during build via Dart Build Hooks.
 ///

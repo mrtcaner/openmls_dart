@@ -92,7 +92,7 @@ openmls_dart/
 ├── rust/                       # Rust source code
 │   ├── Cargo.toml              # Rust dependencies (OpenMLS version here)
 │   └── src/
-│       ├── api/                # FRB API functions (engine.rs is the main API)
+│       ├── api/                # FRB APIs (engine.rs and storage.rs)
 │       ├── encrypted_db.rs     # EncryptedDb (SQLCipher native / Web Crypto WASM)
 │       └── snapshot_storage.rs # SnapshotStorageProvider (HashMap-based)
 ├── test/                       # Test files
@@ -283,7 +283,10 @@ This library uses Flutter Rust Bridge (FRB) with OpenMLS (pure Rust):
 - **No manual cleanup needed** - FRB handles all resource deallocation
 - **No `dispose()` calls** - Rust drops resources when they go out of scope
 
-When adding new Rust API functions to `MlsEngine`:
+When adding a Rust API function, first choose the storage boundary it belongs
+to. Do not make one operation write through both boundaries.
+
+For `MlsEngine` methods:
 
 - Return `Result<T, String>` for error handling (FRB converts to Dart exceptions)
 - Methods on `MlsEngine` access storage via `self.db` (EncryptedDb)
@@ -304,6 +307,19 @@ impl MlsEngine {
     }
 }
 ```
+
+For caller-owned storage functions in `rust/src/api/storage.rs`:
+
+- keep each function operation-scoped; do not retain a provider or group object
+- accept all required opaque entries plus `mlsStorageFormatVersion()`
+- return one complete `MlsStorageBatch` only after success
+- perform no durable I/O; encryption and atomic commit belong to the host
+- validate caller-supplied security context before returning a mutation batch
+- add success, discard/retry, mismatch, and missing-state tests in
+  `test/external_storage_test.dart`
+
+After either API surface changes, run `make codegen` and review the generated
+Dart and Rust diffs before testing.
 
 ## Advanced Development
 
@@ -390,7 +406,9 @@ To enable AI-powered changelog generation in CI:
 
 ### Setting up Coverage Badge
 
-The CI automatically measures test coverage and can update a badge in your README. To enable this:
+CI measures test coverage and updates the README badge after successful pushes
+to `main`. The badge uses a public Gist while its write token remains an Actions
+secret. To recreate or rotate the configuration:
 
 1. Create a **public** GitHub Gist at https://gist.github.com
    - Filename: `coverage.json`
@@ -400,7 +418,11 @@ The CI automatically measures test coverage and can update a badge in your READM
    - Required permission: **Gists → Read and write**
 4. Add as repository secret: Settings → Secrets and variables → Actions → New repository secret → `GIST_TOKEN`
 5. Add as repository variable: Settings → Secrets and variables → Actions → Variables → New repository variable → `COVERAGE_GIST_ID` (value: the Gist ID from step 2)
-6. Update `README.md`: uncomment the coverage badge line and replace `COVERAGE_GIST_ID` with your actual Gist ID
+6. Add the matching Shields endpoint badge to `README.md`
+7. Keep the workflow's `update-badge` input limited to `refs/heads/main`
+
+Use a dedicated classic token with only the `gist` scope. Do not reuse a broad
+GitHub CLI or repository token for this cosmetic job.
 
 ### Setting up pub.dev Publishing
 
@@ -471,9 +493,14 @@ exist before you tag the pub.dev release.
 
 ## Repository rulesets & tag protection
 
-This repository should be guarded by GitHub **repository rulesets** and a
-required-reviewer **environment**, so the native/crypto library's releases can't
-be published without the right people and review:
+The intended configuration uses GitHub **repository rulesets** and a
+required-reviewer **environment** so native releases cannot be published without
+the right role and review.
+
+**Current status (verified 2026-07-22):** the live fork has no repository
+rulesets, and its `native-build` environment has no protection rules, reviewers,
+or deployment-branch policy. The list below is the target configuration, not a
+description of protections currently active:
 
 - **Signed commits** required on all branches (configure SSH or GPG signing).
 - **`main`** protected (changes land via PR; force-push and deletion blocked).

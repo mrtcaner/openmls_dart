@@ -213,25 +213,29 @@ finalizes the CHANGELOG (`[Unreleased]` → `[X.Y.Z]` + compare links; no empty
 `[Unreleased]` is left behind), then signs a commit + tag `vX.Y.Z` and pushes —
 `publish.yml` publishes to pub.dev.
 
-Repository rulesets restrict who can create the `openmls_frb-*` / `v*` release
-tags, and a required-reviewer `native-build` environment gates the native publish.
-See `.github/rulesets/README.md`.
+The committed ruleset files and `native-build` environment are intended to
+protect release triggers, but they are not active on the live fork as of
+2026-07-22: GitHub reports no repository rulesets and no environment protection
+rules. Do not claim the release path is gated until the live settings are
+applied and verified. See `.github/rulesets/README.md`.
 
 ## Native Library Version
 
-The openmls version is specified in `pubspec.yaml`:
+Three versions move independently:
 
-```yaml
-openmls:
-  native_version: "1.0.0"  # Current version
-```
+- `rust/Cargo.toml` `[package].version` is the `openmls_frb` native bridge and
+  release asset version.
+- OpenMLS dependency git tags are pinned in `rust/Cargo.toml`.
+- `pubspec.yaml` `version` is the Dart package version.
+
+There is no `native_version` field in `pubspec.yaml`.
 
 To check/update the version:
 ```bash
 make check-new-openmls-version              # Check for updates
 make check-new-openmls-version ARGS="--update"  # Apply update
 make rust-update                    # Update Cargo.lock after version bump
-make update-changelog ARGS="--version v1.0.0"  # Generate AI changelog entry
+make update-changelog ARGS="--version openmls-vX.Y.Z"  # Generate AI changelog entry
 ```
 
 ### AI-Powered Changelog
@@ -278,7 +282,13 @@ AI_MODELS_TOKEN=xxx make update-changelog ARGS="--version v1.0.0"
 
 ## Storage Architecture
 
-This project uses a **snapshot pattern** for MLS storage (vs Wire's 18+ entity tables with direct SQL per method).
+This project exposes two separate storage authorities. An application must
+choose one authority for a given MLS state.
+
+### `MlsEngine` snapshot storage
+
+`MlsEngine` uses a snapshot pattern for MLS storage (vs Wire's 18+ entity tables
+with direct SQL per method).
 
 ### How it works
 
@@ -289,7 +299,8 @@ This project uses a **snapshot pattern** for MLS storage (vs Wire's 18+ entity t
 4. Drop                  → zeroize() all values in both HashMaps → memory freed
 ```
 
-**No data is held in memory between API calls.** Only the `EncryptedDb` handle persists.
+**No MLS snapshot is held in memory between `MlsEngine` calls.** Only the
+`EncryptedDb` handle persists.
 
 ### Key files
 
@@ -298,6 +309,7 @@ This project uses a **snapshot pattern** for MLS storage (vs Wire's 18+ entity t
 | `rust/src/snapshot_storage.rs` | SnapshotStorageProvider (HashMap-based StorageProvider impl) |
 | `rust/src/encrypted_db.rs` | EncryptedDb (SQLCipher native, IDB+AES-GCM WASM) |
 | `rust/src/api/engine.rs` | MlsEngine (load → operate → commit cycle) |
+| `rust/src/api/storage.rs` | Caller-owned operation boundary (opaque entries → mutation batch) |
 
 ### Native vs WASM loading
 
@@ -320,6 +332,18 @@ The ratchet tree is the only entry scaling with members (~500 bytes per member).
 2. **Decouples DB schema from OpenMLS internals** — far fewer migrations needed on upgrades
 3. **MLS data is small** — full group load is negligible for realistic group sizes
 4. **Simpler code** — one table, one load, one diff, one save
+
+### Caller-owned storage
+
+Functions in `rust/src/api/storage.rs` reconstruct a provider from caller-owned
+opaque entries for one operation and return one complete mutation batch. They do
+not open a database or retain state. The host owns encryption at rest, serialized
+writes, atomic apply/discard, rollback, and backup policy. Keep this surface
+operation-scoped and do not decode or manufacture its opaque rows.
+
+The caller-owned API is deliberately smaller than `MlsEngine`. Before extending
+it, add an explicit operation and tests instead of attempting to emulate missing
+behavior by editing storage entries.
 
 ### Database migrations
 

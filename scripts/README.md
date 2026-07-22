@@ -71,13 +71,12 @@ make test
 When updating openmls version:
 
 ```bash
-# Option 1: Automatic update (recommended)
+# Update the OpenMLS git tags in rust/Cargo.toml
 make check-new-openmls-version ARGS="--update"
 
-# Option 2: Manual update
-# 1. Edit rust/Cargo.toml - update openmls-protocol tag to new version
-# 2. Update Cargo.lock
-cd rust && cargo update && cd ..
+# Refresh the lockfile and generated bindings
+make rust-update
+make codegen
 
 # Test
 make test
@@ -88,7 +87,7 @@ make test
 Native libraries are managed via **native assets** (Dart 3.10+).
 
 - **End users**: Precompiled binaries are downloaded from GitHub Releases (no Rust needed)
-- **Developers**: Local build from source (requires Rust + protoc) takes priority
+- **Developers**: Local build from source (requires Rust) takes priority
 
 The build hook (`hook/build.dart`) handles library resolution:
 1. Checks for local Rust build in `rust/target/release/`
