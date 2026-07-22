@@ -1111,7 +1111,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     return [
       cst_encode_processed_message_type(raw.messageType),
       cst_encode_opt_box_autoadd_u_32(raw.senderIndex),
-      cst_encode_u_64(raw.epoch),
+      cst_encode_u_64(raw.previousEpoch),
+      cst_encode_u_64(raw.resultingEpoch),
       cst_encode_opt_list_prim_u_8_strict(raw.applicationMessage),
       cst_encode_bool(raw.hasStagedCommit),
       cst_encode_bool(raw.hasProposal),
@@ -2621,6 +2622,7 @@ class RustLibWire implements BaseWire {
     JSAny signer_bytes,
     JSAny key_packages_bytes,
     JSAny expected_credential_identities,
+    JSAny aad,
     JSAny storage_entries,
     int storage_format_version,
   ) => wasmModule.wire__crate__api__storage__add_members_with_storage(
@@ -2629,6 +2631,7 @@ class RustLibWire implements BaseWire {
     signer_bytes,
     key_packages_bytes,
     expected_credential_identities,
+    aad,
     storage_entries,
     storage_format_version,
   );
@@ -2680,7 +2683,7 @@ class RustLibWire implements BaseWire {
     JSAny group_id,
     JSAny signer_bytes,
     JSAny message,
-    JSAny? aad,
+    JSAny aad,
     JSAny storage_entries,
     int storage_format_version,
   ) => wasmModule.wire__crate__api__storage__create_message_with_storage(
@@ -2764,7 +2767,7 @@ class RustLibWire implements BaseWire {
     NativePortType port_,
     JSAny group_id,
     JSAny message_bytes,
-    JSAny? expected_aad,
+    JSAny expected_aad,
     JSAny storage_entries,
     int storage_format_version,
   ) => wasmModule.wire__crate__api__storage__process_message_with_storage(
@@ -3371,6 +3374,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny signer_bytes,
     JSAny key_packages_bytes,
     JSAny expected_credential_identities,
+    JSAny aad,
     JSAny storage_entries,
     int storage_format_version,
   );
@@ -3403,7 +3407,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny group_id,
     JSAny signer_bytes,
     JSAny message,
-    JSAny? aad,
+    JSAny aad,
     JSAny storage_entries,
     int storage_format_version,
   );
@@ -3450,7 +3454,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     NativePortType port_,
     JSAny group_id,
     JSAny message_bytes,
-    JSAny? expected_aad,
+    JSAny expected_aad,
     JSAny storage_entries,
     int storage_format_version,
   );

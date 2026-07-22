@@ -89,6 +89,12 @@ Do not use an unpinned branch for an application that persists MLS state. The
 pub.dev Dart package remains version `1.4.2`; the fork changes documented here
 have not been published as a newer Dart package.
 
+The pinned 1.5.4 bridge is the last published baseline. It does not contain the
+required Commit-AAD and explicit epoch-transition changes tracked in
+[`mrtcaner/openmls_dart#4`](https://github.com/mrtcaner/openmls_dart/issues/4).
+Consumers that require those guarantees must wait for and pin the complete
+replacement bridge release.
+
 | Component | Pinned version |
 |-----------|----------------|
 | Dart package metadata | `1.4.2` |
@@ -198,7 +204,7 @@ and need MLS changes to share that database's transaction. The host is
 responsible for encryption at rest, serialized writes, rollback, backup policy,
 and avoiding logs or unnecessary copies of opaque values.
 
-Release `openmls_frb-1.5.4` adds two receive/admission checks to this boundary:
+Release `openmls_frb-1.5.4` added two receive/admission checks to this boundary:
 
 - `processMessageWithStorage(expectedAad: ...)` rejects an authenticated AAD
   mismatch before returning a storage batch.
@@ -206,6 +212,13 @@ Release `openmls_frb-1.5.4` adds two receive/admission checks to this boundary:
   validated KeyPackage to contain a Basic Credential with the corresponding
   expected identity. Count, credential-type, and identity mismatches fail before
   a member-add commit is created.
+
+The next bridge release makes AAD required on
+`createMessageWithStorage`, `addMembersWithStorage`, and
+`processMessageWithStorage`. Add-member Commits authenticate the supplied AAD.
+Processing returns `previousEpoch` and `resultingEpoch`; `resultingEpoch` is the
+group epoch represented by the returned storage batch after any staged Commit
+merge. Welcome has no MLS AAD field and is not given a wrapper substitute.
 
 See [`test/external_storage_test.dart`](test/external_storage_test.dart) for a
 complete create/add/join/message/commit flow that recreates the provider from

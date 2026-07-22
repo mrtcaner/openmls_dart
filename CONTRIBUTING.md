@@ -315,6 +315,8 @@ For caller-owned storage functions in `rust/src/api/storage.rs`:
 - return one complete `MlsStorageBatch` only after success
 - perform no durable I/O; encryption and atomic commit belong to the host
 - validate caller-supplied security context before returning a mutation batch
+- keep application/Commit AAD and receive-side expected AAD mandatory
+- report both the previous and resulting epoch for processed state transitions
 - add success, discard/retry, mismatch, and missing-state tests in
   `test/external_storage_test.dart`
 

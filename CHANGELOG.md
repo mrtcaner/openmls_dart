@@ -4,7 +4,7 @@
 
 #### ✨ Highlights
 
-- **openmls_frb v1.5.4** — Rust FFI bindings
+- **openmls_frb v1.5.4 → next release** — caller-owned storage FFI boundary
 
 ### Added
 
@@ -16,6 +16,9 @@
 - Caller-supplied Basic Credential identity validation for KeyPackages passed
   to the caller-owned storage API. Mismatched identities and list lengths are
   rejected before a member-add commit is created.
+- Required authenticated data for caller-owned application creation,
+  add-member Commit creation, and message processing. Add-member Commits now
+  carry the caller-supplied AAD through OpenMLS framing.
 
 ### Changed
 
@@ -31,6 +34,13 @@
 - CI continues to calculate coverage on pull requests and publishes the README
   badge only after successful `main` runs, using a dedicated Gist token and the
   configured public coverage Gist.
+- `ProcessMessageWithStorageResult.epoch` is replaced by explicit
+  `previousEpoch` and `resultingEpoch` values. The latter describes the group
+  state represented by the returned storage batch after a staged Commit merge.
+
+These caller-owned API changes are intentionally breaking and require a new
+matching native bridge release. They are tracked publicly in
+[`mrtcaner/openmls_dart#4`](https://github.com/mrtcaner/openmls_dart/issues/4).
 
 ### Removed
 

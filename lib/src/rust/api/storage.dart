@@ -61,12 +61,14 @@ Future<CreateGroupWithStorageResult> createGroupWithStorage({
 ///
 /// Each validated KeyPackage must contain a Basic Credential whose identity
 /// exactly matches the corresponding caller-supplied expected identity. A
-/// mismatch fails before group state changes are returned.
+/// mismatch fails before group state changes are returned. `aad` is
+/// authenticated as part of the add-member Commit.
 Future<AddMembersWithStorageResult> addMembersWithStorage({
   required List<int> groupId,
   required List<int> signerBytes,
   required List<Uint8List> keyPackagesBytes,
   required List<Uint8List> expectedCredentialIdentities,
+  required List<int> aad,
   required List<MlsStorageEntry> storageEntries,
   required int storageFormatVersion,
 }) => RustLib.instance.api.crateApiStorageAddMembersWithStorage(
@@ -74,6 +76,7 @@ Future<AddMembersWithStorageResult> addMembersWithStorage({
   signerBytes: signerBytes,
   keyPackagesBytes: keyPackagesBytes,
   expectedCredentialIdentities: expectedCredentialIdentities,
+  aad: aad,
   storageEntries: storageEntries,
   storageFormatVersion: storageFormatVersion,
 );
@@ -100,7 +103,7 @@ Future<CreateMessageWithStorageResult> createMessageWithStorage({
   required List<int> groupId,
   required List<int> signerBytes,
   required List<int> message,
-  Uint8List? aad,
+  required List<int> aad,
   required List<MlsStorageEntry> storageEntries,
   required int storageFormatVersion,
 }) => RustLib.instance.api.crateApiStorageCreateMessageWithStorage(
@@ -114,12 +117,12 @@ Future<CreateMessageWithStorageResult> createMessageWithStorage({
 
 /// Process an application, proposal, or commit message against caller state.
 ///
-/// When `expected_aad` is present, the authenticated message AAD must match it
-/// byte-for-byte. A mismatch returns no storage batch.
+/// The authenticated message AAD must match `expected_aad` byte-for-byte. A
+/// mismatch returns no storage batch.
 Future<ProcessMessageWithStorageResult> processMessageWithStorage({
   required List<int> groupId,
   required List<int> messageBytes,
-  Uint8List? expectedAad,
+  required List<int> expectedAad,
   required List<MlsStorageEntry> storageEntries,
   required int storageFormatVersion,
 }) => RustLib.instance.api.crateApiStorageProcessMessageWithStorage(
@@ -315,7 +318,12 @@ class MlsStorageEntry {
 class ProcessMessageWithStorageResult {
   final ProcessedMessageType messageType;
   final int? senderIndex;
-  final BigInt epoch;
+
+  /// Group epoch before applying this processed message's state transition.
+  final BigInt previousEpoch;
+
+  /// Group epoch represented by the returned storage batch.
+  final BigInt resultingEpoch;
   final Uint8List? applicationMessage;
   final bool hasStagedCommit;
   final bool hasProposal;
@@ -325,7 +333,8 @@ class ProcessMessageWithStorageResult {
   const ProcessMessageWithStorageResult({
     required this.messageType,
     this.senderIndex,
-    required this.epoch,
+    required this.previousEpoch,
+    required this.resultingEpoch,
     this.applicationMessage,
     required this.hasStagedCommit,
     required this.hasProposal,
@@ -337,7 +346,8 @@ class ProcessMessageWithStorageResult {
   int get hashCode =>
       messageType.hashCode ^
       senderIndex.hashCode ^
-      epoch.hashCode ^
+      previousEpoch.hashCode ^
+      resultingEpoch.hashCode ^
       applicationMessage.hashCode ^
       hasStagedCommit.hashCode ^
       hasProposal.hashCode ^
@@ -351,7 +361,8 @@ class ProcessMessageWithStorageResult {
           runtimeType == other.runtimeType &&
           messageType == other.messageType &&
           senderIndex == other.senderIndex &&
-          epoch == other.epoch &&
+          previousEpoch == other.previousEpoch &&
+          resultingEpoch == other.resultingEpoch &&
           applicationMessage == other.applicationMessage &&
           hasStagedCommit == other.hasStagedCommit &&
           hasProposal == other.hasProposal &&
