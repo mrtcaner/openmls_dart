@@ -4,7 +4,7 @@
 
 #### ✨ Highlights
 
-- **openmls_frb v1.5.4 → next release** — caller-owned storage FFI boundary
+- **openmls_frb v1.5.5** — Rust FFI bindings
 
 ### Added
 
