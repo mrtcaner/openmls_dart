@@ -11,7 +11,7 @@
 ///   openmls:
 ///     git:
 ///       url: https://github.com/mrtcaner/openmls_dart.git
-///       ref: 84b389d03fcefc2f1c0b209b9690950fdf7d4d11
+///       ref: <exact-reviewed-commit>
 /// ```
 ///
 /// Pin an exact reviewed commit when persisted MLS state depends on this fork's
@@ -44,8 +44,8 @@ library;
 export 'src/openmls.dart';
 export 'src/rust/api/config.dart';
 export 'src/rust/api/credential.dart';
-export 'src/rust/api/engine.dart';
 export 'src/rust/api/keys.dart';
+export 'src/rust/api/message.dart';
 export 'src/rust/api/storage.dart';
 export 'src/rust/api/types.dart';
 export 'src/security/secure_bytes.dart';

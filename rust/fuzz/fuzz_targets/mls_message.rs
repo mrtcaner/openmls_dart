@@ -8,7 +8,7 @@
 //! input — returning an `Err` is a success.
 
 use libfuzzer_sys::fuzz_target;
-use openmls_frb::api::engine::{
+use openmls_frb::api::message::{
     mls_message_content_type, mls_message_extract_epoch, mls_message_extract_group_id,
 };
 

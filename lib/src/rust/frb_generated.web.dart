@@ -8,9 +8,9 @@
 
 import 'api/config.dart';
 import 'api/credential.dart';
-import 'api/engine.dart';
 import 'api/init.dart';
 import 'api/keys.dart';
+import 'api/message.dart';
 import 'api/storage.dart';
 import 'api/types.dart';
 import 'dart:async';
@@ -31,22 +31,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential;
 
   CrossPlatformFinalizerArg
-  get rust_arc_decrement_strong_count_MlsEnginePtr => wire
-      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine;
-
-  CrossPlatformFinalizerArg
   get rust_arc_decrement_strong_count_MlsSignatureKeyPairPtr => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair;
 
   @protected
   MlsCredential
   dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
-    dynamic raw,
-  );
-
-  @protected
-  MlsEngine
-  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
     dynamic raw,
   );
 
@@ -63,12 +53,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  MlsEngine
-  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    dynamic raw,
-  );
-
-  @protected
   MlsSignatureKeyPair
   dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair(
     dynamic raw,
@@ -77,12 +61,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   MlsCredential
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
-    dynamic raw,
-  );
-
-  @protected
-  MlsEngine
-  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
     dynamic raw,
   );
 
@@ -96,9 +74,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String dco_decode_String(dynamic raw);
 
   @protected
-  AddMembersResult dco_decode_add_members_result(dynamic raw);
-
-  @protected
   AddMembersWithStorageResult dco_decode_add_members_with_storage_result(
     dynamic raw,
   );
@@ -107,39 +82,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
-  FlexibleCommitOptions dco_decode_box_autoadd_flexible_commit_options(
-    dynamic raw,
-  );
-
-  @protected
-  KeyPackageOptions dco_decode_box_autoadd_key_package_options(dynamic raw);
-
-  @protected
-  MlsCapabilities dco_decode_box_autoadd_mls_capabilities(dynamic raw);
-
-  @protected
   MlsGroupConfig dco_decode_box_autoadd_mls_group_config(dynamic raw);
-
-  @protected
-  MlsMemberInfo dco_decode_box_autoadd_mls_member_info(dynamic raw);
 
   @protected
   MlsProposalType dco_decode_box_autoadd_mls_proposal_type(dynamic raw);
 
   @protected
-  StagedCommitInfo dco_decode_box_autoadd_staged_commit_info(dynamic raw);
-
-  @protected
   int dco_decode_box_autoadd_u_32(dynamic raw);
-
-  @protected
-  BigInt dco_decode_box_autoadd_u_64(dynamic raw);
-
-  @protected
-  CommitResult dco_decode_commit_result(dynamic raw);
-
-  @protected
-  CreateGroupResult dco_decode_create_group_result(dynamic raw);
 
   @protected
   CreateGroupWithStorageResult dco_decode_create_group_with_storage_result(
@@ -151,41 +100,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_create_key_package_with_storage_result(dynamic raw);
 
   @protected
-  CreateMessageResult dco_decode_create_message_result(dynamic raw);
-
-  @protected
   CreateMessageWithStorageResult dco_decode_create_message_with_storage_result(
     dynamic raw,
   );
 
   @protected
-  ExternalJoinResult dco_decode_external_join_result(dynamic raw);
-
-  @protected
-  FlexibleCommitOptions dco_decode_flexible_commit_options(dynamic raw);
-
-  @protected
-  GroupConfigurationResult dco_decode_group_configuration_result(dynamic raw);
-
-  @protected
   int dco_decode_i_32(dynamic raw);
-
-  @protected
-  JoinGroupResult dco_decode_join_group_result(dynamic raw);
 
   @protected
   JoinGroupWithStorageResult dco_decode_join_group_with_storage_result(
     dynamic raw,
   );
-
-  @protected
-  KeyPackageOptions dco_decode_key_package_options(dynamic raw);
-
-  @protected
-  KeyPackageResult dco_decode_key_package_result(dynamic raw);
-
-  @protected
-  LeaveGroupResult dco_decode_leave_group_result(dynamic raw);
 
   @protected
   List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw);
@@ -194,27 +119,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<MlsCiphersuite> dco_decode_list_mls_ciphersuite(dynamic raw);
 
   @protected
-  List<MlsExtension> dco_decode_list_mls_extension(dynamic raw);
-
-  @protected
-  List<MlsMemberInfo> dco_decode_list_mls_member_info(dynamic raw);
-
-  @protected
-  List<MlsPendingProposalInfo> dco_decode_list_mls_pending_proposal_info(
-    dynamic raw,
-  );
-
-  @protected
   List<MlsStorageEntry> dco_decode_list_mls_storage_entry(dynamic raw);
-
-  @protected
-  Uint16List dco_decode_list_prim_u_16_strict(dynamic raw);
-
-  @protected
-  List<int> dco_decode_list_prim_u_32_loose(dynamic raw);
-
-  @protected
-  Uint32List dco_decode_list_prim_u_32_strict(dynamic raw);
 
   @protected
   List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
@@ -223,28 +128,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
-  MlsCapabilities dco_decode_mls_capabilities(dynamic raw);
-
-  @protected
   MlsCiphersuite dco_decode_mls_ciphersuite(dynamic raw);
 
   @protected
-  MlsExtension dco_decode_mls_extension(dynamic raw);
-
-  @protected
   MlsGroupConfig dco_decode_mls_group_config(dynamic raw);
-
-  @protected
-  MlsGroupContextInfo dco_decode_mls_group_context_info(dynamic raw);
-
-  @protected
-  MlsLeafNodeInfo dco_decode_mls_leaf_node_info(dynamic raw);
-
-  @protected
-  MlsMemberInfo dco_decode_mls_member_info(dynamic raw);
-
-  @protected
-  MlsPendingProposalInfo dco_decode_mls_pending_proposal_info(dynamic raw);
 
   @protected
   MlsProposalType dco_decode_mls_proposal_type(dynamic raw);
@@ -259,25 +146,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsWireFormatPolicy dco_decode_mls_wire_format_policy(dynamic raw);
 
   @protected
-  MlsCapabilities? dco_decode_opt_box_autoadd_mls_capabilities(dynamic raw);
-
-  @protected
-  MlsMemberInfo? dco_decode_opt_box_autoadd_mls_member_info(dynamic raw);
-
-  @protected
   MlsProposalType? dco_decode_opt_box_autoadd_mls_proposal_type(dynamic raw);
 
   @protected
-  StagedCommitInfo? dco_decode_opt_box_autoadd_staged_commit_info(dynamic raw);
-
-  @protected
   int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
-
-  @protected
-  BigInt? dco_decode_opt_box_autoadd_u_64(dynamic raw);
-
-  @protected
-  List<MlsExtension>? dco_decode_opt_list_mls_extension(dynamic raw);
 
   @protected
   Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw);
@@ -287,21 +159,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_process_message_with_storage_result(dynamic raw);
 
   @protected
-  ProcessedMessageInspectResult dco_decode_processed_message_inspect_result(
-    dynamic raw,
-  );
-
-  @protected
-  ProcessedMessageResult dco_decode_processed_message_result(dynamic raw);
-
-  @protected
   ProcessedMessageType dco_decode_processed_message_type(dynamic raw);
-
-  @protected
-  ProposalResult dco_decode_proposal_result(dynamic raw);
-
-  @protected
-  StagedCommitInfo dco_decode_staged_commit_info(dynamic raw);
 
   @protected
   int dco_decode_u_16(dynamic raw);
@@ -322,17 +180,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt dco_decode_usize(dynamic raw);
 
   @protected
-  WelcomeInspectResult dco_decode_welcome_inspect_result(dynamic raw);
-
-  @protected
   MlsCredential
   sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  MlsEngine
-  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
     SseDeserializer deserializer,
   );
 
@@ -349,12 +198,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  MlsEngine
-  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   MlsSignatureKeyPair
   sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair(
     SseDeserializer deserializer,
@@ -363,12 +206,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   MlsCredential
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  MlsEngine
-  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
     SseDeserializer deserializer,
   );
 
@@ -382,9 +219,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
-  AddMembersResult sse_decode_add_members_result(SseDeserializer deserializer);
-
-  @protected
   AddMembersWithStorageResult sse_decode_add_members_with_storage_result(
     SseDeserializer deserializer,
   );
@@ -393,27 +227,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
-  FlexibleCommitOptions sse_decode_box_autoadd_flexible_commit_options(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  KeyPackageOptions sse_decode_box_autoadd_key_package_options(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  MlsCapabilities sse_decode_box_autoadd_mls_capabilities(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   MlsGroupConfig sse_decode_box_autoadd_mls_group_config(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  MlsMemberInfo sse_decode_box_autoadd_mls_member_info(
     SseDeserializer deserializer,
   );
 
@@ -423,23 +237,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  StagedCommitInfo sse_decode_box_autoadd_staged_commit_info(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
-
-  @protected
-  BigInt sse_decode_box_autoadd_u_64(SseDeserializer deserializer);
-
-  @protected
-  CommitResult sse_decode_commit_result(SseDeserializer deserializer);
-
-  @protected
-  CreateGroupResult sse_decode_create_group_result(
-    SseDeserializer deserializer,
-  );
 
   @protected
   CreateGroupWithStorageResult sse_decode_create_group_with_storage_result(
@@ -453,27 +251,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  CreateMessageResult sse_decode_create_message_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   CreateMessageWithStorageResult sse_decode_create_message_with_storage_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  ExternalJoinResult sse_decode_external_join_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  FlexibleCommitOptions sse_decode_flexible_commit_options(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  GroupConfigurationResult sse_decode_group_configuration_result(
     SseDeserializer deserializer,
   );
 
@@ -481,23 +259,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
-  JoinGroupResult sse_decode_join_group_result(SseDeserializer deserializer);
-
-  @protected
   JoinGroupWithStorageResult sse_decode_join_group_with_storage_result(
     SseDeserializer deserializer,
   );
-
-  @protected
-  KeyPackageOptions sse_decode_key_package_options(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  KeyPackageResult sse_decode_key_package_result(SseDeserializer deserializer);
-
-  @protected
-  LeaveGroupResult sse_decode_leave_group_result(SseDeserializer deserializer);
 
   @protected
   List<Uint8List> sse_decode_list_list_prim_u_8_strict(
@@ -510,33 +274,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  List<MlsExtension> sse_decode_list_mls_extension(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  List<MlsMemberInfo> sse_decode_list_mls_member_info(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  List<MlsPendingProposalInfo> sse_decode_list_mls_pending_proposal_info(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   List<MlsStorageEntry> sse_decode_list_mls_storage_entry(
     SseDeserializer deserializer,
   );
-
-  @protected
-  Uint16List sse_decode_list_prim_u_16_strict(SseDeserializer deserializer);
-
-  @protected
-  List<int> sse_decode_list_prim_u_32_loose(SseDeserializer deserializer);
-
-  @protected
-  Uint32List sse_decode_list_prim_u_32_strict(SseDeserializer deserializer);
 
   @protected
   List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
@@ -545,32 +285,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
-  MlsCapabilities sse_decode_mls_capabilities(SseDeserializer deserializer);
-
-  @protected
   MlsCiphersuite sse_decode_mls_ciphersuite(SseDeserializer deserializer);
 
   @protected
-  MlsExtension sse_decode_mls_extension(SseDeserializer deserializer);
-
-  @protected
   MlsGroupConfig sse_decode_mls_group_config(SseDeserializer deserializer);
-
-  @protected
-  MlsGroupContextInfo sse_decode_mls_group_context_info(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  MlsLeafNodeInfo sse_decode_mls_leaf_node_info(SseDeserializer deserializer);
-
-  @protected
-  MlsMemberInfo sse_decode_mls_member_info(SseDeserializer deserializer);
-
-  @protected
-  MlsPendingProposalInfo sse_decode_mls_pending_proposal_info(
-    SseDeserializer deserializer,
-  );
 
   @protected
   MlsProposalType sse_decode_mls_proposal_type(SseDeserializer deserializer);
@@ -587,35 +305,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  MlsCapabilities? sse_decode_opt_box_autoadd_mls_capabilities(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  MlsMemberInfo? sse_decode_opt_box_autoadd_mls_member_info(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   MlsProposalType? sse_decode_opt_box_autoadd_mls_proposal_type(
     SseDeserializer deserializer,
   );
 
   @protected
-  StagedCommitInfo? sse_decode_opt_box_autoadd_staged_commit_info(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
-
-  @protected
-  BigInt? sse_decode_opt_box_autoadd_u_64(SseDeserializer deserializer);
-
-  @protected
-  List<MlsExtension>? sse_decode_opt_list_mls_extension(
-    SseDeserializer deserializer,
-  );
 
   @protected
   Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer);
@@ -625,25 +320,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   sse_decode_process_message_with_storage_result(SseDeserializer deserializer);
 
   @protected
-  ProcessedMessageInspectResult sse_decode_processed_message_inspect_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  ProcessedMessageResult sse_decode_processed_message_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   ProcessedMessageType sse_decode_processed_message_type(
     SseDeserializer deserializer,
   );
-
-  @protected
-  ProposalResult sse_decode_proposal_result(SseDeserializer deserializer);
-
-  @protected
-  StagedCommitInfo sse_decode_staged_commit_info(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_16(SseDeserializer deserializer);
@@ -664,24 +343,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt sse_decode_usize(SseDeserializer deserializer);
 
   @protected
-  WelcomeInspectResult sse_decode_welcome_inspect_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   String cst_encode_String(String raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw;
-  }
-
-  @protected
-  JSAny cst_encode_add_members_result(AddMembersResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_prim_u_8_strict(raw.commit),
-      cst_encode_list_prim_u_8_strict(raw.welcome),
-      cst_encode_opt_list_prim_u_8_strict(raw.groupInfo),
-    ].jsify()!;
   }
 
   @protected
@@ -698,35 +362,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  JSAny cst_encode_box_autoadd_flexible_commit_options(
-    FlexibleCommitOptions raw,
-  ) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return cst_encode_flexible_commit_options(raw);
-  }
-
-  @protected
-  JSAny cst_encode_box_autoadd_key_package_options(KeyPackageOptions raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return cst_encode_key_package_options(raw);
-  }
-
-  @protected
-  JSAny cst_encode_box_autoadd_mls_capabilities(MlsCapabilities raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return cst_encode_mls_capabilities(raw);
-  }
-
-  @protected
   JSAny cst_encode_box_autoadd_mls_group_config(MlsGroupConfig raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return cst_encode_mls_group_config(raw);
-  }
-
-  @protected
-  JSAny cst_encode_box_autoadd_mls_member_info(MlsMemberInfo raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return cst_encode_mls_member_info(raw);
   }
 
   @protected
@@ -736,37 +374,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  JSAny cst_encode_box_autoadd_staged_commit_info(StagedCommitInfo raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return cst_encode_staged_commit_info(raw);
-  }
-
-  @protected
   int cst_encode_box_autoadd_u_32(int raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return cst_encode_u_32(raw);
-  }
-
-  @protected
-  JSAny cst_encode_box_autoadd_u_64(BigInt raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return cst_encode_u_64(raw);
-  }
-
-  @protected
-  JSAny cst_encode_commit_result(CommitResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_prim_u_8_strict(raw.commit),
-      cst_encode_opt_list_prim_u_8_strict(raw.welcome),
-      cst_encode_opt_list_prim_u_8_strict(raw.groupInfo),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_create_group_result(CreateGroupResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [cst_encode_list_prim_u_8_strict(raw.groupId)].jsify()!;
   }
 
   @protected
@@ -792,12 +402,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  JSAny cst_encode_create_message_result(CreateMessageResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [cst_encode_list_prim_u_8_strict(raw.ciphertext)].jsify()!;
-  }
-
-  @protected
   JSAny cst_encode_create_message_with_storage_result(
     CreateMessageWithStorageResult raw,
   ) {
@@ -809,49 +413,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  JSAny cst_encode_external_join_result(ExternalJoinResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_prim_u_8_strict(raw.groupId),
-      cst_encode_list_prim_u_8_strict(raw.commit),
-      cst_encode_opt_list_prim_u_8_strict(raw.groupInfo),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_flexible_commit_options(FlexibleCommitOptions raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_list_prim_u_8_strict(raw.addKeyPackages),
-      cst_encode_list_prim_u_32_strict(raw.removeIndices),
-      cst_encode_bool(raw.forceSelfUpdate),
-      cst_encode_bool(raw.consumePendingProposals),
-      cst_encode_opt_list_mls_extension(raw.groupContextExtensions),
-      cst_encode_opt_list_prim_u_8_strict(raw.aad),
-      cst_encode_bool(raw.createGroupInfo),
-      cst_encode_bool(raw.useRatchetTreeExtension),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_group_configuration_result(GroupConfigurationResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_mls_ciphersuite(raw.ciphersuite),
-      cst_encode_mls_wire_format_policy(raw.wireFormatPolicy),
-      cst_encode_u_32(raw.paddingSize),
-      cst_encode_u_32(raw.senderRatchetMaxOutOfOrder),
-      cst_encode_u_32(raw.senderRatchetMaxForwardDistance),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_join_group_result(JoinGroupResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [cst_encode_list_prim_u_8_strict(raw.groupId)].jsify()!;
-  }
-
-  @protected
   JSAny cst_encode_join_group_with_storage_result(
     JoinGroupWithStorageResult raw,
   ) {
@@ -860,30 +421,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_list_prim_u_8_strict(raw.groupId),
       cst_encode_mls_storage_batch(raw.storageBatch),
     ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_key_package_options(KeyPackageOptions raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_opt_box_autoadd_u_64(raw.lifetimeSeconds),
-      cst_encode_bool(raw.lastResort),
-      cst_encode_opt_box_autoadd_mls_capabilities(raw.capabilities),
-      cst_encode_opt_list_mls_extension(raw.leafNodeExtensions),
-      cst_encode_opt_list_mls_extension(raw.keyPackageExtensions),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_key_package_result(KeyPackageResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [cst_encode_list_prim_u_8_strict(raw.keyPackageBytes)].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_leave_group_result(LeaveGroupResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [cst_encode_list_prim_u_8_strict(raw.message)].jsify()!;
   }
 
   @protected
@@ -899,47 +436,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  JSAny cst_encode_list_mls_extension(List<MlsExtension> raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw.map(cst_encode_mls_extension).toList().jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_list_mls_member_info(List<MlsMemberInfo> raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw.map(cst_encode_mls_member_info).toList().jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_list_mls_pending_proposal_info(
-    List<MlsPendingProposalInfo> raw,
-  ) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw.map(cst_encode_mls_pending_proposal_info).toList().jsify()!;
-  }
-
-  @protected
   JSAny cst_encode_list_mls_storage_entry(List<MlsStorageEntry> raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw.map(cst_encode_mls_storage_entry).toList().jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_list_prim_u_16_strict(Uint16List raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw.jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_list_prim_u_32_loose(List<int> raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw.jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_list_prim_u_32_strict(Uint32List raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw.jsify()!;
   }
 
   @protected
@@ -955,27 +454,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  JSAny cst_encode_mls_capabilities(MlsCapabilities raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_prim_u_16_strict(raw.versions),
-      cst_encode_list_prim_u_16_strict(raw.ciphersuites),
-      cst_encode_list_prim_u_16_strict(raw.extensions),
-      cst_encode_list_prim_u_16_strict(raw.proposals),
-      cst_encode_list_prim_u_16_strict(raw.credentials),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_mls_extension(MlsExtension raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_u_16(raw.extensionType),
-      cst_encode_list_prim_u_8_strict(raw.data),
-    ].jsify()!;
-  }
-
-  @protected
   JSAny cst_encode_mls_group_config(MlsGroupConfig raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return [
@@ -987,50 +465,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_u_32(raw.senderRatchetMaxOutOfOrder),
       cst_encode_u_32(raw.senderRatchetMaxForwardDistance),
       cst_encode_u_32(raw.numberOfResumptionPsks),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_mls_group_context_info(MlsGroupContextInfo raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_prim_u_8_strict(raw.groupId),
-      cst_encode_u_64(raw.epoch),
-      cst_encode_mls_ciphersuite(raw.ciphersuite),
-      cst_encode_list_prim_u_8_strict(raw.treeHash),
-      cst_encode_list_prim_u_8_strict(raw.confirmedTranscriptHash),
-      cst_encode_list_prim_u_8_strict(raw.extensions),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_mls_leaf_node_info(MlsLeafNodeInfo raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_prim_u_8_strict(raw.credential),
-      cst_encode_list_prim_u_8_strict(raw.signatureKey),
-      cst_encode_list_prim_u_8_strict(raw.encryptionKey),
-      cst_encode_mls_capabilities(raw.capabilities),
-      cst_encode_list_mls_extension(raw.extensions),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_mls_member_info(MlsMemberInfo raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_u_32(raw.index),
-      cst_encode_list_prim_u_8_strict(raw.credential),
-      cst_encode_list_prim_u_8_strict(raw.signatureKey),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_mls_pending_proposal_info(MlsPendingProposalInfo raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_mls_proposal_type(raw.proposalType),
-      cst_encode_opt_box_autoadd_u_32(raw.senderIndex),
     ].jsify()!;
   }
 
@@ -1056,45 +490,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  JSAny? cst_encode_opt_box_autoadd_mls_capabilities(MlsCapabilities? raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw == null ? null : cst_encode_box_autoadd_mls_capabilities(raw);
-  }
-
-  @protected
-  JSAny? cst_encode_opt_box_autoadd_mls_member_info(MlsMemberInfo? raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw == null ? null : cst_encode_box_autoadd_mls_member_info(raw);
-  }
-
-  @protected
   int? cst_encode_opt_box_autoadd_mls_proposal_type(MlsProposalType? raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw == null ? null : cst_encode_box_autoadd_mls_proposal_type(raw);
   }
 
   @protected
-  JSAny? cst_encode_opt_box_autoadd_staged_commit_info(StagedCommitInfo? raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw == null ? null : cst_encode_box_autoadd_staged_commit_info(raw);
-  }
-
-  @protected
   int? cst_encode_opt_box_autoadd_u_32(int? raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw == null ? null : cst_encode_box_autoadd_u_32(raw);
-  }
-
-  @protected
-  JSAny? cst_encode_opt_box_autoadd_u_64(BigInt? raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw == null ? null : cst_encode_box_autoadd_u_64(raw);
-  }
-
-  @protected
-  JSAny? cst_encode_opt_list_mls_extension(List<MlsExtension>? raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw == null ? null : cst_encode_list_mls_extension(raw);
   }
 
   @protected
@@ -1122,53 +526,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  JSAny cst_encode_processed_message_inspect_result(
-    ProcessedMessageInspectResult raw,
-  ) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_processed_message_type(raw.messageType),
-      cst_encode_opt_box_autoadd_u_32(raw.senderIndex),
-      cst_encode_u_64(raw.epoch),
-      cst_encode_opt_list_prim_u_8_strict(raw.applicationMessage),
-      cst_encode_opt_box_autoadd_staged_commit_info(raw.stagedCommitInfo),
-      cst_encode_opt_box_autoadd_mls_proposal_type(raw.proposalType),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_processed_message_result(ProcessedMessageResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_processed_message_type(raw.messageType),
-      cst_encode_opt_box_autoadd_u_32(raw.senderIndex),
-      cst_encode_u_64(raw.epoch),
-      cst_encode_opt_list_prim_u_8_strict(raw.applicationMessage),
-      cst_encode_bool(raw.hasStagedCommit),
-      cst_encode_bool(raw.hasProposal),
-      cst_encode_opt_box_autoadd_mls_proposal_type(raw.proposalType),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_proposal_result(ProposalResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [cst_encode_list_prim_u_8_strict(raw.proposalMessage)].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_staged_commit_info(StagedCommitInfo raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_list_prim_u_8_strict(raw.addCredentials),
-      cst_encode_list_prim_u_32_strict(raw.removeIndices),
-      cst_encode_bool(raw.hasUpdate),
-      cst_encode_bool(raw.selfRemoved),
-      cst_encode_u_32(raw.pskCount),
-    ].jsify()!;
-  }
-
-  @protected
   JSAny cst_encode_u_64(BigInt raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return castNativeBigInt(raw);
@@ -1181,26 +538,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  JSAny cst_encode_welcome_inspect_result(WelcomeInspectResult raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_prim_u_8_strict(raw.groupId),
-      cst_encode_mls_ciphersuite(raw.ciphersuite),
-      cst_encode_u_32(raw.pskCount),
-      cst_encode_u_64(raw.epoch),
-    ].jsify()!;
-  }
-
-  @protected
   int
   cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential raw,
-  );
-
-  @protected
-  int
-  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    MlsEngine raw,
   );
 
   @protected
@@ -1217,12 +557,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int
-  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    MlsEngine raw,
-  );
-
-  @protected
-  int
   cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair(
     MlsSignatureKeyPair raw,
   );
@@ -1231,12 +565,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int
   cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential raw,
-  );
-
-  @protected
-  int
-  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    MlsEngine raw,
   );
 
   @protected
@@ -1284,13 +612,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
-  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    MlsEngine self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void
   sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair(
     MlsSignatureKeyPair self,
     SseSerializer serializer,
@@ -1300,13 +621,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void
   sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void
-  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    MlsEngine self,
     SseSerializer serializer,
   );
 
@@ -1326,13 +640,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
-  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    MlsEngine self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair(
     MlsSignatureKeyPair self,
     SseSerializer serializer,
@@ -1340,12 +647,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_String(String self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_add_members_result(
-    AddMembersResult self,
-    SseSerializer serializer,
-  );
 
   @protected
   void sse_encode_add_members_with_storage_result(
@@ -1357,32 +658,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_flexible_commit_options(
-    FlexibleCommitOptions self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_box_autoadd_key_package_options(
-    KeyPackageOptions self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_box_autoadd_mls_capabilities(
-    MlsCapabilities self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_box_autoadd_mls_group_config(
     MlsGroupConfig self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_box_autoadd_mls_member_info(
-    MlsMemberInfo self,
     SseSerializer serializer,
   );
 
@@ -1393,25 +670,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_box_autoadd_staged_commit_info(
-    StagedCommitInfo self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_box_autoadd_u_64(BigInt self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_commit_result(CommitResult self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_create_group_result(
-    CreateGroupResult self,
-    SseSerializer serializer,
-  );
 
   @protected
   void sse_encode_create_group_with_storage_result(
@@ -1426,32 +685,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_create_message_result(
-    CreateMessageResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_create_message_with_storage_result(
     CreateMessageWithStorageResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_external_join_result(
-    ExternalJoinResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_flexible_commit_options(
-    FlexibleCommitOptions self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_group_configuration_result(
-    GroupConfigurationResult self,
     SseSerializer serializer,
   );
 
@@ -1459,32 +694,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_i_32(int self, SseSerializer serializer);
 
   @protected
-  void sse_encode_join_group_result(
-    JoinGroupResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_join_group_with_storage_result(
     JoinGroupWithStorageResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_key_package_options(
-    KeyPackageOptions self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_key_package_result(
-    KeyPackageResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_leave_group_result(
-    LeaveGroupResult self,
     SseSerializer serializer,
   );
 
@@ -1501,44 +712,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_list_mls_extension(
-    List<MlsExtension> self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_list_mls_member_info(
-    List<MlsMemberInfo> self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_list_mls_pending_proposal_info(
-    List<MlsPendingProposalInfo> self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_list_mls_storage_entry(
     List<MlsStorageEntry> self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_list_prim_u_16_strict(
-    Uint16List self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_list_prim_u_32_loose(
-    List<int> self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_list_prim_u_32_strict(
-    Uint32List self,
     SseSerializer serializer,
   );
 
@@ -1552,44 +727,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_mls_capabilities(
-    MlsCapabilities self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_mls_ciphersuite(
     MlsCiphersuite self,
     SseSerializer serializer,
   );
 
   @protected
-  void sse_encode_mls_extension(MlsExtension self, SseSerializer serializer);
-
-  @protected
   void sse_encode_mls_group_config(
     MlsGroupConfig self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_mls_group_context_info(
-    MlsGroupContextInfo self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_mls_leaf_node_info(
-    MlsLeafNodeInfo self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_mls_member_info(MlsMemberInfo self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_mls_pending_proposal_info(
-    MlsPendingProposalInfo self,
     SseSerializer serializer,
   );
 
@@ -1618,40 +763,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_opt_box_autoadd_mls_capabilities(
-    MlsCapabilities? self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_opt_box_autoadd_mls_member_info(
-    MlsMemberInfo? self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_opt_box_autoadd_mls_proposal_type(
     MlsProposalType? self,
     SseSerializer serializer,
   );
 
   @protected
-  void sse_encode_opt_box_autoadd_staged_commit_info(
-    StagedCommitInfo? self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_opt_box_autoadd_u_64(BigInt? self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_opt_list_mls_extension(
-    List<MlsExtension>? self,
-    SseSerializer serializer,
-  );
 
   @protected
   void sse_encode_opt_list_prim_u_8_strict(
@@ -1666,32 +784,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_processed_message_inspect_result(
-    ProcessedMessageInspectResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_processed_message_result(
-    ProcessedMessageResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_processed_message_type(
     ProcessedMessageType self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_proposal_result(
-    ProposalResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_staged_commit_info(
-    StagedCommitInfo self,
     SseSerializer serializer,
   );
 
@@ -1712,12 +806,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_usize(BigInt self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_welcome_inspect_result(
-    WelcomeInspectResult self,
-    SseSerializer serializer,
-  );
 }
 
 // Section: wire_class
@@ -1761,818 +849,6 @@ class RustLibWire implements BaseWire {
   wire__crate__api__credential__MlsCredential_x509(JSAny certificate_chain) =>
       wasmModule.wire__crate__api__credential__MlsCredential_x509(
         certificate_chain,
-      );
-
-  void wire__crate__api__engine__MlsEngine_add_members(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny key_packages_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_add_members(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-    key_packages_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_add_members_without_update(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny key_packages_bytes,
-  ) =>
-      wasmModule.wire__crate__api__engine__MlsEngine_add_members_without_update(
-        port_,
-        that,
-        group_id_bytes,
-        signer_bytes,
-        key_packages_bytes,
-      );
-
-  void wire__crate__api__engine__MlsEngine_clear_pending_commit(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_clear_pending_commit(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_clear_pending_proposals(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_clear_pending_proposals(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_close(
-    NativePortType port_,
-    int that,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_close(port_, that);
-
-  void wire__crate__api__engine__MlsEngine_commit_to_pending_proposals(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_commit_to_pending_proposals(
-        port_,
-        that,
-        group_id_bytes,
-        signer_bytes,
-      );
-
-  void wire__crate__api__engine__MlsEngine_create(
-    NativePortType port_,
-    String db_path,
-    JSAny encryption_key,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_create(
-    port_,
-    db_path,
-    encryption_key,
-  );
-
-  void wire__crate__api__engine__MlsEngine_create_group(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? group_id,
-    JSAny? credential_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_create_group(
-    port_,
-    that,
-    config,
-    signer_bytes,
-    credential_identity,
-    signer_public_key,
-    group_id,
-    credential_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_create_group_with_builder(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? group_id,
-    JSAny? lifetime_seconds,
-    JSAny? group_context_extensions,
-    JSAny? leaf_node_extensions,
-    JSAny? capabilities,
-    JSAny? credential_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_create_group_with_builder(
-    port_,
-    that,
-    config,
-    signer_bytes,
-    credential_identity,
-    signer_public_key,
-    group_id,
-    lifetime_seconds,
-    group_context_extensions,
-    leaf_node_extensions,
-    capabilities,
-    credential_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_create_key_package(
-    NativePortType port_,
-    int that,
-    int ciphersuite,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? credential_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_create_key_package(
-    port_,
-    that,
-    ciphersuite,
-    signer_bytes,
-    credential_identity,
-    signer_public_key,
-    credential_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_create_key_package_with_options(
-    NativePortType port_,
-    int that,
-    int ciphersuite,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny options,
-    JSAny? credential_bytes,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_create_key_package_with_options(
-        port_,
-        that,
-        ciphersuite,
-        signer_bytes,
-        credential_identity,
-        signer_public_key,
-        options,
-        credential_bytes,
-      );
-
-  void wire__crate__api__engine__MlsEngine_create_message(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny message,
-    JSAny? aad,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_create_message(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-    message,
-    aad,
-  );
-
-  void wire__crate__api__engine__MlsEngine_delete_group(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_delete_group(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_delete_key_package(
-    NativePortType port_,
-    int that,
-    JSAny key_package_ref_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_delete_key_package(
-    port_,
-    that,
-    key_package_ref_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_export_group_context(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_export_group_context(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_export_group_info(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_export_group_info(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_export_ratchet_tree(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_export_ratchet_tree(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_export_secret(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    String label,
-    JSAny context,
-    int key_length,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_export_secret(
-    port_,
-    that,
-    group_id_bytes,
-    label,
-    context,
-    key_length,
-  );
-
-  void wire__crate__api__engine__MlsEngine_flexible_commit(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny options,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_flexible_commit(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-    options,
-  );
-
-  void wire__crate__api__engine__MlsEngine_get_past_resumption_psk(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny epoch,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_get_past_resumption_psk(
-    port_,
-    that,
-    group_id_bytes,
-    epoch,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_ciphersuite(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_ciphersuite(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_configuration(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_configuration(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_confirmation_tag(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_confirmation_tag(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_credential(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_credential(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_epoch(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_epoch(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_epoch_authenticator(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_epoch_authenticator(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_extensions(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_extensions(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_has_pending_proposals(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_group_has_pending_proposals(
-        port_,
-        that,
-        group_id_bytes,
-      );
-
-  void wire__crate__api__engine__MlsEngine_group_id(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_id(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_is_active(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_is_active(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_member_at(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    int leaf_index,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_member_at(
-    port_,
-    that,
-    group_id_bytes,
-    leaf_index,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_member_leaf_index(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny credential_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_member_leaf_index(
-    port_,
-    that,
-    group_id_bytes,
-    credential_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_members(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_members(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_own_index(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_own_index(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_own_leaf_node(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_own_leaf_node(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_group_pending_proposals(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_pending_proposals(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_inspect_welcome(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny welcome_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_inspect_welcome(
-    port_,
-    that,
-    config,
-    welcome_bytes,
-  );
-
-  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__engine__MlsEngine_is_closed(int that) =>
-      wasmModule.wire__crate__api__engine__MlsEngine_is_closed(that);
-
-  void wire__crate__api__engine__MlsEngine_join_group_external_commit(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny group_info_bytes,
-    JSAny? ratchet_tree_bytes,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? credential_bytes,
-  ) =>
-      wasmModule.wire__crate__api__engine__MlsEngine_join_group_external_commit(
-        port_,
-        that,
-        config,
-        group_info_bytes,
-        ratchet_tree_bytes,
-        signer_bytes,
-        credential_identity,
-        signer_public_key,
-        credential_bytes,
-      );
-
-  void wire__crate__api__engine__MlsEngine_join_group_external_commit_v2(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny group_info_bytes,
-    JSAny? ratchet_tree_bytes,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? aad,
-    bool skip_lifetime_validation,
-    JSAny? credential_bytes,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_join_group_external_commit_v2(
-        port_,
-        that,
-        config,
-        group_info_bytes,
-        ratchet_tree_bytes,
-        signer_bytes,
-        credential_identity,
-        signer_public_key,
-        aad,
-        skip_lifetime_validation,
-        credential_bytes,
-      );
-
-  void wire__crate__api__engine__MlsEngine_join_group_from_welcome(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny welcome_bytes,
-    JSAny? ratchet_tree_bytes,
-    JSAny signer_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_join_group_from_welcome(
-    port_,
-    that,
-    config,
-    welcome_bytes,
-    ratchet_tree_bytes,
-    signer_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny welcome_bytes,
-    JSAny? ratchet_tree_bytes,
-    JSAny signer_bytes,
-    bool skip_lifetime_validation,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options(
-        port_,
-        that,
-        config,
-        welcome_bytes,
-        ratchet_tree_bytes,
-        signer_bytes,
-        skip_lifetime_validation,
-      );
-
-  void wire__crate__api__engine__MlsEngine_leave_group(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_leave_group(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_leave_group_via_self_remove(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_leave_group_via_self_remove(
-        port_,
-        that,
-        group_id_bytes,
-        signer_bytes,
-      );
-
-  void wire__crate__api__engine__MlsEngine_merge_pending_commit(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_merge_pending_commit(
-    port_,
-    that,
-    group_id_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_process_message(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny message_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_process_message(
-    port_,
-    that,
-    group_id_bytes,
-    message_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_process_message_with_inspect(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny message_bytes,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_process_message_with_inspect(
-        port_,
-        that,
-        group_id_bytes,
-        message_bytes,
-      );
-
-  void wire__crate__api__engine__MlsEngine_propose_add(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny key_package_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_propose_add(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-    key_package_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_propose_custom_proposal(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    int proposal_type,
-    JSAny payload,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_propose_custom_proposal(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-    proposal_type,
-    payload,
-  );
-
-  void wire__crate__api__engine__MlsEngine_propose_external_psk(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny psk_id,
-    JSAny psk_nonce,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_propose_external_psk(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-    psk_id,
-    psk_nonce,
-  );
-
-  void wire__crate__api__engine__MlsEngine_propose_group_context_extensions(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny extensions,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_propose_group_context_extensions(
-        port_,
-        that,
-        group_id_bytes,
-        signer_bytes,
-        extensions,
-      );
-
-  void wire__crate__api__engine__MlsEngine_propose_remove(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    int member_index,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_propose_remove(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-    member_index,
-  );
-
-  void wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny credential_bytes,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential(
-        port_,
-        that,
-        group_id_bytes,
-        signer_bytes,
-        credential_bytes,
-      );
-
-  void wire__crate__api__engine__MlsEngine_propose_self_update(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny? leaf_node_capabilities,
-    JSAny? leaf_node_extensions,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_propose_self_update(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-    leaf_node_capabilities,
-    leaf_node_extensions,
-  );
-
-  void wire__crate__api__engine__MlsEngine_remove_members(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny member_indices,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_remove_members(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-    member_indices,
-  );
-
-  void wire__crate__api__engine__MlsEngine_remove_pending_proposal(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny proposal_ref_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_remove_pending_proposal(
-    port_,
-    that,
-    group_id_bytes,
-    proposal_ref_bytes,
-  );
-
-  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__engine__MlsEngine_schema_version(int that) =>
-      wasmModule.wire__crate__api__engine__MlsEngine_schema_version(that);
-
-  void wire__crate__api__engine__MlsEngine_self_update(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_self_update(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_self_update_with_new_signer(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny old_signer_bytes,
-    JSAny new_signer_bytes,
-    JSAny new_credential_identity,
-    JSAny new_signer_public_key,
-    JSAny? new_credential_bytes,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_self_update_with_new_signer(
-        port_,
-        that,
-        group_id_bytes,
-        old_signer_bytes,
-        new_signer_bytes,
-        new_credential_identity,
-        new_signer_public_key,
-        new_credential_bytes,
-      );
-
-  void wire__crate__api__engine__MlsEngine_set_configuration(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny config,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_set_configuration(
-    port_,
-    that,
-    group_id_bytes,
-    config,
-  );
-
-  void wire__crate__api__engine__MlsEngine_swap_members(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny remove_indices,
-    JSAny add_key_packages_bytes,
-  ) => wasmModule.wire__crate__api__engine__MlsEngine_swap_members(
-    port_,
-    that,
-    group_id_bytes,
-    signer_bytes,
-    remove_indices,
-    add_key_packages_bytes,
-  );
-
-  void wire__crate__api__engine__MlsEngine_update_group_context_extensions(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny extensions,
-  ) => wasmModule
-      .wire__crate__api__engine__MlsEngine_update_group_context_extensions(
-        port_,
-        that,
-        group_id_bytes,
-        signer_bytes,
-        extensions,
       );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
@@ -2742,22 +1018,23 @@ class RustLibWire implements BaseWire {
       );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__engine__mls_message_content_type(JSAny message_bytes) =>
-      wasmModule.wire__crate__api__engine__mls_message_content_type(
+  wire__crate__api__message__mls_message_content_type(JSAny message_bytes) =>
+      wasmModule.wire__crate__api__message__mls_message_content_type(
         message_bytes,
       );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__engine__mls_message_extract_epoch(JSAny message_bytes) =>
-      wasmModule.wire__crate__api__engine__mls_message_extract_epoch(
+  wire__crate__api__message__mls_message_extract_epoch(JSAny message_bytes) =>
+      wasmModule.wire__crate__api__message__mls_message_extract_epoch(
         message_bytes,
       );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__engine__mls_message_extract_group_id(JSAny message_bytes) =>
-      wasmModule.wire__crate__api__engine__mls_message_extract_group_id(
-        message_bytes,
-      );
+  wire__crate__api__message__mls_message_extract_group_id(
+    JSAny message_bytes,
+  ) => wasmModule.wire__crate__api__message__mls_message_extract_group_id(
+    message_bytes,
+  );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__storage__mls_storage_format_version() =>
@@ -2811,22 +1088,6 @@ class RustLibWire implements BaseWire {
       );
 
   void
-  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    int ptr,
-  ) => wasmModule
-      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-        ptr,
-      );
-
-  void
-  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    int ptr,
-  ) => wasmModule
-      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-        ptr,
-      );
-
-  void
   rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair(
     int ptr,
   ) => wasmModule
@@ -2872,476 +1133,6 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__credential__MlsCredential_x509(JSAny certificate_chain);
-
-  external void wire__crate__api__engine__MlsEngine_add_members(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny key_packages_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_add_members_without_update(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny key_packages_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_clear_pending_commit(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_clear_pending_proposals(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_close(
-    NativePortType port_,
-    int that,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_commit_to_pending_proposals(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_create(
-    NativePortType port_,
-    String db_path,
-    JSAny encryption_key,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_create_group(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? group_id,
-    JSAny? credential_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_create_group_with_builder(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? group_id,
-    JSAny? lifetime_seconds,
-    JSAny? group_context_extensions,
-    JSAny? leaf_node_extensions,
-    JSAny? capabilities,
-    JSAny? credential_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_create_key_package(
-    NativePortType port_,
-    int that,
-    int ciphersuite,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? credential_bytes,
-  );
-
-  external void
-  wire__crate__api__engine__MlsEngine_create_key_package_with_options(
-    NativePortType port_,
-    int that,
-    int ciphersuite,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny options,
-    JSAny? credential_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_create_message(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny message,
-    JSAny? aad,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_delete_group(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_delete_key_package(
-    NativePortType port_,
-    int that,
-    JSAny key_package_ref_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_export_group_context(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_export_group_info(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_export_ratchet_tree(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_export_secret(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    String label,
-    JSAny context,
-    int key_length,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_flexible_commit(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny options,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_get_past_resumption_psk(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny epoch,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_ciphersuite(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_configuration(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_confirmation_tag(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_credential(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_epoch(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_epoch_authenticator(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_extensions(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_has_pending_proposals(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_id(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_is_active(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_member_at(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    int leaf_index,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_member_leaf_index(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny credential_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_members(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_own_index(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_own_leaf_node(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_group_pending_proposals(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_inspect_welcome(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny welcome_bytes,
-  );
-
-  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__engine__MlsEngine_is_closed(int that);
-
-  external void wire__crate__api__engine__MlsEngine_join_group_external_commit(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny group_info_bytes,
-    JSAny? ratchet_tree_bytes,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? credential_bytes,
-  );
-
-  external void
-  wire__crate__api__engine__MlsEngine_join_group_external_commit_v2(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny group_info_bytes,
-    JSAny? ratchet_tree_bytes,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? aad,
-    bool skip_lifetime_validation,
-    JSAny? credential_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_join_group_from_welcome(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny welcome_bytes,
-    JSAny? ratchet_tree_bytes,
-    JSAny signer_bytes,
-  );
-
-  external void
-  wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options(
-    NativePortType port_,
-    int that,
-    JSAny config,
-    JSAny welcome_bytes,
-    JSAny? ratchet_tree_bytes,
-    JSAny signer_bytes,
-    bool skip_lifetime_validation,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_leave_group(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_leave_group_via_self_remove(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_merge_pending_commit(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_process_message(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny message_bytes,
-  );
-
-  external void
-  wire__crate__api__engine__MlsEngine_process_message_with_inspect(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny message_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_propose_add(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny key_package_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_propose_custom_proposal(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    int proposal_type,
-    JSAny payload,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_propose_external_psk(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny psk_id,
-    JSAny psk_nonce,
-  );
-
-  external void
-  wire__crate__api__engine__MlsEngine_propose_group_context_extensions(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny extensions,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_propose_remove(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    int member_index,
-  );
-
-  external void
-  wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny credential_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_propose_self_update(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny? leaf_node_capabilities,
-    JSAny? leaf_node_extensions,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_remove_members(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny member_indices,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_remove_pending_proposal(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny proposal_ref_bytes,
-  );
-
-  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__engine__MlsEngine_schema_version(int that);
-
-  external void wire__crate__api__engine__MlsEngine_self_update(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_self_update_with_new_signer(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny old_signer_bytes,
-    JSAny new_signer_bytes,
-    JSAny new_credential_identity,
-    JSAny new_signer_public_key,
-    JSAny? new_credential_bytes,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_set_configuration(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny config,
-  );
-
-  external void wire__crate__api__engine__MlsEngine_swap_members(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny remove_indices,
-    JSAny add_key_packages_bytes,
-  );
-
-  external void
-  wire__crate__api__engine__MlsEngine_update_group_context_extensions(
-    NativePortType port_,
-    int that,
-    JSAny group_id_bytes,
-    JSAny signer_bytes,
-    JSAny extensions,
-  );
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public(JSAny bytes);
@@ -3439,13 +1230,13 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
   wire__crate__api__config__mls_group_config_default_config(int ciphersuite);
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__engine__mls_message_content_type(JSAny message_bytes);
+  wire__crate__api__message__mls_message_content_type(JSAny message_bytes);
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__engine__mls_message_extract_epoch(JSAny message_bytes);
+  wire__crate__api__message__mls_message_extract_epoch(JSAny message_bytes);
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__engine__mls_message_extract_group_id(JSAny message_bytes);
+  wire__crate__api__message__mls_message_extract_group_id(JSAny message_bytes);
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__storage__mls_storage_format_version();
@@ -3476,16 +1267,6 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external void
   rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
-    int ptr,
-  );
-
-  external void
-  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-    int ptr,
-  );
-
-  external void
-  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
     int ptr,
   );
 

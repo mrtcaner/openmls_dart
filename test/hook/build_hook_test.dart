@@ -4,6 +4,42 @@ import 'package:test/test.dart';
 import '../../hook/build.dart' as build_hook;
 
 void main() {
+  group('localBuildTargetTriple', () {
+    test('maps Android ABIs exactly', () {
+      expect(
+        build_hook.localBuildTargetTriple(OS.android, Architecture.arm64, null),
+        'aarch64-linux-android',
+      );
+      expect(
+        build_hook.localBuildTargetTriple(OS.android, Architecture.arm, null),
+        'armv7-linux-androideabi',
+      );
+      expect(
+        build_hook.localBuildTargetTriple(OS.android, Architecture.x64, null),
+        'x86_64-linux-android',
+      );
+    });
+
+    test('distinguishes iOS device and simulator', () {
+      expect(
+        build_hook.localBuildTargetTriple(
+          OS.iOS,
+          Architecture.arm64,
+          IOSSdk.iPhoneOS,
+        ),
+        'aarch64-apple-ios',
+      );
+      expect(
+        build_hook.localBuildTargetTriple(
+          OS.iOS,
+          Architecture.arm64,
+          IOSSdk.iPhoneSimulator,
+        ),
+        'aarch64-apple-ios-sim',
+      );
+    });
+  });
+
   group('downloadCacheSubdir', () {
     test('distinguishes iOS device from iOS simulator', () {
       final device = build_hook.downloadCacheSubdir(

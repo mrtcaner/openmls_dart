@@ -1,547 +1,95 @@
-# Contributing to openmls_dart
+# Contributing
 
-Thank you for your interest in contributing to openmls_dart! This document provides guidelines and instructions for contributing.
+Contributions are welcome. For protocol, storage-format, FFI-surface, or release-layout changes, open a GitHub issue first so the compatibility and security consequences are recorded publicly.
 
-## Table of Contents
+## Setup
 
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Making Changes](#making-changes)
-- [Testing](#testing)
-- [Submitting Changes](#submitting-changes)
-- [Coding Standards](#coding-standards)
-- [Advanced Development](#advanced-development)
-- [Security Considerations](#security-considerations)
-
-## Code of Conduct
-
-Please be respectful and considerate of others. We expect all contributors to:
-
-- Use welcoming and inclusive language
-- Be respectful of differing viewpoints and experiences
-- Gracefully accept constructive criticism
-- Focus on what is best for the community
-
-## Getting Started
-
-### Prerequisites
-
-- [Dart SDK](https://dart.dev/get-dart) (3.10.0+)
-- Git
-- **For running tests:** Rust toolchain (1.88+)
-
-### Fork and Clone
-
-1. Fork the repository on GitHub
-2. Clone your fork locally:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/openmls_dart.git
-   cd openmls_dart
-   ```
-3. Add upstream remote:
-   ```bash
-   git remote add upstream https://github.com/djx-y-z/openmls_dart.git
-   ```
-
-## Development Setup
-
-### Quick Setup (Recommended)
-
-Run the setup command to install everything automatically:
+Prerequisites are Git, Dart 3.10+, Flutter through FVM, Rust 1.88+, and `make`.
 
 ```bash
+git clone https://github.com/mrtcaner/openmls_dart.git
+cd openmls_dart
 make setup
 ```
 
-This will:
-1. Check that Rust toolchain is installed (shows instructions if not)
-2. Install FVM (Flutter Version Management) and project's Flutter version
-3. Install cargo-audit for Rust dependency vulnerability scanning
-4. Install flutter_rust_bridge_codegen for binding generation
-5. Get all dependencies
+Use the Makefile for every project operation. Do not invoke Cargo, code-generation scripts, or release scripts directly.
 
-### Verify Setup
+## Architecture
+
+The fork has one persistence boundary:
+
+```text
+caller snapshot -> SnapshotStorageProvider -> one OpenMLS operation
+                <- complete MlsStorageBatch <- diffed temporary state
+```
+
+Important files:
+
+| Path | Purpose |
+|---|---|
+| `rust/src/api/storage.rs` | Public caller-owned operations |
+| `rust/src/snapshot_storage.rs` | Temporary OpenMLS storage provider and diff |
+| `rust/src/api/support.rs` | Internal parsing/credential/group helpers |
+| `rust/src/api/message.rs` | Storage-free message routing helpers |
+| `lib/src/platform/` | Native library loading, including Flutter host tests |
+| `hook/build.dart` | Verified release download and CodeAsset registration |
+| `.github/workflows/build-openmls.yml` | All-platform native release |
+
+Do not reintroduce `MlsEngine`, an embedded database, or a second storage authority as an incidental feature. Do not decode or edit opaque storage entries outside the provider implementation.
+
+## Development loop
 
 ```bash
-# Show all available commands
-make help
-
-# Run tests to ensure everything works
+make get
+make codegen
+make build
+make rust-check
+make rust-clippy
 make test
-```
-
-### Windows Users
-
-On Windows, you need to install `make` first:
-- Via Chocolatey: `choco install make`
-- Via Scoop: `scoop install make`
-- Or use Git Bash / WSL
-
-Then run `make setup` as above.
-
-### Project Structure
-
-```
-openmls_dart/
-├── lib/                        # Main library code
-│   ├── openmls.dart            # Public API exports
-│   └── src/
-│       ├── openmls.dart        # Initialization
-│       └── rust/               # Auto-generated FRB bindings
-├── rust/                       # Rust source code
-│   ├── Cargo.toml              # Rust dependencies (OpenMLS version here)
-│   └── src/
-│       ├── api/                # FRB APIs (engine.rs and storage.rs)
-│       ├── encrypted_db.rs     # EncryptedDb (SQLCipher native / Web Crypto WASM)
-│       └── snapshot_storage.rs # SnapshotStorageProvider (HashMap-based)
-├── test/                       # Test files
-├── example/                    # Example Flutter application
-├── scripts/                    # Build scripts (use via Makefile!)
-├── hook/                       # Dart Build Hook for library download
-└── Makefile                    # Entry point for all commands
-```
-
-## Making Changes
-
-### Create a Branch
-
-Create a branch for your changes:
-
-```bash
-git checkout -b feature/your-feature-name
-# or
-git checkout -b fix/your-bug-fix
-```
-
-### Types of Contributions
-
-We welcome:
-
-- **Bug fixes** - Fix issues in existing code
-- **Documentation** - Improve docs, examples, comments
-- **Tests** - Add or improve test coverage
-- **Features** - New functionality (please discuss first)
-- **Performance** - Optimizations with benchmarks
-
-### Before You Start
-
-For major changes:
-1. Open an issue first to discuss the change
-2. Wait for feedback from maintainers
-3. This helps avoid wasted effort on changes that won't be merged
-
-## Testing
-
-### Running Tests
-
-```bash
-# Run all tests
-make test
-
-# Run specific test file
-make test ARGS="test/group_lifecycle_test.dart"
-
-# Run with verbose output
-make test ARGS="--reporter=expanded"
-```
-
-### Writing Tests
-
-- Place tests in the `test/` directory
-- Name test files with `_test.dart` suffix
-- Test both success and error cases
-- Include edge cases for protocol operations
-
-Example test structure:
-
-```dart
-import 'dart:typed_data';
-import 'dart:convert';
-import 'package:test/test.dart';
-import 'package:openmls/openmls.dart';
-
-void main() {
-  group('Group creation', () {
-    test('creates group with default config', () async {
-      await Openmls.init();
-      final engine = await MlsEngine.create(
-        dbPath: ':memory:',
-        encryptionKey: Uint8List(32),
-      );
-      final ciphersuite = MlsCiphersuite.mls128DhkemX25519Aes128GcmSha256Ed25519;
-      final keyPair = MlsSignatureKeyPair.generate(ciphersuite: ciphersuite);
-      final signerBytes = serializeSigner(
-        ciphersuite: ciphersuite,
-        privateKey: keyPair.privateKey(),
-        publicKey: keyPair.publicKey(),
-      );
-
-      final result = await engine.createGroup(
-        config: MlsGroupConfig.defaultConfig(ciphersuite: ciphersuite),
-        signerBytes: signerBytes,
-        credentialIdentity: utf8.encode('alice'),
-        signerPublicKey: keyPair.publicKey(),
-      );
-
-      expect(result.groupId, isNotEmpty);
-    });
-  });
-}
-```
-
-### Coverage
-
-```bash
-make coverage
-```
-
-## Submitting Changes
-
-### Commit Messages
-
-Write clear, concise commit messages:
-
-```
-type: short description
-
-Longer description if needed.
-
-Fixes #123
-```
-
-Types:
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation only
-- `test`: Adding or updating tests
-- `refactor`: Code change that neither fixes a bug nor adds a feature
-- `perf`: Performance improvement
-- `chore`: Maintenance tasks
-
-### Pull Request Process
-
-1. Update your branch with upstream:
-   ```bash
-   git fetch upstream
-   git rebase upstream/main
-   ```
-
-2. Push your branch:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-3. Create a Pull Request on GitHub
-
-4. In your PR description:
-   - Describe what the change does
-   - Reference any related issues
-   - Note any breaking changes
-   - Include testing steps if applicable
-
-5. Wait for review - maintainers will review and may request changes
-
-### PR Checklist
-
-Before submitting:
-
-- [ ] Code follows the project's coding standards
-- [ ] Tests pass locally (`make test`)
-- [ ] Static analysis passes (`make analyze`)
-- [ ] Code is formatted (`make format-check`)
-- [ ] Documentation is updated if needed
-- [ ] CHANGELOG.md is updated for user-facing changes
-- [ ] Commit messages are clear and follow conventions
-
-## Coding Standards
-
-### Dart Style
-
-Follow the [Effective Dart](https://dart.dev/effective-dart) guidelines:
-
-```bash
-# Format code
-make format
-
-# Check formatting without changes
+make flutter-test ARGS="test/openmls_test.dart"
+make analyze ARGS="--fatal-infos"
 make format-check
-
-# Run static analysis
-make analyze
 ```
 
-- Use meaningful variable and function names
-- Add documentation comments for public APIs
-- Keep functions small and focused
+Generated FRB files under `lib/src/rust/` and `rust/src/frb_generated.rs` must be committed whenever `make codegen` changes them.
 
-### Memory Safety (FRB Architecture)
+Tests for caller storage should verify both successful batches and fail-without-batch behavior. Security-sensitive cases include:
 
-This library uses Flutter Rust Bridge (FRB) with OpenMLS (pure Rust):
+- unknown storage-format versions and duplicate keys;
+- expected Basic Credential identity mismatches;
+- application and Commit AAD mismatches;
+- pre-merge versus resulting epoch reporting;
+- discarded mutation batches;
+- a committed-but-undelivered sender generation at and beyond configured limits;
+- ordered Commit processing and unrecoverable missing epochs.
 
-- **Memory is managed automatically** by Rust's ownership system
-- **No manual cleanup needed** - FRB handles all resource deallocation
-- **No `dispose()` calls** - Rust drops resources when they go out of scope
+## Platform and delivery changes
 
-When adding a Rust API function, first choose the storage boundary it belongs
-to. Do not make one operation write through both boundaries.
+The supported release is one complete matrix: Android, iOS, macOS, Linux, Windows, and Web. A change is not release-ready if only the developer’s host/mobile targets work.
 
-For `MlsEngine` methods:
+For build-hook changes, test:
 
-- Return `Result<T, String>` for error handling (FRB converts to Dart exceptions)
-- Methods on `MlsEngine` access storage via `self.db` (EncryptedDb)
-- Storage is loaded into a SnapshotStorageProvider, operated on, then saved back
+- a clean build and a cached build;
+- no `File modified during build. Build must be rerun.` warning;
+- automatic `flutter test` native loading without `libraryPath`;
+- iOS device versus simulator cache identity;
+- checksum failure behavior;
+- Web version refresh behavior.
 
-Example Rust API:
+Run `make third-party-notices ARGS="--output <path>"` twice and compare the files when changing Cargo resolution or attribution logic.
 
-```rust
-impl MlsEngine {
-    pub async fn my_new_function(
-        &self,
-        group_id_bytes: Vec<u8>,
-    ) -> Result<Vec<u8>, String> {
-        let (provider, group) = self.load_for_group(&group_id_bytes).await?;
-        // ... operate on group using provider ...
-        self.commit(&provider, Some(&group_id_bytes)).await?;
-        Ok(result)
-    }
-}
-```
+## Pull requests
 
-For caller-owned storage functions in `rust/src/api/storage.rs`:
+Keep each pull request narrow. Include:
 
-- keep each function operation-scoped; do not retain a provider or group object
-- accept all required opaque entries plus `mlsStorageFormatVersion()`
-- return one complete `MlsStorageBatch` only after success
-- perform no durable I/O; encryption and atomic commit belong to the host
-- validate caller-supplied security context before returning a mutation batch
-- keep application/Commit AAD and receive-side expected AAD mandatory
-- report both the previous and resulting epoch for processed state transitions
-- add success, discard/retry, mismatch, and missing-state tests in
-  `test/external_storage_test.dart`
+- the public issue/decision it implements;
+- compatibility and security reasoning;
+- exact commands run and their results;
+- relevant before/after binary or app size measurements;
+- confirmation that unrelated consumer repositories were not modified.
 
-After either API surface changes, run `make codegen` and review the generated
-Dart and Rust diffs before testing.
+Breaking Dart/FRB changes require a major native ABI version. Releases use signed commits/tags and immutable GitHub assets; never overwrite an existing release to repair it.
 
-## Advanced Development
+## Security
 
-### Makefile Commands Reference
-
-All development tasks should be done via Makefile:
-
-| Command | Description |
-|---------|-------------|
-| `make setup` | Install all required tools (Rust check, FVM, cargo-audit, FRB codegen) |
-| `make setup-fvm` | Install FVM and project Flutter version only |
-| `make setup-rust-tools` | Install Rust tools (cargo-audit, flutter_rust_bridge_codegen) |
-| `make setup-web` | Install wasm-pack for web builds (optional) |
-| `make setup-android` | Install cargo-ndk for Android builds (optional) |
-| `make help` | Show all available commands |
-| `make codegen` | Regenerate FRB bindings |
-| `make build` | Build Rust library locally (native) |
-| `make build-web` | Build WASM for web |
-| `make build-android` | Build for Android |
-| `make test` | Run all tests |
-| `make coverage` | Run tests with coverage report |
-| `make analyze` | Run static analysis |
-| `make rust-audit` | Check Rust dependencies for vulnerabilities |
-| `make rust-check` | Quick Rust type check |
-| `make format` | Format Dart code |
-| `make format-check` | Check Dart code formatting |
-| `make get` | Get dependencies |
-| `make clean` | Clean build artifacts |
-| `make check-new-openmls-version` | Check for upstream OpenMLS updates |
-| `make check-template-updates` | Check for copier template updates |
-| `make check-targets` | Check deployment target consistency (iOS/macOS/Android) |
-| `make rust-update` | Update rust/Cargo.lock |
-| `make update-changelog` | Update CHANGELOG.md with AI (requires AI_MODELS_TOKEN) |
-
-### Regenerating FRB Bindings
-
-When modifying Rust API code in `rust/src/api/`:
-
-```bash
-# Regenerate Flutter Rust Bridge bindings
-make codegen
-
-# Test the new bindings
-make test
-```
-
-**When to regenerate:**
-- After modifying Rust API code in `rust/src/api/`
-- After updating OpenMLS version (if API changed)
-
-### Updating Upstream OpenMLS
-
-**Automatic (CI):** A daily workflow checks for new OpenMLS releases and creates PRs.
-
-**Manual update:**
-
-```bash
-# 1. Check for updates
-make check-new-openmls-version
-
-# 2. Apply update
-make check-new-openmls-version ARGS="--update"
-
-# 3. Update Cargo.lock
-make rust-update
-
-# 4. Regenerate bindings (if API changed)
-make codegen
-
-# 5. Update CHANGELOG (requires AI_MODELS_TOKEN)
-AI_MODELS_TOKEN=xxx make update-changelog ARGS="--version vX.Y.Z"
-
-# 6. Test
-make test
-```
-
-### Setting up AI Changelog
-
-To enable AI-powered changelog generation in CI:
-
-1. Create a Personal Access Token at https://github.com/settings/tokens
-2. Required permission: **Models -> Read only**
-3. Add as repository secret: Settings -> Secrets and variables -> Actions -> `AI_MODELS_TOKEN`
-
-### Setting up Coverage Badge
-
-CI measures test coverage and updates the README badge after successful pushes
-to `main`. The badge uses a public Gist while its write token remains an Actions
-secret. To recreate or rotate the configuration:
-
-1. Create a **public** GitHub Gist at https://gist.github.com
-   - Filename: `coverage.json`
-   - Content: `{"schemaVersion":1,"label":"coverage","message":"0%","color":"red"}`
-2. Copy the **Gist ID** from the URL (e.g., `https://gist.github.com/username/abc123` → `abc123`)
-3. Create a **Fine-grained Personal Access Token** at https://github.com/settings/tokens?type=beta
-   - Required permission: **Gists → Read and write**
-4. Add as repository secret: Settings → Secrets and variables → Actions → New repository secret → `GIST_TOKEN`
-5. Add as repository variable: Settings → Secrets and variables → Actions → Variables → New repository variable → `COVERAGE_GIST_ID` (value: the Gist ID from step 2)
-6. Add the matching Shields endpoint badge to `README.md`
-7. Keep the workflow's `update-badge` input limited to `refs/heads/main`
-
-Use a dedicated classic token with only the `gist` scope. Do not reuse a broad
-GitHub CLI or repository token for this cosmetic job.
-
-### Setting up pub.dev Publishing
-
-The publish workflow uses OIDC authentication to publish to pub.dev without tokens. This requires a one-time setup.
-
-**On pub.dev:**
-
-1. Go to https://pub.dev and sign in
-2. Navigate to your publisher page (or create one)
-3. Go to **Admin** → **Automated publishing**
-4. Click **Enable automated publishing**
-5. Add your GitHub repository: `mrtcaner/openmls_dart`
-6. Set **Publishing from**: **GitHub Actions with tag** → tag pattern: `v*`
-
-See [dart.dev/tools/pub/automated-publishing](https://dart.dev/tools/pub/automated-publishing) for details.
-
-**On GitHub (create environment):**
-
-1. Go to your repository → **Settings → Environments**
-2. Click **New environment** → name it exactly `pub.dev`
-3. Under **Deployment protection rules**:
-   - Check **Required reviewers** → add yourself (and/or your team) as reviewer
-   - Uncheck **Allow administrators to bypass configured protection rules**
-4. Click **Save protection rules**
-
-> The `pub.dev` environment is required by the publish workflow. Protection rules ensure that every publish requires manual approval, preventing accidental releases.
-
-## Releasing (two stages)
-
-Releasing happens in **two independent stages**, each with its own command and git
-tag — the `openmls_frb` native crate and the `openmls` Dart package
-are versioned and released separately.
-
-1. **Native crate (stage 1)** — from a clean, up-to-date `main`:
-   ```bash
-   make release-frb ARGS="--version X.Y.Z"
-   ```
-   Bumps `rust/Cargo.toml`, stamps the CHANGELOG highlight, and creates a
-   **signed** commit + tag `openmls_frb-X.Y.Z`, then pushes. The tag triggers
-   the native build workflow, which builds and publishes the platform binaries.
-   The commit/tag/push inherit your terminal, so you enter your signing passphrase
-   interactively during the command.
-
-2. **Dart package (stage 2)** — after the native build succeeds:
-   ```bash
-   make release ARGS="--version X.Y.Z"
-   ```
-   Verifies the stage-1 `openmls_frb-<crate>` release exists, validates with
-   a publish dry-run (on the clean, pre-bump tree), bumps `pubspec.yaml`,
-   finalizes the CHANGELOG (`[Unreleased]` → `[X.Y.Z]` + compare links; no empty
-   `[Unreleased]` is left behind — the next unreleased change recreates it), then
-   creates a **signed** commit + tag `vX.Y.Z` and pushes. `publish.yml` publishes
-   to pub.dev.
-
-   > **Do not delete the footer `[Unreleased]:` compare link** even when no
-   > `## [Unreleased]` heading is present between releases — it is load-bearing
-   > (the release scripts read it for the base URL and previous version, and the
-   > next unreleased change re-references it). It is intentionally retained, not
-   > stale.
-
-**Order matters:** stage 1 must finish first — the published package's build hook
-downloads the precompiled `openmls_frb-<crate>` binary, so it must already
-exist before you tag the pub.dev release.
-
-> Automated openmls update PRs **do not** bump the `openmls_frb`
-> crate or build binaries — dependency updates accumulate on `main` (tested from
-> source in CI), and you cut a native release deliberately with `make release-frb`.
-
-## Repository rulesets & tag protection
-
-The intended configuration uses GitHub **repository rulesets** and a
-required-reviewer **environment** so native releases cannot be published without
-the right role and review.
-
-**Current status (verified 2026-07-22):** the live fork has no repository
-rulesets, and its `native-build` environment has no protection rules, reviewers,
-or deployment-branch policy. The list below is the target configuration, not a
-description of protections currently active:
-
-- **Signed commits** required on all branches (configure SSH or GPG signing).
-- **`main`** protected (changes land via PR; force-push and deletion blocked).
-- **Tags** — all tags creatable only by Admins/Maintainers and must be signed;
-  the release-triggering `openmls_frb-*` / `v*` are the critical subset (they
-  start native / pub.dev publishing).
-- The **native-build publish** waits on a required reviewer (the `native-build`
-  environment), mirroring the `pub.dev` environment that gates pub.dev publishing.
-
-The maintainer runbook — what each ruleset does, exact `gh` commands to apply /
-verify / roll back, and how to configure the `native-build` environment — is in
-[`.github/rulesets/README.md`](.github/rulesets/README.md).
-
-## Security Considerations
-
-This is a **cryptographic library**. Security is paramount.
-
-### Reporting Security Issues
-
-**Do not open public issues for security vulnerabilities.**
-
-Instead, report security issues privately via GitHub's private vulnerability reporting feature.
-
-### Security Review Checklist
-
-For code changes:
-
-- [ ] No hardcoded keys or secrets
-- [ ] No key material in logs or error messages
-- [ ] `Openmls.init()` called before any operations
-- [ ] `':memory:'` databases used only for testing (not production)
-- [ ] Encryption key stored in platform secure storage
-- [ ] Error handling doesn't leak sensitive information
-
-See [SECURITY.md](SECURITY.md) for full security guidelines.
-
-## Questions?
-
-- Open an issue for general questions
-- Check existing issues before creating new ones
-
-Thank you for contributing!
+Do not put secrets, signer bytes, opaque MLS state, plaintext, or keys in tests/logs. Report vulnerabilities through [GitHub private vulnerability reporting](https://github.com/mrtcaner/openmls_dart/security/advisories/new), not a public issue.

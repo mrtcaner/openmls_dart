@@ -2,7 +2,9 @@
 
 use openmls::prelude::*;
 
-use super::types::{ciphersuite_to_native, wire_format_to_native, MlsCiphersuite, MlsWireFormatPolicy};
+use super::types::{
+    MlsCiphersuite, MlsWireFormatPolicy, ciphersuite_to_native, wire_format_to_native,
+};
 
 /// Group configuration parameters.
 ///

@@ -83,11 +83,13 @@ void main(List<String> args) async {
     final skipMarkerUri = packageRoot.resolve('.skip_openmls_hook');
     final skipFile = File.fromUri(skipMarkerUri);
 
-    // Add marker file as dependency for cache invalidation
-    // This ensures hook reruns when marker is created/deleted
-    output.dependencies.add(skipMarkerUri);
-
     if (skipFile.existsSync()) {
+      // Declare the marker only while it exists. Declaring a missing file makes
+      // hooks_runner classify it as "modified during build" on every normal
+      // invocation, forcing a redundant second hook pass. Once the Makefile
+      // removes an existing marker, this dependency becomes missing and
+      // invalidates the skipped result as intended.
+      output.dependencies.add(skipMarkerUri);
       return;
     }
 
@@ -113,7 +115,7 @@ void main(List<String> args) async {
 
     // Check for local build first (development mode)
     // This allows developers to use locally built libraries without downloading
-    final localLib = _findLocalBuild(packageRoot, targetOS, targetArch);
+    final localLib = _findLocalBuild(packageRoot, targetOS, targetArch, iosSdk);
     if (localLib != null) {
       output.assets.code.add(
         CodeAsset(
@@ -471,31 +473,38 @@ Future<void> _copyWasmFilesToAppRoot(Uri cacheDir, Directory webPkgDir) async {
 // Native Build Support
 // =============================================================================
 
-/// Looks for a locally built library in `rust/target/<profile>/`.
+/// Looks for a locally built library in `rust/target/`.
 ///
 /// This enables development mode where developers use a locally built library
 /// instead of downloading from GitHub Releases. Checks release profile first,
 /// then debug.
 ///
-/// A plain `rust/target/<profile>/` build is always a HOST build, so it is only
-/// valid when the target OS AND architecture match the host — otherwise we would
-/// bundle e.g. a macOS dylib into an iOS app (dyld rejects it at launch) or a
-/// wrong-arch `.so`. For any cross-target build this returns null and the hook
-/// downloads the correct released binary instead (cross-compiled outputs land in
-/// `rust/target/<triple>/release/`, which this intentionally does not read).
+/// A plain `rust/target/<profile>/` build is used only for the exact host. A
+/// cross-target build is accepted only from the exact Rust target triple for
+/// the requested OS, architecture, and iOS SDK. This makes unreleased local
+/// mobile testing possible without ever substituting a host binary.
 ///
 /// Returns the Uri to the local library if a host-matching build is found, null
 /// otherwise.
-Uri? _findLocalBuild(Uri packageRoot, OS targetOS, Architecture targetArch) {
-  if (targetOS != OS.current || targetArch != Architecture.current) {
-    return null;
-  }
-
+Uri? _findLocalBuild(
+  Uri packageRoot,
+  OS targetOS,
+  Architecture targetArch,
+  IOSSdk? iosSdk,
+) {
   final fileName = _getLibraryFileName(targetOS);
 
-  // Try release first, then debug
-  for (final profile in ['release', 'debug']) {
-    final path = packageRoot.resolve('rust/target/$profile/$fileName');
+  final candidates = <String>[];
+  if (targetOS == OS.current && targetArch == Architecture.current) {
+    candidates.addAll(['release/$fileName', 'debug/$fileName']);
+  }
+  final triple = localBuildTargetTriple(targetOS, targetArch, iosSdk);
+  if (triple != null) {
+    candidates.addAll(['$triple/release/$fileName', '$triple/debug/$fileName']);
+  }
+
+  for (final candidate in candidates) {
+    final path = packageRoot.resolve('rust/target/$candidate');
     if (File.fromUri(path).existsSync()) {
       // ignore: avoid_print
       print('Using local $targetOS-$targetArch build: ${path.toFilePath()}');
@@ -504,6 +513,38 @@ Uri? _findLocalBuild(Uri packageRoot, OS targetOS, Architecture targetArch) {
   }
 
   return null;
+}
+
+/// Exact Rust target triple for a locally cross-compiled code asset.
+String? localBuildTargetTriple(
+  OS targetOS,
+  Architecture targetArch,
+  IOSSdk? iosSdk,
+) {
+  if (targetOS == OS.android) {
+    return switch (targetArch) {
+      Architecture.arm => 'armv7-linux-androideabi',
+      Architecture.arm64 => 'aarch64-linux-android',
+      Architecture.x64 => 'x86_64-linux-android',
+      _ => null,
+    };
+  }
+  if (targetOS == OS.iOS) {
+    return switch ((iosSdk, targetArch)) {
+      (IOSSdk.iPhoneOS, Architecture.arm64) => 'aarch64-apple-ios',
+      (IOSSdk.iPhoneSimulator, Architecture.arm64) => 'aarch64-apple-ios-sim',
+      (IOSSdk.iPhoneSimulator, Architecture.x64) => 'x86_64-apple-ios',
+      _ => null,
+    };
+  }
+  return switch ((targetOS, targetArch)) {
+    (OS.macOS, Architecture.arm64) => 'aarch64-apple-darwin',
+    (OS.macOS, Architecture.x64) => 'x86_64-apple-darwin',
+    (OS.linux, Architecture.arm64) => 'aarch64-unknown-linux-gnu',
+    (OS.linux, Architecture.x64) => 'x86_64-unknown-linux-gnu',
+    (OS.windows, Architecture.x64) => 'x86_64-pc-windows-msvc',
+    _ => null,
+  };
 }
 
 /// Gets the library filename for the target OS.
