@@ -2620,6 +2620,7 @@ class RustLibWire implements BaseWire {
     JSAny group_id,
     JSAny signer_bytes,
     JSAny key_packages_bytes,
+    JSAny expected_credential_identities,
     JSAny storage_entries,
     int storage_format_version,
   ) => wasmModule.wire__crate__api__storage__add_members_with_storage(
@@ -2627,6 +2628,7 @@ class RustLibWire implements BaseWire {
     group_id,
     signer_bytes,
     key_packages_bytes,
+    expected_credential_identities,
     storage_entries,
     storage_format_version,
   );
@@ -2762,12 +2764,14 @@ class RustLibWire implements BaseWire {
     NativePortType port_,
     JSAny group_id,
     JSAny message_bytes,
+    JSAny? expected_aad,
     JSAny storage_entries,
     int storage_format_version,
   ) => wasmModule.wire__crate__api__storage__process_message_with_storage(
     port_,
     group_id,
     message_bytes,
+    expected_aad,
     storage_entries,
     storage_format_version,
   );
@@ -3366,6 +3370,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny group_id,
     JSAny signer_bytes,
     JSAny key_packages_bytes,
+    JSAny expected_credential_identities,
     JSAny storage_entries,
     int storage_format_version,
   );
@@ -3445,6 +3450,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     NativePortType port_,
     JSAny group_id,
     JSAny message_bytes,
+    JSAny? expected_aad,
     JSAny storage_entries,
     int storage_format_version,
   );

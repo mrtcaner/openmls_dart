@@ -90,6 +90,68 @@ void main() {
       },
     );
 
+    test('rejects a key package for a different credential identity', () async {
+      final alice = TestIdentity.create('alice-credential-check');
+      final bob = TestIdentity.create('bob-credential-check');
+      final aliceStore = _MemoryMlsStore();
+      final bobStore = _MemoryMlsStore();
+
+      final bobKeyPackage = await _createKeyPackage(
+        bob,
+        bobStore.globalSnapshot,
+      );
+      bobStore.apply(bobKeyPackage.storageBatch);
+
+      final created = await createGroupWithStorage(
+        config: defaultConfig(),
+        signerBytes: alice.signerBytes,
+        credentialIdentity: alice.credentialIdentity,
+        signerPublicKey: alice.publicKey,
+        storageEntries: aliceStore.globalSnapshot,
+        storageFormatVersion: aliceStore.formatVersion,
+      );
+      aliceStore.apply(created.storageBatch);
+      final beforeMismatch = aliceStore.fingerprint;
+
+      await expectLater(
+        addMembersWithStorage(
+          groupId: created.groupId,
+          signerBytes: alice.signerBytes,
+          keyPackagesBytes: [bobKeyPackage.keyPackageBytes],
+          expectedCredentialIdentities: [alice.credentialIdentity],
+          storageEntries: aliceStore.forGroup(created.groupId),
+          storageFormatVersion: aliceStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'Key package credential identity does not match',
+            ),
+          ),
+        ),
+      );
+      expect(aliceStore.fingerprint, beforeMismatch);
+
+      await expectLater(
+        addMembersWithStorage(
+          groupId: created.groupId,
+          signerBytes: alice.signerBytes,
+          keyPackagesBytes: [bobKeyPackage.keyPackageBytes],
+          expectedCredentialIdentities: const [],
+          storageEntries: aliceStore.forGroup(created.groupId),
+          storageFormatVersion: aliceStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'does not match expected credential identity count',
+            ),
+          ),
+        ),
+      );
+      expect(aliceStore.fingerprint, beforeMismatch);
+    });
+
     test('recreates a three-member conversation from stored entries', () async {
       final alice = TestIdentity.create('alice-external');
       final bob = TestIdentity.create('bob-external');
@@ -118,6 +180,7 @@ void main() {
         groupId: created.groupId,
         signerBytes: alice.signerBytes,
         keyPackagesBytes: [bobKeyPackage.keyPackageBytes],
+        expectedCredentialIdentities: [bob.credentialIdentity],
         storageEntries: aliceStore.forGroup(created.groupId),
         storageFormatVersion: aliceStore.formatVersion,
       );
@@ -148,14 +211,35 @@ void main() {
         groupId: created.groupId,
         signerBytes: alice.signerBytes,
         message: utf8.encode('hello bob'),
+        aad: utf8.encode('conversation-1/message-1'),
         storageEntries: aliceStore.forGroup(created.groupId),
         storageFormatVersion: aliceStore.formatVersion,
       );
       aliceStore.apply(sentToBob.storageBatch);
 
+      final bobBeforeAadMismatch = bobStore.fingerprint;
+      await expectLater(
+        processMessageWithStorage(
+          groupId: created.groupId,
+          messageBytes: sentToBob.ciphertext,
+          expectedAad: utf8.encode('conversation-1/wrong-message'),
+          storageEntries: bobStore.forGroup(created.groupId),
+          storageFormatVersion: bobStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'Message AAD does not match the expected AAD',
+            ),
+          ),
+        ),
+      );
+      expect(bobStore.fingerprint, bobBeforeAadMismatch);
+
       final receivedByBob = await processMessageWithStorage(
         groupId: created.groupId,
         messageBytes: sentToBob.ciphertext,
+        expectedAad: utf8.encode('conversation-1/message-1'),
         storageEntries: bobStore.forGroup(created.groupId),
         storageFormatVersion: bobStore.formatVersion,
       );
@@ -190,6 +274,7 @@ void main() {
         groupId: created.groupId,
         signerBytes: alice.signerBytes,
         keyPackagesBytes: [charlieKeyPackage.keyPackageBytes],
+        expectedCredentialIdentities: [charlie.credentialIdentity],
         storageEntries: aliceStore.forGroup(created.groupId),
         storageFormatVersion: aliceStore.formatVersion,
       );

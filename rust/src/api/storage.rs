@@ -173,23 +173,47 @@ pub fn create_group_with_storage(
 }
 
 /// Add members and merge the pending commit against caller-owned group state.
+///
+/// Each validated KeyPackage must contain a Basic Credential whose identity
+/// exactly matches the corresponding caller-supplied expected identity. A
+/// mismatch fails before group state changes are returned.
 pub fn add_members_with_storage(
     group_id: Vec<u8>,
     signer_bytes: Vec<u8>,
     key_packages_bytes: Vec<Vec<u8>>,
+    expected_credential_identities: Vec<Vec<u8>>,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
 ) -> Result<AddMembersWithStorageResult, String> {
     let provider = provider_from_entries(storage_entries, storage_format_version, Some(&group_id))?;
     let signer = signer_from_bytes(signer_bytes)?;
+
+    if key_packages_bytes.len() != expected_credential_identities.len() {
+        return Err(format!(
+            "Key package count ({}) does not match expected credential identity count ({})",
+            key_packages_bytes.len(),
+            expected_credential_identities.len()
+        ));
+    }
+
     let mut group = load_group(&group_id, &provider)?;
 
     let mut key_packages = Vec::with_capacity(key_packages_bytes.len());
-    for key_package_bytes in key_packages_bytes {
+    for (key_package_bytes, expected_credential_identity) in key_packages_bytes
+        .into_iter()
+        .zip(expected_credential_identities)
+    {
         let key_package = KeyPackageIn::tls_deserialize_exact_bytes(&key_package_bytes)
             .map_err(|e| format!("Failed to deserialize key package: {e}"))?
             .validate(provider.crypto(), ProtocolVersion::Mls10)
             .map_err(|e| format!("Failed to validate key package: {e}"))?;
+        let credential = BasicCredential::try_from(key_package.leaf_node().credential().clone())
+            .map_err(|_| "Key package does not contain a Basic Credential".to_string())?;
+        if credential.identity() != expected_credential_identity {
+            return Err(
+                "Key package credential identity does not match the expected identity".to_string(),
+            );
+        }
         key_packages.push(key_package);
     }
 
@@ -295,9 +319,13 @@ pub fn create_message_with_storage(
 }
 
 /// Process an application, proposal, or commit message against caller state.
+///
+/// When `expected_aad` is present, the authenticated message AAD must match it
+/// byte-for-byte. A mismatch returns no storage batch.
 pub fn process_message_with_storage(
     group_id: Vec<u8>,
     message_bytes: Vec<u8>,
+    expected_aad: Option<Vec<u8>>,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
 ) -> Result<ProcessMessageWithStorageResult, String> {
@@ -310,6 +338,12 @@ pub fn process_message_with_storage(
     let processed = group
         .process_message(&provider, message)
         .map_err(|e| format!("Failed to process message: {e}"))?;
+
+    if let Some(expected_aad) = expected_aad
+        && processed.aad() != expected_aad
+    {
+        return Err("Message AAD does not match the expected AAD".to_string());
+    }
 
     let sender_index = match processed.sender() {
         Sender::Member(index) => Some(index.u32()),
