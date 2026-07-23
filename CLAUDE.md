@@ -4,6 +4,12 @@
 
 **ALWAYS use Makefile commands.** Never call scripts or cargo directly. The Makefile is the single entry point for all operations.
 
+**NEVER work directly on `main`.** Code, dependency, automation,
+configuration, API, storage, security, and release changes start with a public
+GitHub issue, continue on a non-`main` branch, and reach `main` through a pull
+request. Documentation-only corrections may skip the issue, but still require a
+branch and pull request. The live ruleset has no administrator bypass.
+
 ```bash
 # Correct - pass arguments via ARGS variable
 make build ARGS="--target aarch64-apple-darwin"
@@ -213,10 +219,11 @@ finalizes the CHANGELOG (`[Unreleased]` → `[X.Y.Z]` + compare links; no empty
 `[Unreleased]` is left behind), then signs a commit + tag `vX.Y.Z` and pushes —
 `publish.yml` publishes to pub.dev.
 
-The committed ruleset files and `native-build` environment are intended to
-protect release triggers, but they are not active on the live fork as of
-2026-07-22: GitHub reports no repository rulesets and no environment protection
-rules. Do not claim the release path is gated until the live settings are
+The live fork's **Protect main branch** ruleset has been active since
+2026-07-23 with no bypass actors: all `main` updates require a pull request, and
+direct pushes, force pushes, and deletion are blocked. The other committed
+rulesets and `native-build` environment protections have not yet been verified
+as live. Do not claim the release path is fully gated until those settings are
 applied and verified. See `.github/rulesets/README.md`.
 
 ## Native Library Version
