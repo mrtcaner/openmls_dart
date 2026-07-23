@@ -380,9 +380,9 @@ jobs:
           VERSION=${{ env.VERSION }}
           mkdir -p release-archives
 
-          make third-party-notices ARGS="--output release-archives/THIRD_PARTY_NOTICES.txt"
+          make verify-third-party-notices
           find artifacts -mindepth 1 -maxdepth 1 -type d \
-            -exec cp release-archives/THIRD_PARTY_NOTICES.txt {} \;
+            -exec cp assets/THIRD_PARTY_NOTICES.txt {} \;
           find artifacts -mindepth 1 -maxdepth 1 -type d \
             -exec cp LICENSE {} \;
 

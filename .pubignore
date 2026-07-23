@@ -3,6 +3,9 @@ TODO.md
 Makefile
 .fvmrc
 .skip_openmls_hook
+# Local cross-repository handoff and decision documents. Public maintenance
+# history is recorded in GitHub issues and pull requests.
+KURTUBA_*.md
 
 # CI/CD
 .github/

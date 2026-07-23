@@ -39,3 +39,7 @@ topics:
   - messaging
   - e2ee
   - rust
+
+flutter:
+  assets:
+    - assets/THIRD_PARTY_NOTICES.txt

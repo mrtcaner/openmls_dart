@@ -1,0 +1,4 @@
+# This generated notice is hash-verified against native release metadata.
+# Preserve its exact UTF-8 bytes on Windows instead of applying CRLF checkout
+# conversion.
+assets/THIRD_PARTY_NOTICES.txt -text

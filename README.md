@@ -109,6 +109,21 @@ make build-web
 
 The release workflow builds Android, iOS, macOS, Linux, Windows, and Web archives. Each archive contains `THIRD_PARTY_NOTICES.txt`, generated deterministically from the locked Cargo resolution, and is covered by checksums and GitHub artifact provenance.
 
+The same verified inventory ships as the Flutter package asset identified by
+`openmlsThirdPartyNoticesAssetKey`. Consumers can load it through their existing
+asset bundle and use `openmlsThirdPartyNoticesNativeVersion` and
+`openmlsThirdPartyNoticesSha256` as a fail-closed release check. The package does
+not import Flutter or register UI entries itself.
+
+Run `make verify-third-party-notices` after changing the locked Rust dependency
+graph or the native crate version. Future release archives copy this committed,
+verified asset rather than generating a separate notice file.
+
+The inventory covers every resolved Cargo package. For 42 packages in the
+current 2.0.0 graph, no package-local license or notice text was available.
+Those entries are identified explicitly in the file and still require license
+review; packaging the inventory does not turn them into complete text coverage.
+
 ## Versioning
 
 Three identities move independently:
