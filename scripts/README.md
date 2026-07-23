@@ -56,6 +56,10 @@ make check-template-updates ARGS="--ci-output /path/to/output"
 
 This script is used by the `check-template-updates.yml` workflow, which creates notification PRs with changelog and update instructions.
 
+Both scheduled update workflows require the repository-scoped GitHub App
+described in [`.github/UPDATER_APP.md`](../.github/UPDATER_APP.md). The required
+Actions configuration is the `APP_ID` variable and `APP_PRIVATE_KEY` secret.
+
 ## Regenerating FRB Bindings
 
 When modifying Rust API code in `rust/src/api/`:
