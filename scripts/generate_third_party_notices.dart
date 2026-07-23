@@ -2,13 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
+import 'package:openmls/src/third_party_notices.dart';
+
+import 'src/common.dart';
 
 Future<void> main(List<String> arguments) async {
   final outputPath = _argumentValue(arguments, '--output');
+  final checkPath = _argumentValue(arguments, '--check');
   final manifestPath =
       _argumentValue(arguments, '--manifest-path') ?? 'rust/Cargo.toml';
-  if (outputPath == null) {
-    stderr.writeln('Usage: --output <path> [--manifest-path rust/Cargo.toml]');
+  if ((outputPath == null) == (checkPath == null)) {
+    stderr.writeln(
+      'Usage: (--output <path> | --check <path>) '
+      '[--manifest-path rust/Cargo.toml]',
+    );
     exitCode = 64;
     return;
   }
@@ -116,11 +123,69 @@ Future<void> main(List<String> arguments) async {
       ..writeln();
   }
 
-  final output = File(outputPath);
-  output.parent.createSync(recursive: true);
-  output.writeAsStringSync('${buffer.toString().trimRight()}\n');
+  final content = '${buffer.toString().trimRight()}\n';
+  if (outputPath != null) {
+    final output = File(outputPath);
+    output.parent.createSync(recursive: true);
+    output.writeAsStringSync(content);
+    stdout.writeln(
+      'Wrote ${packages.length} resolved packages to ${output.path}',
+    );
+    return;
+  }
+
+  final checkedFile = File(checkPath!);
+  if (!checkedFile.existsSync()) {
+    stderr.writeln('Missing committed notice asset: ${checkedFile.path}');
+    exitCode = 1;
+    return;
+  }
+
+  final committedBytes = checkedFile.readAsBytesSync();
+  final generatedBytes = utf8.encode(content);
+  final committedDigest = sha256.convert(committedBytes).toString();
+  final generatedDigest = sha256.convert(generatedBytes).toString();
+  final normalizedCheckPath = checkPath.replaceAll('\\', '/');
+  final expectedAssetKey = 'packages/openmls/$normalizedCheckPath';
+  final crateVersion = getCrateVersion();
+  final errors = <String>[];
+
+  if (!_bytesEqual(committedBytes, generatedBytes)) {
+    errors.add(
+      'Committed notice bytes do not match the locked Cargo resolution '
+      '(committed $committedDigest, generated $generatedDigest).',
+    );
+  }
+  if (openmlsThirdPartyNoticesAssetKey != expectedAssetKey) {
+    errors.add(
+      'Asset key is "$openmlsThirdPartyNoticesAssetKey"; '
+      'expected "$expectedAssetKey".',
+    );
+  }
+  if (openmlsThirdPartyNoticesNativeVersion != crateVersion) {
+    errors.add(
+      'Notice native version is "$openmlsThirdPartyNoticesNativeVersion"; '
+      'rust/Cargo.toml is "$crateVersion".',
+    );
+  }
+  if (openmlsThirdPartyNoticesSha256 != committedDigest) {
+    errors.add(
+      'Notice SHA-256 is "$openmlsThirdPartyNoticesSha256"; '
+      'committed asset is "$committedDigest".',
+    );
+  }
+
+  if (errors.isNotEmpty) {
+    for (final error in errors) {
+      stderr.writeln(error);
+    }
+    exitCode = 1;
+    return;
+  }
+
   stdout.writeln(
-    'Wrote ${packages.length} resolved packages to ${output.path}',
+    'Verified ${packages.length} resolved packages, openmls_frb '
+    '$crateVersion, and SHA-256 $committedDigest.',
   );
 }
 
@@ -181,3 +246,11 @@ String _basename(String path) => path.replaceAll('\\', '/').split('/').last;
 
 String _normalizeNewlines(String value) =>
     value.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+
+bool _bytesEqual(List<int> left, List<int> right) {
+  if (left.length != right.length) return false;
+  for (var index = 0; index < left.length; index++) {
+    if (left[index] != right[index]) return false;
+  }
+  return true;
+}

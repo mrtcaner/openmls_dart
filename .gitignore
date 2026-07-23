@@ -27,6 +27,9 @@ pubspec.lock
 # Development files
 TODO.md
 .skip_openmls_hook
+# Local cross-repository handoff documents; public traceability belongs in
+# GitHub issues and pull requests.
+KURTUBA_*_CHANGE_REQUEST.md
 
 # Flutter metadata
 .metadata

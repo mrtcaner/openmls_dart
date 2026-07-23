@@ -133,6 +133,11 @@ jobs:
         run: make get
         shell: bash
 
+      - name: Verify bundled third-party notices
+        if: matrix.name == 'Linux x86_64'
+        run: make verify-third-party-notices
+        shell: bash
+
       # Build Rust library - FRB loads from rust/target/release/ automatically
       - name: Build Rust library
         run: make build

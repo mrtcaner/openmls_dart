@@ -8,7 +8,7 @@
 # On Windows CI (Git Bash), use cmd to run fvm.bat from PATH:
 # Example: make build ARGS="--target x86_64-pc-windows-msvc" FVM="cmd //c fvm"
 
-.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
+.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets third-party-notices verify-third-party-notices rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
 
 # FVM command - can be overridden to provide full path on Windows CI
 FVM ?= fvm
@@ -76,6 +76,7 @@ help:
 	@echo "    make check-template-updates       - Check for new copier template version"
 	@echo "    make check-targets                - Check deployment target consistency (iOS/macOS/Android)"
 	@echo "                                        Example: make check-targets ARGS=\"--ios --set 14.0\""
+	@echo "    make verify-third-party-notices   - Verify bundled native dependency notices"
 	@echo "    make rust-update                  - Update Cargo.lock (cargo update)"
 	@echo "    make update-changelog             - Update CHANGELOG.md with AI"
 	@echo "                                        Example: make update-changelog ARGS=\"--version v1.0.0\""
@@ -309,6 +310,11 @@ rust-tree:
 # Cargo resolution. Release archives embed this file next to the native binary.
 third-party-notices:
 	@$(DART) scripts/generate_third_party_notices.dart $(ARGS)
+
+verify-third-party-notices:
+	@$(DART) scripts/generate_third_party_notices.dart \
+		--check assets/THIRD_PARTY_NOTICES.txt \
+		--manifest-path rust/Cargo.toml
 
 rust-audit:
 	$(CARGO_AUDIT) audit --file rust/Cargo.lock

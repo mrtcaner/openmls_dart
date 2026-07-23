@@ -19,6 +19,9 @@
 - Required authenticated data for caller-owned application creation,
   add-member Commit creation, and message processing. Add-member Commits now
   carry the caller-supplied AAD through OpenMLS framing.
+- A version-controlled Flutter package asset containing the deterministic
+  native Rust dependency notice inventory, with public native-version and
+  SHA-256 metadata for consumer verification.
 
 ### Changed
 
@@ -31,6 +34,7 @@
   build" retry.
 - Every platform archive includes the fork license and deterministic,
   deduplicated native dependency attribution generated from `Cargo.lock`.
+  Archives and Flutter consumers now use the same committed, CI-verified file.
 - Snapshot storage now uses safe interior mutability and zeroizes Rust-owned
   values on replacement, deletion, validation failure, conversion failure, and
   drop.
