@@ -4,10 +4,12 @@ This directory holds the intended GitHub **repository rulesets** as committed
 JSON, plus this runbook. The live GitHub configuration is authoritative because
 GitHub does not apply these files automatically.
 
-> **Current status (2026-07-22):** this fork has no live repository rulesets.
-> The `native-build` environment exists but has no protection rules, required
-> reviewers, or deployment-branch policy. Native release triggers are therefore
-> not protected by the controls described below.
+> **Current status (2026-07-23):** the live **Protect main branch** ruleset is
+> active on the default branch with no bypass actors. Every update to `main`
+> must arrive through a pull request; direct pushes, force pushes, and branch
+> deletion are blocked for administrators too. The other committed rulesets and
+> the `native-build` environment protections have not yet been verified as live,
+> so do not claim that release triggers have all the controls described below.
 
 Apply the intended controls with:
 
@@ -47,12 +49,17 @@ Maintain = 4, **Admin = 5**.
 
 | File | Ruleset | Target | Rules | Bypass |
 |------|---------|--------|-------|--------|
-| `protect-main.json` | Protect main branch | `~DEFAULT_BRANCH` | pull_request (0 approvals), non_fast_forward, deletion | Admin (5) |
+| `protect-main.json` | Protect main branch | `~DEFAULT_BRANCH` | pull_request (0 approvals), non_fast_forward, deletion | none |
 | `signing-commit.json` | Signing commit | `~ALL` branches | required_signatures, non_fast_forward | none by default |
 | `delete-branches.json` | Delete branches | `~ALL` branches | deletion | Admin (5) |
 | `protect-release-tags.json` | Protect release tags | all tags (`~ALL`) | creation, update, deletion, required_signatures | Admin (5), Maintain (4) |
 
-The load-bearing one is **Protect release tags**. It targets **all tags**
+**Protect main branch** is the repository-history boundary. Its empty bypass
+list is intentional: documentation and administrator changes follow the same
+branch-and-PR path as code. Documentation-only corrections may omit a tracking
+issue, but not the branch or pull request.
+
+The load-bearing release rule is **Protect release tags**. It targets **all tags**
 (`~ALL`), so `creation` restricts creating *any* tag to Admin/Maintain — which
 covers the release-triggering `openmls_frb-*` (native build) and `v*`
 (pub.dev) tags and every other tag, so no `write` collaborator can mint a tag
@@ -120,9 +127,10 @@ it off an arbitrary ref, add a deployment-branch policy allowing only
 
 ## Optional hardening (review, not required)
 
-- **"Protect main" approvals.** With a solo maintainer, 0 required approvals is
-  only a "use PRs" hygiene gate — the Admin bypasses it anyway. Once you add
-  non-admin write collaborators, raise `required_approving_review_count` to 1 and
+- **"Protect main" approvals.** With a solo maintainer, 0 required approvals
+  preserves the issue/branch/PR history without making the sole maintainer find
+  an impossible second reviewer. There is still no direct-push bypass. Once you
+  add another trusted reviewer, raise `required_approving_review_count` to 1 and
   enable `require_last_push_approval` in `protect-main.json`, then re-run with
   `--update`.
 

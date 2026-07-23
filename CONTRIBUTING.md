@@ -1,6 +1,19 @@
 # Contributing
 
-Contributions are welcome. For protocol, storage-format, FFI-surface, or release-layout changes, open a GitHub issue first so the compatibility and security consequences are recorded publicly.
+Contributions are welcome.
+
+## Repository workflow
+
+Every change must be made on a non-`main` branch and merged through a pull
+request. The live GitHub ruleset blocks direct pushes, force pushes, and
+deletion of `main` for every actor, including administrators.
+
+Open a public GitHub issue before starting any change to code, dependencies,
+automation, configuration, APIs, storage formats, security behavior, or release
+layout. The issue records the reason and intended scope before implementation.
+Documentation-only corrections may skip the issue, but they still require a
+branch and pull request. Security vulnerabilities are the exception: report
+them privately as described below.
 
 ## Setup
 
@@ -82,7 +95,8 @@ Run `make third-party-notices ARGS="--output <path>"` twice and compare the file
 
 Keep each pull request narrow. Include:
 
-- the public issue/decision it implements;
+- the public issue/decision it implements, or identify it as an exempt
+  documentation-only correction;
 - compatibility and security reasoning;
 - exact commands run and their results;
 - relevant before/after binary or app size measurements;
