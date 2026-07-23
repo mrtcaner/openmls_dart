@@ -31,6 +31,16 @@ jobs:
       contents: read
 
     steps:
+      - name: Check GitHub App configuration
+        env:
+          APP_ID: ${{ vars.APP_ID }}
+          APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+        run: |
+          if [ -z "$APP_ID" ] || [ -z "$APP_PRIVATE_KEY" ]; then
+            echo "::error::Missing APP_ID Actions variable or APP_PRIVATE_KEY Actions secret. See .github/UPDATER_APP.md."
+            exit 1
+          fi
+
       - name: Generate GitHub App Token
         id: app-token
         uses: actions/create-github-app-token@v2
@@ -54,11 +64,23 @@ jobs:
           ARGS="--ci-output $GITHUB_OUTPUT"
 
           if [ -n "$TARGET_VERSION" ]; then
+            if [[ ! "$TARGET_VERSION" =~ ^v?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
+              echo "::error::target_version must use the vX.Y.Z or X.Y.Z form."
+              exit 2
+            fi
             ARGS="$ARGS --version $TARGET_VERSION"
           fi
 
           echo "Running: make check-template-updates ARGS=\"$ARGS\""
-          make check-template-updates ARGS="$ARGS" || true
+          set +e
+          make check-template-updates ARGS="$ARGS"
+          STATUS=$?
+          set -e
+          # Exit 1 means an update is available and outputs were written.
+          # Exit 2 means the checker itself failed and must fail the workflow.
+          if [ "$STATUS" -gt 1 ]; then
+            exit "$STATUS"
+          fi
 
           echo "Check completed. Outputs:"
           cat $GITHUB_OUTPUT || true

@@ -22,6 +22,12 @@
 
 ### Changed
 
+- Scheduled OpenMLS and template update workflows retain short-lived,
+  repository-scoped GitHub App authentication and now fail with a direct setup
+  error when its Actions variable or secret is missing.
+- OpenMLS update checking accepts the upstream `openmls-vX.Y.Z` tag format,
+  validates manual target versions before shell expansion, and rejects unsafe
+  tag data before it reaches GitHub outputs or branch names.
 - Flutter host tests resolve the build-hook asset from Flutter's generated
   `NativeAssetsManifest.json`; consumers no longer need an explicit native
   library path.

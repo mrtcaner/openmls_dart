@@ -15,6 +15,25 @@ const _upstreamRepo = 'openmls/openmls';
 /// Tag prefix used by the upstream repo for openmls releases.
 const _tagPrefix = 'openmls-v';
 
+/// Validate the exact upstream OpenMLS release-tag form used by this fork.
+///
+/// The value is written to GitHub Actions outputs and later used in branch
+/// names, so only the upstream prefix plus a semantic version and optional
+/// semantic prerelease identifiers are accepted.
+String validateOpenMlsTag(String tag) {
+  final pattern = RegExp(
+    r'^openmls-v'
+    r'(?:0|[1-9]\d*)\.'
+    r'(?:0|[1-9]\d*)\.'
+    r'(?:0|[1-9]\d*)'
+    r'(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$',
+  );
+  if (!pattern.hasMatch(tag)) {
+    throw FormatException('Refusing unexpected OpenMLS tag format: "$tag"');
+  }
+  return tag;
+}
+
 /// Result of checking for updates.
 class UpdateCheckResult {
   const UpdateCheckResult({
@@ -85,7 +104,7 @@ Future<UpdateCheckResult> checkForUpdates({
   bool silent = false,
 }) async {
   // Read current version from rust/Cargo.toml
-  final currentVersion = getUpstreamVersion();
+  final currentVersion = validateOpenMlsTag(getUpstreamVersion());
 
   if (!silent) {
     logInfo('Current openmls version: $currentVersion');
@@ -97,7 +116,7 @@ Future<UpdateCheckResult> checkForUpdates({
   String releaseUrl;
 
   if (targetVersion != null) {
-    latestVersion = targetVersion;
+    latestVersion = validateOpenMlsTag(targetVersion);
     isPrerelease = _isPrerelease(latestVersion);
     releaseUrl =
         'https://github.com/$_upstreamRepo/releases/tag/$targetVersion';
@@ -109,17 +128,10 @@ Future<UpdateCheckResult> checkForUpdates({
       logStep('Fetching latest release from GitHub...');
     }
     final release = await _fetchLatestRelease();
-    latestVersion = release['tag_name'] as String;
+    latestVersion = validateOpenMlsTag(release['tag_name'] as String);
     // The tag name is attacker-controlled upstream data that ends up in
     // GITHUB_OUTPUT and, from there, in workflow shell commands and branch
-    // names. Reject anything that is not a plain semver-ish tag.
-    if (!RegExp(
-      r'^v?\d+\.\d+\.\d+(-[A-Za-z0-9.]+)?$',
-    ).hasMatch(latestVersion)) {
-      throw Exception(
-        'Refusing unexpected upstream tag_name format: "$latestVersion"',
-      );
-    }
+    // names. validateOpenMlsTag rejects unexpected characters and prefixes.
     isPrerelease = release['prerelease'] as bool? ?? false;
     releaseUrl =
         release['html_url'] as String? ??
