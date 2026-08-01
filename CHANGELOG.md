@@ -28,6 +28,9 @@
 - Scheduled OpenMLS and template update workflows retain short-lived,
   repository-scoped GitHub App authentication and now fail with a direct setup
   error when its Actions variable or secret is missing.
+- Template update checks distinguish a reported available update from a checker
+  failure by requiring the checker-written GitHub output instead of relying on
+  GNU Make's collapsed non-zero exit status.
 - OpenMLS update checking accepts the upstream `openmls-vX.Y.Z` tag format,
   validates manual target versions before shell expansion, and rejects unsafe
   tag data before it reaches GitHub outputs or branch names.
