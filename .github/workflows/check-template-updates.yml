@@ -72,18 +72,21 @@ jobs:
           fi
 
           echo "Running: make check-template-updates ARGS=\"$ARGS\""
-          set +e
-          make check-template-updates ARGS="$ARGS"
-          STATUS=$?
-          set -e
-          # Exit 1 means an update is available and outputs were written.
-          # Exit 2 means the checker itself failed and must fail the workflow.
-          if [ "$STATUS" -gt 1 ]; then
-            exit "$STATUS"
+          # The checker exits 1 for "update available", but GNU Make converts
+          # every non-zero recipe exit into Make exit 2. The Make status cannot
+          # distinguish an available update from a checker crash.
+          make check-template-updates ARGS="$ARGS" || true
+
+          # The checker writes outputs before its intentional update signal and
+          # writes no result when it throws. This keeps real failures visible
+          # without misclassifying an available update as a failure.
+          if ! grep -q '^needs_update=' "$GITHUB_OUTPUT"; then
+            echo "::error::Template update checker wrote no result — it failed before reporting. Check the step log above; do NOT read this as 'up to date'."
+            exit 1
           fi
 
           echo "Check completed. Outputs:"
-          cat $GITHUB_OUTPUT || true
+          cat "$GITHUB_OUTPUT"
 
       - name: Create Notification PR
         if: steps.check.outputs.needs_update == 'true'
