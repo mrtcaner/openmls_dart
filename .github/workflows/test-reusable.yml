@@ -133,8 +133,10 @@ jobs:
         run: make get
         shell: bash
 
+      # Both hosts verify the same committed bytes. This catches accidental
+      # host-dependent build/proc-macro inventory without cross-job artifacts.
       - name: Verify bundled third-party notices
-        if: matrix.name == 'Linux x86_64'
+        if: matrix.name == 'Linux x86_64' || matrix.name == 'macOS ARM64'
         run: make verify-third-party-notices
         shell: bash
 

@@ -306,8 +306,9 @@ rust-format-files:
 rust-tree:
 	$(CARGO) tree --manifest-path rust/Cargo.toml $(ARGS)
 
-# Generate deterministic license/notice attribution for the complete locked
-# Cargo resolution. Release archives embed this file next to the native binary.
+# Generate deterministic license/notice attribution for the locked normal and
+# build dependency graph on every release target. Dev dependencies are omitted.
+# Release archives embed this package asset next to the native binary.
 third-party-notices:
 	@$(DART) scripts/generate_third_party_notices.dart $(ARGS)
 

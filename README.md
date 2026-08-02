@@ -115,14 +115,18 @@ asset bundle and use `openmlsThirdPartyNoticesNativeVersion` and
 `openmlsThirdPartyNoticesSha256` as a fail-closed release check. The package does
 not import Flutter or register UI entries itself.
 
-Run `make verify-third-party-notices` after changing the locked Rust dependency
-graph or the native crate version. Future release archives copy this committed,
+Run `make third-party-notices` after changing the locked Rust dependency graph,
+update `openmlsThirdPartyNoticesSha256` to the printed digest, then run
+`make verify-third-party-notices`. Future release archives copy this committed,
 verified asset rather than generating a separate notice file.
 
-The inventory covers every resolved Cargo package. For 42 packages in the
-current 2.0.0 graph, no package-local license or notice text was available.
-Those entries are identified explicitly in the file and still require license
-review; packaging the inventory does not turn them into complete text coverage.
+The inventory unions the locked normal and build dependency graphs for every
+release target and uses Cargo's host-independent `--target all` view. It omits
+dev-only dependencies, searches vendored and git-workspace license locations,
+and supplies reviewed canonical license text when a crate declares a supported
+SPDX license but ships no usable text. Cases where a license exception prevents
+safe reconstruction remain explicitly identified with their SPDX expression
+and source repository. Linux and macOS CI both verify the same committed bytes.
 
 ## Versioning
 

@@ -89,7 +89,11 @@ For build-hook changes, test:
 - checksum failure behavior;
 - Web version refresh behavior.
 
-Run `make third-party-notices ARGS="--output <path>"` twice and compare the files when changing Cargo resolution or attribution logic.
+Run `make third-party-notices` and `make verify-third-party-notices` when
+changing Cargo resolution or attribution logic. Update
+`openmlsThirdPartyNoticesSha256` to the SHA-256 printed by the generator. Linux
+and macOS CI both verify the committed bytes; a host-specific result is a
+defect, not an expected diff.
 
 ## Pull requests
 
