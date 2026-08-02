@@ -38,7 +38,7 @@ jobs:
     outputs:
       targets: ${{ steps.list.outputs.targets }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup nightly Rust
         uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # master 2026-07
@@ -65,7 +65,7 @@ jobs:
       matrix:
         target: ${{ fromJson(needs.discover.outputs.targets) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup nightly Rust
         # SHA-pinned; the tag normally selects the toolchain, so it is passed
@@ -126,7 +126,7 @@ jobs:
 
       - name: Upload crash artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fuzz-artifacts-${{ matrix.target }}
           path: rust/fuzz/artifacts/${{ matrix.target }}/

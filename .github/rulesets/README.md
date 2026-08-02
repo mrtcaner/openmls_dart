@@ -4,7 +4,7 @@ This directory holds the intended GitHub **repository rulesets** as committed
 JSON, plus this runbook. The live GitHub configuration is authoritative because
 GitHub does not apply these files automatically.
 
-> **Current status (2026-07-23):** the live **Protect main branch** ruleset is
+> **Current status (2026-08-02):** the live **Protect main branch** ruleset is
 > active on the default branch with no bypass actors. Every update to `main`
 > must arrive through a pull request; direct pushes, force pushes, and branch
 > deletion are blocked for administrators too. The other committed rulesets and
@@ -50,14 +50,33 @@ Maintain = 4, **Admin = 5**.
 | File | Ruleset | Target | Rules | Bypass |
 |------|---------|--------|-------|--------|
 | `protect-main.json` | Protect main branch | `~DEFAULT_BRANCH` | pull_request (0 approvals), non_fast_forward, deletion | none |
-| `signing-commit.json` | Signing commit | `~ALL` branches | required_signatures, non_fast_forward | none by default |
-| `delete-branches.json` | Delete branches | `~ALL` branches | deletion | Admin (5) |
+| `signing-commit.json` | Signing commit | `~ALL` branches except `dependabot/**/*` | required_signatures, non_fast_forward | none |
+| `delete-branches.json` | Delete branches | `~ALL` branches except `dependabot/**/*` | deletion | Admin (5) |
 | `protect-release-tags.json` | Protect release tags | all tags (`~ALL`) | creation, update, deletion, required_signatures | Admin (5), Maintain (4) |
 
 **Protect main branch** is the repository-history boundary. Its empty bypass
 list is intentional: documentation and administrator changes follow the same
 branch-and-PR path as code. Documentation-only corrections may omit a tracking
 issue, but not the branch or pull request.
+
+### Why Dependabot branches are excluded
+
+The repository-wide signing ruleset also blocks non-fast-forward updates, and
+the deletion ruleset blocks branch deletion. Those controls prevent Dependabot
+from refreshing, rebasing, recreating, or cleaning up its generated branches.
+Both rulesets therefore exclude exactly `refs/heads/dependabot/**/*`.
+
+The trailing `/*` is intentional: Dependabot branch names include nested paths,
+for example `dependabot/github_actions/actions-checkout-7`. This is a ref-name
+condition, not an Integration bypass. An Integration bypass would also weaken
+the protection on `main`, while this exclusion is limited to Dependabot-owned
+branches. Dependabot's commits are still signed by GitHub, and every change must
+still pass through the protected-main pull-request boundary before it becomes
+part of the repository's trusted history.
+
+Do not extend this exclusion to `update-openmls-*`, `update-template-*`, or
+human-owned branches. Those branches remain subject to the repository-wide
+signing, non-fast-forward, and deletion controls.
 
 The load-bearing release rule is **Protect release tags**. It targets **all tags**
 (`~ALL`), so `creation` restricts creating *any* tag to Admin/Maintain — which
@@ -78,6 +97,17 @@ make setup-repo-protections ARGS="--update"   # overwrite existing rulesets (PUT
 make setup-repo-protections ARGS="--no-environment"   # rulesets only
 ```
 
+After changing committed ruleset JSON, review the live diff and apply it only
+after the pull request is merged. For a ruleset-only update, use:
+
+```bash
+make setup-repo-protections ARGS="--update --no-environment"
+```
+
+The command updates every committed ruleset by name, so inspect all JSON files
+before running it. The committed files describe the intended state; the GitHub
+API remains the authority for what is currently enforced.
+
 Manual equivalent (per file), if you can't use the script:
 
 ```bash
@@ -90,6 +120,14 @@ gh api --method POST repos/mrtcaner/openmls_dart/rulesets \
 ```bash
 gh api repos/mrtcaner/openmls_dart/rulesets --jq '.[] | "\(.id)\t\(.name)"'
 gh api --method DELETE repos/mrtcaner/openmls_dart/rulesets/<ID>   # roll back one
+```
+
+After applying the Dependabot exclusions, verify that `main` still evaluates
+both repository-wide rulesets while a nested Dependabot ref does not:
+
+```bash
+gh api repos/mrtcaner/openmls_dart/rules/branches/main
+gh api repos/mrtcaner/openmls_dart/rules/branches/dependabot/github_actions/example
 ```
 
 Prefer a dry run? Set `"enforcement": "evaluate"` in a JSON file, apply, watch the
@@ -112,18 +150,11 @@ it off an arbitrary ref, add a deployment-branch policy allowing only
 
 ## Project-specific / optional fields
 
-- **`signing-commit.json` bypass (empty by default).** If a GitHub App pushes
-  commits (e.g. the `check-openmls-updates.yml` update bot), it needs
-  a bypass entry only when it pushes *unsigned* refs. Find its Integration id and
-  add it to `bypass_actors`:
-  ```bash
-  gh api repos/mrtcaner/openmls_dart/installations --jq '.installations[].app_id'
-  ```
-  ```json
-  { "actor_id": <APP_ID>, "actor_type": "Integration", "bypass_mode": "always" }
-  ```
-  If the bot commits via the API with `sign-commits: true` (already signed), it
-  needs no bypass — leave the array empty.
+- **`signing-commit.json` bypass stays empty.** The fork's updater GitHub App
+  commits through the API with `sign-commits: true`, so it does not need a
+  bypass. If another automation cannot produce signed commits, prefer a narrow
+  ref-name exclusion that cannot match `main`; do not grant the Integration a
+  repository-wide bypass merely to make its maintenance branch writable.
 
 ## Optional hardening (review, not required)
 
