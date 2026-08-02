@@ -68,6 +68,33 @@ jobs:
       - name: Run cargo deny
         run: make rust-deny
 
+  # Verify that rust/Cargo.toml's declared minimum is still truthful. Reading
+  # the value from the manifest prevents a second hardcoded version drifting.
+  msrv:
+    name: MSRV (rust-version from Cargo.toml)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read rust-version
+        id: msrv
+        run: |
+          version=$(grep -m1 '^rust-version' rust/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')
+          if [ -z "$version" ]; then
+            echo "::error::rust/Cargo.toml declares no rust-version."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Declared MSRV: $version"
+
+      - name: Setup Rust
+        uses: ./.github/actions/setup-rust
+        with:
+          toolchain: ${{ steps.msrv.outputs.version }}
+
+      - name: Type-check on the declared MSRV
+        run: make rust-check
+
   web:
     name: Test (Web dart2js)
     runs-on: ubuntu-latest

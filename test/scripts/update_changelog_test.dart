@@ -106,5 +106,101 @@ void main() {
       expect(result, contains('**openmls v0.8.2** — protocol update'));
       expect(result, contains('**openmls_frb v1.5.2**'));
     });
+
+    test('creates For Users before an existing For Contributors block', () {
+      const input = '''
+# Changelog
+
+## [Unreleased]
+
+### For Contributors
+
+#### Fixed
+
+- CI fix
+
+## [1.4.2] - 2026-07-20
+''';
+      final result = insertChangelogEntry(
+        currentChangelog: input,
+        nativeHighlight: '**openmls v0.8.2** — protocol update',
+        changed: '- Update openmls native library to v0.8.2',
+      );
+      final lines = result.split('\n');
+
+      expect(lines.where((line) => line == '### For Users'), hasLength(1));
+      expect(
+        lines.indexOf('### For Users'),
+        lessThan(lines.indexOf('### For Contributors')),
+      );
+      expect(result, contains('- CI fix'));
+    });
+
+    test('never files the update under Changed (Breaking)', () {
+      const input = '''
+# Changelog
+
+## [Unreleased]
+
+### For Users
+
+#### Changed (Breaking)
+
+- Existing breaking change
+
+#### Changed
+
+- Existing routine change
+
+## [1.4.2] - 2026-07-20
+''';
+      const update = '- Update openmls native library to v0.8.2';
+      final result = insertChangelogEntry(
+        currentChangelog: input,
+        nativeHighlight: '**openmls v0.8.2** — protocol update',
+        changed: update,
+      );
+      final lines = result.split('\n');
+
+      expect(lines.where((line) => line == update), hasLength(1));
+      expect(lines.indexOf(update), greaterThan(lines.indexOf('#### Changed')));
+      expect(
+        lines.indexOf('#### Changed'),
+        greaterThan(lines.indexOf('#### Changed (Breaking)')),
+      );
+    });
+
+    test('creates Changed between Changed (Breaking) and Fixed', () {
+      const input = '''
+# Changelog
+
+## [Unreleased]
+
+### For Users
+
+#### Changed (Breaking)
+
+- Existing breaking change
+
+#### Fixed
+
+- Existing fix
+
+## [1.4.2] - 2026-07-20
+''';
+      final result = insertChangelogEntry(
+        currentChangelog: input,
+        nativeHighlight: '**openmls v0.8.2** — protocol update',
+        changed: '- Update openmls native library to v0.8.2',
+      );
+      final lines = result.split('\n');
+      final breaking = lines.indexOf('#### Changed (Breaking)');
+      final changed = lines.indexOf('#### Changed');
+      final fixed = lines.indexOf('#### Fixed');
+
+      expect(changed, greaterThan(breaking));
+      expect(changed, lessThan(fixed));
+      expect(result, contains('- Existing fix'));
+    });
   });
 }

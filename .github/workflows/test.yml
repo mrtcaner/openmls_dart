@@ -3,7 +3,7 @@
 # Triggers:
 # - Manual dispatch (workflow_dispatch)
 # - Push to main branch (relevant files)
-# - Pull requests (relevant files) - skipped for bot PRs (e.g., automated updates)
+# - Pull requests (relevant files); only native-version update branches skip
 # - After successful build-openmls workflow
 #
 # Platforms: Linux x86_64, Linux ARM64, macOS ARM64, Windows x86_64
@@ -18,23 +18,27 @@ on:
       - 'lib/**'
       - 'test/**'
       - 'rust/**'
+      - 'hook/**'
       - 'assets/**'
       - 'scripts/**'
       - 'Makefile'
       - 'pubspec.yaml'
-      - '.github/workflows/test.yml'
-      - '.github/workflows/test-reusable.yml'
+      - 'THIRD_PARTY_NOTICES.txt'
+      - '.gitattributes'
+      - '.github/**'
   pull_request:
     paths:
       - 'lib/**'
       - 'test/**'
       - 'rust/**'
+      - 'hook/**'
       - 'assets/**'
       - 'scripts/**'
       - 'Makefile'
       - 'pubspec.yaml'
-      - '.github/workflows/test.yml'
-      - '.github/workflows/test-reusable.yml'
+      - 'THIRD_PARTY_NOTICES.txt'
+      - '.gitattributes'
+      - '.github/**'
   workflow_run:
     workflows: ["Build openmls FRB Libraries"]
     types:
@@ -50,10 +54,13 @@ jobs:
   test:
     # Skip tests for:
     # - Failed workflow_run triggers
-    # - Bot PRs (automated updates) - native libraries not yet built
+    # - openmls update PRs, whose dependency pin precedes native binaries
+    #
+    # Other bot PRs still exercise CI; skipping every bot hid workflow and
+    # template regressions. head_ref is empty outside pull_request events.
     if: |
       (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') &&
-      (github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot')
+      !startsWith(github.head_ref, 'update-openmls-')
     uses: ./.github/workflows/test-reusable.yml
     with:
       run-coverage: true

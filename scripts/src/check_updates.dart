@@ -15,21 +15,23 @@ const _upstreamRepo = 'openmls/openmls';
 /// Tag prefix used by the upstream repo for openmls releases.
 const _tagPrefix = 'openmls-v';
 
-/// Validate the exact upstream OpenMLS release-tag form used by this fork.
+/// Accepts exactly `<_tagPrefix>X.Y.Z` with optional semver prerelease
+/// identifiers. The pattern is built from [_tagPrefix], rather than duplicating
+/// its value in a regular expression.
+final _upstreamTagPattern = RegExp(
+  '^${RegExp.escape(_tagPrefix)}'
+  r'(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)'
+  r'(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$',
+);
+
+/// Validates an upstream release tag before it is used or exported.
 ///
-/// The value is written to GitHub Actions outputs and later used in branch
-/// names, so only the upstream prefix plus a semantic version and optional
-/// semantic prerelease identifiers are accepted.
-String validateOpenMlsTag(String tag) {
-  final pattern = RegExp(
-    r'^openmls-v'
-    r'(?:0|[1-9]\d*)\.'
-    r'(?:0|[1-9]\d*)\.'
-    r'(?:0|[1-9]\d*)'
-    r'(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$',
-  );
-  if (!pattern.hasMatch(tag)) {
-    throw FormatException('Refusing unexpected OpenMLS tag format: "$tag"');
+/// Values can come from the GitHub API, a manual workflow input, or the local
+/// dependency pin. [source] identifies the failing boundary so an invalid
+/// value is diagnosable without weakening the strict format check.
+String validateUpstreamTag(String tag, {String source = 'upstream tag'}) {
+  if (!_upstreamTagPattern.hasMatch(tag)) {
+    throw FormatException('Refusing unexpected $source format: "$tag"');
   }
   return tag;
 }
@@ -104,7 +106,10 @@ Future<UpdateCheckResult> checkForUpdates({
   bool silent = false,
 }) async {
   // Read current version from rust/Cargo.toml
-  final currentVersion = validateOpenMlsTag(getUpstreamVersion());
+  final currentVersion = validateUpstreamTag(
+    getUpstreamVersion(),
+    source: 'tag recorded in rust/Cargo.toml',
+  );
 
   if (!silent) {
     logInfo('Current openmls version: $currentVersion');
@@ -116,7 +121,10 @@ Future<UpdateCheckResult> checkForUpdates({
   String releaseUrl;
 
   if (targetVersion != null) {
-    latestVersion = validateOpenMlsTag(targetVersion);
+    latestVersion = validateUpstreamTag(
+      targetVersion,
+      source: '--version argument',
+    );
     isPrerelease = _isPrerelease(latestVersion);
     releaseUrl =
         'https://github.com/$_upstreamRepo/releases/tag/$targetVersion';
@@ -128,10 +136,13 @@ Future<UpdateCheckResult> checkForUpdates({
       logStep('Fetching latest release from GitHub...');
     }
     final release = await _fetchLatestRelease();
-    latestVersion = validateOpenMlsTag(release['tag_name'] as String);
     // The tag name is attacker-controlled upstream data that ends up in
     // GITHUB_OUTPUT and, from there, in workflow shell commands and branch
-    // names. validateOpenMlsTag rejects unexpected characters and prefixes.
+    // names. validateUpstreamTag rejects unexpected characters and prefixes.
+    latestVersion = validateUpstreamTag(
+      release['tag_name'] as String,
+      source: 'tag_name from the GitHub API',
+    );
     isPrerelease = release['prerelease'] as bool? ?? false;
     releaseUrl =
         release['html_url'] as String? ??
@@ -264,14 +275,6 @@ Future<UpdateFilesResult> updateVersionFiles({
   );
   cargoContent = cargoContent.replaceAllMapped(
     tagPattern4,
-    (match) => '${match.group(1)}$newVersion${match.group(2)}',
-  );
-
-  final tagPattern5 = RegExp(
-    r'(openmls_memory_storage\s*=\s*\{[^}]*tag\s*=\s*")[^"]+(")',
-  );
-  cargoContent = cargoContent.replaceAllMapped(
-    tagPattern5,
     (match) => '${match.group(1)}$newVersion${match.group(2)}',
   );
 
