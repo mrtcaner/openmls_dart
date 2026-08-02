@@ -17,6 +17,13 @@ void main() {
     );
   });
 
+  test('bundled notice inventory has no unexplained missing-text entries', () {
+    final notice = File('assets/THIRD_PARTY_NOTICES.txt').readAsStringSync();
+
+    expect(notice, isNot(contains('[No license or notice text was found')));
+    expect(notice, contains('Crates listed:'));
+  });
+
   test('bundled notice metadata matches the selected native release', () {
     final cargoToml = File('rust/Cargo.toml').readAsStringSync();
     final version = RegExp(

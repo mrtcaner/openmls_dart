@@ -25,6 +25,11 @@
 
 ### Changed
 
+- Third-party notices now inventory locked normal and build dependencies across
+  all release targets while excluding dev-only crates. Vendored/workspace
+  license discovery, reviewed canonical fallback texts, and Linux/macOS
+  byte-for-byte verification replace unexplained attribution gaps with license
+  text or an explicit, source-linked limitation.
 - Scheduled OpenMLS and template update workflows retain short-lived,
   repository-scoped GitHub App authentication and now fail with a direct setup
   error when its Actions variable or secret is missing.
