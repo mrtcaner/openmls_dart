@@ -125,7 +125,11 @@ void main(List<String> args) async {
           file: localLib,
         ),
       );
-      output.dependencies.add(packageRoot.resolve('rust/Cargo.toml'));
+      // The selected binary is also an input. Rebuilding or deleting it must
+      // invalidate the hook result even when Cargo.toml did not change.
+      output.dependencies
+        ..add(packageRoot.resolve('rust/Cargo.toml'))
+        ..add(localLib);
       return;
     }
 

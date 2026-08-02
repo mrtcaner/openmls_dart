@@ -72,6 +72,8 @@ jobs:
           ARGS="--ci"
 
           if [ -n "$TARGET_VERSION" ]; then
+            # This value is interpolated into ARGS before the Dart checker can
+            # validate it, so reject anything outside the exact tag grammar.
             if [[ ! "$TARGET_VERSION" =~ ^openmls-v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
               echo "::error::target_version must use the exact openmls-vX.Y.Z form."
               exit 2
@@ -84,14 +86,15 @@ jobs:
           fi
 
           echo "Running: make check-new-openmls-version ARGS=\"$ARGS\""
-          set +e
-          make check-new-openmls-version ARGS="$ARGS"
-          STATUS=$?
-          set -e
-          # Exit 1 means an update is available and outputs were written.
-          # Exit 2 means the checker itself failed and must fail the workflow.
-          if [ "$STATUS" -gt 1 ]; then
-            exit "$STATUS"
+          # GNU make maps a recipe's exit 1 (our "update available" signal) to
+          # exit 2, so its status cannot distinguish that result from a crash.
+          make check-new-openmls-version ARGS="$ARGS" || true
+
+          # The checker writes this output before returning either normal
+          # result. If it is absent, the checker failed and the run must fail.
+          if ! grep -q '^needs_update=' "$GITHUB_OUTPUT"; then
+            echo "::error::Update checker wrote no result; inspect the checker log above."
+            exit 1
           fi
 
           echo "Check completed. Outputs:"
@@ -130,6 +133,8 @@ jobs:
           ARGS="--update --ci"
 
           if [ -n "$TARGET_VERSION" ]; then
+            # Keep manual input out of the shell unless it matches the exact
+            # upstream tag grammar.
             if [[ ! "$TARGET_VERSION" =~ ^openmls-v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
               echo "::error::target_version must use the exact openmls-vX.Y.Z form."
               exit 2
@@ -260,7 +265,7 @@ jobs:
             ${{ steps.cargo-lock.outputs.success == 'false' && '1. **RUN `make rust-update`** — Cargo.lock update failed' || '' }}
             1. ${{ steps.codegen.outputs.success == 'false' && '**FIX FRB BINDINGS** — codegen failed, check openmls API changes' || 'Review FRB bindings — check if API changes require Dart code updates' }}
             2. **Review CHANGELOG.md** — ${{ steps.changelog.outputs.success == 'true' && 'verify AI-generated entry is accurate' || '**ADD CHANGELOG ENTRY MANUALLY**' }}
-            3. **Check if DB migration needed** — if openmls changed its storage serialization format, add a migration via `/add-db-migration` skill
+            3. **Review stored-state compatibility** — if openmls changed its serialization format, document the consuming app's migration or recovery requirement before merge
 
             ### After Merge
 

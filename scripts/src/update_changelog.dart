@@ -286,7 +286,9 @@ Return ONLY valid JSON, no markdown code blocks.
 /// testing.
 ///
 /// Strategy:
-/// 1. If [Unreleased] section exists, add entry to Highlights and Changed
+/// 1. If [Unreleased] exists, add the entry to For Users, creating missing
+///    subsections in this order: Highlights, Changed (Breaking), Changed,
+///    Security, Fixed. `#### Changed` is matched exactly.
 /// 2. If no [Unreleased] section, create it before first version (this is the
 ///    normal path after a release, which no longer leaves an empty
 ///    `## [Unreleased]` behind).
@@ -318,6 +320,34 @@ String _insertIntoUnreleased(
   var inForUsers = false;
   var insertedHighlights = false;
   var insertedChanged = false;
+  var unreleasedIdx = -1;
+  var forUsersIdx = -1;
+  var changedAnchorIdx = -1;
+
+  int trimmedEnd() {
+    var at = result.length;
+    while (at > 0 && result[at - 1].trim().isEmpty) {
+      at--;
+    }
+    return at;
+  }
+
+  void flushForUsers() {
+    if (!insertedChanged) {
+      final at = changedAnchorIdx >= 0 ? changedAnchorIdx : trimmedEnd();
+      result.insertAll(at, ['', '#### Changed', '', changed]);
+      insertedChanged = true;
+    }
+    if (!insertedHighlights) {
+      result.insertAll(forUsersIdx + 1, [
+        '',
+        '#### ✨ Highlights',
+        '',
+        '- $nativeHighlight',
+      ]);
+      insertedHighlights = true;
+    }
+  }
 
   for (var i = 0; i < lines.length; i++) {
     final line = lines[i];
@@ -326,6 +356,7 @@ String _insertIntoUnreleased(
     if (line.startsWith('## [Unreleased]')) {
       inUnreleased = true;
       result.add(line);
+      unreleasedIdx = result.length - 1;
       continue;
     }
 
@@ -335,21 +366,25 @@ String _insertIntoUnreleased(
         !line.contains('Unreleased')) {
       // If we haven't inserted yet, create the structure
       if (!insertedHighlights || !insertedChanged) {
-        result.addAll([
-          '',
-          '### For Users',
-          '',
-          '#### ✨ Highlights',
-          '',
-          '- $nativeHighlight',
-          '',
-          '#### Changed',
-          '',
-          changed,
-          '',
-        ]);
-        insertedHighlights = true;
-        insertedChanged = true;
+        if (forUsersIdx >= 0) {
+          flushForUsers();
+        } else {
+          // User-facing release notes belong before contributor-only notes.
+          result.insertAll(unreleasedIdx + 1, [
+            '',
+            '### For Users',
+            '',
+            '#### ✨ Highlights',
+            '',
+            '- $nativeHighlight',
+            '',
+            '#### Changed',
+            '',
+            changed,
+          ]);
+          insertedHighlights = true;
+          insertedChanged = true;
+        }
       }
       inUnreleased = false;
       inForUsers = false;
@@ -361,6 +396,7 @@ String _insertIntoUnreleased(
     if (inUnreleased && line.startsWith('### For Users')) {
       inForUsers = true;
       result.add(line);
+      forUsersIdx = result.length - 1;
       continue;
     }
 
@@ -368,19 +404,7 @@ String _insertIntoUnreleased(
     if (inForUsers && line.startsWith('### ') && !line.contains('For Users')) {
       // If we haven't inserted yet, insert before this section
       if (!insertedHighlights || !insertedChanged) {
-        result.addAll([
-          '',
-          '#### ✨ Highlights',
-          '',
-          '- $nativeHighlight',
-          '',
-          '#### Changed',
-          '',
-          changed,
-          '',
-        ]);
-        insertedHighlights = true;
-        insertedChanged = true;
+        flushForUsers();
       }
       inForUsers = false;
       result.add(line);
@@ -400,13 +424,8 @@ String _insertIntoUnreleased(
       continue;
     }
 
-    // Check for #### Changed in For Users
-    if (inForUsers && line.startsWith('#### Changed')) {
-      // If Highlights wasn't found, add it before Changed
-      if (!insertedHighlights) {
-        result.addAll(['', '#### ✨ Highlights', '', '- $nativeHighlight', '']);
-        insertedHighlights = true;
-      }
+    // The breaking subsection is distinct; never file a routine update there.
+    if (inForUsers && line.trimRight() == '#### Changed') {
       result.addAll([line, '', changed]);
       insertedChanged = true;
       // Skip the next empty line if present
@@ -414,6 +433,16 @@ String _insertIntoUnreleased(
         i++;
       }
       continue;
+    }
+
+    // If Changed is missing, insert it before the first later subsection. The
+    // breaking subsection comes earlier and therefore is not an anchor.
+    if (inForUsers &&
+        !insertedChanged &&
+        changedAnchorIdx < 0 &&
+        line.startsWith('#### ') &&
+        !line.startsWith('#### Changed (')) {
+      changedAnchorIdx = trimmedEnd();
     }
 
     result.add(line);
