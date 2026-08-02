@@ -29,12 +29,12 @@ const _changelog = '''
 
 - Older release
 
-[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare/v6.0.0...HEAD
-[6.0.0]: https://github.com/djx-y-z/openmls_dart/compare/v5.0.9...v6.0.0
-[5.0.9]: https://github.com/djx-y-z/openmls_dart/compare/v5.0.8...v5.0.9
+[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/v6.0.0...HEAD
+[6.0.0]: https://github.com/mrtcaner/openmls_dart/compare/v5.0.9...v6.0.0
+[5.0.9]: https://github.com/mrtcaner/openmls_dart/compare/v5.0.8...v5.0.9
 ''';
 
-const _repoUrl = 'https://github.com/djx-y-z/openmls_dart';
+const _repoUrl = 'https://github.com/mrtcaner/openmls_dart';
 
 /// Index of the line that starts with [prefix]; -1 if none.
 int _lineStarting(String content, String prefix) =>
@@ -175,7 +175,7 @@ void main() {
 
 - something
 
-[6.0.0]: https://github.com/djx-y-z/openmls_dart/compare/v5.0.9...v6.0.0
+[6.0.0]: https://github.com/mrtcaner/openmls_dart/compare/v5.0.9...v6.0.0
 ''';
       expect(
         () => finalizeChangelog(

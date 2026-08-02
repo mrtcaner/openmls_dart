@@ -54,6 +54,14 @@ Future<void> releaseFrb({
     );
   }
 
+  // Every archive built from this tag embeds THIRD_PARTY_NOTICES.txt, and a
+  // pushed release tag cannot be taken back. Checked here rather than trusting
+  // the last CI run, which may predate a local dependency change.
+  logStep('Verifying third-party notices match the dependency graph...');
+  await runInherit('make', [
+    'verify-third-party-notices',
+  ], failMessage: 'third-party notice verification failed');
+
   final current = getCrateVersion();
   if (!isNewerVersion(version, current)) {
     throw Exception(

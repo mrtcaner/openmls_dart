@@ -61,6 +61,13 @@ Future<void> releasePackage({
     );
   }
 
+  // THIRD_PARTY_NOTICES.txt ships inside the published package, and a pub.dev
+  // version cannot be replaced once published.
+  logStep('Verifying third-party notices match the dependency graph...');
+  await runInherit('make', [
+    'verify-third-party-notices',
+  ], failMessage: 'third-party notice verification failed');
+
   final current = getPackageVersion();
   if (!isNewerVersion(version, current)) {
     throw Exception(
