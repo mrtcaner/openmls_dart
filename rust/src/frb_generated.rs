@@ -40,7 +40,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueNom,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -159701412;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1322468827;
 
 // Section: executor
 
@@ -523,6 +523,47 @@ fn wire__crate__api__storage__add_members_with_storage_impl(
         },
     )
 }
+fn wire__crate__api__group_e2ee__add_members_with_storage_v2_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    group_id: impl CstDecode<Vec<u8>>,
+    signer_bytes: impl CstDecode<Vec<u8>>,
+    additions: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>>,
+    aad: impl CstDecode<Vec<u8>>,
+    expected_previous_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
+    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
+    storage_format_version: impl CstDecode<u32>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "add_members_with_storage_v2",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_group_id = group_id.cst_decode();
+            let api_signer_bytes = signer_bytes.cst_decode();
+            let api_additions = additions.cst_decode();
+            let api_aad = aad.cst_decode();
+            let api_expected_previous_state = expected_previous_state.cst_decode();
+            let api_storage_entries = storage_entries.cst_decode();
+            let api_storage_format_version = storage_format_version.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, String>((move || {
+                    let output_ok = crate::api::group_e2ee::add_members_with_storage_v2(
+                        api_group_id,
+                        api_signer_bytes,
+                        api_additions,
+                        api_aad,
+                        api_expected_previous_state,
+                        api_storage_entries,
+                        api_storage_format_version,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__storage__create_group_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     config: impl CstDecode<crate::api::config::MlsGroupConfig>,
@@ -557,6 +598,47 @@ fn wire__crate__api__storage__create_group_with_storage_impl(
                         api_credential_identity,
                         api_signer_public_key,
                         api_group_id,
+                        api_credential_bytes,
+                        api_storage_entries,
+                        api_storage_format_version,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__group_e2ee__create_group_with_storage_v2_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    config: impl CstDecode<crate::api::config::MlsGroupConfig>,
+    signer_bytes: impl CstDecode<Vec<u8>>,
+    explicit_group_id: impl CstDecode<Vec<u8>>,
+    expected_owner_authority: impl CstDecode<crate::api::group_e2ee::MlsAuthorizedOwnerV1>,
+    credential_bytes: impl CstDecode<Option<Vec<u8>>>,
+    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
+    storage_format_version: impl CstDecode<u32>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_group_with_storage_v2",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_config = config.cst_decode();
+            let api_signer_bytes = signer_bytes.cst_decode();
+            let api_explicit_group_id = explicit_group_id.cst_decode();
+            let api_expected_owner_authority = expected_owner_authority.cst_decode();
+            let api_credential_bytes = credential_bytes.cst_decode();
+            let api_storage_entries = storage_entries.cst_decode();
+            let api_storage_format_version = storage_format_version.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, String>((move || {
+                    let output_ok = crate::api::group_e2ee::create_group_with_storage_v2(
+                        api_config,
+                        api_signer_bytes,
+                        api_explicit_group_id,
+                        api_expected_owner_authority,
                         api_credential_bytes,
                         api_storage_entries,
                         api_storage_format_version,
@@ -747,6 +829,48 @@ fn wire__crate__api__storage__join_group_from_welcome_with_storage_impl(
         },
     )
 }
+fn wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    config: impl CstDecode<crate::api::config::MlsGroupConfig>,
+    welcome_bytes: impl CstDecode<Vec<u8>>,
+    ratchet_tree_bytes: impl CstDecode<Option<Vec<u8>>>,
+    signer_bytes: impl CstDecode<Vec<u8>>,
+    expected_resulting_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
+    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
+    storage_format_version: impl CstDecode<u32>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "join_group_from_welcome_with_storage_v2",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_config = config.cst_decode();
+            let api_welcome_bytes = welcome_bytes.cst_decode();
+            let api_ratchet_tree_bytes = ratchet_tree_bytes.cst_decode();
+            let api_signer_bytes = signer_bytes.cst_decode();
+            let api_expected_resulting_state = expected_resulting_state.cst_decode();
+            let api_storage_entries = storage_entries.cst_decode();
+            let api_storage_format_version = storage_format_version.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, String>((move || {
+                    let output_ok =
+                        crate::api::group_e2ee::join_group_from_welcome_with_storage_v2(
+                            api_config,
+                            api_welcome_bytes,
+                            api_ratchet_tree_bytes,
+                            api_signer_bytes,
+                            api_expected_resulting_state,
+                            api_storage_entries,
+                            api_storage_format_version,
+                        )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__config__mls_group_config_default_config_impl(
     ciphersuite: impl CstDecode<crate::api::types::MlsCiphersuite>,
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
@@ -761,6 +885,32 @@ fn wire__crate__api__config__mls_group_config_default_config_impl(
             transform_result_dco::<_, _, ()>((move || {
                 let output_ok = Result::<_, ()>::Ok(
                     crate::api::config::MlsGroupConfig::default_config(api_ciphersuite),
+                )?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__group_e2ee__mls_group_state_digest_impl(
+    group_id: impl CstDecode<Vec<u8>>,
+    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
+    storage_format_version: impl CstDecode<u32>,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "mls_group_state_digest",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let api_group_id = group_id.cst_decode();
+            let api_storage_entries = storage_entries.cst_decode();
+            let api_storage_format_version = storage_format_version.cst_decode();
+            transform_result_dco::<_, _, String>((move || {
+                let output_ok = crate::api::group_e2ee::mls_group_state_digest(
+                    api_group_id,
+                    api_storage_entries,
+                    api_storage_format_version,
                 )?;
                 Ok(output_ok)
             })())
@@ -822,6 +972,32 @@ fn wire__crate__api__message__mls_message_extract_group_id_impl(
         },
     )
 }
+fn wire__crate__api__group_e2ee__mls_roster_digest_v1_impl(
+    group_id: impl CstDecode<Vec<u8>>,
+    epoch: impl CstDecode<u64>,
+    leaves: impl CstDecode<Vec<crate::api::group_e2ee::MlsRosterLeafV1>>,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "mls_roster_digest_v1",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let api_group_id = group_id.cst_decode();
+            let api_epoch = epoch.cst_decode();
+            let api_leaves = leaves.cst_decode();
+            transform_result_dco::<_, _, String>((move || {
+                let output_ok = crate::api::group_e2ee::mls_roster_digest_v1(
+                    api_group_id,
+                    api_epoch,
+                    api_leaves,
+                )?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__storage__mls_storage_format_version_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
@@ -874,6 +1050,129 @@ fn wire__crate__api__storage__process_message_with_storage_impl(
         },
     )
 }
+fn wire__crate__api__group_e2ee__process_message_with_storage_v2_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    group_id: impl CstDecode<Vec<u8>>,
+    message_bytes: impl CstDecode<Vec<u8>>,
+    expected_aad: impl CstDecode<Vec<u8>>,
+    expected_previous_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
+    expected_resulting_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
+    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
+    storage_format_version: impl CstDecode<u32>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "process_message_with_storage_v2",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_group_id = group_id.cst_decode();
+            let api_message_bytes = message_bytes.cst_decode();
+            let api_expected_aad = expected_aad.cst_decode();
+            let api_expected_previous_state = expected_previous_state.cst_decode();
+            let api_expected_resulting_state = expected_resulting_state.cst_decode();
+            let api_storage_entries = storage_entries.cst_decode();
+            let api_storage_format_version = storage_format_version.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, String>((move || {
+                    let output_ok = crate::api::group_e2ee::process_message_with_storage_v2(
+                        api_group_id,
+                        api_message_bytes,
+                        api_expected_aad,
+                        api_expected_previous_state,
+                        api_expected_resulting_state,
+                        api_storage_entries,
+                        api_storage_format_version,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__group_e2ee__remove_members_with_storage_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    group_id: impl CstDecode<Vec<u8>>,
+    signer_bytes: impl CstDecode<Vec<u8>>,
+    removals: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1>>,
+    aad: impl CstDecode<Vec<u8>>,
+    expected_previous_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
+    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
+    storage_format_version: impl CstDecode<u32>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "remove_members_with_storage",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_group_id = group_id.cst_decode();
+            let api_signer_bytes = signer_bytes.cst_decode();
+            let api_removals = removals.cst_decode();
+            let api_aad = aad.cst_decode();
+            let api_expected_previous_state = expected_previous_state.cst_decode();
+            let api_storage_entries = storage_entries.cst_decode();
+            let api_storage_format_version = storage_format_version.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, String>((move || {
+                    let output_ok = crate::api::group_e2ee::remove_members_with_storage(
+                        api_group_id,
+                        api_signer_bytes,
+                        api_removals,
+                        api_aad,
+                        api_expected_previous_state,
+                        api_storage_entries,
+                        api_storage_format_version,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__group_e2ee__self_update_with_storage_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    group_id: impl CstDecode<Vec<u8>>,
+    signer_bytes: impl CstDecode<Vec<u8>>,
+    aad: impl CstDecode<Vec<u8>>,
+    expected_previous_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
+    expected_self_authority: impl CstDecode<crate::api::group_e2ee::MlsAuthorizedSelfV1>,
+    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
+    storage_format_version: impl CstDecode<u32>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "self_update_with_storage",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_group_id = group_id.cst_decode();
+            let api_signer_bytes = signer_bytes.cst_decode();
+            let api_aad = aad.cst_decode();
+            let api_expected_previous_state = expected_previous_state.cst_decode();
+            let api_expected_self_authority = expected_self_authority.cst_decode();
+            let api_storage_entries = storage_entries.cst_decode();
+            let api_storage_format_version = storage_format_version.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, String>((move || {
+                    let output_ok = crate::api::group_e2ee::self_update_with_storage(
+                        api_group_id,
+                        api_signer_bytes,
+                        api_aad,
+                        api_expected_previous_state,
+                        api_expected_self_authority,
+                        api_storage_entries,
+                        api_storage_format_version,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__keys__serialize_signer_impl(
     ciphersuite: impl CstDecode<crate::api::types::MlsCiphersuite>,
     private_key: impl CstDecode<Vec<u8>>,
@@ -913,6 +1212,50 @@ fn wire__crate__api__types__supported_ciphersuites_impl(
                 let output_ok = Result::<_, ()>::Ok(crate::api::types::supported_ciphersuites())?;
                 Ok(output_ok)
             })())
+        },
+    )
+}
+fn wire__crate__api__group_e2ee__swap_members_with_storage_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    group_id: impl CstDecode<Vec<u8>>,
+    signer_bytes: impl CstDecode<Vec<u8>>,
+    removals: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1>>,
+    additions: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>>,
+    aad: impl CstDecode<Vec<u8>>,
+    expected_previous_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
+    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
+    storage_format_version: impl CstDecode<u32>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "swap_members_with_storage",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_group_id = group_id.cst_decode();
+            let api_signer_bytes = signer_bytes.cst_decode();
+            let api_removals = removals.cst_decode();
+            let api_additions = additions.cst_decode();
+            let api_aad = aad.cst_decode();
+            let api_expected_previous_state = expected_previous_state.cst_decode();
+            let api_storage_entries = storage_entries.cst_decode();
+            let api_storage_format_version = storage_format_version.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, String>((move || {
+                    let output_ok = crate::api::group_e2ee::swap_members_with_storage(
+                        api_group_id,
+                        api_signer_bytes,
+                        api_removals,
+                        api_additions,
+                        api_aad,
+                        api_expected_previous_state,
+                        api_storage_entries,
+                        api_storage_format_version,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
         },
     )
 }
@@ -1092,6 +1435,21 @@ impl SseDecode for crate::api::storage::CreateGroupWithStorageResult {
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::CreateGroupWithStorageV2Result {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_resultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
+        return crate::api::group_e2ee::CreateGroupWithStorageV2Result {
+            group_id: var_groupId,
+            resulting_roster: var_resultingRoster,
+            storage_batch: var_storageBatch,
+        };
+    }
+}
+
 impl SseDecode for crate::api::storage::CreateKeyPackageWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1135,6 +1493,21 @@ impl SseDecode for crate::api::storage::JoinGroupWithStorageResult {
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::JoinGroupWithStorageV2Result {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_resultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
+        return crate::api::group_e2ee::JoinGroupWithStorageV2Result {
+            group_id: var_groupId,
+            resulting_roster: var_resultingRoster,
+            storage_batch: var_storageBatch,
+        };
+    }
+}
+
 impl SseDecode for Vec<Vec<u8>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1147,6 +1520,32 @@ impl SseDecode for Vec<Vec<u8>> {
     }
 }
 
+impl SseDecode for Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(
+                <crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>::sse_decode(deserializer),
+            );
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::group_e2ee::MlsAuthorizedRemovalV1>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<crate::api::types::MlsCiphersuite> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1154,6 +1553,20 @@ impl SseDecode for Vec<crate::api::types::MlsCiphersuite> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<crate::api::types::MlsCiphersuite>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::group_e2ee::MlsRosterLeafV1> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(
                 deserializer,
             ));
         }
@@ -1187,6 +1600,60 @@ impl SseDecode for Vec<u8> {
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_keyPackageBytes = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_expectedCredentialIdentity = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_expectedSignaturePublicKey = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
+            key_package_bytes: var_keyPackageBytes,
+            expected_credential_identity: var_expectedCredentialIdentity,
+            expected_signature_public_key: var_expectedSignaturePublicKey,
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::MlsAuthorizedOwnerV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_expectedCredentialIdentity = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_expectedSignaturePublicKey = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsAuthorizedOwnerV1 {
+            expected_credential_identity: var_expectedCredentialIdentity,
+            expected_signature_public_key: var_expectedSignaturePublicKey,
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::MlsAuthorizedRemovalV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_leafIndex = <u32>::sse_decode(deserializer);
+        let mut var_expectedCredentialIdentity = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_expectedSignaturePublicKey = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsAuthorizedRemovalV1 {
+            leaf_index: var_leafIndex,
+            expected_credential_identity: var_expectedCredentialIdentity,
+            expected_signature_public_key: var_expectedSignaturePublicKey,
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::MlsAuthorizedSelfV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_leafIndex = <u32>::sse_decode(deserializer);
+        let mut var_expectedCredentialIdentity = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_expectedSignaturePublicKey = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsAuthorizedSelfV1 {
+            leaf_index: var_leafIndex,
+            expected_credential_identity: var_expectedCredentialIdentity,
+            expected_signature_public_key: var_expectedSignaturePublicKey,
+        };
+    }
+}
+
 impl SseDecode for crate::api::types::MlsCiphersuite {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1196,6 +1663,20 @@ impl SseDecode for crate::api::types::MlsCiphersuite {
             1 => crate::api::types::MlsCiphersuite::Mls128DhkemX25519Chacha20poly1305Sha256Ed25519,
             2 => crate::api::types::MlsCiphersuite::Mls128DhkemP256Aes128gcmSha256P256,
             _ => unreachable!("Invalid variant for MlsCiphersuite: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::MlsExpectedRosterStateV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_epoch = <u64>::sse_decode(deserializer);
+        let mut var_digestSha256 = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsExpectedRosterStateV1 {
+            group_id: var_groupId,
+            epoch: var_epoch,
+            digest_sha256: var_digestSha256,
         };
     }
 }
@@ -1239,6 +1720,37 @@ impl SseDecode for crate::api::types::MlsProposalType {
             6 => crate::api::types::MlsProposalType::GroupContextExtensions,
             7 => crate::api::types::MlsProposalType::Custom,
             _ => unreachable!("Invalid variant for MlsProposalType: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::MlsRosterLeafV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_leafIndex = <u32>::sse_decode(deserializer);
+        let mut var_credentialIdentity = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_signaturePublicKey = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsRosterLeafV1 {
+            leaf_index: var_leafIndex,
+            credential_identity: var_credentialIdentity,
+            signature_public_key: var_signaturePublicKey,
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::MlsRosterSummaryV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_epoch = <u64>::sse_decode(deserializer);
+        let mut var_leaves =
+            <Vec<crate::api::group_e2ee::MlsRosterLeafV1>>::sse_decode(deserializer);
+        let mut var_digestSha256 = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsRosterSummaryV1 {
+            group_id: var_groupId,
+            epoch: var_epoch,
+            leaves: var_leaves,
+            digest_sha256: var_digestSha256,
         };
     }
 }
@@ -1320,6 +1832,32 @@ impl SseDecode for Option<Vec<u8>> {
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::PreparedCommitWithStorageResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_commit = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_welcome = <Option<Vec<u8>>>::sse_decode(deserializer);
+        let mut var_groupInfo = <Option<Vec<u8>>>::sse_decode(deserializer);
+        let mut var_commitSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_previousRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_baseGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
+        return crate::api::group_e2ee::PreparedCommitWithStorageResult {
+            commit: var_commit,
+            welcome: var_welcome,
+            group_info: var_groupInfo,
+            commit_sha256: var_commitSha256,
+            previous_roster: var_previousRoster,
+            resulting_roster: var_resultingRoster,
+            base_group_state_sha256: var_baseGroupStateSha256,
+            storage_batch: var_storageBatch,
+        };
+    }
+}
+
 impl SseDecode for crate::api::storage::ProcessMessageWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1343,6 +1881,40 @@ impl SseDecode for crate::api::storage::ProcessMessageWithStorageResult {
             has_staged_commit: var_hasStagedCommit,
             has_proposal: var_hasProposal,
             proposal_type: var_proposalType,
+            storage_batch: var_storageBatch,
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::ProcessMessageWithStorageV2Result {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_messageType =
+            <crate::api::types::ProcessedMessageType>::sse_decode(deserializer);
+        let mut var_senderIndex = <Option<u32>>::sse_decode(deserializer);
+        let mut var_previousEpoch = <u64>::sse_decode(deserializer);
+        let mut var_resultingEpoch = <u64>::sse_decode(deserializer);
+        let mut var_applicationMessage = <Option<Vec<u8>>>::sse_decode(deserializer);
+        let mut var_hasStagedCommit = <bool>::sse_decode(deserializer);
+        let mut var_hasProposal = <bool>::sse_decode(deserializer);
+        let mut var_proposalType =
+            <Option<crate::api::types::MlsProposalType>>::sse_decode(deserializer);
+        let mut var_previousRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
+        return crate::api::group_e2ee::ProcessMessageWithStorageV2Result {
+            message_type: var_messageType,
+            sender_index: var_senderIndex,
+            previous_epoch: var_previousEpoch,
+            resulting_epoch: var_resultingEpoch,
+            application_message: var_applicationMessage,
+            has_staged_commit: var_hasStagedCommit,
+            has_proposal: var_hasProposal,
+            proposal_type: var_proposalType,
+            previous_roster: var_previousRoster,
+            resulting_roster: var_resultingRoster,
             storage_batch: var_storageBatch,
         };
     }
@@ -1506,6 +2078,28 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::storage::CreateGroupWithStora
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::CreateGroupWithStorageV2Result {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.group_id.into_into_dart().into_dart(),
+            self.resulting_roster.into_into_dart().into_dart(),
+            self.storage_batch.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::CreateGroupWithStorageV2Result
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::CreateGroupWithStorageV2Result>
+    for crate::api::group_e2ee::CreateGroupWithStorageV2Result
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::CreateGroupWithStorageV2Result {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::storage::CreateKeyPackageWithStorageResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -1569,6 +2163,131 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::storage::JoinGroupWithStorage
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::JoinGroupWithStorageV2Result {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.group_id.into_into_dart().into_dart(),
+            self.resulting_roster.into_into_dart().into_dart(),
+            self.storage_batch.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::JoinGroupWithStorageV2Result
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::JoinGroupWithStorageV2Result>
+    for crate::api::group_e2ee::JoinGroupWithStorageV2Result
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::JoinGroupWithStorageV2Result {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.key_package_bytes.into_into_dart().into_dart(),
+            self.expected_credential_identity
+                .into_into_dart()
+                .into_dart(),
+            self.expected_signature_public_key
+                .into_into_dart()
+                .into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsAuthorizedKeyPackageV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>
+    for crate::api::group_e2ee::MlsAuthorizedKeyPackageV1
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsAuthorizedOwnerV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.expected_credential_identity
+                .into_into_dart()
+                .into_dart(),
+            self.expected_signature_public_key
+                .into_into_dart()
+                .into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsAuthorizedOwnerV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsAuthorizedOwnerV1>
+    for crate::api::group_e2ee::MlsAuthorizedOwnerV1
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsAuthorizedOwnerV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsAuthorizedRemovalV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.leaf_index.into_into_dart().into_dart(),
+            self.expected_credential_identity
+                .into_into_dart()
+                .into_dart(),
+            self.expected_signature_public_key
+                .into_into_dart()
+                .into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsAuthorizedRemovalV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsAuthorizedRemovalV1>
+    for crate::api::group_e2ee::MlsAuthorizedRemovalV1
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsAuthorizedRemovalV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsAuthorizedSelfV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.leaf_index.into_into_dart().into_dart(),
+            self.expected_credential_identity
+                .into_into_dart()
+                .into_dart(),
+            self.expected_signature_public_key
+                .into_into_dart()
+                .into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsAuthorizedSelfV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsAuthorizedSelfV1>
+    for crate::api::group_e2ee::MlsAuthorizedSelfV1
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsAuthorizedSelfV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::types::MlsCiphersuite {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -1587,6 +2306,28 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsCiphersuite>
     for crate::api::types::MlsCiphersuite
 {
     fn into_into_dart(self) -> crate::api::types::MlsCiphersuite {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsExpectedRosterStateV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.group_id.into_into_dart().into_dart(),
+            self.epoch.into_into_dart().into_dart(),
+            self.digest_sha256.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsExpectedRosterStateV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsExpectedRosterStateV1>
+    for crate::api::group_e2ee::MlsExpectedRosterStateV1
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsExpectedRosterStateV1 {
         self
     }
 }
@@ -1645,6 +2386,51 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsProposalType>
     for crate::api::types::MlsProposalType
 {
     fn into_into_dart(self) -> crate::api::types::MlsProposalType {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsRosterLeafV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.leaf_index.into_into_dart().into_dart(),
+            self.credential_identity.into_into_dart().into_dart(),
+            self.signature_public_key.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsRosterLeafV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsRosterLeafV1>
+    for crate::api::group_e2ee::MlsRosterLeafV1
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsRosterLeafV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsRosterSummaryV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.group_id.into_into_dart().into_dart(),
+            self.epoch.into_into_dart().into_dart(),
+            self.leaves.into_into_dart().into_dart(),
+            self.digest_sha256.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsRosterSummaryV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsRosterSummaryV1>
+    for crate::api::group_e2ee::MlsRosterSummaryV1
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsRosterSummaryV1 {
         self
     }
 }
@@ -1715,6 +2501,33 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsWireFormatPolicy>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::PreparedCommitWithStorageResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.commit.into_into_dart().into_dart(),
+            self.welcome.into_into_dart().into_dart(),
+            self.group_info.into_into_dart().into_dart(),
+            self.commit_sha256.into_into_dart().into_dart(),
+            self.previous_roster.into_into_dart().into_dart(),
+            self.resulting_roster.into_into_dart().into_dart(),
+            self.base_group_state_sha256.into_into_dart().into_dart(),
+            self.storage_batch.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::PreparedCommitWithStorageResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::PreparedCommitWithStorageResult>
+    for crate::api::group_e2ee::PreparedCommitWithStorageResult
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::PreparedCommitWithStorageResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::storage::ProcessMessageWithStorageResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -1739,6 +2552,36 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::storage::ProcessMessageWithSt
     for crate::api::storage::ProcessMessageWithStorageResult
 {
     fn into_into_dart(self) -> crate::api::storage::ProcessMessageWithStorageResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::ProcessMessageWithStorageV2Result {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.message_type.into_into_dart().into_dart(),
+            self.sender_index.into_into_dart().into_dart(),
+            self.previous_epoch.into_into_dart().into_dart(),
+            self.resulting_epoch.into_into_dart().into_dart(),
+            self.application_message.into_into_dart().into_dart(),
+            self.has_staged_commit.into_into_dart().into_dart(),
+            self.has_proposal.into_into_dart().into_dart(),
+            self.proposal_type.into_into_dart().into_dart(),
+            self.previous_roster.into_into_dart().into_dart(),
+            self.resulting_roster.into_into_dart().into_dart(),
+            self.storage_batch.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::ProcessMessageWithStorageV2Result
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::ProcessMessageWithStorageV2Result>
+    for crate::api::group_e2ee::ProcessMessageWithStorageV2Result
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::ProcessMessageWithStorageV2Result {
         self
     }
 }
@@ -1833,6 +2676,15 @@ impl SseEncode for crate::api::storage::CreateGroupWithStorageResult {
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::CreateGroupWithStorageV2Result {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.group_id, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
+        <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
+    }
+}
+
 impl SseEncode for crate::api::storage::CreateKeyPackageWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1864,6 +2716,15 @@ impl SseEncode for crate::api::storage::JoinGroupWithStorageResult {
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::JoinGroupWithStorageV2Result {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.group_id, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
+        <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
+    }
+}
+
 impl SseEncode for Vec<Vec<u8>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1874,12 +2735,42 @@ impl SseEncode for Vec<Vec<u8>> {
     }
 }
 
+impl SseEncode for Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::group_e2ee::MlsAuthorizedRemovalV1>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::api::types::MlsCiphersuite> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <crate::api::types::MlsCiphersuite>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::group_e2ee::MlsRosterLeafV1> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(item, serializer);
         }
     }
 }
@@ -1904,6 +2795,41 @@ impl SseEncode for Vec<u8> {
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.key_package_bytes, serializer);
+        <Vec<u8>>::sse_encode(self.expected_credential_identity, serializer);
+        <Vec<u8>>::sse_encode(self.expected_signature_public_key, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MlsAuthorizedOwnerV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.expected_credential_identity, serializer);
+        <Vec<u8>>::sse_encode(self.expected_signature_public_key, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MlsAuthorizedRemovalV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u32>::sse_encode(self.leaf_index, serializer);
+        <Vec<u8>>::sse_encode(self.expected_credential_identity, serializer);
+        <Vec<u8>>::sse_encode(self.expected_signature_public_key, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MlsAuthorizedSelfV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u32>::sse_encode(self.leaf_index, serializer);
+        <Vec<u8>>::sse_encode(self.expected_credential_identity, serializer);
+        <Vec<u8>>::sse_encode(self.expected_signature_public_key, serializer);
+    }
+}
+
 impl SseEncode for crate::api::types::MlsCiphersuite {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1911,6 +2837,15 @@ impl SseEncode for crate::api::types::MlsCiphersuite {
 crate::api::types::MlsCiphersuite::Mls128DhkemX25519Chacha20poly1305Sha256Ed25519 => { 1 }
 crate::api::types::MlsCiphersuite::Mls128DhkemP256Aes128gcmSha256P256 => { 2 }
  _ => { unimplemented!(""); }}, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MlsExpectedRosterStateV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.group_id, serializer);
+        <u64>::sse_encode(self.epoch, serializer);
+        <Vec<u8>>::sse_encode(self.digest_sha256, serializer);
     }
 }
 
@@ -1947,6 +2882,25 @@ impl SseEncode for crate::api::types::MlsProposalType {
             },
             serializer,
         );
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MlsRosterLeafV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u32>::sse_encode(self.leaf_index, serializer);
+        <Vec<u8>>::sse_encode(self.credential_identity, serializer);
+        <Vec<u8>>::sse_encode(self.signature_public_key, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MlsRosterSummaryV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.group_id, serializer);
+        <u64>::sse_encode(self.epoch, serializer);
+        <Vec<crate::api::group_e2ee::MlsRosterLeafV1>>::sse_encode(self.leaves, serializer);
+        <Vec<u8>>::sse_encode(self.digest_sha256, serializer);
     }
 }
 
@@ -2015,6 +2969,20 @@ impl SseEncode for Option<Vec<u8>> {
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::PreparedCommitWithStorageResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.commit, serializer);
+        <Option<Vec<u8>>>::sse_encode(self.welcome, serializer);
+        <Option<Vec<u8>>>::sse_encode(self.group_info, serializer);
+        <Vec<u8>>::sse_encode(self.commit_sha256, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.previous_roster, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
+        <Vec<u8>>::sse_encode(self.base_group_state_sha256, serializer);
+        <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
+    }
+}
+
 impl SseEncode for crate::api::storage::ProcessMessageWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2026,6 +2994,23 @@ impl SseEncode for crate::api::storage::ProcessMessageWithStorageResult {
         <bool>::sse_encode(self.has_staged_commit, serializer);
         <bool>::sse_encode(self.has_proposal, serializer);
         <Option<crate::api::types::MlsProposalType>>::sse_encode(self.proposal_type, serializer);
+        <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::ProcessMessageWithStorageV2Result {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::types::ProcessedMessageType>::sse_encode(self.message_type, serializer);
+        <Option<u32>>::sse_encode(self.sender_index, serializer);
+        <u64>::sse_encode(self.previous_epoch, serializer);
+        <u64>::sse_encode(self.resulting_epoch, serializer);
+        <Option<Vec<u8>>>::sse_encode(self.application_message, serializer);
+        <bool>::sse_encode(self.has_staged_commit, serializer);
+        <bool>::sse_encode(self.has_proposal, serializer);
+        <Option<crate::api::types::MlsProposalType>>::sse_encode(self.proposal_type, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.previous_roster, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
         <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
     }
 }
@@ -2185,6 +3170,33 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MlsAuthorizedOwnerV1>
+        for *mut wire_cst_mls_authorized_owner_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsAuthorizedOwnerV1 {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::MlsAuthorizedOwnerV1>::cst_decode(*wrap).into()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsAuthorizedSelfV1>
+        for *mut wire_cst_mls_authorized_self_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsAuthorizedSelfV1 {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::MlsAuthorizedSelfV1>::cst_decode(*wrap).into()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>
+        for *mut wire_cst_mls_expected_roster_state_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsExpectedRosterStateV1 {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::MlsExpectedRosterStateV1>::cst_decode(*wrap).into()
+        }
+    }
     impl CstDecode<crate::api::config::MlsGroupConfig> for *mut wire_cst_mls_group_config {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> crate::api::config::MlsGroupConfig {
@@ -2212,6 +3224,18 @@ mod io {
         fn cst_decode(self) -> crate::api::storage::CreateGroupWithStorageResult {
             crate::api::storage::CreateGroupWithStorageResult {
                 group_id: self.group_id.cst_decode(),
+                storage_batch: self.storage_batch.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::CreateGroupWithStorageV2Result>
+        for wire_cst_create_group_with_storage_v_2_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::CreateGroupWithStorageV2Result {
+            crate::api::group_e2ee::CreateGroupWithStorageV2Result {
+                group_id: self.group_id.cst_decode(),
+                resulting_roster: self.resulting_roster.cst_decode(),
                 storage_batch: self.storage_batch.cst_decode(),
             }
         }
@@ -2249,6 +3273,18 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::JoinGroupWithStorageV2Result>
+        for wire_cst_join_group_with_storage_v_2_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::JoinGroupWithStorageV2Result {
+            crate::api::group_e2ee::JoinGroupWithStorageV2Result {
+                group_id: self.group_id.cst_decode(),
+                resulting_roster: self.resulting_roster.cst_decode(),
+                storage_batch: self.storage_batch.cst_decode(),
+            }
+        }
+    }
     impl CstDecode<Vec<Vec<u8>>> for *mut wire_cst_list_list_prim_u_8_strict {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> Vec<Vec<u8>> {
@@ -2259,9 +3295,45 @@ mod io {
             vec.into_iter().map(CstDecode::cst_decode).collect()
         }
     }
+    impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>>
+        for *mut wire_cst_list_mls_authorized_key_package_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1> {
+            let vec = unsafe {
+                let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
+                flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
+            };
+            vec.into_iter().map(CstDecode::cst_decode).collect()
+        }
+    }
+    impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1>>
+        for *mut wire_cst_list_mls_authorized_removal_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1> {
+            let vec = unsafe {
+                let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
+                flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
+            };
+            vec.into_iter().map(CstDecode::cst_decode).collect()
+        }
+    }
     impl CstDecode<Vec<crate::api::types::MlsCiphersuite>> for *mut wire_cst_list_mls_ciphersuite {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> Vec<crate::api::types::MlsCiphersuite> {
+            let vec = unsafe {
+                let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
+                flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
+            };
+            vec.into_iter().map(CstDecode::cst_decode).collect()
+        }
+    }
+    impl CstDecode<Vec<crate::api::group_e2ee::MlsRosterLeafV1>>
+        for *mut wire_cst_list_mls_roster_leaf_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> Vec<crate::api::group_e2ee::MlsRosterLeafV1> {
             let vec = unsafe {
                 let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
                 flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
@@ -2297,6 +3369,61 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>
+        for wire_cst_mls_authorized_key_package_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
+            crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
+                key_package_bytes: self.key_package_bytes.cst_decode(),
+                expected_credential_identity: self.expected_credential_identity.cst_decode(),
+                expected_signature_public_key: self.expected_signature_public_key.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsAuthorizedOwnerV1> for wire_cst_mls_authorized_owner_v_1 {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsAuthorizedOwnerV1 {
+            crate::api::group_e2ee::MlsAuthorizedOwnerV1 {
+                expected_credential_identity: self.expected_credential_identity.cst_decode(),
+                expected_signature_public_key: self.expected_signature_public_key.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsAuthorizedRemovalV1>
+        for wire_cst_mls_authorized_removal_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsAuthorizedRemovalV1 {
+            crate::api::group_e2ee::MlsAuthorizedRemovalV1 {
+                leaf_index: self.leaf_index.cst_decode(),
+                expected_credential_identity: self.expected_credential_identity.cst_decode(),
+                expected_signature_public_key: self.expected_signature_public_key.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsAuthorizedSelfV1> for wire_cst_mls_authorized_self_v_1 {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsAuthorizedSelfV1 {
+            crate::api::group_e2ee::MlsAuthorizedSelfV1 {
+                leaf_index: self.leaf_index.cst_decode(),
+                expected_credential_identity: self.expected_credential_identity.cst_decode(),
+                expected_signature_public_key: self.expected_signature_public_key.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>
+        for wire_cst_mls_expected_roster_state_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsExpectedRosterStateV1 {
+            crate::api::group_e2ee::MlsExpectedRosterStateV1 {
+                group_id: self.group_id.cst_decode(),
+                epoch: self.epoch.cst_decode(),
+                digest_sha256: self.digest_sha256.cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::config::MlsGroupConfig> for wire_cst_mls_group_config {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> crate::api::config::MlsGroupConfig {
@@ -2311,6 +3438,27 @@ mod io {
                     .sender_ratchet_max_forward_distance
                     .cst_decode(),
                 number_of_resumption_psks: self.number_of_resumption_psks.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsRosterLeafV1> for wire_cst_mls_roster_leaf_v_1 {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsRosterLeafV1 {
+            crate::api::group_e2ee::MlsRosterLeafV1 {
+                leaf_index: self.leaf_index.cst_decode(),
+                credential_identity: self.credential_identity.cst_decode(),
+                signature_public_key: self.signature_public_key.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsRosterSummaryV1> for wire_cst_mls_roster_summary_v_1 {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsRosterSummaryV1 {
+            crate::api::group_e2ee::MlsRosterSummaryV1 {
+                group_id: self.group_id.cst_decode(),
+                epoch: self.epoch.cst_decode(),
+                leaves: self.leaves.cst_decode(),
+                digest_sha256: self.digest_sha256.cst_decode(),
             }
         }
     }
@@ -2335,6 +3483,23 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::PreparedCommitWithStorageResult>
+        for wire_cst_prepared_commit_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::PreparedCommitWithStorageResult {
+            crate::api::group_e2ee::PreparedCommitWithStorageResult {
+                commit: self.commit.cst_decode(),
+                welcome: self.welcome.cst_decode(),
+                group_info: self.group_info.cst_decode(),
+                commit_sha256: self.commit_sha256.cst_decode(),
+                previous_roster: self.previous_roster.cst_decode(),
+                resulting_roster: self.resulting_roster.cst_decode(),
+                base_group_state_sha256: self.base_group_state_sha256.cst_decode(),
+                storage_batch: self.storage_batch.cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::storage::ProcessMessageWithStorageResult>
         for wire_cst_process_message_with_storage_result
     {
@@ -2349,6 +3514,26 @@ mod io {
                 has_staged_commit: self.has_staged_commit.cst_decode(),
                 has_proposal: self.has_proposal.cst_decode(),
                 proposal_type: self.proposal_type.cst_decode(),
+                storage_batch: self.storage_batch.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::ProcessMessageWithStorageV2Result>
+        for wire_cst_process_message_with_storage_v_2_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::ProcessMessageWithStorageV2Result {
+            crate::api::group_e2ee::ProcessMessageWithStorageV2Result {
+                message_type: self.message_type.cst_decode(),
+                sender_index: self.sender_index.cst_decode(),
+                previous_epoch: self.previous_epoch.cst_decode(),
+                resulting_epoch: self.resulting_epoch.cst_decode(),
+                application_message: self.application_message.cst_decode(),
+                has_staged_commit: self.has_staged_commit.cst_decode(),
+                has_proposal: self.has_proposal.cst_decode(),
+                proposal_type: self.proposal_type.cst_decode(),
+                previous_roster: self.previous_roster.cst_decode(),
+                resulting_roster: self.resulting_roster.cst_decode(),
                 storage_batch: self.storage_batch.cst_decode(),
             }
         }
@@ -2377,6 +3562,20 @@ mod io {
         }
     }
     impl Default for wire_cst_create_group_with_storage_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_create_group_with_storage_v_2_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                group_id: core::ptr::null_mut(),
+                resulting_roster: Default::default(),
+                storage_batch: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_create_group_with_storage_v_2_result {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -2420,6 +3619,89 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
+    impl NewWithNullPtr for wire_cst_join_group_with_storage_v_2_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                group_id: core::ptr::null_mut(),
+                resulting_roster: Default::default(),
+                storage_batch: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_join_group_with_storage_v_2_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_authorized_key_package_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                key_package_bytes: core::ptr::null_mut(),
+                expected_credential_identity: core::ptr::null_mut(),
+                expected_signature_public_key: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_authorized_key_package_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_authorized_owner_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                expected_credential_identity: core::ptr::null_mut(),
+                expected_signature_public_key: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_authorized_owner_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_authorized_removal_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                leaf_index: Default::default(),
+                expected_credential_identity: core::ptr::null_mut(),
+                expected_signature_public_key: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_authorized_removal_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_authorized_self_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                leaf_index: Default::default(),
+                expected_credential_identity: core::ptr::null_mut(),
+                expected_signature_public_key: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_authorized_self_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_expected_roster_state_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                group_id: core::ptr::null_mut(),
+                epoch: Default::default(),
+                digest_sha256: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_expected_roster_state_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
     impl NewWithNullPtr for wire_cst_mls_group_config {
         fn new_with_null_ptr() -> Self {
             Self {
@@ -2435,6 +3717,35 @@ mod io {
         }
     }
     impl Default for wire_cst_mls_group_config {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_roster_leaf_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                leaf_index: Default::default(),
+                credential_identity: core::ptr::null_mut(),
+                signature_public_key: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_roster_leaf_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_roster_summary_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                group_id: core::ptr::null_mut(),
+                epoch: Default::default(),
+                leaves: core::ptr::null_mut(),
+                digest_sha256: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_roster_summary_v_1 {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -2468,6 +3779,25 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
+    impl NewWithNullPtr for wire_cst_prepared_commit_with_storage_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                commit: core::ptr::null_mut(),
+                welcome: core::ptr::null_mut(),
+                group_info: core::ptr::null_mut(),
+                commit_sha256: core::ptr::null_mut(),
+                previous_roster: Default::default(),
+                resulting_roster: Default::default(),
+                base_group_state_sha256: core::ptr::null_mut(),
+                storage_batch: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_prepared_commit_with_storage_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
     impl NewWithNullPtr for wire_cst_process_message_with_storage_result {
         fn new_with_null_ptr() -> Self {
             Self {
@@ -2484,6 +3814,28 @@ mod io {
         }
     }
     impl Default for wire_cst_process_message_with_storage_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_process_message_with_storage_v_2_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                message_type: Default::default(),
+                sender_index: core::ptr::null_mut(),
+                previous_epoch: Default::default(),
+                resulting_epoch: Default::default(),
+                application_message: core::ptr::null_mut(),
+                has_staged_commit: Default::default(),
+                has_proposal: Default::default(),
+                proposal_type: core::ptr::null_mut(),
+                previous_roster: Default::default(),
+                resulting_roster: Default::default(),
+                storage_batch: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_process_message_with_storage_v_2_result {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -2624,6 +3976,29 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__add_members_with_storage_v2(
+        port_: i64,
+        group_id: *mut wire_cst_list_prim_u_8_loose,
+        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
+        additions: *mut wire_cst_list_mls_authorized_key_package_v_1,
+        aad: *mut wire_cst_list_prim_u_8_loose,
+        expected_previous_state: *mut wire_cst_mls_expected_roster_state_v_1,
+        storage_entries: *mut wire_cst_list_mls_storage_entry,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__add_members_with_storage_v2_impl(
+            port_,
+            group_id,
+            signer_bytes,
+            additions,
+            aad,
+            expected_previous_state,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__storage__create_group_with_storage(
         port_: i64,
         config: *mut wire_cst_mls_group_config,
@@ -2642,6 +4017,29 @@ mod io {
             credential_identity,
             signer_public_key,
             group_id,
+            credential_bytes,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__create_group_with_storage_v2(
+        port_: i64,
+        config: *mut wire_cst_mls_group_config,
+        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
+        explicit_group_id: *mut wire_cst_list_prim_u_8_loose,
+        expected_owner_authority: *mut wire_cst_mls_authorized_owner_v_1,
+        credential_bytes: *mut wire_cst_list_prim_u_8_strict,
+        storage_entries: *mut wire_cst_list_mls_storage_entry,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__create_group_with_storage_v2_impl(
+            port_,
+            config,
+            signer_bytes,
+            explicit_group_id,
+            expected_owner_authority,
             credential_bytes,
             storage_entries,
             storage_format_version,
@@ -2742,10 +4140,46 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2(
+        port_: i64,
+        config: *mut wire_cst_mls_group_config,
+        welcome_bytes: *mut wire_cst_list_prim_u_8_loose,
+        ratchet_tree_bytes: *mut wire_cst_list_prim_u_8_strict,
+        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
+        expected_resulting_state: *mut wire_cst_mls_expected_roster_state_v_1,
+        storage_entries: *mut wire_cst_list_mls_storage_entry,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2_impl(
+            port_,
+            config,
+            welcome_bytes,
+            ratchet_tree_bytes,
+            signer_bytes,
+            expected_resulting_state,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__config__mls_group_config_default_config(
         ciphersuite: i32,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__config__mls_group_config_default_config_impl(ciphersuite)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__mls_group_state_digest(
+        group_id: *mut wire_cst_list_prim_u_8_loose,
+        storage_entries: *mut wire_cst_list_mls_storage_entry,
+        storage_format_version: u32,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__group_e2ee__mls_group_state_digest_impl(
+            group_id,
+            storage_entries,
+            storage_format_version,
+        )
     }
 
     #[unsafe(no_mangle)]
@@ -2767,6 +4201,15 @@ mod io {
         message_bytes: *mut wire_cst_list_prim_u_8_loose,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__message__mls_message_extract_group_id_impl(message_bytes)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__mls_roster_digest_v1(
+        group_id: *mut wire_cst_list_prim_u_8_loose,
+        epoch: u64,
+        leaves: *mut wire_cst_list_mls_roster_leaf_v_1,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__group_e2ee__mls_roster_digest_v1_impl(group_id, epoch, leaves)
     }
 
     #[unsafe(no_mangle)]
@@ -2795,6 +4238,75 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__process_message_with_storage_v2(
+        port_: i64,
+        group_id: *mut wire_cst_list_prim_u_8_loose,
+        message_bytes: *mut wire_cst_list_prim_u_8_loose,
+        expected_aad: *mut wire_cst_list_prim_u_8_loose,
+        expected_previous_state: *mut wire_cst_mls_expected_roster_state_v_1,
+        expected_resulting_state: *mut wire_cst_mls_expected_roster_state_v_1,
+        storage_entries: *mut wire_cst_list_mls_storage_entry,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__process_message_with_storage_v2_impl(
+            port_,
+            group_id,
+            message_bytes,
+            expected_aad,
+            expected_previous_state,
+            expected_resulting_state,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__remove_members_with_storage(
+        port_: i64,
+        group_id: *mut wire_cst_list_prim_u_8_loose,
+        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
+        removals: *mut wire_cst_list_mls_authorized_removal_v_1,
+        aad: *mut wire_cst_list_prim_u_8_loose,
+        expected_previous_state: *mut wire_cst_mls_expected_roster_state_v_1,
+        storage_entries: *mut wire_cst_list_mls_storage_entry,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__remove_members_with_storage_impl(
+            port_,
+            group_id,
+            signer_bytes,
+            removals,
+            aad,
+            expected_previous_state,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__self_update_with_storage(
+        port_: i64,
+        group_id: *mut wire_cst_list_prim_u_8_loose,
+        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
+        aad: *mut wire_cst_list_prim_u_8_loose,
+        expected_previous_state: *mut wire_cst_mls_expected_roster_state_v_1,
+        expected_self_authority: *mut wire_cst_mls_authorized_self_v_1,
+        storage_entries: *mut wire_cst_list_mls_storage_entry,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__self_update_with_storage_impl(
+            port_,
+            group_id,
+            signer_bytes,
+            aad,
+            expected_previous_state,
+            expected_self_authority,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__keys__serialize_signer(
         ciphersuite: i32,
         private_key: *mut wire_cst_list_prim_u_8_loose,
@@ -2807,6 +4319,31 @@ mod io {
     pub extern "C" fn frbgen_openmls_wire__crate__api__types__supported_ciphersuites(
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__types__supported_ciphersuites_impl()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__swap_members_with_storage(
+        port_: i64,
+        group_id: *mut wire_cst_list_prim_u_8_loose,
+        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
+        removals: *mut wire_cst_list_mls_authorized_removal_v_1,
+        additions: *mut wire_cst_list_mls_authorized_key_package_v_1,
+        aad: *mut wire_cst_list_prim_u_8_loose,
+        expected_previous_state: *mut wire_cst_mls_expected_roster_state_v_1,
+        storage_entries: *mut wire_cst_list_mls_storage_entry,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__swap_members_with_storage_impl(
+            port_,
+            group_id,
+            signer_bytes,
+            removals,
+            additions,
+            aad,
+            expected_previous_state,
+            storage_entries,
+            storage_format_version,
+        )
     }
 
     #[unsafe(no_mangle)]
@@ -2846,6 +4383,30 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_authorized_owner_v_1(
+    ) -> *mut wire_cst_mls_authorized_owner_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_authorized_owner_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_authorized_self_v_1(
+    ) -> *mut wire_cst_mls_authorized_self_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_authorized_self_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_expected_roster_state_v_1(
+    ) -> *mut wire_cst_mls_expected_roster_state_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_expected_roster_state_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_group_config(
     ) -> *mut wire_cst_mls_group_config {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(
@@ -2878,11 +4439,53 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_list_mls_authorized_key_package_v_1(
+        len: i32,
+    ) -> *mut wire_cst_list_mls_authorized_key_package_v_1 {
+        let wrap = wire_cst_list_mls_authorized_key_package_v_1 {
+            ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
+                <wire_cst_mls_authorized_key_package_v_1>::new_with_null_ptr(),
+                len,
+            ),
+            len,
+        };
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_list_mls_authorized_removal_v_1(
+        len: i32,
+    ) -> *mut wire_cst_list_mls_authorized_removal_v_1 {
+        let wrap = wire_cst_list_mls_authorized_removal_v_1 {
+            ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
+                <wire_cst_mls_authorized_removal_v_1>::new_with_null_ptr(),
+                len,
+            ),
+            len,
+        };
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_list_mls_ciphersuite(
         len: i32,
     ) -> *mut wire_cst_list_mls_ciphersuite {
         let wrap = wire_cst_list_mls_ciphersuite {
             ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(Default::default(), len),
+            len,
+        };
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_list_mls_roster_leaf_v_1(
+        len: i32,
+    ) -> *mut wire_cst_list_mls_roster_leaf_v_1 {
+        let wrap = wire_cst_list_mls_roster_leaf_v_1 {
+            ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
+                <wire_cst_mls_roster_leaf_v_1>::new_with_null_ptr(),
+                len,
+            ),
             len,
         };
         flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
@@ -2940,6 +4543,13 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_create_group_with_storage_v_2_result {
+        group_id: *mut wire_cst_list_prim_u_8_strict,
+        resulting_roster: wire_cst_mls_roster_summary_v_1,
+        storage_batch: wire_cst_mls_storage_batch,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_create_key_package_with_storage_result {
         key_package_bytes: *mut wire_cst_list_prim_u_8_strict,
         storage_batch: wire_cst_mls_storage_batch,
@@ -2958,14 +4568,39 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_join_group_with_storage_v_2_result {
+        group_id: *mut wire_cst_list_prim_u_8_strict,
+        resulting_roster: wire_cst_mls_roster_summary_v_1,
+        storage_batch: wire_cst_mls_storage_batch,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_list_list_prim_u_8_strict {
         ptr: *mut *mut wire_cst_list_prim_u_8_strict,
         len: i32,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_list_mls_authorized_key_package_v_1 {
+        ptr: *mut wire_cst_mls_authorized_key_package_v_1,
+        len: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_list_mls_authorized_removal_v_1 {
+        ptr: *mut wire_cst_mls_authorized_removal_v_1,
+        len: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_list_mls_ciphersuite {
         ptr: *mut i32,
+        len: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_list_mls_roster_leaf_v_1 {
+        ptr: *mut wire_cst_mls_roster_leaf_v_1,
         len: i32,
     }
     #[repr(C)]
@@ -2988,6 +4623,40 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_authorized_key_package_v_1 {
+        key_package_bytes: *mut wire_cst_list_prim_u_8_strict,
+        expected_credential_identity: *mut wire_cst_list_prim_u_8_strict,
+        expected_signature_public_key: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_authorized_owner_v_1 {
+        expected_credential_identity: *mut wire_cst_list_prim_u_8_strict,
+        expected_signature_public_key: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_authorized_removal_v_1 {
+        leaf_index: u32,
+        expected_credential_identity: *mut wire_cst_list_prim_u_8_strict,
+        expected_signature_public_key: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_authorized_self_v_1 {
+        leaf_index: u32,
+        expected_credential_identity: *mut wire_cst_list_prim_u_8_strict,
+        expected_signature_public_key: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_expected_roster_state_v_1 {
+        group_id: *mut wire_cst_list_prim_u_8_strict,
+        epoch: u64,
+        digest_sha256: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_mls_group_config {
         ciphersuite: i32,
         wire_format_policy: i32,
@@ -2997,6 +4666,21 @@ mod io {
         sender_ratchet_max_out_of_order: u32,
         sender_ratchet_max_forward_distance: u32,
         number_of_resumption_psks: u32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_roster_leaf_v_1 {
+        leaf_index: u32,
+        credential_identity: *mut wire_cst_list_prim_u_8_strict,
+        signature_public_key: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_roster_summary_v_1 {
+        group_id: *mut wire_cst_list_prim_u_8_strict,
+        epoch: u64,
+        leaves: *mut wire_cst_list_mls_roster_leaf_v_1,
+        digest_sha256: *mut wire_cst_list_prim_u_8_strict,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
@@ -3015,6 +4699,18 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_prepared_commit_with_storage_result {
+        commit: *mut wire_cst_list_prim_u_8_strict,
+        welcome: *mut wire_cst_list_prim_u_8_strict,
+        group_info: *mut wire_cst_list_prim_u_8_strict,
+        commit_sha256: *mut wire_cst_list_prim_u_8_strict,
+        previous_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_roster: wire_cst_mls_roster_summary_v_1,
+        base_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        storage_batch: wire_cst_mls_storage_batch,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_process_message_with_storage_result {
         message_type: i32,
         sender_index: *mut u32,
@@ -3024,6 +4720,21 @@ mod io {
         has_staged_commit: bool,
         has_proposal: bool,
         proposal_type: *mut i32,
+        storage_batch: wire_cst_mls_storage_batch,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_process_message_with_storage_v_2_result {
+        message_type: i32,
+        sender_index: *mut u32,
+        previous_epoch: u64,
+        resulting_epoch: u64,
+        application_message: *mut wire_cst_list_prim_u_8_strict,
+        has_staged_commit: bool,
+        has_proposal: bool,
+        proposal_type: *mut i32,
+        previous_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_roster: wire_cst_mls_roster_summary_v_1,
         storage_batch: wire_cst_mls_storage_batch,
     }
 }
@@ -3103,6 +4814,27 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::CreateGroupWithStorageV2Result>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::CreateGroupWithStorageV2Result {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                3,
+                "Expected 3 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::CreateGroupWithStorageV2Result {
+                group_id: self_.get(0).cst_decode(),
+                resulting_roster: self_.get(1).cst_decode(),
+                storage_batch: self_.get(2).cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::storage::CreateKeyPackageWithStorageResult>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -3163,9 +4895,54 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::JoinGroupWithStorageV2Result>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::JoinGroupWithStorageV2Result {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                3,
+                "Expected 3 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::JoinGroupWithStorageV2Result {
+                group_id: self_.get(0).cst_decode(),
+                resulting_roster: self_.get(1).cst_decode(),
+                storage_batch: self_.get(2).cst_decode(),
+            }
+        }
+    }
     impl CstDecode<Vec<Vec<u8>>> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> Vec<Vec<u8>> {
+            self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap()
+                .iter()
+                .map(CstDecode::cst_decode)
+                .collect()
+        }
+    }
+    impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1> {
+            self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap()
+                .iter()
+                .map(CstDecode::cst_decode)
+                .collect()
+        }
+    }
+    impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1>>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1> {
             self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
                 .unwrap()
                 .iter()
@@ -3178,6 +4955,18 @@ mod web {
     {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> Vec<crate::api::types::MlsCiphersuite> {
+            self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap()
+                .iter()
+                .map(CstDecode::cst_decode)
+                .collect()
+        }
+    }
+    impl CstDecode<Vec<crate::api::group_e2ee::MlsRosterLeafV1>>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> Vec<crate::api::group_e2ee::MlsRosterLeafV1> {
             self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
                 .unwrap()
                 .iter()
@@ -3203,6 +4992,110 @@ mod web {
             self.into_vec()
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                3,
+                "Expected 3 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
+                key_package_bytes: self_.get(0).cst_decode(),
+                expected_credential_identity: self_.get(1).cst_decode(),
+                expected_signature_public_key: self_.get(2).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsAuthorizedOwnerV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsAuthorizedOwnerV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                2,
+                "Expected 2 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsAuthorizedOwnerV1 {
+                expected_credential_identity: self_.get(0).cst_decode(),
+                expected_signature_public_key: self_.get(1).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsAuthorizedRemovalV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsAuthorizedRemovalV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                3,
+                "Expected 3 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsAuthorizedRemovalV1 {
+                leaf_index: self_.get(0).cst_decode(),
+                expected_credential_identity: self_.get(1).cst_decode(),
+                expected_signature_public_key: self_.get(2).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsAuthorizedSelfV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsAuthorizedSelfV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                3,
+                "Expected 3 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsAuthorizedSelfV1 {
+                leaf_index: self_.get(0).cst_decode(),
+                expected_credential_identity: self_.get(1).cst_decode(),
+                expected_signature_public_key: self_.get(2).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsExpectedRosterStateV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                3,
+                "Expected 3 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsExpectedRosterStateV1 {
+                group_id: self_.get(0).cst_decode(),
+                epoch: self_.get(1).cst_decode(),
+                digest_sha256: self_.get(2).cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::config::MlsGroupConfig>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -3226,6 +5119,49 @@ mod web {
                 sender_ratchet_max_out_of_order: self_.get(5).cst_decode(),
                 sender_ratchet_max_forward_distance: self_.get(6).cst_decode(),
                 number_of_resumption_psks: self_.get(7).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsRosterLeafV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsRosterLeafV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                3,
+                "Expected 3 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsRosterLeafV1 {
+                leaf_index: self_.get(0).cst_decode(),
+                credential_identity: self_.get(1).cst_decode(),
+                signature_public_key: self_.get(2).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsRosterSummaryV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsRosterSummaryV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                4,
+                "Expected 4 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsRosterSummaryV1 {
+                group_id: self_.get(0).cst_decode(),
+                epoch: self_.get(1).cst_decode(),
+                leaves: self_.get(2).cst_decode(),
+                digest_sha256: self_.get(3).cst_decode(),
             }
         }
     }
@@ -3278,6 +5214,32 @@ mod web {
             self.map(CstDecode::cst_decode)
         }
     }
+    impl CstDecode<crate::api::group_e2ee::PreparedCommitWithStorageResult>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::PreparedCommitWithStorageResult {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                8,
+                "Expected 8 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::PreparedCommitWithStorageResult {
+                commit: self_.get(0).cst_decode(),
+                welcome: self_.get(1).cst_decode(),
+                group_info: self_.get(2).cst_decode(),
+                commit_sha256: self_.get(3).cst_decode(),
+                previous_roster: self_.get(4).cst_decode(),
+                resulting_roster: self_.get(5).cst_decode(),
+                base_group_state_sha256: self_.get(6).cst_decode(),
+                storage_batch: self_.get(7).cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::storage::ProcessMessageWithStorageResult>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -3302,6 +5264,35 @@ mod web {
                 has_proposal: self_.get(6).cst_decode(),
                 proposal_type: self_.get(7).cst_decode(),
                 storage_batch: self_.get(8).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::ProcessMessageWithStorageV2Result>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::ProcessMessageWithStorageV2Result {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                11,
+                "Expected 11 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::ProcessMessageWithStorageV2Result {
+                message_type: self_.get(0).cst_decode(),
+                sender_index: self_.get(1).cst_decode(),
+                previous_epoch: self_.get(2).cst_decode(),
+                resulting_epoch: self_.get(3).cst_decode(),
+                application_message: self_.get(4).cst_decode(),
+                has_staged_commit: self_.get(5).cst_decode(),
+                has_proposal: self_.get(6).cst_decode(),
+                proposal_type: self_.get(7).cst_decode(),
+                previous_roster: self_.get(8).cst_decode(),
+                resulting_roster: self_.get(9).cst_decode(),
+                storage_batch: self_.get(10).cst_decode(),
             }
         }
     }
@@ -3590,6 +5581,29 @@ mod web {
     }
 
     #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__add_members_with_storage_v2(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        group_id: Box<[u8]>,
+        signer_bytes: Box<[u8]>,
+        additions: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        aad: Box<[u8]>,
+        expected_previous_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__add_members_with_storage_v2_impl(
+            port_,
+            group_id,
+            signer_bytes,
+            additions,
+            aad,
+            expected_previous_state,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[wasm_bindgen]
     pub fn wire__crate__api__storage__create_group_with_storage(
         port_: flutter_rust_bridge::for_generated::MessagePort,
         config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
@@ -3608,6 +5622,29 @@ mod web {
             credential_identity,
             signer_public_key,
             group_id,
+            credential_bytes,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__create_group_with_storage_v2(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        signer_bytes: Box<[u8]>,
+        explicit_group_id: Box<[u8]>,
+        expected_owner_authority: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        credential_bytes: Option<Box<[u8]>>,
+        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__create_group_with_storage_v2_impl(
+            port_,
+            config,
+            signer_bytes,
+            explicit_group_id,
+            expected_owner_authority,
             credential_bytes,
             storage_entries,
             storage_format_version,
@@ -3708,10 +5745,46 @@ mod web {
     }
 
     #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        welcome_bytes: Box<[u8]>,
+        ratchet_tree_bytes: Option<Box<[u8]>>,
+        signer_bytes: Box<[u8]>,
+        expected_resulting_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2_impl(
+            port_,
+            config,
+            welcome_bytes,
+            ratchet_tree_bytes,
+            signer_bytes,
+            expected_resulting_state,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[wasm_bindgen]
     pub fn wire__crate__api__config__mls_group_config_default_config(
         ciphersuite: i32,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__config__mls_group_config_default_config_impl(ciphersuite)
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__mls_group_state_digest(
+        group_id: Box<[u8]>,
+        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_format_version: u32,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__group_e2ee__mls_group_state_digest_impl(
+            group_id,
+            storage_entries,
+            storage_format_version,
+        )
     }
 
     #[wasm_bindgen]
@@ -3733,6 +5806,15 @@ mod web {
         message_bytes: Box<[u8]>,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__message__mls_message_extract_group_id_impl(message_bytes)
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__mls_roster_digest_v1(
+        group_id: Box<[u8]>,
+        epoch: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        leaves: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__group_e2ee__mls_roster_digest_v1_impl(group_id, epoch, leaves)
     }
 
     #[wasm_bindgen]
@@ -3761,6 +5843,75 @@ mod web {
     }
 
     #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__process_message_with_storage_v2(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        group_id: Box<[u8]>,
+        message_bytes: Box<[u8]>,
+        expected_aad: Box<[u8]>,
+        expected_previous_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_resulting_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__process_message_with_storage_v2_impl(
+            port_,
+            group_id,
+            message_bytes,
+            expected_aad,
+            expected_previous_state,
+            expected_resulting_state,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__remove_members_with_storage(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        group_id: Box<[u8]>,
+        signer_bytes: Box<[u8]>,
+        removals: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        aad: Box<[u8]>,
+        expected_previous_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__remove_members_with_storage_impl(
+            port_,
+            group_id,
+            signer_bytes,
+            removals,
+            aad,
+            expected_previous_state,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__self_update_with_storage(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        group_id: Box<[u8]>,
+        signer_bytes: Box<[u8]>,
+        aad: Box<[u8]>,
+        expected_previous_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_self_authority: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__self_update_with_storage_impl(
+            port_,
+            group_id,
+            signer_bytes,
+            aad,
+            expected_previous_state,
+            expected_self_authority,
+            storage_entries,
+            storage_format_version,
+        )
+    }
+
+    #[wasm_bindgen]
     pub fn wire__crate__api__keys__serialize_signer(
         ciphersuite: i32,
         private_key: Box<[u8]>,
@@ -3773,6 +5924,31 @@ mod web {
     pub fn wire__crate__api__types__supported_ciphersuites(
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__types__supported_ciphersuites_impl()
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__swap_members_with_storage(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        group_id: Box<[u8]>,
+        signer_bytes: Box<[u8]>,
+        removals: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        additions: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        aad: Box<[u8]>,
+        expected_previous_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        storage_format_version: u32,
+    ) {
+        wire__crate__api__group_e2ee__swap_members_with_storage_impl(
+            port_,
+            group_id,
+            signer_bytes,
+            removals,
+            additions,
+            aad,
+            expected_previous_state,
+            storage_entries,
+            storage_format_version,
+        )
     }
 
     #[wasm_bindgen]

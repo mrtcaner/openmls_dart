@@ -44,6 +44,7 @@ library;
 export 'src/openmls.dart';
 export 'src/rust/api/config.dart';
 export 'src/rust/api/credential.dart';
+export 'src/rust/api/group_e2ee.dart';
 export 'src/rust/api/keys.dart';
 export 'src/rust/api/message.dart';
 export 'src/rust/api/storage.dart';

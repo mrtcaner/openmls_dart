@@ -1,0 +1,19 @@
+{
+  "encoding": "openmls_dart/roster-summary/v1",
+  "group_id_hex": "67726f75702d31",
+  "epoch": 7,
+  "leaves": [
+    {
+      "leaf_index": 0,
+      "credential_identity_hex": "616c696365",
+      "signature_public_key_hex": "010203"
+    },
+    {
+      "leaf_index": 2,
+      "credential_identity_hex": "626f62",
+      "signature_public_key_hex": "0405"
+    }
+  ],
+  "canonical_bytes_hex": "6f70656e6d6c735f646172742f726f737465722d73756d6d6172792f7631000000000767726f75702d310000000000000007000000020000000000000005616c696365000000030102030000000200000003626f62000000020405",
+  "digest_sha256_hex": "09f62e52960796601347f52117a359b752870f38c21d91ba5496ab5e9cbcd23b"
+}

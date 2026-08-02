@@ -8,7 +8,7 @@ import 'config.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
-// These functions are ignored because they are not marked as `pub`: `batch_from_provider`, `batch_from_updates`, `provider_from_entries`, `zeroize_entry_values`
+// These functions are ignored because they are not marked as `pub`: `batch_from_provider`, `batch_from_updates`, `provider_from_entries`, `validate_storage_entries`, `zeroize_entry_values`
 
 /// Return the only storage format version accepted by this build.
 int mlsStorageFormatVersion() =>

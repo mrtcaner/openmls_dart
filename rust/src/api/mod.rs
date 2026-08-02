@@ -2,6 +2,7 @@
 
 pub mod config;
 pub mod credential;
+pub mod group_e2ee;
 pub mod init;
 pub mod keys;
 pub mod message;
