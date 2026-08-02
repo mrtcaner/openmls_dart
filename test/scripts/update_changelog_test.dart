@@ -19,8 +19,8 @@ const _noUnreleased = '''
 
 - Older release
 
-[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.2...HEAD
-[1.4.2]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.1...v1.4.2
+[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/v1.4.2...HEAD
+[1.4.2]: https://github.com/mrtcaner/openmls_dart/compare/v1.4.1...v1.4.2
 ''';
 
 /// The same CHANGELOG but with an in-progress `## [Unreleased]` section already
@@ -44,8 +44,8 @@ const _withUnreleased = '''
 
 - Prior release
 
-[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.2...HEAD
-[1.4.2]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.1...v1.4.2
+[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/v1.4.2...HEAD
+[1.4.2]: https://github.com/mrtcaner/openmls_dart/compare/v1.4.1...v1.4.2
 ''';
 
 void main() {
@@ -84,7 +84,7 @@ void main() {
       expect(
         result,
         contains(
-          '[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare',
+          '[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare',
         ),
       );
     });
