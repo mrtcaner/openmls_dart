@@ -10,7 +10,8 @@ The supported API is intentionally small:
 
 - create a KeyPackage;
 - create a group;
-- add members and produce a Commit/Welcome;
+- add, remove, or atomically replace members and produce a Commit/Welcome;
+- refresh the local member's leaf key material;
 - join from a Welcome;
 - create and process application or handshake messages;
 - delete one group’s state;
@@ -75,6 +76,23 @@ The public operations are:
 - `processMessageWithStorage()`
 - `deleteGroupWithStorage()`
 
+Strict variable-roster operations retain the original repository's familiar
+member-management vocabulary while using the caller-owned transaction boundary:
+
+- `createGroupWithStorageV2()`
+- `addMembersWithStorageV2()`
+- `removeMembersWithStorage()`
+- `swapMembersWithStorage()`
+- `selfUpdateWithStorage()`
+- `joinGroupFromWelcomeWithStorageV2()`
+- `processMessageWithStorageV2()`
+
+The `V2` create/add/join/process names coexist with the earlier direct-message
+surface. Remove, swap, and self-update are new at this storage boundary and
+therefore need no compatibility suffix. Internally, add/remove/swap share the
+same OpenMLS Commit-builder path that underpinned the former `flexibleCommit`
+API; the package does not restore `MlsEngine` or its database.
+
 ### Authentication boundaries
 
 `addMembersWithStorage()` requires one expected Basic Credential identity for each KeyPackage and authenticates the supplied AAD in the resulting Commit. A mismatch returns no mutation batch.
@@ -82,6 +100,35 @@ The public operations are:
 `processMessageWithStorage()` requires caller-supplied expected AAD for application and handshake messages. It returns both `previousEpoch` and `resultingEpoch`; a processed Commit normally advances the latter.
 
 An MLS Welcome has no equivalent application AAD field. Bind it to authenticated bootstrap metadata in the application protocol before calling `joinGroupFromWelcomeWithStorage()`.
+
+For variable-roster groups, `MlsRosterSummaryV1` binds the exact MLS group ID,
+epoch, active leaf indexes, Basic Credential identities, and signature public
+keys in a deterministic SHA-256 digest. Commit preparation validates the
+authenticated previous digest and exact authorized additions/removals, then
+returns the actual OpenMLS-selected resulting roster for server
+canonicalization. Welcome join and received-message processing instead require
+the already-canonical expected resulting digest and return no batch on a
+mismatch. Duplicate active identities or signature-key bindings are rejected.
+
+`swapMembersWithStorage()` is one atomic remove-plus-add Commit, matching the
+former upstream `swapMembers` operation. `selfUpdateWithStorage()` may update
+only the caller's own leaf and deliberately preserves its Basic identity and
+signature key. MLS does not allow one member to author an Update for another
+member's leaf.
+
+### Deferred Commit candidates
+
+Member-management and self-update results are candidate state: they contain
+the Commit hash, previous/resulting roster summaries, the complete unapplied
+storage batch, and `baseGroupStateSha256`. Persist those exact bytes before
+submission and apply the retained batch only after the application server
+canonically accepts that Commit. Do not regenerate a Commit for an exact retry.
+
+Immediately before promotion, recompute `mlsGroupStateDigest()` from the current
+group snapshot and require it to equal the candidate's base digest. This catches
+same-epoch sender/receiver-ratchet changes that an epoch-only check misses. A
+rejected or stale candidate is discarded; candidate storage, server acceptance,
+mailbox fencing, and promotion transactions remain caller responsibilities.
 
 ### Ordering and rejection
 
@@ -137,6 +184,10 @@ Three identities move independently:
 - `pubspec.yaml` — Dart package version.
 
 Removing `MlsEngine` changes the Dart/FRB surface and therefore requires a new major native ABI release. Consumers should pin the exact commit that selects that release.
+
+The strict variable-roster API is additive but introduces new bridge symbols.
+It begins with native `openmls_frb` 2.1.0 and Dart package 2.1.0; older 2.0.x
+archives cannot be used with the generated 2.1.0 bindings.
 
 ## Security
 

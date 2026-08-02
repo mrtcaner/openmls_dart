@@ -4,9 +4,24 @@
 
 #### ✨ Highlights
 
-- **openmls_frb v2.0.0** — Rust FFI bindings
+- **openmls_frb v2.1.0** — Rust FFI bindings
 
 ### Added
+
+- Strict variable-roster caller-storage operations for group E2EE, retaining
+  the original `addMembers`, `removeMembers`, `swapMembers`, and `selfUpdate`
+  vocabulary without restoring the removed database-owning `MlsEngine`.
+- Deterministic `MlsRosterSummaryV1` authority containing active leaf indexes,
+  Basic Credential identities, signature public keys, group ID, epoch, and a
+  cross-platform canonical SHA-256 digest.
+- Deferred Commit candidate results with exact Commit hash, previous/resulting
+  rosters, complete unapplied storage batch, and a local group-state base digest
+  that detects stale same-epoch state before promotion.
+- Strict Welcome and received-message roster validation plus exact authorized
+  add/remove/swap validation. Mismatches, duplicate active identities, duplicate
+  signature bindings, and unauthorized leaf changes return no mutation batch.
+- A checked-in roster-summary-v1 interoperability fixture shared by the Rust
+  and Dart encoders.
 
 - Operation-scoped caller-owned MLS storage API with versioned opaque entries,
   atomic mutation batches, complete create/add/join/message/commit flow, and

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:openmls/openmls.dart';
 import 'package:test/test.dart';
@@ -476,7 +477,576 @@ void main() {
       );
       expect(beyondLimit.receiverStore.fingerprint, receiverBeforeFailure);
     });
+
+    test('supports strict origin-aligned variable-roster operations', () async {
+      final alice = TestIdentity.create('group-alice');
+      final bob = TestIdentity.create('group-bob');
+      final charlie = TestIdentity.create('group-charlie');
+      final aliceStore = _MemoryMlsStore();
+      final bobStore = _MemoryMlsStore();
+      final charlieStore = _MemoryMlsStore();
+      final groupId = utf8.encode('server-issued-group-1');
+
+      final bobKeyPackage = await _createKeyPackage(
+        bob,
+        bobStore.globalSnapshot,
+      );
+      bobStore.apply(bobKeyPackage.storageBatch);
+      final charlieKeyPackage = await _createKeyPackage(
+        charlie,
+        charlieStore.globalSnapshot,
+      );
+      charlieStore.apply(charlieKeyPackage.storageBatch);
+
+      final beforeCreate = aliceStore.fingerprint;
+      final created = await createGroupWithStorageV2(
+        config: defaultConfig(),
+        signerBytes: alice.signerBytes,
+        explicitGroupId: groupId,
+        expectedOwnerAuthority: MlsAuthorizedOwnerV1(
+          expectedCredentialIdentity: alice.credentialIdentity,
+          expectedSignaturePublicKey: alice.publicKey,
+        ),
+        storageEntries: aliceStore.globalSnapshot,
+        storageFormatVersion: aliceStore.formatVersion,
+      );
+      expect(aliceStore.fingerprint, beforeCreate);
+      expect(created.groupId, orderedEquals(groupId));
+      _expectRoster(
+        created.resultingRoster,
+        groupId: groupId,
+        epoch: 0,
+        identities: [alice.credentialIdentity],
+      );
+      aliceStore.apply(created.storageBatch);
+
+      final wrongPreviousDigest = Uint8List.fromList(
+        created.resultingRoster.digestSha256,
+      );
+      wrongPreviousDigest[0] ^= 0xff;
+      final beforeWrongPrevious = aliceStore.fingerprint;
+      await expectLater(
+        addMembersWithStorageV2(
+          groupId: groupId,
+          signerBytes: alice.signerBytes,
+          additions: [
+            MlsAuthorizedKeyPackageV1(
+              keyPackageBytes: bobKeyPackage.keyPackageBytes,
+              expectedCredentialIdentity: bob.credentialIdentity,
+              expectedSignaturePublicKey: bob.publicKey,
+            ),
+          ],
+          aad: utf8.encode('group-1/add-bob'),
+          expectedPreviousState: MlsExpectedRosterStateV1(
+            groupId: created.resultingRoster.groupId,
+            epoch: created.resultingRoster.epoch,
+            digestSha256: wrongPreviousDigest,
+          ),
+          storageEntries: aliceStore.forGroup(groupId),
+          storageFormatVersion: aliceStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'previous MLS roster digest does not match',
+            ),
+          ),
+        ),
+      );
+      expect(aliceStore.fingerprint, beforeWrongPrevious);
+
+      final wrongBobSignatureKey = Uint8List.fromList(bob.publicKey);
+      wrongBobSignatureKey[0] ^= 0xff;
+      final beforeWrongAddition = aliceStore.fingerprint;
+      await expectLater(
+        addMembersWithStorageV2(
+          groupId: groupId,
+          signerBytes: alice.signerBytes,
+          additions: [
+            MlsAuthorizedKeyPackageV1(
+              keyPackageBytes: bobKeyPackage.keyPackageBytes,
+              expectedCredentialIdentity: bob.credentialIdentity,
+              expectedSignaturePublicKey: wrongBobSignatureKey,
+            ),
+          ],
+          aad: utf8.encode('group-1/add-bob'),
+          expectedPreviousState: _expected(created.resultingRoster),
+          storageEntries: aliceStore.forGroup(groupId),
+          storageFormatVersion: aliceStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'signature key does not match expected authority',
+            ),
+          ),
+        ),
+      );
+      expect(aliceStore.fingerprint, beforeWrongAddition);
+
+      final addBaseDigest = mlsGroupStateDigest(
+        groupId: groupId,
+        storageEntries: aliceStore.forGroup(groupId),
+        storageFormatVersion: aliceStore.formatVersion,
+      );
+      final beforeAdd = aliceStore.fingerprint;
+      final addedBob = await addMembersWithStorageV2(
+        groupId: groupId,
+        signerBytes: alice.signerBytes,
+        additions: [
+          MlsAuthorizedKeyPackageV1(
+            keyPackageBytes: bobKeyPackage.keyPackageBytes,
+            expectedCredentialIdentity: bob.credentialIdentity,
+            expectedSignaturePublicKey: bob.publicKey,
+          ),
+        ],
+        aad: utf8.encode('group-1/add-bob'),
+        expectedPreviousState: _expected(created.resultingRoster),
+        storageEntries: aliceStore.forGroup(groupId),
+        storageFormatVersion: aliceStore.formatVersion,
+      );
+      expect(aliceStore.fingerprint, beforeAdd);
+      expect(addedBob.baseGroupStateSha256, orderedEquals(addBaseDigest));
+      expect(addedBob.commitSha256, hasLength(32));
+      _expectRoster(
+        addedBob.resultingRoster,
+        groupId: groupId,
+        epoch: 1,
+        identities: [alice.credentialIdentity, bob.credentialIdentity],
+      );
+      aliceStore.apply(addedBob.storageBatch);
+
+      final bobBeforeWrongSigner = bobStore.fingerprint;
+      await expectLater(
+        joinGroupFromWelcomeWithStorageV2(
+          config: defaultConfig(),
+          welcomeBytes: addedBob.welcome!,
+          signerBytes: charlie.signerBytes,
+          expectedResultingState: _expected(addedBob.resultingRoster),
+          storageEntries: bobStore.globalSnapshot,
+          storageFormatVersion: bobStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'Signer public key does not match expected installation authority',
+            ),
+          ),
+        ),
+      );
+      expect(bobStore.fingerprint, bobBeforeWrongSigner);
+
+      final wrongJoinDigest = Uint8List.fromList(
+        addedBob.resultingRoster.digestSha256,
+      );
+      wrongJoinDigest[0] ^= 0xff;
+      final bobBeforeWrongJoin = bobStore.fingerprint;
+      await expectLater(
+        joinGroupFromWelcomeWithStorageV2(
+          config: defaultConfig(),
+          welcomeBytes: addedBob.welcome!,
+          signerBytes: bob.signerBytes,
+          expectedResultingState: MlsExpectedRosterStateV1(
+            groupId: addedBob.resultingRoster.groupId,
+            epoch: addedBob.resultingRoster.epoch,
+            digestSha256: wrongJoinDigest,
+          ),
+          storageEntries: bobStore.globalSnapshot,
+          storageFormatVersion: bobStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'resulting MLS roster digest does not match',
+            ),
+          ),
+        ),
+      );
+      expect(bobStore.fingerprint, bobBeforeWrongJoin);
+
+      final joinedBob = await joinGroupFromWelcomeWithStorageV2(
+        config: defaultConfig(),
+        welcomeBytes: addedBob.welcome!,
+        signerBytes: bob.signerBytes,
+        expectedResultingState: _expected(addedBob.resultingRoster),
+        storageEntries: bobStore.globalSnapshot,
+        storageFormatVersion: bobStore.formatVersion,
+      );
+      _expectSameRoster(joinedBob.resultingRoster, addedBob.resultingRoster);
+      bobStore.apply(joinedBob.storageBatch);
+
+      final applicationAad = utf8.encode('group-1/application-1');
+      final sent = await createMessageWithStorage(
+        groupId: groupId,
+        signerBytes: alice.signerBytes,
+        message: utf8.encode('hello variable roster'),
+        aad: applicationAad,
+        storageEntries: aliceStore.forGroup(groupId),
+        storageFormatVersion: aliceStore.formatVersion,
+      );
+      aliceStore.apply(sent.storageBatch);
+      final received = await processMessageWithStorageV2(
+        groupId: groupId,
+        messageBytes: sent.ciphertext,
+        expectedAad: applicationAad,
+        expectedPreviousState: _expected(addedBob.resultingRoster),
+        expectedResultingState: _expected(addedBob.resultingRoster),
+        storageEntries: bobStore.forGroup(groupId),
+        storageFormatVersion: bobStore.formatVersion,
+      );
+      expect(
+        utf8.decode(received.applicationMessage!),
+        'hello variable roster',
+      );
+      _expectSameRoster(received.previousRoster, received.resultingRoster);
+      bobStore.apply(received.storageBatch);
+
+      final bobLeaf = addedBob.resultingRoster.leaves.singleWhere(
+        (leaf) =>
+            base64Encode(leaf.credentialIdentity) ==
+            base64Encode(bob.credentialIdentity),
+      );
+      final swapAad = utf8.encode('group-1/swap-bob-charlie');
+      final beforeSwap = aliceStore.fingerprint;
+      final swapped = await swapMembersWithStorage(
+        groupId: groupId,
+        signerBytes: alice.signerBytes,
+        removals: [
+          MlsAuthorizedRemovalV1(
+            leafIndex: bobLeaf.leafIndex,
+            expectedCredentialIdentity: bobLeaf.credentialIdentity,
+            expectedSignaturePublicKey: bobLeaf.signaturePublicKey,
+          ),
+        ],
+        additions: [
+          MlsAuthorizedKeyPackageV1(
+            keyPackageBytes: charlieKeyPackage.keyPackageBytes,
+            expectedCredentialIdentity: charlie.credentialIdentity,
+            expectedSignaturePublicKey: charlie.publicKey,
+          ),
+        ],
+        aad: swapAad,
+        expectedPreviousState: _expected(addedBob.resultingRoster),
+        storageEntries: aliceStore.forGroup(groupId),
+        storageFormatVersion: aliceStore.formatVersion,
+      );
+      expect(aliceStore.fingerprint, beforeSwap);
+      _expectRoster(
+        swapped.resultingRoster,
+        groupId: groupId,
+        epoch: 2,
+        identities: [alice.credentialIdentity, charlie.credentialIdentity],
+      );
+      aliceStore.apply(swapped.storageBatch);
+
+      final bobProcessedSwap = await processMessageWithStorageV2(
+        groupId: groupId,
+        messageBytes: swapped.commit,
+        expectedAad: swapAad,
+        expectedPreviousState: _expected(addedBob.resultingRoster),
+        expectedResultingState: _expected(swapped.resultingRoster),
+        storageEntries: bobStore.forGroup(groupId),
+        storageFormatVersion: bobStore.formatVersion,
+      );
+      expect(bobProcessedSwap.resultingEpoch, BigInt.two);
+      bobStore.apply(bobProcessedSwap.storageBatch);
+
+      final joinedCharlie = await joinGroupFromWelcomeWithStorageV2(
+        config: defaultConfig(),
+        welcomeBytes: swapped.welcome!,
+        signerBytes: charlie.signerBytes,
+        expectedResultingState: _expected(swapped.resultingRoster),
+        storageEntries: charlieStore.globalSnapshot,
+        storageFormatVersion: charlieStore.formatVersion,
+      );
+      _expectSameRoster(joinedCharlie.resultingRoster, swapped.resultingRoster);
+      charlieStore.apply(joinedCharlie.storageBatch);
+
+      final aliceLeaf = swapped.resultingRoster.leaves.singleWhere(
+        (leaf) =>
+            base64Encode(leaf.credentialIdentity) ==
+            base64Encode(alice.credentialIdentity),
+      );
+      final selfUpdateAad = utf8.encode('group-1/alice-self-update');
+      final selfUpdated = await selfUpdateWithStorage(
+        groupId: groupId,
+        signerBytes: alice.signerBytes,
+        aad: selfUpdateAad,
+        expectedPreviousState: _expected(swapped.resultingRoster),
+        expectedSelfAuthority: MlsAuthorizedSelfV1(
+          leafIndex: aliceLeaf.leafIndex,
+          expectedCredentialIdentity: aliceLeaf.credentialIdentity,
+          expectedSignaturePublicKey: aliceLeaf.signaturePublicKey,
+        ),
+        storageEntries: aliceStore.forGroup(groupId),
+        storageFormatVersion: aliceStore.formatVersion,
+      );
+      expect(selfUpdated.resultingRoster.leaves, hasLength(2));
+      _expectRoster(
+        selfUpdated.resultingRoster,
+        groupId: groupId,
+        epoch: 3,
+        identities: [alice.credentialIdentity, charlie.credentialIdentity],
+      );
+      aliceStore.apply(selfUpdated.storageBatch);
+
+      final wrongResult = _expected(selfUpdated.resultingRoster);
+      final wrongDigest = List<int>.from(wrongResult.digestSha256);
+      wrongDigest[0] ^= 0xff;
+      final charlieBeforeWrongResult = charlieStore.fingerprint;
+      await expectLater(
+        processMessageWithStorageV2(
+          groupId: groupId,
+          messageBytes: selfUpdated.commit,
+          expectedAad: selfUpdateAad,
+          expectedPreviousState: _expected(swapped.resultingRoster),
+          expectedResultingState: MlsExpectedRosterStateV1(
+            groupId: wrongResult.groupId,
+            epoch: wrongResult.epoch,
+            digestSha256: Uint8List.fromList(wrongDigest),
+          ),
+          storageEntries: charlieStore.forGroup(groupId),
+          storageFormatVersion: charlieStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'resulting MLS roster digest does not match',
+            ),
+          ),
+        ),
+      );
+      expect(charlieStore.fingerprint, charlieBeforeWrongResult);
+      final charlieProcessedUpdate = await processMessageWithStorageV2(
+        groupId: groupId,
+        messageBytes: selfUpdated.commit,
+        expectedAad: selfUpdateAad,
+        expectedPreviousState: _expected(swapped.resultingRoster),
+        expectedResultingState: _expected(selfUpdated.resultingRoster),
+        storageEntries: charlieStore.forGroup(groupId),
+        storageFormatVersion: charlieStore.formatVersion,
+      );
+      charlieStore.apply(charlieProcessedUpdate.storageBatch);
+
+      final charlieLeaf = selfUpdated.resultingRoster.leaves.singleWhere(
+        (leaf) =>
+            base64Encode(leaf.credentialIdentity) ==
+            base64Encode(charlie.credentialIdentity),
+      );
+      final removeAad = utf8.encode('group-1/remove-charlie');
+      final wrongCharlieSignatureKey = Uint8List.fromList(
+        charlieLeaf.signaturePublicKey,
+      );
+      wrongCharlieSignatureKey[0] ^= 0xff;
+      final beforeWrongRemoval = aliceStore.fingerprint;
+      await expectLater(
+        removeMembersWithStorage(
+          groupId: groupId,
+          signerBytes: alice.signerBytes,
+          removals: [
+            MlsAuthorizedRemovalV1(
+              leafIndex: charlieLeaf.leafIndex,
+              expectedCredentialIdentity: charlieLeaf.credentialIdentity,
+              expectedSignaturePublicKey: wrongCharlieSignatureKey,
+            ),
+          ],
+          aad: removeAad,
+          expectedPreviousState: _expected(selfUpdated.resultingRoster),
+          storageEntries: aliceStore.forGroup(groupId),
+          storageFormatVersion: aliceStore.formatVersion,
+        ),
+        throwsA(
+          predicate<Object>(
+            (error) => error.toString().contains(
+              'Authorized removal does not match current leaf authority',
+            ),
+          ),
+        ),
+      );
+      expect(aliceStore.fingerprint, beforeWrongRemoval);
+
+      final removedCharlie = await removeMembersWithStorage(
+        groupId: groupId,
+        signerBytes: alice.signerBytes,
+        removals: [
+          MlsAuthorizedRemovalV1(
+            leafIndex: charlieLeaf.leafIndex,
+            expectedCredentialIdentity: charlieLeaf.credentialIdentity,
+            expectedSignaturePublicKey: charlieLeaf.signaturePublicKey,
+          ),
+        ],
+        aad: removeAad,
+        expectedPreviousState: _expected(selfUpdated.resultingRoster),
+        storageEntries: aliceStore.forGroup(groupId),
+        storageFormatVersion: aliceStore.formatVersion,
+      );
+      expect(removedCharlie.welcome, isNull);
+      _expectRoster(
+        removedCharlie.resultingRoster,
+        groupId: groupId,
+        epoch: 4,
+        identities: [alice.credentialIdentity],
+      );
+      aliceStore.apply(removedCharlie.storageBatch);
+
+      final charlieProcessedRemoval = await processMessageWithStorageV2(
+        groupId: groupId,
+        messageBytes: removedCharlie.commit,
+        expectedAad: removeAad,
+        expectedPreviousState: _expected(selfUpdated.resultingRoster),
+        expectedResultingState: _expected(removedCharlie.resultingRoster),
+        storageEntries: charlieStore.forGroup(groupId),
+        storageFormatVersion: charlieStore.formatVersion,
+      );
+      _expectSameRoster(
+        charlieProcessedRemoval.resultingRoster,
+        removedCharlie.resultingRoster,
+      );
+      charlieStore.apply(charlieProcessedRemoval.storageBatch);
+    });
+
+    test('binds a deferred candidate to its exact group snapshot', () async {
+      final alice = TestIdentity.create('candidate-alice');
+      final store = _MemoryMlsStore();
+      final groupId = utf8.encode('candidate-group');
+      final created = await createGroupWithStorageV2(
+        config: defaultConfig(),
+        signerBytes: alice.signerBytes,
+        explicitGroupId: groupId,
+        expectedOwnerAuthority: MlsAuthorizedOwnerV1(
+          expectedCredentialIdentity: alice.credentialIdentity,
+          expectedSignaturePublicKey: alice.publicKey,
+        ),
+        storageEntries: store.globalSnapshot,
+        storageFormatVersion: store.formatVersion,
+      );
+      store.apply(created.storageBatch);
+      final owner = created.resultingRoster.leaves.single;
+      final candidate = await selfUpdateWithStorage(
+        groupId: groupId,
+        signerBytes: alice.signerBytes,
+        aad: utf8.encode('candidate/self-update'),
+        expectedPreviousState: _expected(created.resultingRoster),
+        expectedSelfAuthority: MlsAuthorizedSelfV1(
+          leafIndex: owner.leafIndex,
+          expectedCredentialIdentity: owner.credentialIdentity,
+          expectedSignaturePublicKey: owner.signaturePublicKey,
+        ),
+        storageEntries: store.forGroup(groupId),
+        storageFormatVersion: store.formatVersion,
+      );
+      final retainedCommit = List<int>.from(candidate.commit);
+      final retainedBatchFingerprint = _batchFingerprint(
+        candidate.storageBatch,
+      );
+      expect(
+        candidate.storageBatch.upserts.every((entry) => entry.groupId != null),
+        isTrue,
+        reason: 'group candidate batches must not rewrite global inventory',
+      );
+
+      expect(
+        mlsGroupStateDigest(
+          groupId: groupId,
+          storageEntries: store.forGroup(groupId),
+          storageFormatVersion: store.formatVersion,
+        ),
+        orderedEquals(candidate.baseGroupStateSha256),
+      );
+
+      final message = await createMessageWithStorage(
+        groupId: groupId,
+        signerBytes: alice.signerBytes,
+        message: utf8.encode('accepted before the candidate fence'),
+        aad: utf8.encode('candidate/application'),
+        storageEntries: store.forGroup(groupId),
+        storageFormatVersion: store.formatVersion,
+      );
+      store.apply(message.storageBatch);
+
+      expect(
+        mlsGroupStateDigest(
+          groupId: groupId,
+          storageEntries: store.forGroup(groupId),
+          storageFormatVersion: store.formatVersion,
+        ),
+        isNot(orderedEquals(candidate.baseGroupStateSha256)),
+      );
+      expect(candidate.commit, orderedEquals(retainedCommit));
+      expect(
+        _batchFingerprint(candidate.storageBatch),
+        retainedBatchFingerprint,
+      );
+    });
   });
+}
+
+MlsExpectedRosterStateV1 _expected(MlsRosterSummaryV1 summary) =>
+    MlsExpectedRosterStateV1(
+      groupId: summary.groupId,
+      epoch: summary.epoch,
+      digestSha256: summary.digestSha256,
+    );
+
+void _expectRoster(
+  MlsRosterSummaryV1 summary, {
+  required List<int> groupId,
+  required int epoch,
+  required List<List<int>> identities,
+}) {
+  expect(summary.groupId, orderedEquals(groupId));
+  expect(summary.epoch, BigInt.from(epoch));
+  expect(summary.digestSha256, hasLength(32));
+  expect(
+    summary.digestSha256,
+    orderedEquals(
+      mlsRosterDigestV1(
+        groupId: summary.groupId,
+        epoch: summary.epoch,
+        leaves: summary.leaves,
+      ),
+    ),
+  );
+  expect(
+    summary.leaves.map((leaf) => base64Encode(leaf.credentialIdentity)),
+    unorderedEquals(identities.map(base64Encode)),
+  );
+  final sortedIndexes = summary.leaves.map((leaf) => leaf.leafIndex).toList()
+    ..sort();
+  expect(summary.leaves.map((leaf) => leaf.leafIndex), sortedIndexes);
+}
+
+void _expectSameRoster(MlsRosterSummaryV1 actual, MlsRosterSummaryV1 expected) {
+  expect(actual.groupId, orderedEquals(expected.groupId));
+  expect(actual.epoch, expected.epoch);
+  expect(actual.digestSha256, orderedEquals(expected.digestSha256));
+  expect(actual.leaves, hasLength(expected.leaves.length));
+  for (var index = 0; index < actual.leaves.length; index++) {
+    expect(actual.leaves[index].leafIndex, expected.leaves[index].leafIndex);
+    expect(
+      actual.leaves[index].credentialIdentity,
+      orderedEquals(expected.leaves[index].credentialIdentity),
+    );
+    expect(
+      actual.leaves[index].signaturePublicKey,
+      orderedEquals(expected.leaves[index].signaturePublicKey),
+    );
+  }
+}
+
+String _batchFingerprint(MlsStorageBatch batch) {
+  final rows = batch.upserts.map((entry) {
+    final encodedGroupId = entry.groupId == null
+        ? '-'
+        : base64Encode(entry.groupId!);
+    return [
+      base64Encode(entry.key),
+      base64Encode(entry.value),
+      encodedGroupId,
+    ].join(':');
+  }).toList()..sort();
+  final deletes = batch.deletes.map(base64Encode).toList()..sort();
+  return '${rows.join('|')}#${deletes.join('|')}';
 }
 
 MlsGroupConfig _configWithForwardDistance(int maximumForwardDistance) {

@@ -8,6 +8,7 @@
 
 import 'api/config.dart';
 import 'api/credential.dart';
+import 'api/group_e2ee.dart';
 import 'api/init.dart';
 import 'api/keys.dart';
 import 'api/message.dart';
@@ -82,6 +83,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  MlsAuthorizedOwnerV1 dco_decode_box_autoadd_mls_authorized_owner_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  MlsAuthorizedSelfV1 dco_decode_box_autoadd_mls_authorized_self_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  MlsExpectedRosterStateV1 dco_decode_box_autoadd_mls_expected_roster_state_v_1(
+    dynamic raw,
+  );
+
+  @protected
   MlsGroupConfig dco_decode_box_autoadd_mls_group_config(dynamic raw);
 
   @protected
@@ -94,6 +110,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CreateGroupWithStorageResult dco_decode_create_group_with_storage_result(
     dynamic raw,
   );
+
+  @protected
+  CreateGroupWithStorageV2Result
+  dco_decode_create_group_with_storage_v_2_result(dynamic raw);
 
   @protected
   CreateKeyPackageWithStorageResult
@@ -113,10 +133,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  JoinGroupWithStorageV2Result dco_decode_join_group_with_storage_v_2_result(
+    dynamic raw,
+  );
+
+  @protected
   List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  List<MlsAuthorizedKeyPackageV1>
+  dco_decode_list_mls_authorized_key_package_v_1(dynamic raw);
+
+  @protected
+  List<MlsAuthorizedRemovalV1> dco_decode_list_mls_authorized_removal_v_1(
+    dynamic raw,
+  );
+
+  @protected
   List<MlsCiphersuite> dco_decode_list_mls_ciphersuite(dynamic raw);
+
+  @protected
+  List<MlsRosterLeafV1> dco_decode_list_mls_roster_leaf_v_1(dynamic raw);
 
   @protected
   List<MlsStorageEntry> dco_decode_list_mls_storage_entry(dynamic raw);
@@ -128,13 +165,38 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  MlsAuthorizedKeyPackageV1 dco_decode_mls_authorized_key_package_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  MlsAuthorizedOwnerV1 dco_decode_mls_authorized_owner_v_1(dynamic raw);
+
+  @protected
+  MlsAuthorizedRemovalV1 dco_decode_mls_authorized_removal_v_1(dynamic raw);
+
+  @protected
+  MlsAuthorizedSelfV1 dco_decode_mls_authorized_self_v_1(dynamic raw);
+
+  @protected
   MlsCiphersuite dco_decode_mls_ciphersuite(dynamic raw);
+
+  @protected
+  MlsExpectedRosterStateV1 dco_decode_mls_expected_roster_state_v_1(
+    dynamic raw,
+  );
 
   @protected
   MlsGroupConfig dco_decode_mls_group_config(dynamic raw);
 
   @protected
   MlsProposalType dco_decode_mls_proposal_type(dynamic raw);
+
+  @protected
+  MlsRosterLeafV1 dco_decode_mls_roster_leaf_v_1(dynamic raw);
+
+  @protected
+  MlsRosterSummaryV1 dco_decode_mls_roster_summary_v_1(dynamic raw);
 
   @protected
   MlsStorageBatch dco_decode_mls_storage_batch(dynamic raw);
@@ -155,8 +217,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  PreparedCommitWithStorageResult
+  dco_decode_prepared_commit_with_storage_result(dynamic raw);
+
+  @protected
   ProcessMessageWithStorageResult
   dco_decode_process_message_with_storage_result(dynamic raw);
+
+  @protected
+  ProcessMessageWithStorageV2Result
+  dco_decode_process_message_with_storage_v_2_result(dynamic raw);
 
   @protected
   ProcessedMessageType dco_decode_processed_message_type(dynamic raw);
@@ -227,6 +297,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
+  MlsAuthorizedOwnerV1 sse_decode_box_autoadd_mls_authorized_owner_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsAuthorizedSelfV1 sse_decode_box_autoadd_mls_authorized_self_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsExpectedRosterStateV1 sse_decode_box_autoadd_mls_expected_roster_state_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsGroupConfig sse_decode_box_autoadd_mls_group_config(
     SseDeserializer deserializer,
   );
@@ -243,6 +328,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CreateGroupWithStorageResult sse_decode_create_group_with_storage_result(
     SseDeserializer deserializer,
   );
+
+  @protected
+  CreateGroupWithStorageV2Result
+  sse_decode_create_group_with_storage_v_2_result(SseDeserializer deserializer);
 
   @protected
   CreateKeyPackageWithStorageResult
@@ -264,12 +353,31 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  JoinGroupWithStorageV2Result sse_decode_join_group_with_storage_v_2_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   List<Uint8List> sse_decode_list_list_prim_u_8_strict(
     SseDeserializer deserializer,
   );
 
   @protected
+  List<MlsAuthorizedKeyPackageV1>
+  sse_decode_list_mls_authorized_key_package_v_1(SseDeserializer deserializer);
+
+  @protected
+  List<MlsAuthorizedRemovalV1> sse_decode_list_mls_authorized_removal_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   List<MlsCiphersuite> sse_decode_list_mls_ciphersuite(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<MlsRosterLeafV1> sse_decode_list_mls_roster_leaf_v_1(
     SseDeserializer deserializer,
   );
 
@@ -285,13 +393,46 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  MlsAuthorizedKeyPackageV1 sse_decode_mls_authorized_key_package_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsAuthorizedOwnerV1 sse_decode_mls_authorized_owner_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsAuthorizedRemovalV1 sse_decode_mls_authorized_removal_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsAuthorizedSelfV1 sse_decode_mls_authorized_self_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsCiphersuite sse_decode_mls_ciphersuite(SseDeserializer deserializer);
+
+  @protected
+  MlsExpectedRosterStateV1 sse_decode_mls_expected_roster_state_v_1(
+    SseDeserializer deserializer,
+  );
 
   @protected
   MlsGroupConfig sse_decode_mls_group_config(SseDeserializer deserializer);
 
   @protected
   MlsProposalType sse_decode_mls_proposal_type(SseDeserializer deserializer);
+
+  @protected
+  MlsRosterLeafV1 sse_decode_mls_roster_leaf_v_1(SseDeserializer deserializer);
+
+  @protected
+  MlsRosterSummaryV1 sse_decode_mls_roster_summary_v_1(
+    SseDeserializer deserializer,
+  );
 
   @protected
   MlsStorageBatch sse_decode_mls_storage_batch(SseDeserializer deserializer);
@@ -316,8 +457,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  PreparedCommitWithStorageResult
+  sse_decode_prepared_commit_with_storage_result(SseDeserializer deserializer);
+
+  @protected
   ProcessMessageWithStorageResult
   sse_decode_process_message_with_storage_result(SseDeserializer deserializer);
+
+  @protected
+  ProcessMessageWithStorageV2Result
+  sse_decode_process_message_with_storage_v_2_result(
+    SseDeserializer deserializer,
+  );
 
   @protected
   ProcessedMessageType sse_decode_processed_message_type(
@@ -362,6 +513,30 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_box_autoadd_mls_authorized_owner_v_1(
+    MlsAuthorizedOwnerV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_mls_authorized_owner_v_1(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_mls_authorized_self_v_1(
+    MlsAuthorizedSelfV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_mls_authorized_self_v_1(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_mls_expected_roster_state_v_1(
+    MlsExpectedRosterStateV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_mls_expected_roster_state_v_1(raw);
+  }
+
+  @protected
   JSAny cst_encode_box_autoadd_mls_group_config(MlsGroupConfig raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return cst_encode_mls_group_config(raw);
@@ -386,6 +561,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return [
       cst_encode_list_prim_u_8_strict(raw.groupId),
+      cst_encode_mls_storage_batch(raw.storageBatch),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_create_group_with_storage_v_2_result(
+    CreateGroupWithStorageV2Result raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.groupId),
+      cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
       cst_encode_mls_storage_batch(raw.storageBatch),
     ].jsify()!;
   }
@@ -424,15 +611,49 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_join_group_with_storage_v_2_result(
+    JoinGroupWithStorageV2Result raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.groupId),
+      cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
+      cst_encode_mls_storage_batch(raw.storageBatch),
+    ].jsify()!;
+  }
+
+  @protected
   JSAny cst_encode_list_list_prim_u_8_strict(List<Uint8List> raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw.map(cst_encode_list_prim_u_8_strict).toList().jsify()!;
   }
 
   @protected
+  JSAny cst_encode_list_mls_authorized_key_package_v_1(
+    List<MlsAuthorizedKeyPackageV1> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw.map(cst_encode_mls_authorized_key_package_v_1).toList().jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_list_mls_authorized_removal_v_1(
+    List<MlsAuthorizedRemovalV1> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw.map(cst_encode_mls_authorized_removal_v_1).toList().jsify()!;
+  }
+
+  @protected
   JSAny cst_encode_list_mls_ciphersuite(List<MlsCiphersuite> raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw.map(cst_encode_mls_ciphersuite).toList().jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_list_mls_roster_leaf_v_1(List<MlsRosterLeafV1> raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw.map(cst_encode_mls_roster_leaf_v_1).toList().jsify()!;
   }
 
   @protected
@@ -454,6 +675,57 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_mls_authorized_key_package_v_1(
+    MlsAuthorizedKeyPackageV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.keyPackageBytes),
+      cst_encode_list_prim_u_8_strict(raw.expectedCredentialIdentity),
+      cst_encode_list_prim_u_8_strict(raw.expectedSignaturePublicKey),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_mls_authorized_owner_v_1(MlsAuthorizedOwnerV1 raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.expectedCredentialIdentity),
+      cst_encode_list_prim_u_8_strict(raw.expectedSignaturePublicKey),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_mls_authorized_removal_v_1(MlsAuthorizedRemovalV1 raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_u_32(raw.leafIndex),
+      cst_encode_list_prim_u_8_strict(raw.expectedCredentialIdentity),
+      cst_encode_list_prim_u_8_strict(raw.expectedSignaturePublicKey),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_mls_authorized_self_v_1(MlsAuthorizedSelfV1 raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_u_32(raw.leafIndex),
+      cst_encode_list_prim_u_8_strict(raw.expectedCredentialIdentity),
+      cst_encode_list_prim_u_8_strict(raw.expectedSignaturePublicKey),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_mls_expected_roster_state_v_1(MlsExpectedRosterStateV1 raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.groupId),
+      cst_encode_u_64(raw.epoch),
+      cst_encode_list_prim_u_8_strict(raw.digestSha256),
+    ].jsify()!;
+  }
+
+  @protected
   JSAny cst_encode_mls_group_config(MlsGroupConfig raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return [
@@ -465,6 +737,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_u_32(raw.senderRatchetMaxOutOfOrder),
       cst_encode_u_32(raw.senderRatchetMaxForwardDistance),
       cst_encode_u_32(raw.numberOfResumptionPsks),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_mls_roster_leaf_v_1(MlsRosterLeafV1 raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_u_32(raw.leafIndex),
+      cst_encode_list_prim_u_8_strict(raw.credentialIdentity),
+      cst_encode_list_prim_u_8_strict(raw.signaturePublicKey),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_mls_roster_summary_v_1(MlsRosterSummaryV1 raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.groupId),
+      cst_encode_u_64(raw.epoch),
+      cst_encode_list_mls_roster_leaf_v_1(raw.leaves),
+      cst_encode_list_prim_u_8_strict(raw.digestSha256),
     ].jsify()!;
   }
 
@@ -508,6 +801,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_prepared_commit_with_storage_result(
+    PreparedCommitWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.commit),
+      cst_encode_opt_list_prim_u_8_strict(raw.welcome),
+      cst_encode_opt_list_prim_u_8_strict(raw.groupInfo),
+      cst_encode_list_prim_u_8_strict(raw.commitSha256),
+      cst_encode_mls_roster_summary_v_1(raw.previousRoster),
+      cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
+      cst_encode_list_prim_u_8_strict(raw.baseGroupStateSha256),
+      cst_encode_mls_storage_batch(raw.storageBatch),
+    ].jsify()!;
+  }
+
+  @protected
   JSAny cst_encode_process_message_with_storage_result(
     ProcessMessageWithStorageResult raw,
   ) {
@@ -521,6 +831,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_bool(raw.hasStagedCommit),
       cst_encode_bool(raw.hasProposal),
       cst_encode_opt_box_autoadd_mls_proposal_type(raw.proposalType),
+      cst_encode_mls_storage_batch(raw.storageBatch),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_process_message_with_storage_v_2_result(
+    ProcessMessageWithStorageV2Result raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_processed_message_type(raw.messageType),
+      cst_encode_opt_box_autoadd_u_32(raw.senderIndex),
+      cst_encode_u_64(raw.previousEpoch),
+      cst_encode_u_64(raw.resultingEpoch),
+      cst_encode_opt_list_prim_u_8_strict(raw.applicationMessage),
+      cst_encode_bool(raw.hasStagedCommit),
+      cst_encode_bool(raw.hasProposal),
+      cst_encode_opt_box_autoadd_mls_proposal_type(raw.proposalType),
+      cst_encode_mls_roster_summary_v_1(raw.previousRoster),
+      cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
       cst_encode_mls_storage_batch(raw.storageBatch),
     ].jsify()!;
   }
@@ -658,6 +988,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_mls_authorized_owner_v_1(
+    MlsAuthorizedOwnerV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_mls_authorized_self_v_1(
+    MlsAuthorizedSelfV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_mls_expected_roster_state_v_1(
+    MlsExpectedRosterStateV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_mls_group_config(
     MlsGroupConfig self,
     SseSerializer serializer,
@@ -675,6 +1023,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_create_group_with_storage_result(
     CreateGroupWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_create_group_with_storage_v_2_result(
+    CreateGroupWithStorageV2Result self,
     SseSerializer serializer,
   );
 
@@ -700,14 +1054,38 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_join_group_with_storage_v_2_result(
+    JoinGroupWithStorageV2Result self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_list_prim_u_8_strict(
     List<Uint8List> self,
     SseSerializer serializer,
   );
 
   @protected
+  void sse_encode_list_mls_authorized_key_package_v_1(
+    List<MlsAuthorizedKeyPackageV1> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_mls_authorized_removal_v_1(
+    List<MlsAuthorizedRemovalV1> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_mls_ciphersuite(
     List<MlsCiphersuite> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_mls_roster_leaf_v_1(
+    List<MlsRosterLeafV1> self,
     SseSerializer serializer,
   );
 
@@ -727,8 +1105,38 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_mls_authorized_key_package_v_1(
+    MlsAuthorizedKeyPackageV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_authorized_owner_v_1(
+    MlsAuthorizedOwnerV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_authorized_removal_v_1(
+    MlsAuthorizedRemovalV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_authorized_self_v_1(
+    MlsAuthorizedSelfV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_mls_ciphersuite(
     MlsCiphersuite self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_expected_roster_state_v_1(
+    MlsExpectedRosterStateV1 self,
     SseSerializer serializer,
   );
 
@@ -741,6 +1149,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_mls_proposal_type(
     MlsProposalType self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_roster_leaf_v_1(
+    MlsRosterLeafV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_roster_summary_v_1(
+    MlsRosterSummaryV1 self,
     SseSerializer serializer,
   );
 
@@ -778,8 +1198,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_prepared_commit_with_storage_result(
+    PreparedCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_process_message_with_storage_result(
     ProcessMessageWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_process_message_with_storage_v_2_result(
+    ProcessMessageWithStorageV2Result self,
     SseSerializer serializer,
   );
 
@@ -912,6 +1344,26 @@ class RustLibWire implements BaseWire {
     storage_format_version,
   );
 
+  void wire__crate__api__group_e2ee__add_members_with_storage_v2(
+    NativePortType port_,
+    JSAny group_id,
+    JSAny signer_bytes,
+    JSAny additions,
+    JSAny aad,
+    JSAny expected_previous_state,
+    JSAny storage_entries,
+    int storage_format_version,
+  ) => wasmModule.wire__crate__api__group_e2ee__add_members_with_storage_v2(
+    port_,
+    group_id,
+    signer_bytes,
+    additions,
+    aad,
+    expected_previous_state,
+    storage_entries,
+    storage_format_version,
+  );
+
   void wire__crate__api__storage__create_group_with_storage(
     NativePortType port_,
     JSAny config,
@@ -929,6 +1381,26 @@ class RustLibWire implements BaseWire {
     credential_identity,
     signer_public_key,
     group_id,
+    credential_bytes,
+    storage_entries,
+    storage_format_version,
+  );
+
+  void wire__crate__api__group_e2ee__create_group_with_storage_v2(
+    NativePortType port_,
+    JSAny config,
+    JSAny signer_bytes,
+    JSAny explicit_group_id,
+    JSAny expected_owner_authority,
+    JSAny? credential_bytes,
+    JSAny storage_entries,
+    int storage_format_version,
+  ) => wasmModule.wire__crate__api__group_e2ee__create_group_with_storage_v2(
+    port_,
+    config,
+    signer_bytes,
+    explicit_group_id,
+    expected_owner_authority,
     credential_bytes,
     storage_entries,
     storage_format_version,
@@ -1011,11 +1483,43 @@ class RustLibWire implements BaseWire {
         storage_format_version,
       );
 
+  void wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2(
+    NativePortType port_,
+    JSAny config,
+    JSAny welcome_bytes,
+    JSAny? ratchet_tree_bytes,
+    JSAny signer_bytes,
+    JSAny expected_resulting_state,
+    JSAny storage_entries,
+    int storage_format_version,
+  ) => wasmModule
+      .wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2(
+        port_,
+        config,
+        welcome_bytes,
+        ratchet_tree_bytes,
+        signer_bytes,
+        expected_resulting_state,
+        storage_entries,
+        storage_format_version,
+      );
+
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__config__mls_group_config_default_config(int ciphersuite) =>
       wasmModule.wire__crate__api__config__mls_group_config_default_config(
         ciphersuite,
       );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__group_e2ee__mls_group_state_digest(
+    JSAny group_id,
+    JSAny storage_entries,
+    int storage_format_version,
+  ) => wasmModule.wire__crate__api__group_e2ee__mls_group_state_digest(
+    group_id,
+    storage_entries,
+    storage_format_version,
+  );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__message__mls_message_content_type(JSAny message_bytes) =>
@@ -1034,6 +1538,17 @@ class RustLibWire implements BaseWire {
     JSAny message_bytes,
   ) => wasmModule.wire__crate__api__message__mls_message_extract_group_id(
     message_bytes,
+  );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__group_e2ee__mls_roster_digest_v1(
+    JSAny group_id,
+    JSAny epoch,
+    JSAny leaves,
+  ) => wasmModule.wire__crate__api__group_e2ee__mls_roster_digest_v1(
+    group_id,
+    epoch,
+    leaves,
   );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
@@ -1056,6 +1571,66 @@ class RustLibWire implements BaseWire {
     storage_format_version,
   );
 
+  void wire__crate__api__group_e2ee__process_message_with_storage_v2(
+    NativePortType port_,
+    JSAny group_id,
+    JSAny message_bytes,
+    JSAny expected_aad,
+    JSAny expected_previous_state,
+    JSAny expected_resulting_state,
+    JSAny storage_entries,
+    int storage_format_version,
+  ) => wasmModule.wire__crate__api__group_e2ee__process_message_with_storage_v2(
+    port_,
+    group_id,
+    message_bytes,
+    expected_aad,
+    expected_previous_state,
+    expected_resulting_state,
+    storage_entries,
+    storage_format_version,
+  );
+
+  void wire__crate__api__group_e2ee__remove_members_with_storage(
+    NativePortType port_,
+    JSAny group_id,
+    JSAny signer_bytes,
+    JSAny removals,
+    JSAny aad,
+    JSAny expected_previous_state,
+    JSAny storage_entries,
+    int storage_format_version,
+  ) => wasmModule.wire__crate__api__group_e2ee__remove_members_with_storage(
+    port_,
+    group_id,
+    signer_bytes,
+    removals,
+    aad,
+    expected_previous_state,
+    storage_entries,
+    storage_format_version,
+  );
+
+  void wire__crate__api__group_e2ee__self_update_with_storage(
+    NativePortType port_,
+    JSAny group_id,
+    JSAny signer_bytes,
+    JSAny aad,
+    JSAny expected_previous_state,
+    JSAny expected_self_authority,
+    JSAny storage_entries,
+    int storage_format_version,
+  ) => wasmModule.wire__crate__api__group_e2ee__self_update_with_storage(
+    port_,
+    group_id,
+    signer_bytes,
+    aad,
+    expected_previous_state,
+    expected_self_authority,
+    storage_entries,
+    storage_format_version,
+  );
+
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__keys__serialize_signer(
     int ciphersuite,
@@ -1070,6 +1645,28 @@ class RustLibWire implements BaseWire {
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__types__supported_ciphersuites() =>
       wasmModule.wire__crate__api__types__supported_ciphersuites();
+
+  void wire__crate__api__group_e2ee__swap_members_with_storage(
+    NativePortType port_,
+    JSAny group_id,
+    JSAny signer_bytes,
+    JSAny removals,
+    JSAny additions,
+    JSAny aad,
+    JSAny expected_previous_state,
+    JSAny storage_entries,
+    int storage_format_version,
+  ) => wasmModule.wire__crate__api__group_e2ee__swap_members_with_storage(
+    port_,
+    group_id,
+    signer_bytes,
+    removals,
+    additions,
+    aad,
+    expected_previous_state,
+    storage_entries,
+    storage_format_version,
+  );
 
   void
   rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
@@ -1170,6 +1767,17 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     int storage_format_version,
   );
 
+  external void wire__crate__api__group_e2ee__add_members_with_storage_v2(
+    NativePortType port_,
+    JSAny group_id,
+    JSAny signer_bytes,
+    JSAny additions,
+    JSAny aad,
+    JSAny expected_previous_state,
+    JSAny storage_entries,
+    int storage_format_version,
+  );
+
   external void wire__crate__api__storage__create_group_with_storage(
     NativePortType port_,
     JSAny config,
@@ -1177,6 +1785,17 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny credential_identity,
     JSAny signer_public_key,
     JSAny? group_id,
+    JSAny? credential_bytes,
+    JSAny storage_entries,
+    int storage_format_version,
+  );
+
+  external void wire__crate__api__group_e2ee__create_group_with_storage_v2(
+    NativePortType port_,
+    JSAny config,
+    JSAny signer_bytes,
+    JSAny explicit_group_id,
+    JSAny expected_owner_authority,
     JSAny? credential_bytes,
     JSAny storage_entries,
     int storage_format_version,
@@ -1226,8 +1845,27 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     int storage_format_version,
   );
 
+  external void
+  wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2(
+    NativePortType port_,
+    JSAny config,
+    JSAny welcome_bytes,
+    JSAny? ratchet_tree_bytes,
+    JSAny signer_bytes,
+    JSAny expected_resulting_state,
+    JSAny storage_entries,
+    int storage_format_version,
+  );
+
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__config__mls_group_config_default_config(int ciphersuite);
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__group_e2ee__mls_group_state_digest(
+    JSAny group_id,
+    JSAny storage_entries,
+    int storage_format_version,
+  );
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__message__mls_message_content_type(JSAny message_bytes);
@@ -1237,6 +1875,13 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__message__mls_message_extract_group_id(JSAny message_bytes);
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__group_e2ee__mls_roster_digest_v1(
+    JSAny group_id,
+    JSAny epoch,
+    JSAny leaves,
+  );
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__storage__mls_storage_format_version();
@@ -1250,6 +1895,39 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     int storage_format_version,
   );
 
+  external void wire__crate__api__group_e2ee__process_message_with_storage_v2(
+    NativePortType port_,
+    JSAny group_id,
+    JSAny message_bytes,
+    JSAny expected_aad,
+    JSAny expected_previous_state,
+    JSAny expected_resulting_state,
+    JSAny storage_entries,
+    int storage_format_version,
+  );
+
+  external void wire__crate__api__group_e2ee__remove_members_with_storage(
+    NativePortType port_,
+    JSAny group_id,
+    JSAny signer_bytes,
+    JSAny removals,
+    JSAny aad,
+    JSAny expected_previous_state,
+    JSAny storage_entries,
+    int storage_format_version,
+  );
+
+  external void wire__crate__api__group_e2ee__self_update_with_storage(
+    NativePortType port_,
+    JSAny group_id,
+    JSAny signer_bytes,
+    JSAny aad,
+    JSAny expected_previous_state,
+    JSAny expected_self_authority,
+    JSAny storage_entries,
+    int storage_format_version,
+  );
+
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__keys__serialize_signer(
     int ciphersuite,
@@ -1259,6 +1937,18 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__types__supported_ciphersuites();
+
+  external void wire__crate__api__group_e2ee__swap_members_with_storage(
+    NativePortType port_,
+    JSAny group_id,
+    JSAny signer_bytes,
+    JSAny removals,
+    JSAny additions,
+    JSAny aad,
+    JSAny expected_previous_state,
+    JSAny storage_entries,
+    int storage_format_version,
+  );
 
   external void
   rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(

@@ -428,15 +428,36 @@ pub(crate) fn provider_from_entries(
     storage_format_version: u32,
     expected_group_id: Option<&[u8]>,
 ) -> Result<SnapshotOpenMlsProvider, String> {
-    if storage_format_version != MLS_STORAGE_FORMAT_VERSION {
+    if let Err(error) =
+        validate_storage_entries(&entries, storage_format_version, expected_group_id)
+    {
         zeroize_entry_values(&mut entries);
+        return Err(error);
+    }
+
+    let snapshot_entries = entries
+        .into_iter()
+        .map(|entry| (entry.key, entry.value))
+        .collect();
+
+    Ok(SnapshotOpenMlsProvider::new(
+        SnapshotStorageProvider::from_entries(snapshot_entries),
+    ))
+}
+
+pub(crate) fn validate_storage_entries(
+    entries: &[MlsStorageEntry],
+    storage_format_version: u32,
+    expected_group_id: Option<&[u8]>,
+) -> Result<(), String> {
+    if storage_format_version != MLS_STORAGE_FORMAT_VERSION {
         return Err(format!(
             "Unsupported MLS storage format version {storage_format_version}; expected {MLS_STORAGE_FORMAT_VERSION}"
         ));
     }
 
     let mut seen_keys = HashSet::with_capacity(entries.len());
-    let validation = entries.iter().try_for_each(|entry| {
+    entries.iter().try_for_each(|entry| {
         if !seen_keys.insert(entry.key.clone()) {
             return Err("Duplicate MLS storage key in snapshot".to_string());
         }
@@ -454,20 +475,7 @@ pub(crate) fn provider_from_entries(
             }
         }
         Ok(())
-    });
-    if let Err(error) = validation {
-        zeroize_entry_values(&mut entries);
-        return Err(error);
-    }
-
-    let snapshot_entries = entries
-        .into_iter()
-        .map(|entry| (entry.key, entry.value))
-        .collect();
-
-    Ok(SnapshotOpenMlsProvider::new(
-        SnapshotStorageProvider::from_entries(snapshot_entries),
-    ))
+    })
 }
 
 pub(crate) fn batch_from_provider(
@@ -525,7 +533,7 @@ fn batch_from_updates(
     })
 }
 
-fn zeroize_entry_values(entries: &mut [MlsStorageEntry]) {
+pub(crate) fn zeroize_entry_values(entries: &mut [MlsStorageEntry]) {
     for entry in entries {
         entry.value.zeroize();
     }
