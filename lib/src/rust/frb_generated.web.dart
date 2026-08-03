@@ -75,11 +75,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String dco_decode_String(dynamic raw);
 
   @protected
-  AddMembersWithStorageResult dco_decode_add_members_with_storage_result(
-    dynamic raw,
-  );
-
-  @protected
   bool dco_decode_bool(dynamic raw);
 
   @protected
@@ -112,10 +107,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  CreateGroupWithStorageV2Result
-  dco_decode_create_group_with_storage_v_2_result(dynamic raw);
-
-  @protected
   CreateKeyPackageWithStorageResult
   dco_decode_create_key_package_with_storage_result(dynamic raw);
 
@@ -129,11 +120,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   JoinGroupWithStorageResult dco_decode_join_group_with_storage_result(
-    dynamic raw,
-  );
-
-  @protected
-  JoinGroupWithStorageV2Result dco_decode_join_group_with_storage_v_2_result(
     dynamic raw,
   );
 
@@ -225,10 +211,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_process_message_with_storage_result(dynamic raw);
 
   @protected
-  ProcessMessageWithStorageV2Result
-  dco_decode_process_message_with_storage_v_2_result(dynamic raw);
-
-  @protected
   ProcessedMessageType dco_decode_processed_message_type(dynamic raw);
 
   @protected
@@ -289,11 +271,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
-  AddMembersWithStorageResult sse_decode_add_members_with_storage_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
@@ -330,10 +307,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  CreateGroupWithStorageV2Result
-  sse_decode_create_group_with_storage_v_2_result(SseDeserializer deserializer);
-
-  @protected
   CreateKeyPackageWithStorageResult
   sse_decode_create_key_package_with_storage_result(
     SseDeserializer deserializer,
@@ -349,11 +322,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   JoinGroupWithStorageResult sse_decode_join_group_with_storage_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  JoinGroupWithStorageV2Result sse_decode_join_group_with_storage_v_2_result(
     SseDeserializer deserializer,
   );
 
@@ -465,12 +433,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   sse_decode_process_message_with_storage_result(SseDeserializer deserializer);
 
   @protected
-  ProcessMessageWithStorageV2Result
-  sse_decode_process_message_with_storage_v_2_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   ProcessedMessageType sse_decode_processed_message_type(
     SseDeserializer deserializer,
   );
@@ -497,19 +459,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String cst_encode_String(String raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw;
-  }
-
-  @protected
-  JSAny cst_encode_add_members_with_storage_result(
-    AddMembersWithStorageResult raw,
-  ) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_prim_u_8_strict(raw.commit),
-      cst_encode_list_prim_u_8_strict(raw.welcome),
-      cst_encode_opt_list_prim_u_8_strict(raw.groupInfo),
-      cst_encode_mls_storage_batch(raw.storageBatch),
-    ].jsify()!;
   }
 
   @protected
@@ -561,17 +510,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return [
       cst_encode_list_prim_u_8_strict(raw.groupId),
-      cst_encode_mls_storage_batch(raw.storageBatch),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_create_group_with_storage_v_2_result(
-    CreateGroupWithStorageV2Result raw,
-  ) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_prim_u_8_strict(raw.groupId),
       cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
       cst_encode_mls_storage_batch(raw.storageBatch),
     ].jsify()!;
@@ -602,17 +540,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   JSAny cst_encode_join_group_with_storage_result(
     JoinGroupWithStorageResult raw,
-  ) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_list_prim_u_8_strict(raw.groupId),
-      cst_encode_mls_storage_batch(raw.storageBatch),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_join_group_with_storage_v_2_result(
-    JoinGroupWithStorageV2Result raw,
   ) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return [
@@ -831,24 +758,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_bool(raw.hasStagedCommit),
       cst_encode_bool(raw.hasProposal),
       cst_encode_opt_box_autoadd_mls_proposal_type(raw.proposalType),
-      cst_encode_mls_storage_batch(raw.storageBatch),
-    ].jsify()!;
-  }
-
-  @protected
-  JSAny cst_encode_process_message_with_storage_v_2_result(
-    ProcessMessageWithStorageV2Result raw,
-  ) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return [
-      cst_encode_processed_message_type(raw.messageType),
-      cst_encode_opt_box_autoadd_u_32(raw.senderIndex),
-      cst_encode_u_64(raw.previousEpoch),
-      cst_encode_u_64(raw.resultingEpoch),
-      cst_encode_opt_list_prim_u_8_strict(raw.applicationMessage),
-      cst_encode_bool(raw.hasStagedCommit),
-      cst_encode_bool(raw.hasProposal),
-      cst_encode_opt_box_autoadd_mls_proposal_type(raw.proposalType),
       cst_encode_mls_roster_summary_v_1(raw.previousRoster),
       cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
       cst_encode_mls_storage_batch(raw.storageBatch),
@@ -979,12 +888,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
-  void sse_encode_add_members_with_storage_result(
-    AddMembersWithStorageResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
@@ -1027,12 +930,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_create_group_with_storage_v_2_result(
-    CreateGroupWithStorageV2Result self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_create_key_package_with_storage_result(
     CreateKeyPackageWithStorageResult self,
     SseSerializer serializer,
@@ -1050,12 +947,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_join_group_with_storage_result(
     JoinGroupWithStorageResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_join_group_with_storage_v_2_result(
-    JoinGroupWithStorageV2Result self,
     SseSerializer serializer,
   );
 
@@ -1210,12 +1101,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_process_message_with_storage_v_2_result(
-    ProcessMessageWithStorageV2Result self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_processed_message_type(
     ProcessedMessageType self,
     SseSerializer serializer,
@@ -1324,27 +1209,7 @@ class RustLibWire implements BaseWire {
         that,
       );
 
-  void wire__crate__api__storage__add_members_with_storage(
-    NativePortType port_,
-    JSAny group_id,
-    JSAny signer_bytes,
-    JSAny key_packages_bytes,
-    JSAny expected_credential_identities,
-    JSAny aad,
-    JSAny storage_entries,
-    int storage_format_version,
-  ) => wasmModule.wire__crate__api__storage__add_members_with_storage(
-    port_,
-    group_id,
-    signer_bytes,
-    key_packages_bytes,
-    expected_credential_identities,
-    aad,
-    storage_entries,
-    storage_format_version,
-  );
-
-  void wire__crate__api__group_e2ee__add_members_with_storage_v2(
+  void wire__crate__api__group_e2ee__add_members_with_storage(
     NativePortType port_,
     JSAny group_id,
     JSAny signer_bytes,
@@ -1353,7 +1218,7 @@ class RustLibWire implements BaseWire {
     JSAny expected_previous_state,
     JSAny storage_entries,
     int storage_format_version,
-  ) => wasmModule.wire__crate__api__group_e2ee__add_members_with_storage_v2(
+  ) => wasmModule.wire__crate__api__group_e2ee__add_members_with_storage(
     port_,
     group_id,
     signer_bytes,
@@ -1364,29 +1229,7 @@ class RustLibWire implements BaseWire {
     storage_format_version,
   );
 
-  void wire__crate__api__storage__create_group_with_storage(
-    NativePortType port_,
-    JSAny config,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? group_id,
-    JSAny? credential_bytes,
-    JSAny storage_entries,
-    int storage_format_version,
-  ) => wasmModule.wire__crate__api__storage__create_group_with_storage(
-    port_,
-    config,
-    signer_bytes,
-    credential_identity,
-    signer_public_key,
-    group_id,
-    credential_bytes,
-    storage_entries,
-    storage_format_version,
-  );
-
-  void wire__crate__api__group_e2ee__create_group_with_storage_v2(
+  void wire__crate__api__group_e2ee__create_group_with_storage(
     NativePortType port_,
     JSAny config,
     JSAny signer_bytes,
@@ -1395,7 +1238,7 @@ class RustLibWire implements BaseWire {
     JSAny? credential_bytes,
     JSAny storage_entries,
     int storage_format_version,
-  ) => wasmModule.wire__crate__api__group_e2ee__create_group_with_storage_v2(
+  ) => wasmModule.wire__crate__api__group_e2ee__create_group_with_storage(
     port_,
     config,
     signer_bytes,
@@ -1464,26 +1307,7 @@ class RustLibWire implements BaseWire {
   wire__crate__api__init__is_openmls_initialized() =>
       wasmModule.wire__crate__api__init__is_openmls_initialized();
 
-  void wire__crate__api__storage__join_group_from_welcome_with_storage(
-    NativePortType port_,
-    JSAny config,
-    JSAny welcome_bytes,
-    JSAny? ratchet_tree_bytes,
-    JSAny signer_bytes,
-    JSAny storage_entries,
-    int storage_format_version,
-  ) => wasmModule
-      .wire__crate__api__storage__join_group_from_welcome_with_storage(
-        port_,
-        config,
-        welcome_bytes,
-        ratchet_tree_bytes,
-        signer_bytes,
-        storage_entries,
-        storage_format_version,
-      );
-
-  void wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2(
+  void wire__crate__api__group_e2ee__join_group_from_welcome_with_storage(
     NativePortType port_,
     JSAny config,
     JSAny welcome_bytes,
@@ -1493,7 +1317,7 @@ class RustLibWire implements BaseWire {
     JSAny storage_entries,
     int storage_format_version,
   ) => wasmModule
-      .wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2(
+      .wire__crate__api__group_e2ee__join_group_from_welcome_with_storage(
         port_,
         config,
         welcome_bytes,
@@ -1555,23 +1379,7 @@ class RustLibWire implements BaseWire {
   wire__crate__api__storage__mls_storage_format_version() =>
       wasmModule.wire__crate__api__storage__mls_storage_format_version();
 
-  void wire__crate__api__storage__process_message_with_storage(
-    NativePortType port_,
-    JSAny group_id,
-    JSAny message_bytes,
-    JSAny expected_aad,
-    JSAny storage_entries,
-    int storage_format_version,
-  ) => wasmModule.wire__crate__api__storage__process_message_with_storage(
-    port_,
-    group_id,
-    message_bytes,
-    expected_aad,
-    storage_entries,
-    storage_format_version,
-  );
-
-  void wire__crate__api__group_e2ee__process_message_with_storage_v2(
+  void wire__crate__api__group_e2ee__process_message_with_storage(
     NativePortType port_,
     JSAny group_id,
     JSAny message_bytes,
@@ -1580,7 +1388,7 @@ class RustLibWire implements BaseWire {
     JSAny expected_resulting_state,
     JSAny storage_entries,
     int storage_format_version,
-  ) => wasmModule.wire__crate__api__group_e2ee__process_message_with_storage_v2(
+  ) => wasmModule.wire__crate__api__group_e2ee__process_message_with_storage(
     port_,
     group_id,
     message_bytes,
@@ -1756,18 +1564,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme(int that);
 
-  external void wire__crate__api__storage__add_members_with_storage(
-    NativePortType port_,
-    JSAny group_id,
-    JSAny signer_bytes,
-    JSAny key_packages_bytes,
-    JSAny expected_credential_identities,
-    JSAny aad,
-    JSAny storage_entries,
-    int storage_format_version,
-  );
-
-  external void wire__crate__api__group_e2ee__add_members_with_storage_v2(
+  external void wire__crate__api__group_e2ee__add_members_with_storage(
     NativePortType port_,
     JSAny group_id,
     JSAny signer_bytes,
@@ -1778,19 +1575,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     int storage_format_version,
   );
 
-  external void wire__crate__api__storage__create_group_with_storage(
-    NativePortType port_,
-    JSAny config,
-    JSAny signer_bytes,
-    JSAny credential_identity,
-    JSAny signer_public_key,
-    JSAny? group_id,
-    JSAny? credential_bytes,
-    JSAny storage_entries,
-    int storage_format_version,
-  );
-
-  external void wire__crate__api__group_e2ee__create_group_with_storage_v2(
+  external void wire__crate__api__group_e2ee__create_group_with_storage(
     NativePortType port_,
     JSAny config,
     JSAny signer_bytes,
@@ -1835,18 +1620,8 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__init__is_openmls_initialized();
 
-  external void wire__crate__api__storage__join_group_from_welcome_with_storage(
-    NativePortType port_,
-    JSAny config,
-    JSAny welcome_bytes,
-    JSAny? ratchet_tree_bytes,
-    JSAny signer_bytes,
-    JSAny storage_entries,
-    int storage_format_version,
-  );
-
   external void
-  wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_v2(
+  wire__crate__api__group_e2ee__join_group_from_welcome_with_storage(
     NativePortType port_,
     JSAny config,
     JSAny welcome_bytes,
@@ -1886,16 +1661,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__storage__mls_storage_format_version();
 
-  external void wire__crate__api__storage__process_message_with_storage(
-    NativePortType port_,
-    JSAny group_id,
-    JSAny message_bytes,
-    JSAny expected_aad,
-    JSAny storage_entries,
-    int storage_format_version,
-  );
-
-  external void wire__crate__api__group_e2ee__process_message_with_storage_v2(
+  external void wire__crate__api__group_e2ee__process_message_with_storage(
     NativePortType port_,
     JSAny group_id,
     JSAny message_bytes,

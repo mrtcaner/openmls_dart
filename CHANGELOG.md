@@ -4,6 +4,35 @@
 
 #### ✨ Highlights
 
+- **openmls_frb v3.0.0** — one strict caller-owned MLS API for direct and group E2EE
+
+### Changed
+
+- The strict roster-authority create, add, Welcome join, and received-message
+  operations now use the unsuffixed public names and strict unsuffixed result
+  types. Direct and group conversations use the same package API; roster-size
+  policy remains a consumer responsibility.
+- Dart package and native bridge versions advance to 3.0.0 because the public
+  Dart functions, result types, and native symbols change. Opaque caller-owned
+  MLS storage remains format version 1 and requires no package storage
+  migration.
+
+### Removed
+
+- The weak legacy create/add/join/process implementations and their legacy-only
+  result types.
+- The temporary `V2` function and result-type names. No compatibility aliases
+  or direct-only package mode remain.
+
+These changes are tracked in
+[`mrtcaner/openmls_dart#28`](https://github.com/mrtcaner/openmls_dart/issues/28).
+
+## [2.1.0] - 2026-08-02
+
+### For Users
+
+#### ✨ Highlights
+
 - **openmls_frb v2.1.0** — Rust FFI bindings
 
 ### Added

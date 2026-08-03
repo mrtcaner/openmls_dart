@@ -71,13 +71,13 @@ pub struct MlsAuthorizedSelfV1 {
     pub expected_signature_public_key: Vec<u8>,
 }
 
-pub struct CreateGroupWithStorageV2Result {
+pub struct CreateGroupWithStorageResult {
     pub group_id: Vec<u8>,
     pub resulting_roster: MlsRosterSummaryV1,
     pub storage_batch: MlsStorageBatch,
 }
 
-pub struct JoinGroupWithStorageV2Result {
+pub struct JoinGroupWithStorageResult {
     pub group_id: Vec<u8>,
     pub resulting_roster: MlsRosterSummaryV1,
     pub storage_batch: MlsStorageBatch,
@@ -94,7 +94,7 @@ pub struct PreparedCommitWithStorageResult {
     pub storage_batch: MlsStorageBatch,
 }
 
-pub struct ProcessMessageWithStorageV2Result {
+pub struct ProcessMessageWithStorageResult {
     pub message_type: ProcessedMessageType,
     pub sender_index: Option<u32>,
     pub previous_epoch: u64,
@@ -137,7 +137,7 @@ pub fn mls_group_state_digest(
 
 /// Create an owner-only group with an explicit server-issued group ID.
 #[allow(clippy::too_many_arguments)]
-pub fn create_group_with_storage_v2(
+pub fn create_group_with_storage(
     config: MlsGroupConfig,
     signer_bytes: Vec<u8>,
     explicit_group_id: Vec<u8>,
@@ -145,7 +145,7 @@ pub fn create_group_with_storage_v2(
     credential_bytes: Option<Vec<u8>>,
     mut storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<CreateGroupWithStorageV2Result, String> {
+) -> Result<CreateGroupWithStorageResult, String> {
     if explicit_group_id.is_empty() {
         zeroize_entry_values(&mut storage_entries);
         return Err("Explicit MLS group ID must not be empty".to_string());
@@ -183,7 +183,7 @@ pub fn create_group_with_storage_v2(
         return Err("Created owner leaf does not match expected owner authority".to_string());
     }
     let storage_batch = batch_from_provider(provider, Some(explicit_group_id.clone()), Vec::new())?;
-    Ok(CreateGroupWithStorageV2Result {
+    Ok(CreateGroupWithStorageResult {
         group_id: explicit_group_id,
         resulting_roster,
         storage_batch,
@@ -191,7 +191,7 @@ pub fn create_group_with_storage_v2(
 }
 
 /// Add exact authorized members and return deferred candidate state.
-pub fn add_members_with_storage_v2(
+pub fn add_members_with_storage(
     group_id: Vec<u8>,
     signer_bytes: Vec<u8>,
     additions: Vec<MlsAuthorizedKeyPackageV1>,
@@ -377,7 +377,7 @@ pub fn self_update_with_storage(
 }
 
 /// Join a Welcome only when its installed state matches canonical authority.
-pub fn join_group_from_welcome_with_storage_v2(
+pub fn join_group_from_welcome_with_storage(
     config: MlsGroupConfig,
     welcome_bytes: Vec<u8>,
     ratchet_tree_bytes: Option<Vec<u8>>,
@@ -385,7 +385,7 @@ pub fn join_group_from_welcome_with_storage_v2(
     expected_resulting_state: MlsExpectedRosterStateV1,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<JoinGroupWithStorageV2Result, String> {
+) -> Result<JoinGroupWithStorageResult, String> {
     let provider = provider_from_entries(storage_entries, storage_format_version, None)?;
     let signer = signer_from_bytes(signer_bytes)?;
     signer
@@ -414,7 +414,7 @@ pub fn join_group_from_welcome_with_storage_v2(
     validate_expected_roster(&resulting_roster, &expected_resulting_state, "resulting")?;
     let group_id = resulting_roster.group_id.clone();
     let storage_batch = batch_from_provider(provider, Some(group_id.clone()), Vec::new())?;
-    Ok(JoinGroupWithStorageV2Result {
+    Ok(JoinGroupWithStorageResult {
         group_id,
         resulting_roster,
         storage_batch,
@@ -422,7 +422,7 @@ pub fn join_group_from_welcome_with_storage_v2(
 }
 
 /// Process a message only when both base and resulting roster authority match.
-pub fn process_message_with_storage_v2(
+pub fn process_message_with_storage(
     group_id: Vec<u8>,
     message_bytes: Vec<u8>,
     expected_aad: Vec<u8>,
@@ -430,7 +430,7 @@ pub fn process_message_with_storage_v2(
     expected_resulting_state: MlsExpectedRosterStateV1,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<ProcessMessageWithStorageV2Result, String> {
+) -> Result<ProcessMessageWithStorageResult, String> {
     let provider = provider_from_entries(storage_entries, storage_format_version, Some(&group_id))?;
     let mut group = load_group(&group_id, &provider)?;
     let previous_roster = roster_from_group(&group)?;
@@ -484,7 +484,7 @@ pub fn process_message_with_storage_v2(
     let previous_epoch = previous_roster.epoch;
     let resulting_epoch = resulting_roster.epoch;
     let storage_batch = batch_from_provider(provider, Some(group_id), Vec::new())?;
-    Ok(ProcessMessageWithStorageV2Result {
+    Ok(ProcessMessageWithStorageResult {
         message_type,
         sender_index,
         previous_epoch,

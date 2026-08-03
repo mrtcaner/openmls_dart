@@ -4,7 +4,6 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
-import 'config.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
@@ -36,68 +35,6 @@ Future<CreateKeyPackageWithStorageResult> createKeyPackageWithStorage({
   storageFormatVersion: storageFormatVersion,
 );
 
-/// Create a group from caller-owned global state without writing a database.
-Future<CreateGroupWithStorageResult> createGroupWithStorage({
-  required MlsGroupConfig config,
-  required List<int> signerBytes,
-  required List<int> credentialIdentity,
-  required List<int> signerPublicKey,
-  Uint8List? groupId,
-  Uint8List? credentialBytes,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiStorageCreateGroupWithStorage(
-  config: config,
-  signerBytes: signerBytes,
-  credentialIdentity: credentialIdentity,
-  signerPublicKey: signerPublicKey,
-  groupId: groupId,
-  credentialBytes: credentialBytes,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
-
-/// Add members and merge the pending commit against caller-owned group state.
-///
-/// Each validated KeyPackage must contain a Basic Credential whose identity
-/// exactly matches the corresponding caller-supplied expected identity. A
-/// mismatch fails before group state changes are returned. `aad` is
-/// authenticated as part of the add-member Commit.
-Future<AddMembersWithStorageResult> addMembersWithStorage({
-  required List<int> groupId,
-  required List<int> signerBytes,
-  required List<Uint8List> keyPackagesBytes,
-  required List<Uint8List> expectedCredentialIdentities,
-  required List<int> aad,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiStorageAddMembersWithStorage(
-  groupId: groupId,
-  signerBytes: signerBytes,
-  keyPackagesBytes: keyPackagesBytes,
-  expectedCredentialIdentities: expectedCredentialIdentities,
-  aad: aad,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
-
-/// Join a group from a Welcome using caller-owned global state.
-Future<JoinGroupWithStorageResult> joinGroupFromWelcomeWithStorage({
-  required MlsGroupConfig config,
-  required List<int> welcomeBytes,
-  Uint8List? ratchetTreeBytes,
-  required List<int> signerBytes,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiStorageJoinGroupFromWelcomeWithStorage(
-  config: config,
-  welcomeBytes: welcomeBytes,
-  ratchetTreeBytes: ratchetTreeBytes,
-  signerBytes: signerBytes,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
-
 /// Create an application message and return its sender-state changes.
 Future<CreateMessageWithStorageResult> createMessageWithStorage({
   required List<int> groupId,
@@ -115,24 +52,6 @@ Future<CreateMessageWithStorageResult> createMessageWithStorage({
   storageFormatVersion: storageFormatVersion,
 );
 
-/// Process an application, proposal, or commit message against caller state.
-///
-/// The authenticated message AAD must match `expected_aad` byte-for-byte. A
-/// mismatch returns no storage batch.
-Future<ProcessMessageWithStorageResult> processMessageWithStorage({
-  required List<int> groupId,
-  required List<int> messageBytes,
-  required List<int> expectedAad,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiStorageProcessMessageWithStorage(
-  groupId: groupId,
-  messageBytes: messageBytes,
-  expectedAad: expectedAad,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
-
 /// Delete a group and represent the complete group removal in one batch.
 Future<MlsStorageBatch> deleteGroupWithStorage({
   required List<int> groupId,
@@ -143,58 +62,6 @@ Future<MlsStorageBatch> deleteGroupWithStorage({
   storageEntries: storageEntries,
   storageFormatVersion: storageFormatVersion,
 );
-
-class AddMembersWithStorageResult {
-  final Uint8List commit;
-  final Uint8List welcome;
-  final Uint8List? groupInfo;
-  final MlsStorageBatch storageBatch;
-
-  const AddMembersWithStorageResult({
-    required this.commit,
-    required this.welcome,
-    this.groupInfo,
-    required this.storageBatch,
-  });
-
-  @override
-  int get hashCode =>
-      commit.hashCode ^
-      welcome.hashCode ^
-      groupInfo.hashCode ^
-      storageBatch.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AddMembersWithStorageResult &&
-          runtimeType == other.runtimeType &&
-          commit == other.commit &&
-          welcome == other.welcome &&
-          groupInfo == other.groupInfo &&
-          storageBatch == other.storageBatch;
-}
-
-class CreateGroupWithStorageResult {
-  final Uint8List groupId;
-  final MlsStorageBatch storageBatch;
-
-  const CreateGroupWithStorageResult({
-    required this.groupId,
-    required this.storageBatch,
-  });
-
-  @override
-  int get hashCode => groupId.hashCode ^ storageBatch.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is CreateGroupWithStorageResult &&
-          runtimeType == other.runtimeType &&
-          groupId == other.groupId &&
-          storageBatch == other.storageBatch;
-}
 
 /// Key package bytes and the state changes that created them.
 class CreateKeyPackageWithStorageResult {
@@ -236,27 +103,6 @@ class CreateMessageWithStorageResult {
       other is CreateMessageWithStorageResult &&
           runtimeType == other.runtimeType &&
           ciphertext == other.ciphertext &&
-          storageBatch == other.storageBatch;
-}
-
-class JoinGroupWithStorageResult {
-  final Uint8List groupId;
-  final MlsStorageBatch storageBatch;
-
-  const JoinGroupWithStorageResult({
-    required this.groupId,
-    required this.storageBatch,
-  });
-
-  @override
-  int get hashCode => groupId.hashCode ^ storageBatch.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is JoinGroupWithStorageResult &&
-          runtimeType == other.runtimeType &&
-          groupId == other.groupId &&
           storageBatch == other.storageBatch;
 }
 
@@ -313,59 +159,4 @@ class MlsStorageEntry {
           key == other.key &&
           value == other.value &&
           groupId == other.groupId;
-}
-
-class ProcessMessageWithStorageResult {
-  final ProcessedMessageType messageType;
-  final int? senderIndex;
-
-  /// Group epoch before applying this processed message's state transition.
-  final BigInt previousEpoch;
-
-  /// Group epoch represented by the returned storage batch.
-  final BigInt resultingEpoch;
-  final Uint8List? applicationMessage;
-  final bool hasStagedCommit;
-  final bool hasProposal;
-  final MlsProposalType? proposalType;
-  final MlsStorageBatch storageBatch;
-
-  const ProcessMessageWithStorageResult({
-    required this.messageType,
-    this.senderIndex,
-    required this.previousEpoch,
-    required this.resultingEpoch,
-    this.applicationMessage,
-    required this.hasStagedCommit,
-    required this.hasProposal,
-    this.proposalType,
-    required this.storageBatch,
-  });
-
-  @override
-  int get hashCode =>
-      messageType.hashCode ^
-      senderIndex.hashCode ^
-      previousEpoch.hashCode ^
-      resultingEpoch.hashCode ^
-      applicationMessage.hashCode ^
-      hasStagedCommit.hashCode ^
-      hasProposal.hashCode ^
-      proposalType.hashCode ^
-      storageBatch.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ProcessMessageWithStorageResult &&
-          runtimeType == other.runtimeType &&
-          messageType == other.messageType &&
-          senderIndex == other.senderIndex &&
-          previousEpoch == other.previousEpoch &&
-          resultingEpoch == other.resultingEpoch &&
-          applicationMessage == other.applicationMessage &&
-          hasStagedCommit == other.hasStagedCommit &&
-          hasProposal == other.hasProposal &&
-          proposalType == other.proposalType &&
-          storageBatch == other.storageBatch;
 }

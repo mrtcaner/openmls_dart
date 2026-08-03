@@ -38,7 +38,7 @@ Uint8List mlsGroupStateDigest({
 );
 
 /// Create an owner-only group with an explicit server-issued group ID.
-Future<CreateGroupWithStorageV2Result> createGroupWithStorageV2({
+Future<CreateGroupWithStorageResult> createGroupWithStorage({
   required MlsGroupConfig config,
   required List<int> signerBytes,
   required List<int> explicitGroupId,
@@ -46,7 +46,7 @@ Future<CreateGroupWithStorageV2Result> createGroupWithStorageV2({
   Uint8List? credentialBytes,
   required List<MlsStorageEntry> storageEntries,
   required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeCreateGroupWithStorageV2(
+}) => RustLib.instance.api.crateApiGroupE2EeCreateGroupWithStorage(
   config: config,
   signerBytes: signerBytes,
   explicitGroupId: explicitGroupId,
@@ -57,7 +57,7 @@ Future<CreateGroupWithStorageV2Result> createGroupWithStorageV2({
 );
 
 /// Add exact authorized members and return deferred candidate state.
-Future<PreparedCommitWithStorageResult> addMembersWithStorageV2({
+Future<PreparedCommitWithStorageResult> addMembersWithStorage({
   required List<int> groupId,
   required List<int> signerBytes,
   required List<MlsAuthorizedKeyPackageV1> additions,
@@ -65,7 +65,7 @@ Future<PreparedCommitWithStorageResult> addMembersWithStorageV2({
   required MlsExpectedRosterStateV1 expectedPreviousState,
   required List<MlsStorageEntry> storageEntries,
   required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeAddMembersWithStorageV2(
+}) => RustLib.instance.api.crateApiGroupE2EeAddMembersWithStorage(
   groupId: groupId,
   signerBytes: signerBytes,
   additions: additions,
@@ -135,7 +135,7 @@ Future<PreparedCommitWithStorageResult> selfUpdateWithStorage({
 );
 
 /// Join a Welcome only when its installed state matches canonical authority.
-Future<JoinGroupWithStorageV2Result> joinGroupFromWelcomeWithStorageV2({
+Future<JoinGroupWithStorageResult> joinGroupFromWelcomeWithStorage({
   required MlsGroupConfig config,
   required List<int> welcomeBytes,
   Uint8List? ratchetTreeBytes,
@@ -143,7 +143,7 @@ Future<JoinGroupWithStorageV2Result> joinGroupFromWelcomeWithStorageV2({
   required MlsExpectedRosterStateV1 expectedResultingState,
   required List<MlsStorageEntry> storageEntries,
   required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeJoinGroupFromWelcomeWithStorageV2(
+}) => RustLib.instance.api.crateApiGroupE2EeJoinGroupFromWelcomeWithStorage(
   config: config,
   welcomeBytes: welcomeBytes,
   ratchetTreeBytes: ratchetTreeBytes,
@@ -154,7 +154,7 @@ Future<JoinGroupWithStorageV2Result> joinGroupFromWelcomeWithStorageV2({
 );
 
 /// Process a message only when both base and resulting roster authority match.
-Future<ProcessMessageWithStorageV2Result> processMessageWithStorageV2({
+Future<ProcessMessageWithStorageResult> processMessageWithStorage({
   required List<int> groupId,
   required List<int> messageBytes,
   required List<int> expectedAad,
@@ -162,7 +162,7 @@ Future<ProcessMessageWithStorageV2Result> processMessageWithStorageV2({
   required MlsExpectedRosterStateV1 expectedResultingState,
   required List<MlsStorageEntry> storageEntries,
   required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeProcessMessageWithStorageV2(
+}) => RustLib.instance.api.crateApiGroupE2EeProcessMessageWithStorage(
   groupId: groupId,
   messageBytes: messageBytes,
   expectedAad: expectedAad,
@@ -172,12 +172,12 @@ Future<ProcessMessageWithStorageV2Result> processMessageWithStorageV2({
   storageFormatVersion: storageFormatVersion,
 );
 
-class CreateGroupWithStorageV2Result {
+class CreateGroupWithStorageResult {
   final Uint8List groupId;
   final MlsRosterSummaryV1 resultingRoster;
   final MlsStorageBatch storageBatch;
 
-  const CreateGroupWithStorageV2Result({
+  const CreateGroupWithStorageResult({
     required this.groupId,
     required this.resultingRoster,
     required this.storageBatch,
@@ -190,19 +190,19 @@ class CreateGroupWithStorageV2Result {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CreateGroupWithStorageV2Result &&
+      other is CreateGroupWithStorageResult &&
           runtimeType == other.runtimeType &&
           groupId == other.groupId &&
           resultingRoster == other.resultingRoster &&
           storageBatch == other.storageBatch;
 }
 
-class JoinGroupWithStorageV2Result {
+class JoinGroupWithStorageResult {
   final Uint8List groupId;
   final MlsRosterSummaryV1 resultingRoster;
   final MlsStorageBatch storageBatch;
 
-  const JoinGroupWithStorageV2Result({
+  const JoinGroupWithStorageResult({
     required this.groupId,
     required this.resultingRoster,
     required this.storageBatch,
@@ -215,7 +215,7 @@ class JoinGroupWithStorageV2Result {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is JoinGroupWithStorageV2Result &&
+      other is JoinGroupWithStorageResult &&
           runtimeType == other.runtimeType &&
           groupId == other.groupId &&
           resultingRoster == other.resultingRoster &&
@@ -454,7 +454,7 @@ class PreparedCommitWithStorageResult {
           storageBatch == other.storageBatch;
 }
 
-class ProcessMessageWithStorageV2Result {
+class ProcessMessageWithStorageResult {
   final ProcessedMessageType messageType;
   final int? senderIndex;
   final BigInt previousEpoch;
@@ -467,7 +467,7 @@ class ProcessMessageWithStorageV2Result {
   final MlsRosterSummaryV1 resultingRoster;
   final MlsStorageBatch storageBatch;
 
-  const ProcessMessageWithStorageV2Result({
+  const ProcessMessageWithStorageResult({
     required this.messageType,
     this.senderIndex,
     required this.previousEpoch,
@@ -498,7 +498,7 @@ class ProcessMessageWithStorageV2Result {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ProcessMessageWithStorageV2Result &&
+      other is ProcessMessageWithStorageResult &&
           runtimeType == other.runtimeType &&
           messageType == other.messageType &&
           senderIndex == other.senderIndex &&
