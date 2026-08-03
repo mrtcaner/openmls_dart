@@ -71,33 +71,33 @@ The public operations are:
 - `createKeyPackageWithStorage()`
 - `createGroupWithStorage()`
 - `addMembersWithStorage()`
+- `removeMembersWithStorage()`
+- `swapMembersWithStorage()`
+- `selfUpdateWithStorage()`
 - `joinGroupFromWelcomeWithStorage()`
 - `createMessageWithStorage()`
 - `processMessageWithStorage()`
 - `deleteGroupWithStorage()`
 
-Strict variable-roster operations retain the original repository's familiar
-member-management vocabulary while using the caller-owned transaction boundary:
-
-- `createGroupWithStorageV2()`
-- `addMembersWithStorageV2()`
-- `removeMembersWithStorage()`
-- `swapMembersWithStorage()`
-- `selfUpdateWithStorage()`
-- `joinGroupFromWelcomeWithStorageV2()`
-- `processMessageWithStorageV2()`
-
-The `V2` create/add/join/process names coexist with the earlier direct-message
-surface. Remove, swap, and self-update are new at this storage boundary and
-therefore need no compatibility suffix. Internally, add/remove/swap share the
-same OpenMLS Commit-builder path that underpinned the former `flexibleCommit`
-API; the package does not restore `MlsEngine` or its database.
+This is one roster-neutral MLS surface for direct and group conversations.
+Direct-chat roster size is application policy: consumers enforce exactly two
+active installations when a direct conversation is send-usable. Internally,
+add/remove/swap share the OpenMLS Commit-builder path that underpinned the
+former `flexibleCommit` API; the package does not restore `MlsEngine` or its
+database.
 
 ### Authentication boundaries
 
-`addMembersWithStorage()` requires one expected Basic Credential identity for each KeyPackage and authenticates the supplied AAD in the resulting Commit. A mismatch returns no mutation batch.
+`createGroupWithStorage()` requires an explicit application-issued group ID
+and exact owner credential/signature authority. `addMembersWithStorage()`
+requires exact authorized KeyPackages, including Basic Credential identity and
+signature public key, plus the canonical previous roster. It authenticates the
+supplied AAD in the resulting Commit. A mismatch returns no mutation batch.
 
-`processMessageWithStorage()` requires caller-supplied expected AAD for application and handshake messages. It returns both `previousEpoch` and `resultingEpoch`; a processed Commit normally advances the latter.
+`processMessageWithStorage()` requires caller-supplied expected AAD and
+canonical previous/resulting rosters for application and handshake messages.
+It returns both `previousEpoch` and `resultingEpoch`; a processed Commit
+normally advances the latter.
 
 An MLS Welcome has no equivalent application AAD field. Bind it to authenticated bootstrap metadata in the application protocol before calling `joinGroupFromWelcomeWithStorage()`.
 
@@ -183,11 +183,12 @@ Three identities move independently:
 - the pinned OpenMLS git tag — protocol implementation version;
 - `pubspec.yaml` — Dart package version.
 
-Removing `MlsEngine` changes the Dart/FRB surface and therefore requires a new major native ABI release. Consumers should pin the exact commit that selects that release.
-
-The strict variable-roster API is additive but introduces new bridge symbols.
-It begins with native `openmls_frb` 2.1.0 and Dart package 2.1.0; older 2.0.x
-archives cannot be used with the generated 2.1.0 bindings.
+Removing `MlsEngine` changed the Dart/FRB surface in 2.0.0. Version 3.0.0 makes
+the strict roster-authority operations the only create/add/join/process API and
+removes the temporary weak and `V2` symbols. This is intentionally breaking at
+the Dart and native symbol boundaries, while caller-owned MLS storage format
+remains version `1`. Consumers must pin the exact reviewed package revision and
+matching `openmls_frb` 3.0.0 release.
 
 ## Security
 

@@ -10,10 +10,9 @@ use openmls::prelude::tls_codec::Serialize as TlsSerialize;
 use openmls::prelude::*;
 use zeroize::Zeroize;
 
-use super::config::MlsGroupConfig;
 use super::keys::signer_from_bytes;
-use super::support::{build_credential_with_key, load_group, mls_message_from_exact_bytes};
-use super::types::{MlsCiphersuite, MlsProposalType, ProcessedMessageType, ciphersuite_to_native};
+use super::support::{build_credential_with_key, load_group};
+use super::types::{MlsCiphersuite, ciphersuite_to_native};
 use crate::snapshot_storage::{
     SnapshotOpenMlsProvider, SnapshotStorageProvider, StorageUpdates, is_global_key,
 };
@@ -45,39 +44,8 @@ pub struct CreateKeyPackageWithStorageResult {
     pub storage_batch: MlsStorageBatch,
 }
 
-pub struct CreateGroupWithStorageResult {
-    pub group_id: Vec<u8>,
-    pub storage_batch: MlsStorageBatch,
-}
-
-pub struct AddMembersWithStorageResult {
-    pub commit: Vec<u8>,
-    pub welcome: Vec<u8>,
-    pub group_info: Option<Vec<u8>>,
-    pub storage_batch: MlsStorageBatch,
-}
-
-pub struct JoinGroupWithStorageResult {
-    pub group_id: Vec<u8>,
-    pub storage_batch: MlsStorageBatch,
-}
-
 pub struct CreateMessageWithStorageResult {
     pub ciphertext: Vec<u8>,
-    pub storage_batch: MlsStorageBatch,
-}
-
-pub struct ProcessMessageWithStorageResult {
-    pub message_type: ProcessedMessageType,
-    pub sender_index: Option<u32>,
-    /// Group epoch before applying this processed message's state transition.
-    pub previous_epoch: u64,
-    /// Group epoch represented by the returned storage batch.
-    pub resulting_epoch: u64,
-    pub application_message: Option<Vec<u8>>,
-    pub has_staged_commit: bool,
-    pub has_proposal: bool,
-    pub proposal_type: Option<MlsProposalType>,
     pub storage_batch: MlsStorageBatch,
 }
 
@@ -129,172 +97,6 @@ pub fn create_key_package_with_storage(
     })
 }
 
-/// Create a group from caller-owned global state without writing a database.
-#[allow(clippy::too_many_arguments)]
-pub fn create_group_with_storage(
-    config: MlsGroupConfig,
-    signer_bytes: Vec<u8>,
-    credential_identity: Vec<u8>,
-    signer_public_key: Vec<u8>,
-    group_id: Option<Vec<u8>>,
-    credential_bytes: Option<Vec<u8>>,
-    storage_entries: Vec<MlsStorageEntry>,
-    storage_format_version: u32,
-) -> Result<CreateGroupWithStorageResult, String> {
-    let provider = provider_from_entries(storage_entries, storage_format_version, None)?;
-    let signer = signer_from_bytes(signer_bytes)?;
-    let credential_with_key = build_credential_with_key(
-        &credential_identity,
-        &signer_public_key,
-        credential_bytes.as_deref(),
-    )?;
-    let create_config = config.to_create_config();
-
-    signer
-        .store(provider.storage())
-        .map_err(|e| format!("Failed to store signer: {e}"))?;
-
-    let group = if let Some(group_id) = group_id {
-        MlsGroup::new_with_group_id(
-            &provider,
-            &signer,
-            &create_config,
-            GroupId::from_slice(&group_id),
-            credential_with_key,
-        )
-    } else {
-        MlsGroup::new(&provider, &signer, &create_config, credential_with_key)
-    }
-    .map_err(|e| format!("Failed to create group: {e}"))?;
-
-    let group_id = group.group_id().as_slice().to_vec();
-    let storage_batch = batch_from_provider(provider, Some(group_id.clone()), Vec::new())?;
-
-    Ok(CreateGroupWithStorageResult {
-        group_id,
-        storage_batch,
-    })
-}
-
-/// Add members and merge the pending commit against caller-owned group state.
-///
-/// Each validated KeyPackage must contain a Basic Credential whose identity
-/// exactly matches the corresponding caller-supplied expected identity. A
-/// mismatch fails before group state changes are returned. `aad` is
-/// authenticated as part of the add-member Commit.
-pub fn add_members_with_storage(
-    group_id: Vec<u8>,
-    signer_bytes: Vec<u8>,
-    key_packages_bytes: Vec<Vec<u8>>,
-    expected_credential_identities: Vec<Vec<u8>>,
-    aad: Vec<u8>,
-    storage_entries: Vec<MlsStorageEntry>,
-    storage_format_version: u32,
-) -> Result<AddMembersWithStorageResult, String> {
-    let provider = provider_from_entries(storage_entries, storage_format_version, Some(&group_id))?;
-    let signer = signer_from_bytes(signer_bytes)?;
-
-    if key_packages_bytes.len() != expected_credential_identities.len() {
-        return Err(format!(
-            "Key package count ({}) does not match expected credential identity count ({})",
-            key_packages_bytes.len(),
-            expected_credential_identities.len()
-        ));
-    }
-
-    let mut group = load_group(&group_id, &provider)?;
-
-    let mut key_packages = Vec::with_capacity(key_packages_bytes.len());
-    for (key_package_bytes, expected_credential_identity) in key_packages_bytes
-        .into_iter()
-        .zip(expected_credential_identities)
-    {
-        let key_package = KeyPackageIn::tls_deserialize_exact_bytes(&key_package_bytes)
-            .map_err(|e| format!("Failed to deserialize key package: {e}"))?
-            .validate(provider.crypto(), ProtocolVersion::Mls10)
-            .map_err(|e| format!("Failed to validate key package: {e}"))?;
-        let credential = BasicCredential::try_from(key_package.leaf_node().credential().clone())
-            .map_err(|_| "Key package does not contain a Basic Credential".to_string())?;
-        if credential.identity() != expected_credential_identity {
-            return Err(
-                "Key package credential identity does not match the expected identity".to_string(),
-            );
-        }
-        key_packages.push(key_package);
-    }
-
-    group.set_aad(aad);
-    let (commit, welcome, group_info) = group
-        .add_members(&provider, &signer, &key_packages)
-        .map_err(|e| format!("Failed to add members: {e}"))?;
-    group
-        .merge_pending_commit(&provider)
-        .map_err(|e| format!("Failed to merge pending commit: {e}"))?;
-
-    let commit = commit
-        .tls_serialize_detached()
-        .map_err(|e| format!("Failed to serialize commit: {e}"))?;
-    let welcome = welcome
-        .tls_serialize_detached()
-        .map_err(|e| format!("Failed to serialize welcome: {e}"))?;
-    let group_info = group_info
-        .map(|message| message.tls_serialize_detached())
-        .transpose()
-        .map_err(|e| format!("Failed to serialize group info: {e}"))?;
-    let storage_batch = batch_from_provider(provider, Some(group_id), Vec::new())?;
-
-    Ok(AddMembersWithStorageResult {
-        commit,
-        welcome,
-        group_info,
-        storage_batch,
-    })
-}
-
-/// Join a group from a Welcome using caller-owned global state.
-pub fn join_group_from_welcome_with_storage(
-    config: MlsGroupConfig,
-    welcome_bytes: Vec<u8>,
-    ratchet_tree_bytes: Option<Vec<u8>>,
-    signer_bytes: Vec<u8>,
-    storage_entries: Vec<MlsStorageEntry>,
-    storage_format_version: u32,
-) -> Result<JoinGroupWithStorageResult, String> {
-    let provider = provider_from_entries(storage_entries, storage_format_version, None)?;
-    let signer = signer_from_bytes(signer_bytes)?;
-
-    signer
-        .store(provider.storage())
-        .map_err(|e| format!("Failed to store signer: {e}"))?;
-
-    let welcome_message = mls_message_from_exact_bytes(&welcome_bytes)
-        .map_err(|e| format!("Failed to deserialize welcome: {e}"))?;
-    let welcome = match welcome_message.extract() {
-        MlsMessageBodyIn::Welcome(welcome) => welcome,
-        _ => return Err("Message is not a Welcome".to_string()),
-    };
-    let ratchet_tree: Option<RatchetTreeIn> = ratchet_tree_bytes
-        .map(|bytes| {
-            RatchetTreeIn::tls_deserialize_exact_bytes(&bytes)
-                .map_err(|e| format!("Failed to deserialize ratchet tree: {e}"))
-        })
-        .transpose()?;
-
-    let staged =
-        StagedWelcome::new_from_welcome(&provider, &config.to_join_config(), welcome, ratchet_tree)
-            .map_err(|e| format!("Failed to process welcome: {e}"))?;
-    let group = staged
-        .into_group(&provider)
-        .map_err(|e| format!("Failed to join group from welcome: {e}"))?;
-    let group_id = group.group_id().as_slice().to_vec();
-    let storage_batch = batch_from_provider(provider, Some(group_id.clone()), Vec::new())?;
-
-    Ok(JoinGroupWithStorageResult {
-        group_id,
-        storage_batch,
-    })
-}
-
 /// Create an application message and return its sender-state changes.
 pub fn create_message_with_storage(
     group_id: Vec<u8>,
@@ -319,91 +121,6 @@ pub fn create_message_with_storage(
 
     Ok(CreateMessageWithStorageResult {
         ciphertext,
-        storage_batch,
-    })
-}
-
-/// Process an application, proposal, or commit message against caller state.
-///
-/// The authenticated message AAD must match `expected_aad` byte-for-byte. A
-/// mismatch returns no storage batch.
-pub fn process_message_with_storage(
-    group_id: Vec<u8>,
-    message_bytes: Vec<u8>,
-    expected_aad: Vec<u8>,
-    storage_entries: Vec<MlsStorageEntry>,
-    storage_format_version: u32,
-) -> Result<ProcessMessageWithStorageResult, String> {
-    let provider = provider_from_entries(storage_entries, storage_format_version, Some(&group_id))?;
-    let mut group = load_group(&group_id, &provider)?;
-    let message = mls_message_from_exact_bytes(&message_bytes)
-        .map_err(|e| format!("Failed to deserialize message: {e}"))?
-        .try_into_protocol_message()
-        .map_err(|e| format!("Not a protocol message: {e}"))?;
-    let processed = group
-        .process_message(&provider, message)
-        .map_err(|e| format!("Failed to process message: {e}"))?;
-
-    if processed.aad() != expected_aad {
-        return Err("Message AAD does not match the expected AAD".to_string());
-    }
-
-    let sender_index = match processed.sender() {
-        Sender::Member(index) => Some(index.u32()),
-        _ => None,
-    };
-    let previous_epoch = group.epoch().as_u64();
-    let (message_type, application_message, has_staged_commit, has_proposal, proposal_type) =
-        match processed.into_content() {
-            ProcessedMessageContent::ApplicationMessage(message) => (
-                ProcessedMessageType::Application,
-                Some(message.into_bytes()),
-                false,
-                false,
-                None,
-            ),
-            ProcessedMessageContent::StagedCommitMessage(commit) => {
-                group
-                    .merge_staged_commit(&provider, *commit)
-                    .map_err(|e| format!("Failed to merge staged commit: {e}"))?;
-                (ProcessedMessageType::StagedCommit, None, true, false, None)
-            }
-            ProcessedMessageContent::ProposalMessage(proposal) => {
-                let proposal_type = match proposal.proposal() {
-                    Proposal::Add(_) => MlsProposalType::Add,
-                    Proposal::Remove(_) => MlsProposalType::Remove,
-                    Proposal::Update(_) => MlsProposalType::Update,
-                    Proposal::PreSharedKey(_) => MlsProposalType::PreSharedKey,
-                    Proposal::ReInit(_) => MlsProposalType::Reinit,
-                    Proposal::ExternalInit(_) => MlsProposalType::ExternalInit,
-                    Proposal::GroupContextExtensions(_) => MlsProposalType::GroupContextExtensions,
-                    _ => MlsProposalType::Custom,
-                };
-                group
-                    .store_pending_proposal(provider.storage(), *proposal)
-                    .map_err(|e| format!("Failed to store pending proposal: {e}"))?;
-                (
-                    ProcessedMessageType::Proposal,
-                    None,
-                    false,
-                    true,
-                    Some(proposal_type),
-                )
-            }
-            _ => return Err("Unknown processed message content type".to_string()),
-        };
-    let resulting_epoch = group.epoch().as_u64();
-    let storage_batch = batch_from_provider(provider, Some(group_id), Vec::new())?;
-
-    Ok(ProcessMessageWithStorageResult {
-        message_type,
-        sender_index,
-        previous_epoch,
-        resulting_epoch,
-        application_message,
-        has_staged_commit,
-        has_proposal,
-        proposal_type,
         storage_batch,
     })
 }

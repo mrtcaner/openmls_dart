@@ -96,6 +96,7 @@ void main() {
       final bob = TestIdentity.create('bob-credential-check');
       final aliceStore = _MemoryMlsStore();
       final bobStore = _MemoryMlsStore();
+      final groupId = utf8.encode('credential-check-group');
 
       final bobKeyPackage = await _createKeyPackage(
         bob,
@@ -106,8 +107,11 @@ void main() {
       final created = await createGroupWithStorage(
         config: defaultConfig(),
         signerBytes: alice.signerBytes,
-        credentialIdentity: alice.credentialIdentity,
-        signerPublicKey: alice.publicKey,
+        explicitGroupId: groupId,
+        expectedOwnerAuthority: MlsAuthorizedOwnerV1(
+          expectedCredentialIdentity: alice.credentialIdentity,
+          expectedSignaturePublicKey: alice.publicKey,
+        ),
         storageEntries: aliceStore.globalSnapshot,
         storageFormatVersion: aliceStore.formatVersion,
       );
@@ -118,36 +122,24 @@ void main() {
         addMembersWithStorage(
           groupId: created.groupId,
           signerBytes: alice.signerBytes,
-          keyPackagesBytes: [bobKeyPackage.keyPackageBytes],
-          expectedCredentialIdentities: [alice.credentialIdentity],
-          aad: utf8.encode('credential-check/add-member'),
-          storageEntries: aliceStore.forGroup(created.groupId),
-          storageFormatVersion: aliceStore.formatVersion,
-        ),
-        throwsA(
-          predicate<Object>(
-            (error) => error.toString().contains(
-              'Key package credential identity does not match',
+          additions: [
+            MlsAuthorizedKeyPackageV1(
+              keyPackageBytes: bobKeyPackage.keyPackageBytes,
+              expectedCredentialIdentity: utf8.encode(
+                'different-authorized-installation',
+              ),
+              expectedSignaturePublicKey: bob.publicKey,
             ),
-          ),
-        ),
-      );
-      expect(aliceStore.fingerprint, beforeMismatch);
-
-      await expectLater(
-        addMembersWithStorage(
-          groupId: created.groupId,
-          signerBytes: alice.signerBytes,
-          keyPackagesBytes: [bobKeyPackage.keyPackageBytes],
-          expectedCredentialIdentities: const [],
+          ],
           aad: utf8.encode('credential-check/add-member'),
+          expectedPreviousState: _expected(created.resultingRoster),
           storageEntries: aliceStore.forGroup(created.groupId),
           storageFormatVersion: aliceStore.formatVersion,
         ),
         throwsA(
           predicate<Object>(
             (error) => error.toString().contains(
-              'does not match expected credential identity count',
+              'Key package credential identity does not match expected authority',
             ),
           ),
         ),
@@ -162,6 +154,7 @@ void main() {
       final aliceStore = _MemoryMlsStore();
       final bobStore = _MemoryMlsStore();
       final charlieStore = _MemoryMlsStore();
+      final groupId = utf8.encode('conversation-1');
 
       final bobKeyPackage = await _createKeyPackage(
         bob,
@@ -172,8 +165,11 @@ void main() {
       final created = await createGroupWithStorage(
         config: defaultConfig(),
         signerBytes: alice.signerBytes,
-        credentialIdentity: alice.credentialIdentity,
-        signerPublicKey: alice.publicKey,
+        explicitGroupId: groupId,
+        expectedOwnerAuthority: MlsAuthorizedOwnerV1(
+          expectedCredentialIdentity: alice.credentialIdentity,
+          expectedSignaturePublicKey: alice.publicKey,
+        ),
         storageEntries: aliceStore.globalSnapshot,
         storageFormatVersion: aliceStore.formatVersion,
       );
@@ -182,9 +178,15 @@ void main() {
       final addedBob = await addMembersWithStorage(
         groupId: created.groupId,
         signerBytes: alice.signerBytes,
-        keyPackagesBytes: [bobKeyPackage.keyPackageBytes],
-        expectedCredentialIdentities: [bob.credentialIdentity],
+        additions: [
+          MlsAuthorizedKeyPackageV1(
+            keyPackageBytes: bobKeyPackage.keyPackageBytes,
+            expectedCredentialIdentity: bob.credentialIdentity,
+            expectedSignaturePublicKey: bob.publicKey,
+          ),
+        ],
         aad: utf8.encode('conversation-1/add-bob'),
+        expectedPreviousState: _expected(created.resultingRoster),
         storageEntries: aliceStore.forGroup(created.groupId),
         storageFormatVersion: aliceStore.formatVersion,
       );
@@ -192,8 +194,9 @@ void main() {
 
       final joinedBob = await joinGroupFromWelcomeWithStorage(
         config: defaultConfig(),
-        welcomeBytes: addedBob.welcome,
+        welcomeBytes: addedBob.welcome!,
         signerBytes: bob.signerBytes,
+        expectedResultingState: _expected(addedBob.resultingRoster),
         storageEntries: bobStore.globalSnapshot,
         storageFormatVersion: bobStore.formatVersion,
       );
@@ -228,6 +231,8 @@ void main() {
           groupId: created.groupId,
           messageBytes: sentToBob.ciphertext,
           expectedAad: utf8.encode('conversation-1/wrong-message'),
+          expectedPreviousState: _expected(addedBob.resultingRoster),
+          expectedResultingState: _expected(addedBob.resultingRoster),
           storageEntries: bobStore.forGroup(created.groupId),
           storageFormatVersion: bobStore.formatVersion,
         ),
@@ -245,6 +250,8 @@ void main() {
         groupId: created.groupId,
         messageBytes: sentToBob.ciphertext,
         expectedAad: utf8.encode('conversation-1/message-1'),
+        expectedPreviousState: _expected(addedBob.resultingRoster),
+        expectedResultingState: _expected(addedBob.resultingRoster),
         storageEntries: bobStore.forGroup(created.groupId),
         storageFormatVersion: bobStore.formatVersion,
       );
@@ -278,6 +285,8 @@ void main() {
         groupId: created.groupId,
         messageBytes: sentAfterGap.ciphertext,
         expectedAad: utf8.encode('conversation-1/message-3'),
+        expectedPreviousState: _expected(addedBob.resultingRoster),
+        expectedResultingState: _expected(addedBob.resultingRoster),
         storageEntries: bobStore.forGroup(created.groupId),
         storageFormatVersion: bobStore.formatVersion,
       );
@@ -295,6 +304,8 @@ void main() {
           groupId: created.groupId,
           messageBytes: const [1, 2, 3],
           expectedAad: const [],
+          expectedPreviousState: _expected(addedBob.resultingRoster),
+          expectedResultingState: _expected(addedBob.resultingRoster),
           storageEntries: bobStore.forGroup(created.groupId),
           storageFormatVersion: bobStore.formatVersion,
         ),
@@ -317,9 +328,15 @@ void main() {
       final addedCharlie = await addMembersWithStorage(
         groupId: created.groupId,
         signerBytes: alice.signerBytes,
-        keyPackagesBytes: [charlieKeyPackage.keyPackageBytes],
-        expectedCredentialIdentities: [charlie.credentialIdentity],
+        additions: [
+          MlsAuthorizedKeyPackageV1(
+            keyPackageBytes: charlieKeyPackage.keyPackageBytes,
+            expectedCredentialIdentity: charlie.credentialIdentity,
+            expectedSignaturePublicKey: charlie.publicKey,
+          ),
+        ],
         aad: charlieCommitAad,
+        expectedPreviousState: _expected(addedBob.resultingRoster),
         storageEntries: aliceStore.forGroup(created.groupId),
         storageFormatVersion: aliceStore.formatVersion,
       );
@@ -331,6 +348,8 @@ void main() {
           groupId: created.groupId,
           messageBytes: addedCharlie.commit,
           expectedAad: utf8.encode('conversation-1/wrong-add-charlie'),
+          expectedPreviousState: _expected(addedBob.resultingRoster),
+          expectedResultingState: _expected(addedCharlie.resultingRoster),
           storageEntries: bobStore.forGroup(created.groupId),
           storageFormatVersion: bobStore.formatVersion,
         ),
@@ -348,6 +367,8 @@ void main() {
         groupId: created.groupId,
         messageBytes: addedCharlie.commit,
         expectedAad: charlieCommitAad,
+        expectedPreviousState: _expected(addedBob.resultingRoster),
+        expectedResultingState: _expected(addedCharlie.resultingRoster),
         storageEntries: bobStore.forGroup(created.groupId),
         storageFormatVersion: bobStore.formatVersion,
       );
@@ -359,8 +380,9 @@ void main() {
 
       final joinedCharlie = await joinGroupFromWelcomeWithStorage(
         config: defaultConfig(),
-        welcomeBytes: addedCharlie.welcome,
+        welcomeBytes: addedCharlie.welcome!,
         signerBytes: charlie.signerBytes,
+        expectedResultingState: _expected(addedCharlie.resultingRoster),
         storageEntries: charlieStore.globalSnapshot,
         storageFormatVersion: charlieStore.formatVersion,
       );
@@ -381,6 +403,8 @@ void main() {
         groupId: created.groupId,
         messageBytes: sentToGroup.ciphertext,
         expectedAad: utf8.encode('conversation-1/message-4'),
+        expectedPreviousState: _expected(addedCharlie.resultingRoster),
+        expectedResultingState: _expected(addedCharlie.resultingRoster),
         storageEntries: aliceStore.forGroup(created.groupId),
         storageFormatVersion: aliceStore.formatVersion,
       );
@@ -388,6 +412,8 @@ void main() {
         groupId: created.groupId,
         messageBytes: sentToGroup.ciphertext,
         expectedAad: utf8.encode('conversation-1/message-4'),
+        expectedPreviousState: _expected(addedCharlie.resultingRoster),
+        expectedResultingState: _expected(addedCharlie.resultingRoster),
         storageEntries: charlieStore.forGroup(created.groupId),
         storageFormatVersion: charlieStore.formatVersion,
       );
@@ -437,6 +463,8 @@ void main() {
         groupId: atLimit.groupId,
         messageBytes: atLimitMessage.ciphertext,
         expectedAad: utf8.encode('at-limit/message-2'),
+        expectedPreviousState: _expected(atLimit.roster),
+        expectedResultingState: _expected(atLimit.roster),
         storageEntries: atLimit.receiverStore.forGroup(atLimit.groupId),
         storageFormatVersion: atLimit.receiverStore.formatVersion,
       );
@@ -462,6 +490,8 @@ void main() {
           groupId: beyondLimit.groupId,
           messageBytes: beyondLimitMessage.ciphertext,
           expectedAad: utf8.encode('beyond-limit/message-3'),
+          expectedPreviousState: _expected(beyondLimit.roster),
+          expectedResultingState: _expected(beyondLimit.roster),
           storageEntries: beyondLimit.receiverStore.forGroup(
             beyondLimit.groupId,
           ),
@@ -499,7 +529,7 @@ void main() {
       charlieStore.apply(charlieKeyPackage.storageBatch);
 
       final beforeCreate = aliceStore.fingerprint;
-      final created = await createGroupWithStorageV2(
+      final created = await createGroupWithStorage(
         config: defaultConfig(),
         signerBytes: alice.signerBytes,
         explicitGroupId: groupId,
@@ -526,7 +556,7 @@ void main() {
       wrongPreviousDigest[0] ^= 0xff;
       final beforeWrongPrevious = aliceStore.fingerprint;
       await expectLater(
-        addMembersWithStorageV2(
+        addMembersWithStorage(
           groupId: groupId,
           signerBytes: alice.signerBytes,
           additions: [
@@ -559,7 +589,7 @@ void main() {
       wrongBobSignatureKey[0] ^= 0xff;
       final beforeWrongAddition = aliceStore.fingerprint;
       await expectLater(
-        addMembersWithStorageV2(
+        addMembersWithStorage(
           groupId: groupId,
           signerBytes: alice.signerBytes,
           additions: [
@@ -590,7 +620,7 @@ void main() {
         storageFormatVersion: aliceStore.formatVersion,
       );
       final beforeAdd = aliceStore.fingerprint;
-      final addedBob = await addMembersWithStorageV2(
+      final addedBob = await addMembersWithStorage(
         groupId: groupId,
         signerBytes: alice.signerBytes,
         additions: [
@@ -618,7 +648,7 @@ void main() {
 
       final bobBeforeWrongSigner = bobStore.fingerprint;
       await expectLater(
-        joinGroupFromWelcomeWithStorageV2(
+        joinGroupFromWelcomeWithStorage(
           config: defaultConfig(),
           welcomeBytes: addedBob.welcome!,
           signerBytes: charlie.signerBytes,
@@ -642,7 +672,7 @@ void main() {
       wrongJoinDigest[0] ^= 0xff;
       final bobBeforeWrongJoin = bobStore.fingerprint;
       await expectLater(
-        joinGroupFromWelcomeWithStorageV2(
+        joinGroupFromWelcomeWithStorage(
           config: defaultConfig(),
           welcomeBytes: addedBob.welcome!,
           signerBytes: bob.signerBytes,
@@ -664,7 +694,7 @@ void main() {
       );
       expect(bobStore.fingerprint, bobBeforeWrongJoin);
 
-      final joinedBob = await joinGroupFromWelcomeWithStorageV2(
+      final joinedBob = await joinGroupFromWelcomeWithStorage(
         config: defaultConfig(),
         welcomeBytes: addedBob.welcome!,
         signerBytes: bob.signerBytes,
@@ -685,7 +715,7 @@ void main() {
         storageFormatVersion: aliceStore.formatVersion,
       );
       aliceStore.apply(sent.storageBatch);
-      final received = await processMessageWithStorageV2(
+      final received = await processMessageWithStorage(
         groupId: groupId,
         messageBytes: sent.ciphertext,
         expectedAad: applicationAad,
@@ -739,7 +769,7 @@ void main() {
       );
       aliceStore.apply(swapped.storageBatch);
 
-      final bobProcessedSwap = await processMessageWithStorageV2(
+      final bobProcessedSwap = await processMessageWithStorage(
         groupId: groupId,
         messageBytes: swapped.commit,
         expectedAad: swapAad,
@@ -751,7 +781,7 @@ void main() {
       expect(bobProcessedSwap.resultingEpoch, BigInt.two);
       bobStore.apply(bobProcessedSwap.storageBatch);
 
-      final joinedCharlie = await joinGroupFromWelcomeWithStorageV2(
+      final joinedCharlie = await joinGroupFromWelcomeWithStorage(
         config: defaultConfig(),
         welcomeBytes: swapped.welcome!,
         signerBytes: charlie.signerBytes,
@@ -795,7 +825,7 @@ void main() {
       wrongDigest[0] ^= 0xff;
       final charlieBeforeWrongResult = charlieStore.fingerprint;
       await expectLater(
-        processMessageWithStorageV2(
+        processMessageWithStorage(
           groupId: groupId,
           messageBytes: selfUpdated.commit,
           expectedAad: selfUpdateAad,
@@ -817,7 +847,7 @@ void main() {
         ),
       );
       expect(charlieStore.fingerprint, charlieBeforeWrongResult);
-      final charlieProcessedUpdate = await processMessageWithStorageV2(
+      final charlieProcessedUpdate = await processMessageWithStorage(
         groupId: groupId,
         messageBytes: selfUpdated.commit,
         expectedAad: selfUpdateAad,
@@ -889,7 +919,7 @@ void main() {
       );
       aliceStore.apply(removedCharlie.storageBatch);
 
-      final charlieProcessedRemoval = await processMessageWithStorageV2(
+      final charlieProcessedRemoval = await processMessageWithStorage(
         groupId: groupId,
         messageBytes: removedCharlie.commit,
         expectedAad: removeAad,
@@ -909,7 +939,7 @@ void main() {
       final alice = TestIdentity.create('candidate-alice');
       final store = _MemoryMlsStore();
       final groupId = utf8.encode('candidate-group');
-      final created = await createGroupWithStorageV2(
+      final created = await createGroupWithStorage(
         config: defaultConfig(),
         signerBytes: alice.signerBytes,
         explicitGroupId: groupId,
@@ -1081,8 +1111,11 @@ Future<_TwoMemberSession> _createTwoMemberSession(
   final created = await createGroupWithStorage(
     config: config,
     signerBytes: sender.signerBytes,
-    credentialIdentity: sender.credentialIdentity,
-    signerPublicKey: sender.publicKey,
+    explicitGroupId: utf8.encode('$label-group'),
+    expectedOwnerAuthority: MlsAuthorizedOwnerV1(
+      expectedCredentialIdentity: sender.credentialIdentity,
+      expectedSignaturePublicKey: sender.publicKey,
+    ),
     storageEntries: senderStore.globalSnapshot,
     storageFormatVersion: senderStore.formatVersion,
   );
@@ -1091,9 +1124,15 @@ Future<_TwoMemberSession> _createTwoMemberSession(
   final added = await addMembersWithStorage(
     groupId: created.groupId,
     signerBytes: sender.signerBytes,
-    keyPackagesBytes: [receiverKeyPackage.keyPackageBytes],
-    expectedCredentialIdentities: [receiver.credentialIdentity],
+    additions: [
+      MlsAuthorizedKeyPackageV1(
+        keyPackageBytes: receiverKeyPackage.keyPackageBytes,
+        expectedCredentialIdentity: receiver.credentialIdentity,
+        expectedSignaturePublicKey: receiver.publicKey,
+      ),
+    ],
     aad: utf8.encode('$label/add-receiver'),
+    expectedPreviousState: _expected(created.resultingRoster),
     storageEntries: senderStore.forGroup(created.groupId),
     storageFormatVersion: senderStore.formatVersion,
   );
@@ -1101,8 +1140,9 @@ Future<_TwoMemberSession> _createTwoMemberSession(
 
   final joined = await joinGroupFromWelcomeWithStorage(
     config: config,
-    welcomeBytes: added.welcome,
+    welcomeBytes: added.welcome!,
     signerBytes: receiver.signerBytes,
+    expectedResultingState: _expected(added.resultingRoster),
     storageEntries: receiverStore.globalSnapshot,
     storageFormatVersion: receiverStore.formatVersion,
   );
@@ -1114,6 +1154,7 @@ Future<_TwoMemberSession> _createTwoMemberSession(
     senderStore: senderStore,
     receiverStore: receiverStore,
     groupId: created.groupId,
+    roster: added.resultingRoster,
   );
 }
 
@@ -1140,6 +1181,7 @@ class _TwoMemberSession {
     required this.senderStore,
     required this.receiverStore,
     required this.groupId,
+    required this.roster,
   });
 
   final String label;
@@ -1147,6 +1189,7 @@ class _TwoMemberSession {
   final _MemoryMlsStore senderStore;
   final _MemoryMlsStore receiverStore;
   final List<int> groupId;
+  final MlsRosterSummaryV1 roster;
 }
 
 Future<CreateKeyPackageWithStorageResult> _createKeyPackage(
