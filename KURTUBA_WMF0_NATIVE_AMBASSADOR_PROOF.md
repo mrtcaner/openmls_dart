@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-17
 
-**Status:** Owner-authorized `3.1.0` release preparation; consumer physical integration evidence remains open
+**Status:** Native `3.1.0` released; Dart `3.1.0` release preparation; consumer physical integration evidence remains open
 
 **Base:** `openmls_frb-3.0.0`, storage format `1`
 
@@ -380,6 +380,19 @@ path to ship without those results. A failed physical gate must cause Flutter
 to lower provisional limits, correct packaging, or reject the fast path; it
 must not silently raise limits, duplicate the native library, or split the
 atomic storage transaction.
+
+The all-platform native release completed successfully on 2026-08-17:
+
+- tag: `openmls_frb-3.1.0`;
+- exact source commit: `dc6777a23a9384487481c176a1411c47c78f12d8`;
+- release workflow: `32058337061`;
+- release: <https://github.com/mrtcaner/openmls_dart/releases/tag/openmls_frb-3.1.0>;
+- checksums: `openmls_frb-3.1.0-checksums.sha256`; and
+- provenance: `openmls_frb-3.1.0.sigstore.jsonl`.
+
+Android, iOS, macOS, Linux, Windows, and Web archives are present. The Dart
+package release is a separate protected-branch stage and does not alter native
+contract version `1` or storage format `1`.
 
 ## What remains before production consumer adoption
 
