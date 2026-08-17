@@ -314,23 +314,72 @@ Therefore MLS processing time inside the transaction is writer-blocking, not
 inherently WAL-reader-blocking. The crash boundary must not be split merely to
 shorten the writer lock.
 
-## What remains before production
+## Production implementation status — 2026-08-17
 
-Flutter and Chat have approved the proposed answers to the proof's codec,
-typed-error, limits, shared-core, version, KeyPackage binding, and platform-
-transport questions. Production still requires:
+Issue `#33` now has a package-owned implementation on branch
+`codex/issue-33-native-receive-v1`. It remains unreleased. Signed implementation
+coordinates are:
 
-1. Complete production zeroization review, including upstream signer-key copies
-   that do not currently expose a zeroizing drop implementation.
-2. Build Android/iOS release automation, signing and package validation only
-   after the public contract is approved.
-3. Generate worst-case 256-leaf codec/storage fixtures and prove the provisional
-   bounds before treating them as final.
-4. Run device-level iOS extension execution and final app package/RSS/latency
-   measurements in the eventual consumer integration.
-5. Prove the production decoder, typed errors, shared Rust core, zeroization,
-   Android ABI/R8 loading, Apple single-framework topology, archive notices,
-   checksums, signing, and cross-platform semantic vectors in CI.
+- `b248b0c284d02377170c1e18d3ffd680cb627a3f`: coordinated contract record;
+- `227e24c2b792e5a382c2d8edab682fe7108b445d`: bounded CBOR core, typed errors,
+  Android JNI and Apple C-buffer wrappers;
+- `c194e3872d41aad1cf9b463c2dc9e0039448b922`: the first ten success/error
+  interop vectors, Android/macOS harnesses, zeroizing Welcome signer storage,
+  and complete dependency notices;
+- `32af678e0f046ed70c9afed8ab9a2172b1b228bf`: real 256-leaf
+  Welcome/application fixtures and Android/Apple runtime/limit evidence; and
+- `1f14b21b8072d6f2f91e5bf7de185b181a26ad04`: release-build symbol gates and
+  macOS C-boundary vector CI.
 
-No production Chat/Flutter schema, generated contract, release, tag, or public
-API was created by this proof or contract record.
+The production surface is additive and native-only: contract version `1`,
+storage format `1`, no Dart API break, no JSON/proof symbols, and no second
+OpenMLS binary. The exact `expectedTargetKeyPackageSha256` input,
+`consumedKeyPackageSha256` output, and numeric error `35` are implemented and
+covered by success/mismatch vectors.
+
+The committed manifest now contains twelve exact binary request/result pairs.
+Rust, Android arm64 API 28 JNI, and the Apple C boundary replay all twelve
+byte-for-byte. Full Rust validation passes 27 tests with all features/targets
+and warning-free Clippy. The existing Dart package remains compatible: 108
+tests, Flutter analysis, formatting, and third-party-notice verification pass
+against a freshly built host library.
+
+At the 256-leaf package ceiling, the largest request, result, snapshot, and
+batch observed were 311,392, 299,806, 277,051, and 277,194 bytes respectively.
+These remain far below the 12/8/6 MiB package ceilings. The application
+ciphertext is 31,895 bytes, also below Chat's independent 32 KiB admission
+limit. The product roster limit remains 100; this fixture proves package
+headroom only.
+
+Same-toolchain stripped release growth relative to signed tag
+`openmls_frb-3.0.0` is +143,136 bytes macOS arm64 (3.0%), +158,496 bytes iOS
+arm64 (3.3%), +257,200 bytes Android arm64 (3.8%), and +211,000 bytes Android
+x86_64 (3.4%). Detailed frame, limit, runtime, and size records are in
+`native/receive_v1/README.md` and `native/receive_v1/fixtures/manifest.json`.
+
+## What remains before release
+
+Flutter and Chat have approved the package contract. The package must not be
+published until all of these remaining gates are closed:
+
+1. Run the exact production symbols and 256-leaf fixtures inside a physical iOS
+   Notification Service Extension. Record peak memory, elapsed time, extension
+   termination behavior, and successful caller-buffer freeing.
+2. In the actual Flutter iOS package, prove that the Runner and extension link
+   one generated OpenMLS framework, with none embedded inside the `.appex`, and
+   freeze the resulting product/module/install-name spelling. This cannot be
+   proven solely from this package repository.
+3. Exercise the fixed Android app-owned class through the real minified/R8 app
+   build, confirming the committed keep rules and one `libopenmls_frb.so` per
+   ABI. The package JNI harness already proves symbol loading and byte-array
+   wiping without R8.
+4. Run the new release CI symbol/vector gates on the pull request and then the
+   complete Android, iOS, macOS, Linux, Windows, and Web signed build matrix for
+   the eventual `3.1.0` release candidate. Preserve notice, checksum, provenance,
+   protected-environment, and human-approval gates.
+5. Hand the exact merged revision and candidate artifact coordinates to Flutter
+   for the two physical integration gates above. Only after their evidence is
+   accepted may the signed tag/release be created.
+
+No Chat/Flutter repository, schema, generated consumer contract, release, or
+tag was changed by this package implementation.
