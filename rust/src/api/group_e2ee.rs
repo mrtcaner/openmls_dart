@@ -10,10 +10,12 @@ use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use openmls::prelude::tls_codec::Serialize as TlsSerialize;
 use openmls::prelude::*;
 use openmls_traits::OpenMlsProvider;
+use openmls_traits::storage::StorageProvider;
 use sha2::{Digest, Sha256};
+use zeroize::Zeroize;
 
 use super::config::MlsGroupConfig;
-use super::keys::signer_from_bytes;
+use super::keys::{deserialize_signer_bytes, signer_from_bytes};
 use super::storage::{
     MlsStorageBatch, MlsStorageEntry, batch_from_provider, provider_from_entries,
     validate_storage_entries, zeroize_entry_values,
@@ -106,6 +108,51 @@ pub struct ProcessMessageWithStorageResult {
     pub previous_roster: MlsRosterSummaryV1,
     pub resulting_roster: MlsRosterSummaryV1,
     pub storage_batch: MlsStorageBatch,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum StrictReceiveErrorKind {
+    StorageFormatMismatch,
+    InvalidStorageSnapshot,
+    GroupStateUnavailable,
+    ConfigurationMismatch,
+    GroupMismatch,
+    PreviousEpochMismatch,
+    PreviousRosterMismatch,
+    ResultingEpochMismatch,
+    ResultingRosterMismatch,
+    AadMismatch,
+    MessageKindMismatch,
+    LocalLeafMismatch,
+    InvalidSigner,
+    UnsupportedCredential,
+    MlsDecodeRejected,
+    WelcomeRejected,
+    MlsProtocolRejected,
+    ExpectedKeyPackageMismatch,
+    InternalFailure,
+}
+
+#[derive(Debug)]
+pub(crate) struct StrictReceiveError {
+    pub kind: StrictReceiveErrorKind,
+    pub detail: String,
+}
+
+pub(crate) struct StrictJoinGroupWithStorageResult {
+    pub joined: JoinGroupWithStorageResult,
+    pub local_leaf: MlsRosterLeafV1,
+    pub consumed_key_package_sha256: Vec<u8>,
+}
+
+fn strict_receive_error(
+    kind: StrictReceiveErrorKind,
+    detail: impl Into<String>,
+) -> StrictReceiveError {
+    StrictReceiveError {
+        kind,
+        detail: detail.into(),
+    }
 }
 
 /// Compute the canonical version-1 roster digest from caller-supplied fields.
@@ -386,38 +433,155 @@ pub fn join_group_from_welcome_with_storage(
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
 ) -> Result<JoinGroupWithStorageResult, String> {
-    let provider = provider_from_entries(storage_entries, storage_format_version, None)?;
-    let signer = signer_from_bytes(signer_bytes)?;
-    signer
-        .store(provider.storage())
-        .map_err(|e| format!("Failed to store signer: {e}"))?;
-    let welcome_message = mls_message_from_exact_bytes(&welcome_bytes)
-        .map_err(|e| format!("Failed to deserialize welcome: {e}"))?;
+    join_group_from_welcome_with_storage_typed(
+        config,
+        welcome_bytes,
+        ratchet_tree_bytes,
+        signer_bytes,
+        expected_resulting_state,
+        None,
+        storage_entries,
+        storage_format_version,
+    )
+    .map(|result| result.joined)
+    .map_err(|error| error.detail)
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn join_group_from_welcome_with_storage_typed(
+    config: MlsGroupConfig,
+    welcome_bytes: Vec<u8>,
+    ratchet_tree_bytes: Option<Vec<u8>>,
+    signer_bytes: Vec<u8>,
+    expected_resulting_state: MlsExpectedRosterStateV1,
+    expected_target_key_package_sha256: Option<&[u8]>,
+    storage_entries: Vec<MlsStorageEntry>,
+    storage_format_version: u32,
+) -> Result<StrictJoinGroupWithStorageResult, StrictReceiveError> {
+    if storage_format_version != super::storage::MLS_STORAGE_FORMAT_VERSION {
+        return Err(strict_receive_error(
+            StrictReceiveErrorKind::StorageFormatMismatch,
+            "Unsupported MLS storage format version",
+        ));
+    }
+    let provider =
+        provider_from_entries(storage_entries, storage_format_version, None).map_err(|detail| {
+            strict_receive_error(StrictReceiveErrorKind::InvalidStorageSnapshot, detail)
+        })?;
+    let signer = deserialize_signer_bytes(signer_bytes)
+        .map_err(|detail| strict_receive_error(StrictReceiveErrorKind::InvalidSigner, detail))?;
+    let signature_scheme = SignatureScheme::try_from(signer.scheme).map_err(|_| {
+        strict_receive_error(
+            StrictReceiveErrorKind::InvalidSigner,
+            "Signer contains an unsupported signature scheme",
+        )
+    })?;
+    if signature_scheme
+        != config
+            .to_create_config()
+            .ciphersuite()
+            .signature_algorithm()
+    {
+        return Err(strict_receive_error(
+            StrictReceiveErrorKind::ConfigurationMismatch,
+            "Signer signature scheme does not match the required configuration profile",
+        ));
+    }
+    provider
+        .storage()
+        .write_serialized_basic_signer(&signer.private, &signer.public, signature_scheme)
+        .map_err(|e| {
+            strict_receive_error(
+                StrictReceiveErrorKind::InternalFailure,
+                format!("Failed to store signer: {e}"),
+            )
+        })?;
+    let welcome_message = mls_message_from_exact_bytes(&welcome_bytes).map_err(|e| {
+        strict_receive_error(
+            StrictReceiveErrorKind::MlsDecodeRejected,
+            format!("Failed to deserialize welcome: {e}"),
+        )
+    })?;
     let welcome = match welcome_message.extract() {
         MlsMessageBodyIn::Welcome(welcome) => welcome,
-        _ => return Err("Message is not a Welcome".to_string()),
+        _ => {
+            return Err(strict_receive_error(
+                StrictReceiveErrorKind::MessageKindMismatch,
+                "Message is not a Welcome",
+            ));
+        }
     };
+    let consumed_key_package_sha256 = selected_key_package_sha256(&provider, &welcome)?;
+    if let Some(expected) = expected_target_key_package_sha256
+        && (expected.len() != 32 || expected != consumed_key_package_sha256)
+    {
+        return Err(strict_receive_error(
+            StrictReceiveErrorKind::ExpectedKeyPackageMismatch,
+            "Welcome selected a different retained KeyPackage",
+        ));
+    }
     let ratchet_tree: Option<RatchetTreeIn> = ratchet_tree_bytes
         .map(|bytes| {
-            RatchetTreeIn::tls_deserialize_exact_bytes(&bytes)
-                .map_err(|e| format!("Failed to deserialize ratchet tree: {e}"))
+            RatchetTreeIn::tls_deserialize_exact_bytes(&bytes).map_err(|e| {
+                strict_receive_error(
+                    StrictReceiveErrorKind::MlsDecodeRejected,
+                    format!("Failed to deserialize ratchet tree: {e}"),
+                )
+            })
         })
         .transpose()?;
     let staged =
         StagedWelcome::new_from_welcome(&provider, &config.to_join_config(), welcome, ratchet_tree)
-            .map_err(|e| format!("Failed to process welcome: {e}"))?;
-    let group = staged
-        .into_group(&provider)
-        .map_err(|e| format!("Failed to join group from welcome: {e}"))?;
-    ensure_local_signer(&group, &signer)?;
-    let resulting_roster = roster_from_group(&group)?;
-    validate_expected_roster(&resulting_roster, &expected_resulting_state, "resulting")?;
+            .map_err(|e| {
+                strict_receive_error(
+                    StrictReceiveErrorKind::WelcomeRejected,
+                    format!("Failed to process welcome: {e}"),
+                )
+            })?;
+    let group = staged.into_group(&provider).map_err(|e| {
+        strict_receive_error(
+            StrictReceiveErrorKind::WelcomeRejected,
+            format!("Failed to join group from welcome: {e}"),
+        )
+    })?;
+    if group.ciphersuite() != config.to_create_config().ciphersuite()
+        || group.configuration() != &config.to_join_config()
+    {
+        return Err(strict_receive_error(
+            StrictReceiveErrorKind::ConfigurationMismatch,
+            "Joined MLS group does not match the required configuration profile",
+        ));
+    }
+    ensure_local_signer_public_key(&group, &signer.public).map_err(|detail| {
+        strict_receive_error(StrictReceiveErrorKind::LocalLeafMismatch, detail)
+    })?;
+    let resulting_roster = roster_from_group(&group).map_err(|detail| {
+        strict_receive_error(StrictReceiveErrorKind::UnsupportedCredential, detail)
+    })?;
+    let own_leaf_index = group.own_leaf_index().u32();
+    let local_leaf = resulting_roster
+        .leaves
+        .iter()
+        .find(|leaf| leaf.leaf_index == own_leaf_index)
+        .cloned()
+        .ok_or_else(|| {
+            strict_receive_error(
+                StrictReceiveErrorKind::LocalLeafMismatch,
+                "Joined group does not contain its own authenticated leaf",
+            )
+        })?;
+    validate_expected_roster_typed(&resulting_roster, &expected_resulting_state, false)?;
     let group_id = resulting_roster.group_id.clone();
-    let storage_batch = batch_from_provider(provider, Some(group_id.clone()), Vec::new())?;
-    Ok(JoinGroupWithStorageResult {
-        group_id,
-        resulting_roster,
-        storage_batch,
+    let storage_batch = batch_from_provider(provider, Some(group_id.clone()), Vec::new())
+        .map_err(|detail| strict_receive_error(StrictReceiveErrorKind::InternalFailure, detail))?;
+    Ok(StrictJoinGroupWithStorageResult {
+        joined: JoinGroupWithStorageResult {
+            group_id,
+            resulting_roster,
+            storage_batch,
+        },
+        local_leaf,
+        consumed_key_package_sha256,
     })
 }
 
@@ -431,25 +595,88 @@ pub fn process_message_with_storage(
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
 ) -> Result<ProcessMessageWithStorageResult, String> {
-    let provider = provider_from_entries(storage_entries, storage_format_version, Some(&group_id))?;
-    let mut group = load_group(&group_id, &provider)?;
-    let previous_roster = roster_from_group(&group)?;
-    validate_expected_roster(&previous_roster, &expected_previous_state, "previous")?;
+    process_message_with_storage_typed(
+        group_id,
+        message_bytes,
+        expected_aad,
+        expected_previous_state,
+        expected_resulting_state,
+        None,
+        storage_entries,
+        storage_format_version,
+    )
+    .map_err(|error| error.detail)
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn process_message_with_storage_typed(
+    group_id: Vec<u8>,
+    message_bytes: Vec<u8>,
+    expected_aad: Vec<u8>,
+    expected_previous_state: MlsExpectedRosterStateV1,
+    expected_resulting_state: MlsExpectedRosterStateV1,
+    expected_config: Option<&MlsGroupConfig>,
+    storage_entries: Vec<MlsStorageEntry>,
+    storage_format_version: u32,
+) -> Result<ProcessMessageWithStorageResult, StrictReceiveError> {
+    if storage_format_version != super::storage::MLS_STORAGE_FORMAT_VERSION {
+        return Err(strict_receive_error(
+            StrictReceiveErrorKind::StorageFormatMismatch,
+            "Unsupported MLS storage format version",
+        ));
+    }
+    let provider = provider_from_entries(storage_entries, storage_format_version, Some(&group_id))
+        .map_err(|detail| {
+            strict_receive_error(StrictReceiveErrorKind::InvalidStorageSnapshot, detail)
+        })?;
+    let mut group = load_group(&group_id, &provider).map_err(|detail| {
+        strict_receive_error(StrictReceiveErrorKind::GroupStateUnavailable, detail)
+    })?;
+    if let Some(config) = expected_config
+        && (group.ciphersuite() != config.to_create_config().ciphersuite()
+            || group.configuration() != &config.to_join_config())
+    {
+        return Err(strict_receive_error(
+            StrictReceiveErrorKind::ConfigurationMismatch,
+            "Loaded MLS group does not match the required configuration profile",
+        ));
+    }
+    let previous_roster = roster_from_group(&group).map_err(|detail| {
+        strict_receive_error(StrictReceiveErrorKind::UnsupportedCredential, detail)
+    })?;
+    validate_expected_roster_typed(&previous_roster, &expected_previous_state, true)?;
     let message = mls_message_from_exact_bytes(&message_bytes)
-        .map_err(|e| format!("Failed to deserialize message: {e}"))?
+        .map_err(|e| {
+            strict_receive_error(
+                StrictReceiveErrorKind::MlsDecodeRejected,
+                format!("Failed to deserialize message: {e}"),
+            )
+        })?
         .try_into_protocol_message()
-        .map_err(|e| format!("Not a protocol message: {e}"))?;
-    let processed = group
-        .process_message(&provider, message)
-        .map_err(|e| format!("Failed to process message: {e}"))?;
+        .map_err(|e| {
+            strict_receive_error(
+                StrictReceiveErrorKind::MessageKindMismatch,
+                format!("Not a protocol message: {e}"),
+            )
+        })?;
+    let processed = group.process_message(&provider, message).map_err(|e| {
+        strict_receive_error(
+            StrictReceiveErrorKind::MlsProtocolRejected,
+            format!("Failed to process message: {e}"),
+        )
+    })?;
     if processed.aad() != expected_aad {
-        return Err("Message AAD does not match the expected AAD".to_string());
+        zeroize_processed_content(processed);
+        return Err(strict_receive_error(
+            StrictReceiveErrorKind::AadMismatch,
+            "Message AAD does not match the expected AAD",
+        ));
     }
     let sender_index = match processed.sender() {
         Sender::Member(index) => Some(index.u32()),
         _ => None,
     };
-    let (message_type, application_message, has_staged_commit, has_proposal, proposal_type) =
+    let (message_type, mut application_message, has_staged_commit, has_proposal, proposal_type) =
         match processed.into_content() {
             ProcessedMessageContent::ApplicationMessage(message) => (
                 ProcessedMessageType::Application,
@@ -459,16 +686,24 @@ pub fn process_message_with_storage(
                 None,
             ),
             ProcessedMessageContent::StagedCommitMessage(commit) => {
-                group
-                    .merge_staged_commit(&provider, *commit)
-                    .map_err(|e| format!("Failed to merge staged commit: {e}"))?;
+                group.merge_staged_commit(&provider, *commit).map_err(|e| {
+                    strict_receive_error(
+                        StrictReceiveErrorKind::MlsProtocolRejected,
+                        format!("Failed to merge staged commit: {e}"),
+                    )
+                })?;
                 (ProcessedMessageType::StagedCommit, None, true, false, None)
             }
             ProcessedMessageContent::ProposalMessage(proposal) => {
                 let proposal_type = proposal_type(proposal.proposal());
                 group
                     .store_pending_proposal(provider.storage(), *proposal)
-                    .map_err(|e| format!("Failed to store pending proposal: {e}"))?;
+                    .map_err(|e| {
+                        strict_receive_error(
+                            StrictReceiveErrorKind::MlsProtocolRejected,
+                            format!("Failed to store pending proposal: {e}"),
+                        )
+                    })?;
                 (
                     ProcessedMessageType::Proposal,
                     None,
@@ -477,13 +712,28 @@ pub fn process_message_with_storage(
                     Some(proposal_type),
                 )
             }
-            _ => return Err("Unknown processed message content type".to_string()),
+            _ => {
+                return Err(strict_receive_error(
+                    StrictReceiveErrorKind::MessageKindMismatch,
+                    "Unknown processed message content type",
+                ));
+            }
         };
-    let resulting_roster = roster_from_group(&group)?;
-    validate_expected_roster(&resulting_roster, &expected_resulting_state, "resulting")?;
+    let resulting_roster = roster_from_group(&group).map_err(|detail| {
+        strict_receive_error(StrictReceiveErrorKind::UnsupportedCredential, detail)
+    })?;
+    if let Err(error) =
+        validate_expected_roster_typed(&resulting_roster, &expected_resulting_state, false)
+    {
+        if let Some(message) = &mut application_message {
+            message.zeroize();
+        }
+        return Err(error);
+    }
     let previous_epoch = previous_roster.epoch;
     let resulting_epoch = resulting_roster.epoch;
-    let storage_batch = batch_from_provider(provider, Some(group_id), Vec::new())?;
+    let storage_batch = batch_from_provider(provider, Some(group_id), Vec::new())
+        .map_err(|detail| strict_receive_error(StrictReceiveErrorKind::InternalFailure, detail))?;
     Ok(ProcessMessageWithStorageResult {
         message_type,
         sender_index,
@@ -499,6 +749,90 @@ pub fn process_message_with_storage(
     })
 }
 
+fn selected_key_package_sha256(
+    provider: &crate::snapshot_storage::SnapshotOpenMlsProvider,
+    welcome: &Welcome,
+) -> Result<Vec<u8>, StrictReceiveError> {
+    for encrypted_group_secrets in welcome.secrets() {
+        let key_package_ref = encrypted_group_secrets.new_member();
+        let key_package_bundle: Option<KeyPackageBundle> = provider
+            .storage()
+            .key_package(&key_package_ref)
+            .map_err(|error| {
+                strict_receive_error(
+                    StrictReceiveErrorKind::InvalidStorageSnapshot,
+                    format!("Failed to read retained KeyPackage: {error}"),
+                )
+            })?;
+        if let Some(bundle) = key_package_bundle {
+            let encoded = bundle
+                .key_package()
+                .tls_serialize_detached()
+                .map_err(|error| {
+                    strict_receive_error(
+                        StrictReceiveErrorKind::InternalFailure,
+                        format!("Failed to serialize selected KeyPackage: {error}"),
+                    )
+                })?;
+            return Ok(Sha256::digest(encoded).to_vec());
+        }
+    }
+    Err(strict_receive_error(
+        StrictReceiveErrorKind::WelcomeRejected,
+        "Welcome has no KeyPackage present in the supplied snapshot",
+    ))
+}
+
+fn validate_expected_roster_typed(
+    actual: &MlsRosterSummaryV1,
+    expected: &MlsExpectedRosterStateV1,
+    previous: bool,
+) -> Result<(), StrictReceiveError> {
+    if expected.digest_sha256.len() != 32 {
+        return Err(strict_receive_error(
+            if previous {
+                StrictReceiveErrorKind::PreviousRosterMismatch
+            } else {
+                StrictReceiveErrorKind::ResultingRosterMismatch
+            },
+            "Expected roster digest must be 32 bytes",
+        ));
+    }
+    if actual.group_id != expected.group_id {
+        return Err(strict_receive_error(
+            StrictReceiveErrorKind::GroupMismatch,
+            "MLS group ID does not match expected authority",
+        ));
+    }
+    if actual.epoch != expected.epoch {
+        return Err(strict_receive_error(
+            if previous {
+                StrictReceiveErrorKind::PreviousEpochMismatch
+            } else {
+                StrictReceiveErrorKind::ResultingEpochMismatch
+            },
+            "MLS epoch does not match expected authority",
+        ));
+    }
+    if actual.digest_sha256 != expected.digest_sha256 {
+        return Err(strict_receive_error(
+            if previous {
+                StrictReceiveErrorKind::PreviousRosterMismatch
+            } else {
+                StrictReceiveErrorKind::ResultingRosterMismatch
+            },
+            "MLS roster digest does not match expected authority",
+        ));
+    }
+    Ok(())
+}
+
+fn zeroize_processed_content(processed: ProcessedMessage) {
+    if let ProcessedMessageContent::ApplicationMessage(message) = processed.into_content() {
+        let mut plaintext = message.into_bytes();
+        plaintext.zeroize();
+    }
+}
 fn roster_from_group(group: &MlsGroup) -> Result<MlsRosterSummaryV1, String> {
     let mut leaves = Vec::new();
     for member in group.members() {
@@ -653,6 +987,19 @@ fn ensure_local_signer(
         .member_at(group.own_leaf_index())
         .ok_or_else(|| "Local MLS leaf is missing".to_string())?;
     ensure_signer_public_key(signer, &own.signature_key)
+}
+
+fn ensure_local_signer_public_key(
+    group: &MlsGroup,
+    signer_public_key: &[u8],
+) -> Result<(), String> {
+    let own = group
+        .member_at(group.own_leaf_index())
+        .ok_or_else(|| "Local MLS leaf is missing".to_string())?;
+    if signer_public_key != own.signature_key {
+        return Err("Signer public key does not match expected installation authority".to_string());
+    }
+    Ok(())
 }
 
 fn leaf_matches_owner(leaf: &MlsRosterLeafV1, owner: &MlsAuthorizedOwnerV1) -> bool {

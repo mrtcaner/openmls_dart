@@ -121,6 +121,15 @@ pub(crate) struct SerializableSigner {
     pub scheme: u16,
 }
 
+pub(crate) fn deserialize_signer_bytes(
+    mut signer_bytes: Vec<u8>,
+) -> Result<SerializableSigner, String> {
+    let result = serde_json::from_slice::<SerializableSigner>(&signer_bytes)
+        .map_err(|e| format!("Failed to deserialize signer: {e}"));
+    signer_bytes.zeroize();
+    result
+}
+
 /// Serialize a `SignatureKeyPair` to JSON bytes including private key.
 ///
 /// # Security
@@ -145,11 +154,8 @@ pub fn serialize_signer(
 
 /// Reconstruct a `SignatureKeyPair` from raw signer bytes (JSON-serialized).
 /// Zeroizes the input bytes regardless of success or failure.
-pub(crate) fn signer_from_bytes(mut signer_bytes: Vec<u8>) -> Result<SignatureKeyPair, String> {
-    let result = serde_json::from_slice::<SerializableSigner>(&signer_bytes)
-        .map_err(|e| format!("Failed to deserialize signer: {}", e));
-    signer_bytes.zeroize(); // Always zeroize, even on error
-    let mut skp = result?;
+pub(crate) fn signer_from_bytes(signer_bytes: Vec<u8>) -> Result<SignatureKeyPair, String> {
+    let mut skp = deserialize_signer_bytes(signer_bytes)?;
     let scheme = SignatureScheme::try_from(skp.scheme)
         .map_err(|_| format!("Invalid signature scheme: {}", skp.scheme))?;
     Ok(SignatureKeyPair::from_raw(

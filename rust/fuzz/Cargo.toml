@@ -40,3 +40,10 @@ path = "fuzz_targets/credential.rs"
 test = false
 doc = false
 bench = false
+
+[[bin]]
+name = "native_receive_v1"
+path = "fuzz_targets/native_receive_v1.rs"
+test = false
+doc = false
+bench = false

@@ -3,6 +3,7 @@
 use openmls::prelude::*;
 
 /// MLS ciphersuite selection.
+#[derive(Clone)]
 pub enum MlsCiphersuite {
     Mls128DhkemX25519Aes128gcmSha256Ed25519,
     Mls128DhkemX25519Chacha20poly1305Sha256Ed25519,
@@ -10,6 +11,7 @@ pub enum MlsCiphersuite {
 }
 
 /// Wire format policy for MLS messages.
+#[derive(Clone)]
 pub enum MlsWireFormatPolicy {
     Plaintext,
     Ciphertext,

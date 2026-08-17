@@ -13,4 +13,11 @@ mod utils;
 
 pub mod api;
 
+#[cfg(target_os = "android")]
+#[allow(unsafe_code)]
+mod native_receive_android;
+#[cfg(any(target_os = "ios", target_os = "macos"))]
+#[allow(unsafe_code)]
+mod native_receive_apple;
+pub mod native_receive_v1;
 pub use utils::current_time;

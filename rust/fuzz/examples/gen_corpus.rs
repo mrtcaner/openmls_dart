@@ -67,5 +67,13 @@ fn main() {
     // corpus/mls_message/.
     write_seed(&base.join("mls_message"), "empty", b"");
 
+    // --- native_receive_v1 target ---
+    write_seed(&base.join("native_receive_v1"), "empty", b"");
+    write_seed(
+        &base.join("native_receive_v1"),
+        "valid_header_empty_payload",
+        b"KMLS\x00\x01\x01\x00\x00\x00\x00\x00",
+    );
+
     println!("Seed corpus generation complete.");
 }
