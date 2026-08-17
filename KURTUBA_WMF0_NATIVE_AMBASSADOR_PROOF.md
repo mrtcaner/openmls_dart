@@ -1,14 +1,17 @@
-# Kurtuba WMF0 Native Ambassador Proof
+# Kurtuba Native Receive v1 Decision and Evidence
 
 **Date:** 2026-08-17
 
-**Status:** Proof complete; coordinated production contract approved; release blocked on evidence gates
+**Status:** Production implementation is under review; release blocked on physical integration gates
 
 **Base:** `openmls_frb-3.0.0`, storage format `1`
 
-**Branch:** `codex/wmf0-ambassador-proof`
+**Branch:** `codex/issue-33-native-receive-v1`
 
-**Implementation commit:** `de8be8a84e4394b746c2e5cd7974b02ba63c0633`
+The earlier disposable WMF0 source and JSON transports are deliberately absent
+from this production branch. Historical proof sections below preserve the
+reasoning and measurements only; their old local paths are not package inputs
+or release contents.
 
 ## Decision
 
@@ -320,16 +323,18 @@ Issue `#33` now has a package-owned implementation on branch
 `codex/issue-33-native-receive-v1`. It remains unreleased. Signed implementation
 coordinates are:
 
-- `b248b0c284d02377170c1e18d3ffd680cb627a3f`: coordinated contract record;
-- `227e24c2b792e5a382c2d8edab682fe7108b445d`: bounded CBOR core, typed errors,
+- `718995f`: coordinated contract record;
+- `74a24ba`: bounded CBOR core, typed errors,
   Android JNI and Apple C-buffer wrappers;
-- `c194e3872d41aad1cf9b463c2dc9e0039448b922`: the first ten success/error
+- `ad16339`: the first ten success/error
   interop vectors, Android/macOS harnesses, zeroizing Welcome signer storage,
   and complete dependency notices;
-- `32af678e0f046ed70c9afed8ab9a2172b1b228bf`: real 256-leaf
+- `660d2aa`: real 256-leaf
   Welcome/application fixtures and Android/Apple runtime/limit evidence; and
-- `1f14b21b8072d6f2f91e5bf7de185b181a26ad04`: release-build symbol gates and
-  macOS C-boundary vector CI.
+- `4db70f9`: release-build symbol gates and
+  macOS C-boundary vector CI; and
+- `bd3bbda`: the production-only local-state digest visibility and Android JNI
+  lockfile prerequisite exposed by rebuilding without the disposable proof.
 
 The production surface is additive and native-only: contract version `1`,
 storage format `1`, no Dart API break, no JSON/proof symbols, and no second
@@ -339,7 +344,7 @@ covered by success/mismatch vectors.
 
 The committed manifest now contains twelve exact binary request/result pairs.
 Rust, Android arm64 API 28 JNI, and the Apple C boundary replay all twelve
-byte-for-byte. Full Rust validation passes 27 tests with all features/targets
+byte-for-byte. Full Rust validation passes 22 tests with all features/targets
 and warning-free Clippy. The existing Dart package remains compatible: 108
 tests, Flutter analysis, formatting, and third-party-notice verification pass
 against a freshly built host library.
@@ -352,8 +357,8 @@ limit. The product roster limit remains 100; this fixture proves package
 headroom only.
 
 Same-toolchain stripped release growth relative to signed tag
-`openmls_frb-3.0.0` is +143,136 bytes macOS arm64 (3.0%), +158,496 bytes iOS
-arm64 (3.3%), +257,200 bytes Android arm64 (3.8%), and +211,000 bytes Android
+`openmls_frb-3.0.0` is +143,056 bytes macOS arm64 (3.0%), +158,320 bytes iOS
+arm64 (3.3%), +256,672 bytes Android arm64 (3.7%), and +211,000 bytes Android
 x86_64 (3.4%). Detailed frame, limit, runtime, and size records are in
 `native/receive_v1/README.md` and `native/receive_v1/fixtures/manifest.json`.
 

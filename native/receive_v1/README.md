@@ -125,9 +125,9 @@ used an 88,656-byte request, 299,806-byte response, 2,031-byte input snapshot,
 and 277,194-byte output batch. Application used a 311,392-byte request,
 82,283-byte response, 277,051-byte snapshot, and 7,804-byte batch. Its MLS
 ciphertext is 31,895 bytes, below Chat's independent 32 KiB admission limit.
-On the API-28 arm64 AVD, Welcome/application took 23,231/10,880 microseconds
-with process high-water RSS reaching 83,184 KiB. The macOS Apple boundary took
-33,078/12,347 microseconds with high-water RSS reaching 10,911,744 bytes. These
+On the API-28 arm64 AVD, Welcome/application took 24,484/12,778 microseconds
+with process high-water RSS reaching 83,068 KiB. The macOS Apple boundary took
+31,557/11,995 microseconds with high-water RSS reaching 10,862,592 bytes. These
 are constructibility measurements, not production service-level guarantees.
 
 Same-toolchain stripped release binaries were compared with signed tag
@@ -135,7 +135,7 @@ Same-toolchain stripped release binaries were compared with signed tag
 
 | Target | 3.0.0 bytes | Native receive v1 bytes | Delta |
 | --- | ---: | ---: | ---: |
-| macOS arm64 | 4,794,800 | 4,937,936 | +143,136 (+3.0%) |
-| iOS arm64 device | 4,754,984 | 4,913,480 | +158,496 (+3.3%) |
-| Android arm64 | 6,853,464 | 7,110,664 | +257,200 (+3.8%) |
+| macOS arm64 | 4,794,800 | 4,937,856 | +143,056 (+3.0%) |
+| iOS arm64 device | 4,754,984 | 4,913,304 | +158,320 (+3.3%) |
+| Android arm64 | 6,853,464 | 7,110,136 | +256,672 (+3.7%) |
 | Android x86_64 | 6,250,600 | 6,461,600 | +211,000 (+3.4%) |
