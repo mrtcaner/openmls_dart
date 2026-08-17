@@ -1,0 +1,99 @@
+{
+  "generated_date": "2026-08-17",
+  "contract_version": 1,
+  "profile_id": 1,
+  "storage_format_version": 1,
+  "synthetic_secrets_only": true,
+  "vectors": [
+    {
+      "id": "welcome_success",
+      "operation": 3,
+      "request_file": "welcome_success.request.bin",
+      "request_sha256": "0b0d73a9963074ba0fc72103e40bb038ba8bee5f2700416521280c9059c3c7a1",
+      "response_file": "welcome_success.response.bin",
+      "response_sha256": "8e16bc06dea491e7b674dc45575eba09836429fdddc60a9eac78d81bde8dc851",
+      "expected_error_code": null
+    },
+    {
+      "id": "welcome_wrong_key_package",
+      "operation": 3,
+      "request_file": "welcome_wrong_key_package.request.bin",
+      "request_sha256": "6d11e8cadceae213f5870ab0cf91753efb5c9ef897fbfd81c8cd4f923dc209dc",
+      "response_file": "welcome_wrong_key_package.response.bin",
+      "response_sha256": "2627a71d66198ead0d82825160c1c4924262210ecffb52367fb18592b5b244db",
+      "expected_error_code": 35
+    },
+    {
+      "id": "welcome_wrong_local_leaf",
+      "operation": 3,
+      "request_file": "welcome_wrong_local_leaf.request.bin",
+      "request_sha256": "a3d97e46afa846566be975355c1ba27c7d9bb59705bac5c5f3c912041679e2a8",
+      "response_file": "welcome_wrong_local_leaf.response.bin",
+      "response_sha256": "b882dd758d71d3a1d3f9279179d85ce3ba0d1333de190afd942fe4db537eb2f9",
+      "expected_error_code": 29
+    },
+    {
+      "id": "application_success",
+      "operation": 1,
+      "request_file": "application_success.request.bin",
+      "request_sha256": "d01f0318a71f4e6fa52f9378f3783e45edacaf7411ab7b5ff33d2c0cbb70f258",
+      "response_file": "application_success.response.bin",
+      "response_sha256": "823eb3dcb6355e4a4c5c9c9a288bba969b4b3b3182d2eea5763e661d1b5c265a",
+      "expected_error_code": null
+    },
+    {
+      "id": "application_wrong_base",
+      "operation": 1,
+      "request_file": "application_wrong_base.request.bin",
+      "request_sha256": "e1358752dd2889621bf2ba22845a3b3f5a6491a8f7cf25a34a71b127fc3b0646",
+      "response_file": "application_wrong_base.response.bin",
+      "response_sha256": "b27df1ec01bb1e549918b15237466b5192d7e71fd4ca415d0430bca95c566b79",
+      "expected_error_code": 13
+    },
+    {
+      "id": "application_wrong_aad",
+      "operation": 1,
+      "request_file": "application_wrong_aad.request.bin",
+      "request_sha256": "72c36d56c83ed82b6b22d72a0e2ac6253ee77b7a784140d7e74cde5914de97c9",
+      "response_file": "application_wrong_aad.response.bin",
+      "response_sha256": "85a99fa4d9185868885cf010f4485f204b6a3ba35a6509854f8fd6ba873c017b",
+      "expected_error_code": 26
+    },
+    {
+      "id": "application_wrong_sender",
+      "operation": 1,
+      "request_file": "application_wrong_sender.request.bin",
+      "request_sha256": "b044d5614717a3b803300a254da8ddd75573383b2355c009600c47046821a119",
+      "response_file": "application_wrong_sender.response.bin",
+      "response_sha256": "74ba85a1e1f92eb8e4f6040937f15d0b7f814f66a5dcc46c84725831e6e2939b",
+      "expected_error_code": 28
+    },
+    {
+      "id": "application_wrong_roster",
+      "operation": 1,
+      "request_file": "application_wrong_roster.request.bin",
+      "request_sha256": "9def79a5117509e592a622e6adc4945cfb5a0bf20f2c49f761f033b9e1b7b0d6",
+      "response_file": "application_wrong_roster.response.bin",
+      "response_sha256": "acf0a205ddc95a1dbf37a21ecaff9cdf76788524634ca58e5ae8241b657d00d3",
+      "expected_error_code": 25
+    },
+    {
+      "id": "application_wrong_kind",
+      "operation": 2,
+      "request_file": "application_wrong_kind.request.bin",
+      "request_sha256": "aedc5db4c672cc0bfdd8a75b6c7a0a93ce7877d264603454188dc398e0f5fe25",
+      "response_file": "application_wrong_kind.response.bin",
+      "response_sha256": "f90d1c8ac7768fe3d3a2ed0743b9877723b5b2a892b505503bf80caf9b3ee00d",
+      "expected_error_code": 27
+    },
+    {
+      "id": "commit_success",
+      "operation": 2,
+      "request_file": "commit_success.request.bin",
+      "request_sha256": "71e5e2b3f9b6de5d678496724468e285a9ad699f743076c94aafe8606a82a5e3",
+      "response_file": "commit_success.response.bin",
+      "response_sha256": "68d35b1cb3a460b27137afd4fb569f55edb608673380b89ef448786038895d43",
+      "expected_error_code": null
+    }
+  ]
+}

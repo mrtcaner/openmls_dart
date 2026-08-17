@@ -20,4 +20,6 @@ mod native_receive_android;
 #[allow(unsafe_code)]
 mod native_receive_apple;
 pub mod native_receive_v1;
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub mod native_receive_v1_vectors;
 pub use utils::current_time;

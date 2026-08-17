@@ -48,6 +48,25 @@ Storage batches contain format version, sorted upserts, sorted deletes, and up
 to eight deleted group IDs. Callers atomically apply deletes, then upserts,
 then group deletions together with deduplication/handoff/settlement records.
 
+Stable numeric errors:
+
+| Code | Meaning | Code | Meaning |
+| ---: | --- | ---: | --- |
+| 1 | invalid frame | 2 | unsupported contract version |
+| 3 | unsupported profile | 4 | unsupported operation |
+| 5 | noncanonical encoding | 6 | limit exceeded |
+| 10 | storage format mismatch | 11 | invalid storage snapshot |
+| 12 | group state unavailable | 13 | local base state mismatch |
+| 20 | configuration mismatch | 21 | group mismatch |
+| 22 | previous epoch mismatch | 23 | previous roster mismatch |
+| 24 | resulting epoch mismatch | 25 | resulting roster mismatch |
+| 26 | AAD mismatch | 27 | message kind mismatch |
+| 28 | sender mismatch | 29 | local leaf mismatch |
+| 30 | invalid signer | 31 | unsupported credential |
+| 32 | MLS decode rejected | 33 | Welcome rejected |
+| 34 | MLS protocol rejected | 35 | expected KeyPackage mismatch |
+| 255 | contained internal failure | | |
+
 ## Limits and product authority
 
 Package fail-closed ceilings are 12 MiB request, 8 MiB result, 6 MiB snapshot
@@ -67,11 +86,35 @@ class only loads/passes/wipes byte arrays. Apply `android/consumer-rules.pro`.
 The JVM may retain internal copies, so this is not a native-only plaintext
 claim.
 
-Apple uses the header in `include/openmls_receive_v1.h` from the single
-`OpenMls.framework`/XCFramework shared by the app and extension. The caller
-must invoke `openmls_receive_v1_free` exactly once for every returned buffer;
-free reconstructs and zeroizes the complete Rust allocation.
+Apple uses the header in `include/openmls_receive_v1.h`. The three C symbols
+are compiled into the same `libopenmls_frb.dylib` that carries the FRB symbols;
+the Dart code-assets pipeline converts that one dylib into the app framework.
+The Notification Service Extension must link that same generated framework.
+Do not add a companion `OpenMls.framework` or a second Rust/OpenMLS binary.
+Final generated product/module/install-name spelling remains open until the
+actual extension packaging gate. The caller must invoke
+`openmls_receive_v1_free` exactly once for every returned buffer; free
+reconstructs and zeroizes the complete Rust allocation.
 
 Welcome calls require the installation writer/lifecycle fence. Application and
 Commit calls require the exact-group writer plus lifecycle fence. Cross-process
 serialization and the caller's SQLite transaction remain consumer authority.
+
+## Shared vectors and harnesses
+
+`fixtures/manifest.json` records ten synthetic canonical binary request/result
+pairs: Welcome, application and Commit success plus wrong KeyPackage hash,
+local leaf, base digest, AAD, sender, resulting roster and kind. Rust replays
+the committed bytes exactly in its test suite.
+
+- `android/run_avd_harness.sh <serial>` compiles the fixed Java class, loads the
+  existing arm64 `libopenmls_frb.so`, compares all ten results byte-for-byte,
+  and verifies Java request/result array wiping.
+- `apple/run_macos_harness.sh` compiles the C header boundary, compares all ten
+  results, and frees every returned Rust allocation through the public API.
+
+Evidence on 2026-08-17: Android arm64 API 28 and the macOS Apple boundary both
+reported `10 passed=true`; the iOS arm64 device target built and exported
+`openmls_receive_v1_execute`, `openmls_receive_v1_free`, and
+`openmls_receive_v1_version`. Simulator/physical Notification Service
+Extension execution and final framework naming are still release gates.

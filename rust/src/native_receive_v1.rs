@@ -875,6 +875,8 @@ pub fn encode_native_receive_outcome_v1(
             .and_then(|encoder| encoder.u8(1))
             .and_then(|encoder| encoder.bool(false))
             .and_then(|encoder| encoder.u8(3))
+            .and_then(|encoder| encoder.map(1))
+            .and_then(|encoder| encoder.u8(3))
             .and_then(|encoder| encoder.u16(error as u16))
             .map_err(|_| NativeReceiveErrorCodeV1::InternalFailure)?;
     }
@@ -2356,5 +2358,19 @@ mod tests {
         assert_eq!(&encoded[..4], FRAME_MAGIC);
         assert_eq!(encoded[6], NativeReceiveOperationV1::Welcome as u8);
         assert!(encoded.len() < 64);
+        let mut decoder = Decoder::new(&encoded[FRAME_HEADER_BYTES..]);
+        assert_eq!(decoder.map().unwrap(), Some(3));
+        assert_eq!(decoder.u8().unwrap(), 0);
+        assert_eq!(decoder.u16().unwrap(), NATIVE_RECEIVE_CONTRACT_VERSION);
+        assert_eq!(decoder.u8().unwrap(), 1);
+        assert!(!decoder.bool().unwrap());
+        assert_eq!(decoder.u8().unwrap(), 3);
+        assert_eq!(decoder.map().unwrap(), Some(1));
+        assert_eq!(decoder.u8().unwrap(), 3);
+        assert_eq!(
+            decoder.u16().unwrap(),
+            NativeReceiveErrorCodeV1::ExpectedKeyPackageMismatch as u16
+        );
+        assert_eq!(decoder.position(), encoded.len() - FRAME_HEADER_BYTES);
     }
 }

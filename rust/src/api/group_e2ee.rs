@@ -788,6 +788,7 @@ fn validate_expected_roster_typed(
     expected: &MlsExpectedRosterStateV1,
     previous: bool,
 ) -> Result<(), StrictReceiveError> {
+    let label = if previous { "previous" } else { "resulting" };
     if expected.digest_sha256.len() != 32 {
         return Err(strict_receive_error(
             if previous {
@@ -795,13 +796,13 @@ fn validate_expected_roster_typed(
             } else {
                 StrictReceiveErrorKind::ResultingRosterMismatch
             },
-            "Expected roster digest must be 32 bytes",
+            format!("Expected {label} roster digest must be 32 bytes"),
         ));
     }
     if actual.group_id != expected.group_id {
         return Err(strict_receive_error(
             StrictReceiveErrorKind::GroupMismatch,
-            "MLS group ID does not match expected authority",
+            format!("{label} MLS group ID does not match expected authority"),
         ));
     }
     if actual.epoch != expected.epoch {
@@ -811,7 +812,7 @@ fn validate_expected_roster_typed(
             } else {
                 StrictReceiveErrorKind::ResultingEpochMismatch
             },
-            "MLS epoch does not match expected authority",
+            format!("{label} MLS epoch does not match expected authority"),
         ));
     }
     if actual.digest_sha256 != expected.digest_sha256 {
@@ -821,7 +822,7 @@ fn validate_expected_roster_typed(
             } else {
                 StrictReceiveErrorKind::ResultingRosterMismatch
             },
-            "MLS roster digest does not match expected authority",
+            format!("{label} MLS roster digest does not match expected authority"),
         ));
     }
     Ok(())
