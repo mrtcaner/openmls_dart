@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/resource.h>
+#include <time.h>
 
 static const char *vector_ids[] = {
     "welcome_success",
@@ -15,7 +17,14 @@ static const char *vector_ids[] = {
     "application_wrong_roster",
     "application_wrong_kind",
     "commit_success",
+    "welcome_256_leaves",
+    "application_256_leaves",
 };
+
+static long long elapsed_microseconds(struct timespec start, struct timespec end) {
+  return (long long)(end.tv_sec - start.tv_sec) * 1000000LL +
+         (long long)(end.tv_nsec - start.tv_nsec) / 1000LL;
+}
 
 static unsigned char *read_file(const char *path, size_t *length) {
   FILE *file = fopen(path, "rb");
@@ -75,12 +84,25 @@ int main(int argc, char **argv) {
       fprintf(stderr, "%s fixture read failed\n", vector_ids[index]);
       return 4;
     }
+    struct timespec started;
+    struct timespec finished;
+    clock_gettime(CLOCK_MONOTONIC, &started);
     OpenMlsReceiveV1Buffer actual =
         openmls_receive_v1_execute(request, request_length);
+    clock_gettime(CLOCK_MONOTONIC, &finished);
     if (actual.data == NULL || actual.len != expected_length ||
         memcmp(actual.data, expected, expected_length) != 0) {
       fprintf(stderr, "%s response mismatch\n", vector_ids[index]);
       return 5;
+    }
+    if (strstr(vector_ids[index], "_256_leaves") != NULL) {
+      struct rusage usage;
+      memset(&usage, 0, sizeof(usage));
+      getrusage(RUSAGE_SELF, &usage);
+      printf("native_receive_v1_apple_limit id=%s request_bytes=%zu "
+             "response_bytes=%zu elapsed_us=%lld max_rss_bytes=%ld\n",
+             vector_ids[index], request_length, actual.len,
+             elapsed_microseconds(started, finished), usage.ru_maxrss);
     }
     wipe(request, request_length);
     wipe(expected, expected_length);
@@ -88,6 +110,7 @@ int main(int argc, char **argv) {
     free(expected);
     openmls_receive_v1_free(actual);
   }
-  printf("native_receive_v1_apple_vectors=10 passed=true\n");
+  printf("native_receive_v1_apple_vectors=%zu passed=true\n",
+         sizeof(vector_ids) / sizeof(vector_ids[0]));
   return 0;
 }

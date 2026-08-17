@@ -19,14 +19,16 @@ use crate::api::group_e2ee::{
 use crate::api::keys::{MlsSignatureKeyPair, serialize_signer};
 use crate::api::storage::{
     MLS_STORAGE_FORMAT_VERSION, MlsStorageBatch, MlsStorageEntry, create_key_package_with_storage,
-    create_message_with_storage,
+    create_message_with_storage, zeroize_entry_values,
 };
 use crate::api::types::MlsCiphersuite;
 use crate::native_receive_v1::{
-    NATIVE_RECEIVE_CONTRACT_VERSION, NATIVE_RECEIVE_PROFILE_V1, NativeExpectedRosterStateV1,
-    NativeLeafAuthorityV1, NativeReceiveErrorCodeV1, NativeReceiveOperationV1,
-    NativeReceiveRequestV1, NativeStorageEntryV1, NativeStorageSnapshotV1,
-    encode_native_receive_request_v1, execute_native_receive_v1,
+    NATIVE_RECEIVE_CONTRACT_VERSION, NATIVE_RECEIVE_MLS_MESSAGE_MAX_BYTES,
+    NATIVE_RECEIVE_PROFILE_V1, NATIVE_RECEIVE_REQUEST_MAX_BYTES, NATIVE_RECEIVE_RESULT_MAX_BYTES,
+    NATIVE_RECEIVE_ROSTER_MAX_LEAVES, NATIVE_RECEIVE_STORAGE_MAX_BYTES,
+    NativeExpectedRosterStateV1, NativeLeafAuthorityV1, NativeReceiveErrorCodeV1,
+    NativeReceiveOperationV1, NativeReceiveRequestV1, NativeStorageEntryV1,
+    NativeStorageSnapshotV1, encode_native_receive_request_v1, execute_native_receive_v1,
 };
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
@@ -36,7 +38,29 @@ pub struct NativeReceiveV1VectorManifest {
     pub profile_id: u16,
     pub storage_format_version: u32,
     pub synthetic_secrets_only: bool,
+    pub limits_256: NativeReceiveV1LimitEvidence,
     pub vectors: Vec<NativeReceiveV1VectorRecord>,
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+pub struct NativeReceiveV1LimitEvidence {
+    pub roster_leaves: usize,
+    pub welcome_wire_bytes: usize,
+    pub application_ciphertext_bytes: usize,
+    pub welcome: NativeReceiveV1OperationEvidence,
+    pub application: NativeReceiveV1OperationEvidence,
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+pub struct NativeReceiveV1OperationEvidence {
+    pub request_bytes: usize,
+    pub response_bytes: usize,
+    pub snapshot_entries: usize,
+    pub snapshot_bytes: usize,
+    pub batch_upserts: usize,
+    pub batch_deletes: usize,
+    pub batch_deleted_groups: usize,
+    pub batch_bytes: usize,
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
@@ -52,7 +76,7 @@ pub struct NativeReceiveV1VectorRecord {
 
 pub fn write_native_receive_v1_vectors(output: &Path) -> Result<(), String> {
     fs::create_dir_all(output).map_err(|error| format!("create fixture directory: {error}"))?;
-    let vectors = build_vectors()?;
+    let (vectors, limits_256) = build_vectors()?;
     let mut records = Vec::with_capacity(vectors.len());
     for vector in vectors {
         let request = encode_native_receive_request_v1(&vector.request)
@@ -81,6 +105,7 @@ pub fn write_native_receive_v1_vectors(output: &Path) -> Result<(), String> {
         profile_id: NATIVE_RECEIVE_PROFILE_V1,
         storage_format_version: MLS_STORAGE_FORMAT_VERSION,
         synthetic_secrets_only: true,
+        limits_256,
         vectors: records,
     };
     let manifest_bytes = serde_json::to_vec_pretty(&manifest)
@@ -102,6 +127,7 @@ pub fn validate_native_receive_v1_vectors(output: &Path) -> Result<(), String> {
     {
         return Err("fixture manifest authority does not match this build".to_string());
     }
+    validate_limit_evidence(&manifest.limits_256)?;
     for vector in manifest.vectors {
         let request = fs::read(output.join(&vector.request_file))
             .map_err(|error| format!("read {}: {error}", vector.request_file))?;
@@ -112,6 +138,12 @@ pub fn validate_native_receive_v1_vectors(output: &Path) -> Result<(), String> {
         {
             return Err(format!("fixture {} digest mismatch", vector.id));
         }
+        validate_limit_record(
+            &manifest.limits_256,
+            &vector.id,
+            request.len(),
+            expected_response.len(),
+        )?;
         let actual_response = execute_native_receive_v1(&request);
         if actual_response != expected_response {
             return Err(format!("fixture {} response mismatch", vector.id));
@@ -130,7 +162,7 @@ struct GeneratedVector {
     expected_error: Option<NativeReceiveErrorCodeV1>,
 }
 
-fn build_vectors() -> Result<Vec<GeneratedVector>, String> {
+fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence), String> {
     let config = MlsGroupConfig::default_config(ciphersuite());
     let group_id = vec![0x51; 16];
     let alice_identity = identity(1);
@@ -401,7 +433,273 @@ fn build_vectors() -> Result<Vec<GeneratedVector>, String> {
         NativeReceiveOperationV1::Commit,
         commit_request,
     ));
-    Ok(vectors)
+    let (mut limit_vectors, limit_evidence) = build_limit_vectors()?;
+    vectors.append(&mut limit_vectors);
+    Ok((vectors, limit_evidence))
+}
+
+fn build_limit_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence), String> {
+    const ROSTER_LEAVES: usize = 256;
+
+    let config = MlsGroupConfig::default_config(ciphersuite());
+    let group_id = vec![0x52; 16];
+    let owner_identity = limit_identity(0);
+    let target_identity = limit_identity(1);
+    let (owner_signer, owner_public) = signer()?;
+    let created = create_group_with_storage(
+        config.clone(),
+        owner_signer.clone(),
+        group_id.clone(),
+        MlsAuthorizedOwnerV1 {
+            expected_credential_identity: owner_identity.clone(),
+            expected_signature_public_key: owner_public,
+        },
+        None,
+        Vec::new(),
+        MLS_STORAGE_FORMAT_VERSION,
+    )?;
+    let mut owner_entries = Vec::new();
+    apply_batch(&mut owner_entries, &created.storage_batch);
+
+    let mut additions = Vec::with_capacity(ROSTER_LEAVES - 1);
+    let mut target_signer = Vec::new();
+    let mut target_public = Vec::new();
+    let mut target_entries = Vec::new();
+    let mut target_key_package_sha256 = Vec::new();
+    for member in 1..ROSTER_LEAVES {
+        let identity = limit_identity(member as u16);
+        let (mut member_signer, member_public) = signer()?;
+        let mut key_package = create_key_package_with_storage(
+            ciphersuite(),
+            member_signer.clone(),
+            identity.clone(),
+            member_public.clone(),
+            None,
+            Vec::new(),
+            MLS_STORAGE_FORMAT_VERSION,
+        )?;
+        if member == 1 {
+            target_signer = member_signer.clone();
+            target_public = member_public.clone();
+            target_key_package_sha256 = Sha256::digest(&key_package.key_package_bytes).to_vec();
+            apply_batch(&mut target_entries, &key_package.storage_batch);
+        }
+        member_signer.zeroize();
+        zeroize_entry_values(&mut key_package.storage_batch.upserts);
+        additions.push(MlsAuthorizedKeyPackageV1 {
+            key_package_bytes: key_package.key_package_bytes,
+            expected_credential_identity: identity,
+            expected_signature_public_key: member_public,
+        });
+    }
+
+    let added = add_members_with_storage(
+        group_id.clone(),
+        owner_signer.clone(),
+        additions,
+        vec![0x41; 2048],
+        expected(&created.resulting_roster),
+        owner_entries.clone(),
+        MLS_STORAGE_FORMAT_VERSION,
+    )?;
+    if added.resulting_roster.leaves.len() != ROSTER_LEAVES {
+        return Err("limit fixture did not create exactly 256 active leaves".to_string());
+    }
+    apply_batch(&mut owner_entries, &added.storage_batch);
+    let welcome_bytes = added
+        .welcome
+        .clone()
+        .ok_or_else(|| "limit fixture add did not produce Welcome".to_string())?;
+    let target_leaf = native_leaf(
+        added
+            .resulting_roster
+            .leaves
+            .iter()
+            .find(|leaf| {
+                leaf.credential_identity == target_identity
+                    && leaf.signature_public_key == target_public
+            })
+            .ok_or_else(|| "limit fixture target leaf missing".to_string())?,
+    );
+
+    let welcome_request = NativeReceiveRequestV1::Welcome {
+        profile_id: NATIVE_RECEIVE_PROFILE_V1,
+        welcome_bytes: welcome_bytes.clone(),
+        ratchet_tree_bytes: None,
+        signer_bytes: target_signer.clone(),
+        expected_local_leaf: target_leaf,
+        expected_resulting_state: native_expected(&added.resulting_roster),
+        expected_target_key_package_sha256: target_key_package_sha256,
+        storage: native_snapshot(&target_entries),
+    };
+    let welcome_frame = encode_native_receive_request_v1(&welcome_request)
+        .map_err(|error| format!("encode 256-leaf Welcome request: {error:?}"))?;
+    let welcome_response = execute_native_receive_v1(&welcome_frame);
+    validate_response_shape(&welcome_response, NativeReceiveOperationV1::Welcome, None)?;
+    let joined = join_group_from_welcome_with_storage(
+        config,
+        welcome_bytes.clone(),
+        None,
+        target_signer,
+        expected(&added.resulting_roster),
+        target_entries.clone(),
+        MLS_STORAGE_FORMAT_VERSION,
+    )?;
+    let welcome_evidence = operation_evidence(
+        welcome_frame.len(),
+        welcome_response.len(),
+        &target_entries,
+        &joined.storage_batch,
+    );
+    apply_batch(&mut target_entries, &joined.storage_batch);
+
+    let application = create_message_with_storage(
+        group_id.clone(),
+        owner_signer,
+        vec![0x50; 29 * 1024],
+        vec![0x42; 2048],
+        owner_entries,
+        MLS_STORAGE_FORMAT_VERSION,
+    )?;
+    let owner_leaf = native_leaf(
+        added
+            .resulting_roster
+            .leaves
+            .iter()
+            .find(|leaf| leaf.credential_identity == owner_identity)
+            .ok_or_else(|| "limit fixture owner leaf missing".to_string())?,
+    );
+    let application_request = NativeReceiveRequestV1::Process {
+        operation: NativeReceiveOperationV1::Application,
+        profile_id: NATIVE_RECEIVE_PROFILE_V1,
+        group_id: group_id.clone(),
+        message_bytes: application.ciphertext.clone(),
+        expected_aad: vec![0x42; 2048],
+        expected_sender: owner_leaf,
+        expected_previous_state: native_expected(&added.resulting_roster),
+        expected_resulting_state: native_expected(&added.resulting_roster),
+        expected_base_group_state_sha256: group_digest(&group_id, &target_entries)?,
+        storage: native_snapshot(&target_entries),
+    };
+    let application_frame = encode_native_receive_request_v1(&application_request)
+        .map_err(|error| format!("encode 256-leaf application request: {error:?}"))?;
+    let application_response = execute_native_receive_v1(&application_frame);
+    validate_response_shape(
+        &application_response,
+        NativeReceiveOperationV1::Application,
+        None,
+    )?;
+    let processed = process_message_with_storage(
+        group_id,
+        application.ciphertext.clone(),
+        vec![0x42; 2048],
+        expected(&added.resulting_roster),
+        expected(&added.resulting_roster),
+        target_entries.clone(),
+        MLS_STORAGE_FORMAT_VERSION,
+    )?;
+    let application_evidence = operation_evidence(
+        application_frame.len(),
+        application_response.len(),
+        &target_entries,
+        &processed.storage_batch,
+    );
+
+    let evidence = NativeReceiveV1LimitEvidence {
+        roster_leaves: ROSTER_LEAVES,
+        welcome_wire_bytes: welcome_bytes.len(),
+        application_ciphertext_bytes: application.ciphertext.len(),
+        welcome: welcome_evidence,
+        application: application_evidence,
+    };
+    Ok((
+        vec![
+            success(
+                "welcome_256_leaves",
+                NativeReceiveOperationV1::Welcome,
+                welcome_request,
+            ),
+            success(
+                "application_256_leaves",
+                NativeReceiveOperationV1::Application,
+                application_request,
+            ),
+        ],
+        evidence,
+    ))
+}
+
+fn operation_evidence(
+    request_bytes: usize,
+    response_bytes: usize,
+    snapshot: &[MlsStorageEntry],
+    batch: &MlsStorageBatch,
+) -> NativeReceiveV1OperationEvidence {
+    NativeReceiveV1OperationEvidence {
+        request_bytes,
+        response_bytes,
+        snapshot_entries: snapshot.len(),
+        snapshot_bytes: entries_bytes(snapshot),
+        batch_upserts: batch.upserts.len(),
+        batch_deletes: batch.deletes.len(),
+        batch_deleted_groups: batch.deleted_group_ids.len(),
+        batch_bytes: entries_bytes(&batch.upserts)
+            + batch.deletes.iter().map(Vec::len).sum::<usize>()
+            + batch.deleted_group_ids.iter().map(Vec::len).sum::<usize>(),
+    }
+}
+
+fn validate_limit_evidence(evidence: &NativeReceiveV1LimitEvidence) -> Result<(), String> {
+    if evidence.roster_leaves != NATIVE_RECEIVE_ROSTER_MAX_LEAVES
+        || evidence.welcome_wire_bytes > NATIVE_RECEIVE_MLS_MESSAGE_MAX_BYTES
+        || evidence.application_ciphertext_bytes > NATIVE_RECEIVE_MLS_MESSAGE_MAX_BYTES
+    {
+        return Err("256-leaf fixture does not exercise the declared roster ceiling".to_string());
+    }
+    for operation in [&evidence.welcome, &evidence.application] {
+        if operation.request_bytes > NATIVE_RECEIVE_REQUEST_MAX_BYTES
+            || operation.response_bytes > NATIVE_RECEIVE_RESULT_MAX_BYTES
+            || operation.snapshot_bytes > NATIVE_RECEIVE_STORAGE_MAX_BYTES
+            || operation.batch_bytes > NATIVE_RECEIVE_STORAGE_MAX_BYTES
+        {
+            return Err("256-leaf fixture exceeds a native receive ceiling".to_string());
+        }
+    }
+    Ok(())
+}
+
+fn validate_limit_record(
+    evidence: &NativeReceiveV1LimitEvidence,
+    id: &str,
+    request_bytes: usize,
+    response_bytes: usize,
+) -> Result<(), String> {
+    let expected = match id {
+        "welcome_256_leaves" => Some(&evidence.welcome),
+        "application_256_leaves" => Some(&evidence.application),
+        _ => None,
+    };
+    if let Some(expected) = expected
+        && (request_bytes != expected.request_bytes || response_bytes != expected.response_bytes)
+    {
+        return Err(format!("fixture {id} does not match its limit evidence"));
+    }
+    Ok(())
+}
+
+fn entries_bytes(entries: &[MlsStorageEntry]) -> usize {
+    entries
+        .iter()
+        .map(|entry| {
+            entry.key.len() + entry.value.len() + entry.group_id.as_ref().map_or(0, Vec::len)
+        })
+        .sum()
+}
+
+fn limit_identity(value: u16) -> Vec<u8> {
+    let mut identity = vec![0x4b; 45];
+    identity[..2].copy_from_slice(&value.to_be_bytes());
+    identity
 }
 
 fn success(

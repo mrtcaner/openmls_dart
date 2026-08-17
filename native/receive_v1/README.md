@@ -102,19 +102,40 @@ serialization and the caller's SQLite transaction remain consumer authority.
 
 ## Shared vectors and harnesses
 
-`fixtures/manifest.json` records ten synthetic canonical binary request/result
-pairs: Welcome, application and Commit success plus wrong KeyPackage hash,
-local leaf, base digest, AAD, sender, resulting roster and kind. Rust replays
-the committed bytes exactly in its test suite.
+`fixtures/manifest.json` records twelve synthetic canonical binary
+request/result pairs: Welcome, application and Commit success; wrong
+KeyPackage hash, local leaf, base digest, AAD, sender, resulting roster and
+kind; plus successful Welcome and application operations at the package's
+256-leaf ceiling. Rust replays the committed bytes exactly in its test suite.
 
 - `android/run_avd_harness.sh <serial>` compiles the fixed Java class, loads the
-  existing arm64 `libopenmls_frb.so`, compares all ten results byte-for-byte,
+  existing arm64 `libopenmls_frb.so`, compares all twelve results byte-for-byte,
   and verifies Java request/result array wiping.
-- `apple/run_macos_harness.sh` compiles the C header boundary, compares all ten
+- `apple/run_macos_harness.sh` compiles the C header boundary, compares all twelve
   results, and frees every returned Rust allocation through the public API.
 
 Evidence on 2026-08-17: Android arm64 API 28 and the macOS Apple boundary both
-reported `10 passed=true`; the iOS arm64 device target built and exported
+reported `12 passed=true`; the iOS arm64 device target built and exported
 `openmls_receive_v1_execute`, `openmls_receive_v1_free`, and
 `openmls_receive_v1_version`. Simulator/physical Notification Service
 Extension execution and final framework naming are still release gates.
+
+The generated 256-leaf fixture stays far below every package ceiling. Welcome
+used an 88,656-byte request, 299,806-byte response, 2,031-byte input snapshot,
+and 277,194-byte output batch. Application used a 311,392-byte request,
+82,283-byte response, 277,051-byte snapshot, and 7,804-byte batch. Its MLS
+ciphertext is 31,895 bytes, below Chat's independent 32 KiB admission limit.
+On the API-28 arm64 AVD, Welcome/application took 23,231/10,880 microseconds
+with process high-water RSS reaching 83,184 KiB. The macOS Apple boundary took
+33,078/12,347 microseconds with high-water RSS reaching 10,911,744 bytes. These
+are constructibility measurements, not production service-level guarantees.
+
+Same-toolchain stripped release binaries were compared with signed tag
+`openmls_frb-3.0.0` (`280752b`):
+
+| Target | 3.0.0 bytes | Native receive v1 bytes | Delta |
+| --- | ---: | ---: | ---: |
+| macOS arm64 | 4,794,800 | 4,937,936 | +143,136 (+3.0%) |
+| iOS arm64 device | 4,754,984 | 4,913,480 | +158,496 (+3.3%) |
+| Android arm64 | 6,853,464 | 7,110,664 | +257,200 (+3.8%) |
+| Android x86_64 | 6,250,600 | 6,461,600 | +211,000 (+3.4%) |
