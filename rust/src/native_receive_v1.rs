@@ -300,6 +300,20 @@ pub fn decode_native_receive_request_v1(
 pub fn encode_native_receive_request_v1(
     request: &NativeReceiveRequestV1,
 ) -> Result<Vec<u8>, NativeReceiveErrorCodeV1> {
+    encode_native_receive_request_v1_with_aad_minimum(request, 1)
+}
+
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) fn encode_native_receive_request_v1_allow_empty_aad_fixture(
+    request: &NativeReceiveRequestV1,
+) -> Result<Vec<u8>, NativeReceiveErrorCodeV1> {
+    encode_native_receive_request_v1_with_aad_minimum(request, 0)
+}
+
+fn encode_native_receive_request_v1_with_aad_minimum(
+    request: &NativeReceiveRequestV1,
+    minimum_aad_bytes: usize,
+) -> Result<Vec<u8>, NativeReceiveErrorCodeV1> {
     let mut payload = Vec::new();
     let operation = match request {
         NativeReceiveRequestV1::Process {
@@ -320,7 +334,11 @@ pub fn encode_native_receive_request_v1(
             validate_profile(*profile_id)?;
             validate_exact_result_bytes(group_id, PROFILE_GROUP_ID_BYTES)?;
             validate_result_range(message_bytes, 1, NATIVE_RECEIVE_MLS_MESSAGE_MAX_BYTES)?;
-            validate_result_range(expected_aad, 0, NATIVE_RECEIVE_AAD_MAX_BYTES)?;
+            validate_result_range(
+                expected_aad,
+                minimum_aad_bytes,
+                NATIVE_RECEIVE_AAD_MAX_BYTES,
+            )?;
             validate_exact_result_bytes(expected_base_group_state_sha256, SHA256_BYTES)?;
             let mut encoder = Encoder::new(&mut payload);
             encoder
@@ -958,7 +976,7 @@ fn decode_process_request(
     expect_key(decoder, 2)?;
     let message_bytes = decode_bounded_bytes(decoder, 1, NATIVE_RECEIVE_MLS_MESSAGE_MAX_BYTES)?;
     expect_key(decoder, 3)?;
-    let expected_aad = decode_bounded_bytes(decoder, 0, NATIVE_RECEIVE_AAD_MAX_BYTES)?;
+    let expected_aad = decode_bounded_bytes(decoder, 1, NATIVE_RECEIVE_AAD_MAX_BYTES)?;
     expect_key(decoder, 4)?;
     let expected_sender = decode_leaf(decoder)?;
     expect_key(decoder, 5)?;
@@ -2038,6 +2056,37 @@ mod tests {
         let second = encode_native_receive_request_v1(&decoded).unwrap();
         assert_eq!(first, second);
         assert!(matches!(decoded, NativeReceiveRequestV1::Welcome { .. }));
+    }
+
+    #[test]
+    fn rejects_empty_process_aad_at_codec_boundary() {
+        let fixture = ApplicationFixture::new();
+        let request = fixture.request(
+            NativeReceiveOperationV1::Application,
+            Vec::new(),
+            fixture.sender.clone(),
+            native_expected(&fixture.roster),
+            fixture.base_digest.clone(),
+        );
+
+        assert_eq!(
+            encode_native_receive_request_v1(&request).unwrap_err(),
+            NativeReceiveErrorCodeV1::LimitExceeded
+        );
+
+        // The fixture-only encoder constructs canonical CBOR that deliberately
+        // violates the semantic lower bound, exercising the production decoder.
+        let frame = encode_native_receive_request_v1_allow_empty_aad_fixture(&request).unwrap();
+        assert_eq!(
+            decode_native_receive_request_v1(&frame).unwrap_err(),
+            NativeReceiveErrorCodeV1::LimitExceeded
+        );
+        let expected_failure = encode_native_receive_outcome_v1(
+            Some(NativeReceiveOperationV1::Application),
+            &NativeReceiveOutcomeV1::failure(NativeReceiveErrorCodeV1::LimitExceeded),
+        )
+        .unwrap();
+        assert_eq!(execute_native_receive_v1(&frame), expected_failure);
     }
 
     #[test]

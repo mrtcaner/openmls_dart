@@ -28,7 +28,8 @@ use crate::native_receive_v1::{
     NATIVE_RECEIVE_ROSTER_MAX_LEAVES, NATIVE_RECEIVE_STORAGE_MAX_BYTES,
     NativeExpectedRosterStateV1, NativeLeafAuthorityV1, NativeReceiveErrorCodeV1,
     NativeReceiveOperationV1, NativeReceiveRequestV1, NativeStorageEntryV1,
-    NativeStorageSnapshotV1, encode_native_receive_request_v1, execute_native_receive_v1,
+    NativeStorageSnapshotV1, encode_native_receive_request_v1,
+    encode_native_receive_request_v1_allow_empty_aad_fixture, execute_native_receive_v1,
 };
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
@@ -79,8 +80,12 @@ pub fn write_native_receive_v1_vectors(output: &Path) -> Result<(), String> {
     let (vectors, limits_256) = build_vectors()?;
     let mut records = Vec::with_capacity(vectors.len());
     for vector in vectors {
-        let request = encode_native_receive_request_v1(&vector.request)
-            .map_err(|error| format!("encode {} request: {error:?}", vector.id))?;
+        let request = if vector.allow_empty_aad_encoding {
+            encode_native_receive_request_v1_allow_empty_aad_fixture(&vector.request)
+        } else {
+            encode_native_receive_request_v1(&vector.request)
+        }
+        .map_err(|error| format!("encode {} request: {error:?}", vector.id))?;
         let response = execute_native_receive_v1(&request);
         validate_response_shape(&response, vector.operation, vector.expected_error)?;
         let request_file = format!("{}.request.bin", vector.id);
@@ -160,6 +165,7 @@ struct GeneratedVector {
     operation: NativeReceiveOperationV1,
     request: NativeReceiveRequestV1,
     expected_error: Option<NativeReceiveErrorCodeV1>,
+    allow_empty_aad_encoding: bool,
 }
 
 fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence), String> {
@@ -343,6 +349,15 @@ fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence
         NativeReceiveOperationV1::Application,
         wrong_aad,
         NativeReceiveErrorCodeV1::AadMismatch,
+    ));
+    let mut empty_aad = application_request();
+    if let NativeReceiveRequestV1::Process { expected_aad, .. } = &mut empty_aad {
+        expected_aad.clear();
+    }
+    vectors.push(empty_aad_failure(
+        "application_empty_aad",
+        NativeReceiveOperationV1::Application,
+        empty_aad,
     ));
     let mut wrong_sender = application_request();
     if let NativeReceiveRequestV1::Process {
@@ -712,6 +727,7 @@ fn success(
         operation,
         request,
         expected_error: None,
+        allow_empty_aad_encoding: false,
     }
 }
 
@@ -726,6 +742,21 @@ fn failure(
         operation,
         request,
         expected_error: Some(error),
+        allow_empty_aad_encoding: false,
+    }
+}
+
+fn empty_aad_failure(
+    id: &str,
+    operation: NativeReceiveOperationV1,
+    request: NativeReceiveRequestV1,
+) -> GeneratedVector {
+    GeneratedVector {
+        id: id.to_string(),
+        operation,
+        request,
+        expected_error: Some(NativeReceiveErrorCodeV1::LimitExceeded),
+        allow_empty_aad_encoding: true,
     }
 }
 
@@ -885,6 +916,7 @@ impl NativeReceiveOperationV1 {
 
 fn error_from_u16(value: u16) -> Result<NativeReceiveErrorCodeV1, String> {
     match value {
+        6 => Ok(NativeReceiveErrorCodeV1::LimitExceeded),
         13 => Ok(NativeReceiveErrorCodeV1::BaseStateMismatch),
         25 => Ok(NativeReceiveErrorCodeV1::ResultingRosterMismatch),
         26 => Ok(NativeReceiveErrorCodeV1::AadMismatch),

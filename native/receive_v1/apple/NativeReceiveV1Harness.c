@@ -13,6 +13,7 @@ static const char *vector_ids[] = {
     "application_success",
     "application_wrong_base",
     "application_wrong_aad",
+    "application_empty_aad",
     "application_wrong_sender",
     "application_wrong_roster",
     "application_wrong_kind",

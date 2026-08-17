@@ -342,24 +342,25 @@ OpenMLS binary. The exact `expectedTargetKeyPackageSha256` input,
 `consumedKeyPackageSha256` output, and numeric error `35` are implemented and
 covered by success/mismatch vectors.
 
-The committed manifest now contains twelve exact binary request/result pairs.
-Rust, Android arm64 API 28 JNI, and the Apple C boundary replay all twelve
-byte-for-byte. Full Rust validation passes 22 tests with all features/targets
-and warning-free Clippy. The existing Dart package remains compatible: 108
-tests, Flutter analysis, formatting, and third-party-notice verification pass
-against a freshly built host library.
+The committed manifest now contains thirteen exact binary request/result pairs,
+including a canonical empty-application-AAD frame that fails with typed
+`limit_exceeded`. Rust, Android arm64 API 28 JNI, and the Apple C boundary
+replay all thirteen byte-for-byte. Full Rust validation passes 23 tests with
+all features/targets and warning-free Clippy. The existing Dart package remains
+compatible: 108 tests, Flutter analysis, formatting, and third-party-notice
+verification pass against a freshly built host library.
 
 At the 256-leaf package ceiling, the largest request, result, snapshot, and
-batch observed were 311,392, 299,806, 277,051, and 277,194 bytes respectively.
+batch observed were 311,320, 299,738, 276,979, and 277,126 bytes respectively.
 These remain far below the 12/8/6 MiB package ceilings. The application
 ciphertext is 31,895 bytes, also below Chat's independent 32 KiB admission
 limit. The product roster limit remains 100; this fixture proves package
 headroom only.
 
 Same-toolchain stripped release growth relative to signed tag
-`openmls_frb-3.0.0` is +143,056 bytes macOS arm64 (3.0%), +158,320 bytes iOS
-arm64 (3.3%), +256,672 bytes Android arm64 (3.7%), and +211,000 bytes Android
-x86_64 (3.4%). Detailed frame, limit, runtime, and size records are in
+`openmls_frb-3.0.0` is +143,056 bytes macOS arm64 (3.0%), +158,336 bytes iOS
+arm64 (3.3%), +254,880 bytes Android arm64 (3.7%), and +208,232 bytes Android
+x86_64 (3.3%). Detailed frame, limit, runtime, and size records are in
 `native/receive_v1/README.md` and `native/receive_v1/fixtures/manifest.json`.
 
 ## What remains before release

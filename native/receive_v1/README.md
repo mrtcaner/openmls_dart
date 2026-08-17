@@ -76,7 +76,7 @@ or batch, 4,096 storage entries/upserts/deletes, 1 MiB MLS/Welcome, 2 MiB tree,
 These are implementation headroom, not product admission authority. Chat's
 lower limits remain: 32 KiB application ciphertext, 2 KiB AAD, 16 KiB Commit,
 16 KiB Welcome plus 16 KiB GroupInfo, roster 100, 192 KiB encoded operation,
-256 KiB response, and eight operations per settlement.
+256 KiB response, and eight operations per resolve response/page.
 
 ## Platform ownership
 
@@ -102,32 +102,34 @@ serialization and the caller's SQLite transaction remain consumer authority.
 
 ## Shared vectors and harnesses
 
-`fixtures/manifest.json` records twelve synthetic canonical binary
+`fixtures/manifest.json` records thirteen synthetic canonical binary
 request/result pairs: Welcome, application and Commit success; wrong
-KeyPackage hash, local leaf, base digest, AAD, sender, resulting roster and
-kind; plus successful Welcome and application operations at the package's
-256-leaf ceiling. Rust replays the committed bytes exactly in its test suite.
+KeyPackage hash, local leaf, base digest, empty/mismatched AAD, sender,
+resulting roster and kind; plus successful Welcome and application operations
+at the package's 256-leaf ceiling. Rust replays the committed bytes exactly in
+its test suite.
 
 - `android/run_avd_harness.sh <serial>` compiles the fixed Java class, loads the
-  existing arm64 `libopenmls_frb.so`, compares all twelve results byte-for-byte,
-  and verifies Java request/result array wiping.
-- `apple/run_macos_harness.sh` compiles the C header boundary, compares all twelve
-  results, and frees every returned Rust allocation through the public API.
+  existing arm64 `libopenmls_frb.so`, compares all thirteen results
+  byte-for-byte, and verifies Java request/result array wiping.
+- `apple/run_macos_harness.sh` compiles the C header boundary, compares all
+  thirteen results, and frees every returned Rust allocation through the public
+  API.
 
 Evidence on 2026-08-17: Android arm64 API 28 and the macOS Apple boundary both
-reported `12 passed=true`; the iOS arm64 device target built and exported
+reported `13 passed=true`; the iOS arm64 device target built and exported
 `openmls_receive_v1_execute`, `openmls_receive_v1_free`, and
 `openmls_receive_v1_version`. Simulator/physical Notification Service
 Extension execution and final framework naming are still release gates.
 
 The generated 256-leaf fixture stays far below every package ceiling. Welcome
-used an 88,656-byte request, 299,806-byte response, 2,031-byte input snapshot,
-and 277,194-byte output batch. Application used a 311,392-byte request,
-82,283-byte response, 277,051-byte snapshot, and 7,804-byte batch. Its MLS
+used an 88,669-byte request, 299,738-byte response, 2,037-byte input snapshot,
+and 277,126-byte output batch. Application used a 311,320-byte request,
+82,252-byte response, 276,979-byte snapshot, and 7,773-byte batch. Its MLS
 ciphertext is 31,895 bytes, below Chat's independent 32 KiB admission limit.
-On the API-28 arm64 AVD, Welcome/application took 24,484/12,778 microseconds
-with process high-water RSS reaching 83,068 KiB. The macOS Apple boundary took
-31,557/11,995 microseconds with high-water RSS reaching 10,862,592 bytes. These
+On the API-28 arm64 AVD, Welcome/application took 28,860/14,561 microseconds
+with process high-water RSS reaching 83,148 KiB. The macOS Apple boundary took
+29,222/11,885 microseconds with high-water RSS reaching 10,764,288 bytes. These
 are constructibility measurements, not production service-level guarantees.
 
 Same-toolchain stripped release binaries were compared with signed tag
@@ -136,6 +138,6 @@ Same-toolchain stripped release binaries were compared with signed tag
 | Target | 3.0.0 bytes | Native receive v1 bytes | Delta |
 | --- | ---: | ---: | ---: |
 | macOS arm64 | 4,794,800 | 4,937,856 | +143,056 (+3.0%) |
-| iOS arm64 device | 4,754,984 | 4,913,304 | +158,320 (+3.3%) |
-| Android arm64 | 6,853,464 | 7,110,136 | +256,672 (+3.7%) |
-| Android x86_64 | 6,250,600 | 6,461,600 | +211,000 (+3.4%) |
+| iOS arm64 device | 4,754,984 | 4,913,320 | +158,336 (+3.3%) |
+| Android arm64 | 6,853,464 | 7,108,344 | +254,880 (+3.7%) |
+| Android x86_64 | 6,250,600 | 6,458,832 | +208,232 (+3.3%) |
