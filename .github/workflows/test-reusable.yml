@@ -177,6 +177,11 @@ jobs:
         run: make rust-test
         shell: bash
 
+      - name: Apple native receive v1 vector harness
+        if: matrix.name == 'macOS ARM64'
+        run: native/receive_v1/apple/run_macos_harness.sh
+        shell: bash
+
       # Lint hand-written Rust with clippy (warnings = errors). Runs once, on
       # Linux x86_64: clippy is a full check-compile of the native library and
       # its findings are platform-independent for this portable FRB glue, so

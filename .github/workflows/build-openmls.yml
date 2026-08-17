@@ -158,6 +158,14 @@ jobs:
           cd rust
           cargo build --release --target ${{ matrix.rust_target }}
 
+      - name: Verify Apple native receive v1 exports
+        run: |
+          LIB="rust/target/${{ matrix.rust_target }}/release/libopenmls_frb.dylib"
+          SYMBOLS="$(nm -gU "$LIB")"
+          grep -q ' _openmls_receive_v1_execute$' <<< "$SYMBOLS"
+          grep -q ' _openmls_receive_v1_free$' <<< "$SYMBOLS"
+          grep -q ' _openmls_receive_v1_version$' <<< "$SYMBOLS"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
@@ -203,6 +211,14 @@ jobs:
         run: |
           cd rust
           cargo build --release --target ${{ matrix.rust_target }}
+
+      - name: Verify Apple native receive v1 exports
+        run: |
+          LIB="rust/target/${{ matrix.rust_target }}/release/libopenmls_frb.dylib"
+          SYMBOLS="$(nm -gU "$LIB")"
+          grep -q ' _openmls_receive_v1_execute$' <<< "$SYMBOLS"
+          grep -q ' _openmls_receive_v1_free$' <<< "$SYMBOLS"
+          grep -q ' _openmls_receive_v1_version$' <<< "$SYMBOLS"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
@@ -252,6 +268,14 @@ jobs:
           # otherwise use its own default).
           cd rust
           cargo ndk -t ${{ matrix.rust_target }} --platform 24 build --release
+
+      - name: Verify Android native receive v1 exports
+        run: |
+          LIB="rust/target/${{ matrix.rust_target }}/release/libopenmls_frb.so"
+          SYMBOLS="$(nm -D --defined-only "$LIB")"
+          grep -q 'Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeExecuteReceiveV1$' <<< "$SYMBOLS"
+          grep -q 'Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeZeroize$' <<< "$SYMBOLS"
+          grep -q 'Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeContractVersion$' <<< "$SYMBOLS"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7

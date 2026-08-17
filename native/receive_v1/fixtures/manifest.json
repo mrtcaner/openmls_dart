@@ -1,0 +1,151 @@
+{
+  "generated_date": "2026-08-17",
+  "contract_version": 1,
+  "profile_id": 1,
+  "storage_format_version": 1,
+  "synthetic_secrets_only": true,
+  "limits_256": {
+    "roster_leaves": 256,
+    "welcome_wire_bytes": 86140,
+    "application_ciphertext_bytes": 31895,
+    "welcome": {
+      "request_bytes": 88669,
+      "response_bytes": 299738,
+      "snapshot_entries": 1,
+      "snapshot_bytes": 2037,
+      "batch_upserts": 12,
+      "batch_deletes": 1,
+      "batch_deleted_groups": 0,
+      "batch_bytes": 277126
+    },
+    "application": {
+      "request_bytes": 311320,
+      "response_bytes": 82252,
+      "snapshot_entries": 12,
+      "snapshot_bytes": 276979,
+      "batch_upserts": 1,
+      "batch_deletes": 0,
+      "batch_deleted_groups": 0,
+      "batch_bytes": 7773
+    }
+  },
+  "vectors": [
+    {
+      "id": "welcome_success",
+      "operation": 3,
+      "request_file": "welcome_success.request.bin",
+      "request_sha256": "a553ffab19067791ef33ed5d6898aef0763264d7ca51e39d86e3ebb01c6316aa",
+      "response_file": "welcome_success.response.bin",
+      "response_sha256": "699c12bc4bfe54434b6bf5fc9f76cca7911d899a2f98f0497c29b5b898a74653",
+      "expected_error_code": null
+    },
+    {
+      "id": "welcome_wrong_key_package",
+      "operation": 3,
+      "request_file": "welcome_wrong_key_package.request.bin",
+      "request_sha256": "30184a1b2840913c03eef8be0382126cfd9b563548c8e7df2b0f6dc519f7b0f8",
+      "response_file": "welcome_wrong_key_package.response.bin",
+      "response_sha256": "2627a71d66198ead0d82825160c1c4924262210ecffb52367fb18592b5b244db",
+      "expected_error_code": 35
+    },
+    {
+      "id": "welcome_wrong_local_leaf",
+      "operation": 3,
+      "request_file": "welcome_wrong_local_leaf.request.bin",
+      "request_sha256": "7809e3f2ee0eaef646e168759ac42e3905afb20c0dcd4a281ce2728b216f411b",
+      "response_file": "welcome_wrong_local_leaf.response.bin",
+      "response_sha256": "b882dd758d71d3a1d3f9279179d85ce3ba0d1333de190afd942fe4db537eb2f9",
+      "expected_error_code": 29
+    },
+    {
+      "id": "application_success",
+      "operation": 1,
+      "request_file": "application_success.request.bin",
+      "request_sha256": "f3c707cfaaf0bd1ab91d46e0dc1e5eab1bf6217da92b9946aaf9be09a7ae028b",
+      "response_file": "application_success.response.bin",
+      "response_sha256": "69709ea4d5e805b106ef3c737f51f2ecbaec5c4b3a0afd5a2ca960c60d99f40b",
+      "expected_error_code": null
+    },
+    {
+      "id": "application_wrong_base",
+      "operation": 1,
+      "request_file": "application_wrong_base.request.bin",
+      "request_sha256": "3ef313d0543d8211ec8174cd73713254ee1712763c17b7d4808111ee39804bf5",
+      "response_file": "application_wrong_base.response.bin",
+      "response_sha256": "b27df1ec01bb1e549918b15237466b5192d7e71fd4ca415d0430bca95c566b79",
+      "expected_error_code": 13
+    },
+    {
+      "id": "application_wrong_aad",
+      "operation": 1,
+      "request_file": "application_wrong_aad.request.bin",
+      "request_sha256": "1375a8629a087bd59a0b8561eaf046fb3a063caec894b3d14296e7ba4975c02a",
+      "response_file": "application_wrong_aad.response.bin",
+      "response_sha256": "85a99fa4d9185868885cf010f4485f204b6a3ba35a6509854f8fd6ba873c017b",
+      "expected_error_code": 26
+    },
+    {
+      "id": "application_empty_aad",
+      "operation": 1,
+      "request_file": "application_empty_aad.request.bin",
+      "request_sha256": "4f1fe81301d82ba66a047dd8ed63e66b3c0711769a28e3647b4f702a53a6fec7",
+      "response_file": "application_empty_aad.response.bin",
+      "response_sha256": "84970e8c40709c8e9fbb2221957e1af06a42a9ee08cde7c7d747b1fec4214250",
+      "expected_error_code": 6
+    },
+    {
+      "id": "application_wrong_sender",
+      "operation": 1,
+      "request_file": "application_wrong_sender.request.bin",
+      "request_sha256": "b5aadcf5544da9251599a8285905417c8ab5451b515c8ffa0c50e287e0418c94",
+      "response_file": "application_wrong_sender.response.bin",
+      "response_sha256": "74ba85a1e1f92eb8e4f6040937f15d0b7f814f66a5dcc46c84725831e6e2939b",
+      "expected_error_code": 28
+    },
+    {
+      "id": "application_wrong_roster",
+      "operation": 1,
+      "request_file": "application_wrong_roster.request.bin",
+      "request_sha256": "723e0c6eaf6cb0708b30111a1c5e3c4300e83e24cf99f135b43036b63b65e154",
+      "response_file": "application_wrong_roster.response.bin",
+      "response_sha256": "acf0a205ddc95a1dbf37a21ecaff9cdf76788524634ca58e5ae8241b657d00d3",
+      "expected_error_code": 25
+    },
+    {
+      "id": "application_wrong_kind",
+      "operation": 2,
+      "request_file": "application_wrong_kind.request.bin",
+      "request_sha256": "002828fab56bc95aae71de9c797c77f2cd43617fc3c79c668ac05131444b3f7e",
+      "response_file": "application_wrong_kind.response.bin",
+      "response_sha256": "f90d1c8ac7768fe3d3a2ed0743b9877723b5b2a892b505503bf80caf9b3ee00d",
+      "expected_error_code": 27
+    },
+    {
+      "id": "commit_success",
+      "operation": 2,
+      "request_file": "commit_success.request.bin",
+      "request_sha256": "a5f8e441484c0645a8b7e4bcdbe4d5a85f9eaec4c8408a4b20b2892596c9c82a",
+      "response_file": "commit_success.response.bin",
+      "response_sha256": "171a9aba7d42d89f4a7ce05311494d65da7eba46d742fc7704887c6eb14de90e",
+      "expected_error_code": null
+    },
+    {
+      "id": "welcome_256_leaves",
+      "operation": 3,
+      "request_file": "welcome_256_leaves.request.bin",
+      "request_sha256": "24595170c19535f144e3bc44f11b80c7d6d3141a1ecb36914d56933d96ff2d7d",
+      "response_file": "welcome_256_leaves.response.bin",
+      "response_sha256": "a7f053f3cd9c1ae512c82d0101eb22282d5d8c5b4f0c9d2e0f57a90262cf0732",
+      "expected_error_code": null
+    },
+    {
+      "id": "application_256_leaves",
+      "operation": 1,
+      "request_file": "application_256_leaves.request.bin",
+      "request_sha256": "ba80956ca246dbb3ee4de77644ea6f54be879fcc5b584bf62a574cbb2dc7471c",
+      "response_file": "application_256_leaves.response.bin",
+      "response_sha256": "b89a93d02eaa47045621b15ace98998187beae4cfd2218ad39359954265bba5d",
+      "expected_error_code": null
+    }
+  ]
+}

@@ -13,6 +13,11 @@ name = "openmls_frb"
 # rlib is required so the fuzz crate (rust/fuzz) can link against this crate.
 crate-type = ["cdylib", "staticlib", "rlib"]
 
+[features]
+# Generator for committed native receive v1 binary interop fixtures. Excluded
+# from package/release builds.
+native-receive-fixtures = []
+
 [dependencies]
 flutter_rust_bridge = "=2.12.0"
 thiserror = "2.0"
@@ -20,6 +25,7 @@ log = "0.4"
 zeroize = { version = "1.8", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+minicbor = { version = "2.3.0", features = ["std"] }
 futures = "0.3"
 parking_lot = "0.12"
 sha2 = "0.10"
@@ -28,6 +34,8 @@ openmls_rust_crypto = { git = "https://github.com/openmls/openmls", tag = "openm
 openmls_basic_credential = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1", features = ["test-utils"] }
 openmls_traits = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
 
+[target.'cfg(target_os = "android")'.dependencies]
+jni = "0.21"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 # OpenMLS requires `js` feature for WASM: enables fluvio_wasm_timer for time access
@@ -49,6 +57,10 @@ strip = true
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ["-O4", "--enable-bulk-memory", "--enable-nontrapping-float-to-int"]
+
+[[example]]
+name = "native_receive_v1_export_vectors"
+required-features = ["native-receive-fixtures"]
 
 # Turn silent integer wraparound into a deterministic panic — but ONLY for this
 # crate's own code. Applying overflow-checks tree-wide would change the release

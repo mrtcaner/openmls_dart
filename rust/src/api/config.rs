@@ -9,6 +9,7 @@ use super::types::{
 /// Group configuration parameters.
 ///
 /// This is a plain data struct (transparent to FRB) — Dart can create/modify directly.
+#[derive(Clone)]
 pub struct MlsGroupConfig {
     pub ciphersuite: MlsCiphersuite,
     pub wire_format_policy: MlsWireFormatPolicy,

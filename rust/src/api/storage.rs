@@ -23,6 +23,7 @@ use crate::snapshot_storage::{
 pub const MLS_STORAGE_FORMAT_VERSION: u32 = 1;
 
 /// One opaque OpenMLS storage row owned by the caller.
+#[derive(Clone)]
 pub struct MlsStorageEntry {
     pub key: Vec<u8>,
     pub value: Vec<u8>,
@@ -31,6 +32,7 @@ pub struct MlsStorageEntry {
 }
 
 /// All durable changes produced by one successful MLS operation.
+#[derive(Clone)]
 pub struct MlsStorageBatch {
     pub upserts: Vec<MlsStorageEntry>,
     pub deletes: Vec<Vec<u8>>,

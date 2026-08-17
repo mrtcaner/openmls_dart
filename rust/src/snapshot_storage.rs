@@ -8,6 +8,7 @@
 
 use openmls_traits::OpenMlsProvider;
 use openmls_traits::storage::{CURRENT_VERSION, StorageProvider, traits};
+use openmls_traits::types::SignatureScheme;
 use parking_lot::Mutex;
 use std::collections::HashMap;
 use zeroize::Zeroize;
@@ -152,6 +153,21 @@ fn build_key_serde<const V: u16>(
     Ok(build_key::<V>(label, &key_bytes))
 }
 
+fn deserialize_zeroizing<Val: serde::de::DeserializeOwned>(
+    mut bytes: Vec<u8>,
+) -> Result<Val, SnapshotStorageError> {
+    let result = serde_json::from_slice(&bytes)
+        .map_err(|error| SnapshotStorageError::Serialization(error.to_string()));
+    bytes.zeroize();
+    result
+}
+
+fn zeroize_byte_list(values: &mut [Vec<u8>]) {
+    for value in values {
+        value.zeroize();
+    }
+}
+
 /// Build composite key for epoch key pairs (group_id + epoch + leaf_index).
 fn build_epoch_key<const V: u16>(
     group_id: &impl serde::Serialize,
@@ -190,6 +206,36 @@ impl SnapshotStorageProvider {
         }
     }
 
+    pub(crate) fn write_serialized_basic_signer(
+        &self,
+        private: &[u8],
+        public: &[u8],
+        signature_scheme: SignatureScheme,
+    ) -> Result<(), SnapshotStorageError> {
+        #[derive(serde::Serialize)]
+        struct SignatureStorageId {
+            value: Vec<u8>,
+        }
+
+        #[derive(serde::Serialize)]
+        struct StoredSignatureKeyPair<'a> {
+            private: &'a [u8],
+            public: &'a [u8],
+            signature_scheme: SignatureScheme,
+        }
+
+        let mut value = public.to_vec();
+        value.extend_from_slice(b"RustCryptoSignatureKey");
+        value.extend_from_slice(&(signature_scheme as u16).to_be_bytes());
+        let id = SignatureStorageId { value };
+        let signer = StoredSignatureKeyPair {
+            private,
+            public,
+            signature_scheme,
+        };
+        self.write_val::<{ CURRENT_VERSION }>(SIGNATURE_KEY_PAIR_LABEL, &id, &signer)
+    }
+
     // -- higher-level helpers --
 
     fn write_val<const V: u16>(
@@ -212,11 +258,7 @@ impl SnapshotStorageProvider {
     ) -> Result<Option<Val>, SnapshotStorageError> {
         let storage_key = build_key_serde::<V>(label, key)?;
         match self.kv_read(&storage_key) {
-            Some(bytes) => {
-                let val = serde_json::from_slice(&bytes)
-                    .map_err(|e| SnapshotStorageError::Serialization(e.to_string()))?;
-                Ok(Some(val))
-            }
+            Some(bytes) => deserialize_zeroizing(bytes).map(Some),
             None => Ok(None),
         }
     }
@@ -239,13 +281,14 @@ impl SnapshotStorageProvider {
     ) -> Result<(), SnapshotStorageError> {
         let storage_key = build_key_serde::<V>(label, key)?;
         let mut list: Vec<Vec<u8>> = match self.kv_read(&storage_key) {
-            Some(bytes) => serde_json::from_slice(&bytes)
-                .map_err(|e| SnapshotStorageError::Serialization(e.to_string()))?,
+            Some(bytes) => deserialize_zeroizing(bytes)?,
             None => Vec::new(),
         };
         list.push(item);
-        let val_bytes = serde_json::to_vec(&list)
-            .map_err(|e| SnapshotStorageError::Serialization(e.to_string()))?;
+        let encoded = serde_json::to_vec(&list)
+            .map_err(|error| SnapshotStorageError::Serialization(error.to_string()));
+        zeroize_byte_list(&mut list);
+        let val_bytes = encoded?;
         self.kv_write(storage_key, val_bytes);
         Ok(())
     }
@@ -258,14 +301,19 @@ impl SnapshotStorageProvider {
         let storage_key = build_key_serde::<V>(label, key)?;
         match self.kv_read(&storage_key) {
             Some(bytes) => {
-                let raw_list: Vec<Vec<u8>> = serde_json::from_slice(&bytes)
-                    .map_err(|e| SnapshotStorageError::Serialization(e.to_string()))?;
+                let mut raw_list: Vec<Vec<u8>> = deserialize_zeroizing(bytes)?;
                 let mut result = Vec::with_capacity(raw_list.len());
-                for item_bytes in raw_list {
-                    let item: Val = serde_json::from_slice(&item_bytes)
-                        .map_err(|e| SnapshotStorageError::Serialization(e.to_string()))?;
+                while let Some(item_bytes) = raw_list.pop() {
+                    let item: Val = match deserialize_zeroizing(item_bytes) {
+                        Ok(item) => item,
+                        Err(error) => {
+                            zeroize_byte_list(&mut raw_list);
+                            return Err(error);
+                        }
+                    };
                     result.push(item);
                 }
+                result.reverse();
                 Ok(result)
             }
             None => Ok(Vec::new()),
@@ -276,19 +324,22 @@ impl SnapshotStorageProvider {
         &self,
         label: &[u8],
         key: &impl serde::Serialize,
-        item: Vec<u8>,
+        mut item: Vec<u8>,
     ) -> Result<(), SnapshotStorageError> {
         let storage_key = build_key_serde::<V>(label, key)?;
         let mut list: Vec<Vec<u8>> = match self.kv_read(&storage_key) {
-            Some(bytes) => serde_json::from_slice(&bytes)
-                .map_err(|e| SnapshotStorageError::Serialization(e.to_string()))?,
+            Some(bytes) => deserialize_zeroizing(bytes)?,
             None => return Ok(()),
         };
         if let Some(pos) = list.iter().position(|x| *x == item) {
-            list.remove(pos);
+            let mut removed = list.remove(pos);
+            removed.zeroize();
         }
-        let val_bytes = serde_json::to_vec(&list)
-            .map_err(|e| SnapshotStorageError::Serialization(e.to_string()))?;
+        item.zeroize();
+        let encoded = serde_json::to_vec(&list)
+            .map_err(|error| SnapshotStorageError::Serialization(error.to_string()));
+        zeroize_byte_list(&mut list);
+        let val_bytes = encoded?;
         self.kv_write(storage_key, val_bytes);
         Ok(())
     }
@@ -717,11 +768,7 @@ impl StorageProvider<{ CURRENT_VERSION }> for SnapshotStorageProvider {
     ) -> Result<Vec<HpkeKeyPair>, Self::Error> {
         let storage_key = build_epoch_key::<{ CURRENT_VERSION }>(group_id, epoch, leaf_index)?;
         match self.kv_read(&storage_key) {
-            Some(bytes) => {
-                let val: Vec<HpkeKeyPair> = serde_json::from_slice(&bytes)
-                    .map_err(|e| SnapshotStorageError::Serialization(e.to_string()))?;
-                Ok(val)
-            }
+            Some(bytes) => deserialize_zeroizing(bytes),
             None => Ok(Vec::new()),
         }
     }
@@ -963,6 +1010,7 @@ impl OpenMlsProvider for SnapshotOpenMlsProvider {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use openmls_basic_credential::SignatureKeyPair;
 
     #[test]
     fn unchanged_snapshot_has_no_updates() {
@@ -1007,5 +1055,32 @@ mod tests {
             ]
         );
         assert_eq!(updates.deletes, vec![b"deleted".to_vec()]);
+    }
+
+    #[test]
+    fn zeroizing_signer_store_matches_openmls_storage_encoding() {
+        let private = vec![0x31; 32];
+        let public = vec![0x42; 32];
+        let scheme = SignatureScheme::ED25519;
+        let signer = SignatureKeyPair::from_raw(scheme, private.clone(), public.clone());
+
+        let openmls_provider = SnapshotStorageProvider::from_entries(Vec::new());
+        signer.store(&openmls_provider).unwrap();
+        let mut openmls_updates = openmls_provider.into_updates();
+
+        let zeroizing_provider = SnapshotStorageProvider::from_entries(Vec::new());
+        zeroizing_provider
+            .write_serialized_basic_signer(&private, &public, scheme)
+            .unwrap();
+        let mut zeroizing_updates = zeroizing_provider.into_updates();
+
+        assert_eq!(zeroizing_updates.deletes, openmls_updates.deletes);
+        assert_eq!(zeroizing_updates.upserts, openmls_updates.upserts);
+        for (_, value) in &mut openmls_updates.upserts {
+            value.zeroize();
+        }
+        for (_, value) in &mut zeroizing_updates.upserts {
+            value.zeroize();
+        }
     }
 }
