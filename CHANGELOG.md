@@ -1,4 +1,4 @@
-## [Unreleased]
+## [3.1.0] - 2026-08-17
 
 ### For Users
 
@@ -423,7 +423,8 @@ and [`#7`](https://github.com/mrtcaner/openmls_dart/issues/7).
 - X.509 `x509()` documents that application layer must validate certificate chains
 - SECURITY.md: sensitive API table, known limitations, web deployment recommendations, vulnerability reporting via GitHub Security Advisories
 
-[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/mrtcaner/openmls_dart/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/mrtcaner/openmls_dart/compare/v2.1.0...v3.0.0
 [2.1.0]: https://github.com/mrtcaner/openmls_dart/compare/v1.4.2...v2.1.0
 [1.4.2]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.1...v1.4.2
