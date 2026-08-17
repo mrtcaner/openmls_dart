@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-17
 
-**Status:** Production implementation is under review; release blocked on physical integration gates
+**Status:** Owner-authorized `3.1.0` release preparation; consumer physical integration evidence remains open
 
 **Base:** `openmls_frb-3.0.0`, storage format `1`
 
@@ -34,10 +34,13 @@ release design.
 On 2026-08-17 the Flutter owner accepted the fork's proposed persistent native
 receive contract in full. Chat then supplied its final product limits and
 accepted the package boundary, including the exact KeyPackage binding below.
-Package-owned implementation and release preparation are authorized. Publishing
-a release remains prohibited until every platform, zeroization, fixture,
-packaging, and signing gate in this document passes and the exact coordinates
-are handed back.
+Package-owned implementation and release preparation are authorized. On
+2026-08-17 the owner additionally authorized publishing `3.1.0` before the
+Flutter-owned physical Android R8 and iOS Notification Service Extension gates
+are complete. This does not convert missing consumer evidence into package
+evidence: the release may be published because the package implementation,
+fixtures, CI gates, and packaging contract are ready, while Flutter must still
+close those physical adoption gates before enabling the production fast path.
 
 The consumer-approved package proposal is:
 
@@ -363,10 +366,26 @@ arm64 (3.3%), +254,880 bytes Android arm64 (3.7%), and +208,232 bytes Android
 x86_64 (3.3%). Detailed frame, limit, runtime, and size records are in
 `native/receive_v1/README.md` and `native/receive_v1/fixtures/manifest.json`.
 
-## What remains before release
+## Owner release decision — 2026-08-17
 
-Flutter and Chat have approved the package contract. The package must not be
-published until all of these remaining gates are closed:
+Release `3.1.0` now, through protected release-preparation pull requests and
+signed tags from the resulting `main` commits. The reason is that the remaining
+Android R8 and physical iOS extension checks require exact released artifacts
+for honest consumer integration. They test the consuming app's shrinker,
+embedding, memory, and lifecycle behavior; they do not change the frozen MLS
+semantics, storage format, or package-owned codec.
+
+This decision does not waive fail-closed behavior or permit the production fast
+path to ship without those results. A failed physical gate must cause Flutter
+to lower provisional limits, correct packaging, or reject the fast path; it
+must not silently raise limits, duplicate the native library, or split the
+atomic storage transaction.
+
+## What remains before production consumer adoption
+
+Flutter and Chat have approved the package contract. The native fast path must
+not be enabled in the production consumer until all of these remaining gates
+are closed:
 
 1. Run the exact production symbols and 256-leaf fixtures inside a physical iOS
    Notification Service Extension. Record peak memory, elapsed time, extension
@@ -383,9 +402,9 @@ published until all of these remaining gates are closed:
    complete Android, iOS, macOS, Linux, Windows, and Web signed build matrix for
    the eventual `3.1.0` release candidate. Preserve notice, checksum, provenance,
    protected-environment, and human-approval gates.
-5. Hand the exact merged revision and candidate artifact coordinates to Flutter
-   for the two physical integration gates above. Only after their evidence is
-   accepted may the signed tag/release be created.
+5. Hand the exact signed tags, release revisions, artifact coordinates, and
+   checksums to Flutter for the two physical integration gates above. Flutter
+   may not enable the production fast path until their evidence is accepted.
 
 No Chat/Flutter repository, schema, generated consumer contract, release, or
 tag was changed by this package implementation.

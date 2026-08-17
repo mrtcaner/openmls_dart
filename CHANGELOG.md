@@ -4,7 +4,27 @@
 
 #### ✨ Highlights
 
-- **openmls_frb v3.0.0** — one strict caller-owned MLS API for direct and group E2EE
+- **openmls_frb v3.1.0** — bounded native receive contract for background Android and Apple execution
+
+### Added
+
+- A package-owned, versioned native receive contract for Welcome, Commit, and
+  application processing through the same Rust/OpenMLS implementation used by
+  the existing package. Android exposes a thin JNI transport and Apple exposes
+  a thin C-compatible buffer transport; neither wrapper owns MLS policy or
+  storage.
+- Deterministic bounded CBOR request/result frames, stable numeric errors, exact
+  group/epoch/roster/AAD/base-state validation, and exact Welcome KeyPackage
+  hash binding. Every failure returns `stateApplied=false` with no storage
+  batch or application plaintext.
+- Cross-platform binary fixtures, generated 256-leaf limit evidence, release
+  symbol gates, caller-owned buffer wiping rules, and Android/Apple harnesses.
+
+### Compatibility
+
+- The new surface is additive and native-only. Dart APIs remain unchanged,
+  caller-owned storage remains format version `1`, and the native receive
+  contract version is `1`.
 
 ### Changed
 
@@ -403,7 +423,9 @@ and [`#7`](https://github.com/mrtcaner/openmls_dart/issues/7).
 - X.509 `x509()` documents that application layer must validate certificate chains
 - SECURITY.md: sensitive API table, known limitations, web deployment recommendations, vulnerability reporting via GitHub Security Advisories
 
-[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/v1.4.2...HEAD
+[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/mrtcaner/openmls_dart/compare/v2.1.0...v3.0.0
+[2.1.0]: https://github.com/mrtcaner/openmls_dart/compare/v1.4.2...v2.1.0
 [1.4.2]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.3.0...v1.4.0
