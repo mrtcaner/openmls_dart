@@ -895,7 +895,7 @@ fn roster_digest(
     Ok(hash.finalize().to_vec())
 }
 
-fn group_state_digest_from_entries(
+pub(crate) fn group_state_digest_from_entries(
     group_id: &[u8],
     entries: &[MlsStorageEntry],
     storage_format_version: u32,
