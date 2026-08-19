@@ -88,8 +88,50 @@ jobs:
           echo "Check completed. Outputs:"
           cat "$GITHUB_OUTPUT"
 
-      - name: Create Notification PR
+      # A notification PR is intentionally one-shot for each template version.
+      # Rebuilding it after main advances makes create-pull-request replace its
+      # single signed commit with a different history, which requires a force
+      # push. Repository rules prohibit that, so reuse the existing open PR.
+      - name: Check for existing notification PR
+        id: existing
         if: steps.check.outputs.needs_update == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          LATEST_VERSION: ${{ steps.check.outputs.latest_version }}
+        run: |
+          BRANCH="update-template-${LATEST_VERSION}"
+          PR_NUMBER=$(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --head "$BRANCH" \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')
+
+          if [ -n "$PR_NUMBER" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+            echo "url=https://github.com/${GITHUB_REPOSITORY}/pull/${PR_NUMBER}" >> "$GITHUB_OUTPUT"
+            echo "::notice::Notification PR #$PR_NUMBER for $LATEST_VERSION already exists; leaving its signed branch unchanged."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # A closed PR can leave its protected branch behind. Do not let the PR
+      # action discover it and attempt an opaque force-push; fail before any
+      # write with the exact manual cleanup required.
+      - name: Reject orphaned notification branch
+        if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
+        env:
+          LATEST_VERSION: ${{ steps.check.outputs.latest_version }}
+        run: |
+          BRANCH="update-template-${LATEST_VERSION}"
+          if git ls-remote --exit-code --heads origin "refs/heads/$BRANCH" > /dev/null; then
+            echo "::error::Branch $BRANCH exists but has no open pull request. Delete the stale branch after confirming its PR is closed, then rerun this workflow. The workflow will not force-push protected automation branches."
+            exit 1
+          fi
+
+      - name: Create Notification PR
+        if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ steps.app-token.outputs.token }}
@@ -153,6 +195,9 @@ jobs:
           TEMPLATE_REPO: ${{ steps.check.outputs.template_repo }}
           CURRENT_VERSION: ${{ steps.check.outputs.current_version }}
           LATEST_VERSION: ${{ steps.check.outputs.latest_version }}
+          EXISTING_PR: ${{ steps.existing.outputs.skip }}
+          EXISTING_PR_NUMBER: ${{ steps.existing.outputs.number }}
+          EXISTING_PR_URL: ${{ steps.existing.outputs.url }}
         run: |
           if [ "$NEEDS_UPDATE" = "true" ]; then
             echo "## Template Update Available" >> $GITHUB_STEP_SUMMARY
@@ -163,7 +208,11 @@ jobs:
             echo "| Current | ${CURRENT_VERSION} |" >> $GITHUB_STEP_SUMMARY
             echo "| Latest | ${LATEST_VERSION} |" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "A notification PR has been created." >> $GITHUB_STEP_SUMMARY
+            if [ "$EXISTING_PR" = "true" ]; then
+              echo "Existing notification PR [#${EXISTING_PR_NUMBER}](${EXISTING_PR_URL}) remains authoritative; its protected branch was not rewritten." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "A notification PR has been created." >> $GITHUB_STEP_SUMMARY
+            fi
           else
             echo "## Template Up to Date" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY

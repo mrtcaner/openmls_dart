@@ -53,6 +53,12 @@ Checker exit code 1 means an update is available and continues into PR
 creation; configuration, parsing, or network errors use exit code 2 and fail
 the workflow instead of being silently ignored.
 
+Update PR creation is idempotent. If the exact version already has an open PR,
+the scheduled workflow reuses it and does not rewrite its signed branch. If an
+automation branch exists without an open PR, the workflow fails before any
+write and asks an owner to inspect and delete that stale branch. It never
+force-pushes through the repository-wide signed-commit ruleset.
+
 This double validation is intentional: fetched tags must not become unsafe
 GitHub output or branch-name data, and manual inputs must not reach Make's
 shell-expanded `ARGS` value before validation.
