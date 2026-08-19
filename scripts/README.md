@@ -127,4 +127,6 @@ The `check-openmls-updates.yml` workflow:
 The `check-template-updates.yml` workflow:
 1. Runs daily to check for new copier template versions
 2. Compares with current version in `.copier-answers.yml`
-3. Creates a notification PR with changelog and update instructions
+3. Reuses the notification PR when that exact version already has one open
+4. Otherwise creates a notification PR with changelog and update instructions
+5. Rejects an orphaned update branch instead of force-pushing it
