@@ -870,6 +870,39 @@ fn committed_account_envelope_fixture_replays_exactly() {
             .map(|error| error.code),
         Some(AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid)
     );
+
+    let sender_public = fixture_hex(&fixture, &["publicBundlesHex", "initial"]);
+    let recipient_private = fixture_hex(&fixture, &["invitationRecipient", "privateBundleHex"]);
+    assert_eq!(
+        fixture_hex(&fixture, &["invitationRecipient", "rootInstallationIdHex"]),
+        RECIPIENT_ROOT_ID
+    );
+    let recipient_public = initial_public_bundle(recipient_authority(1), &recipient_private);
+    assert_eq!(
+        recipient_public,
+        fixture_hex(&fixture, &["invitationRecipient", "publicBundleHex"])
+    );
+    for (name, padding_class, expected_len) in [
+        ("bytes512", AccountEnvelopePaddingClassV1::Bytes512, 741),
+        ("bytes1024", AccountEnvelopePaddingClassV1::Bytes1024, 1253),
+        ("bytes2048", AccountEnvelopePaddingClassV1::Bytes2048, 2277),
+    ] {
+        let envelope = fixture_hex(&fixture, &["invitationEnvelopesHex", name]);
+        assert_eq!(envelope.len(), expected_len);
+        let opened = verify_and_open_context_invitation_preview_v1(
+            envelope,
+            ExpectedContextInvitationAuthorityV1 {
+                invitation: fixture_invitation_authority(&fixture, padding_class),
+                local_root_installation_id: RECIPIENT_ROOT_ID,
+                local_root_authority_generation: 1,
+            },
+            recipient_private.clone(),
+            sender_public.clone(),
+        )
+        .unwrap();
+        assert_eq!(opened.preview.title.as_deref(), Some("Café"));
+        assert_eq!(opened.preview.tags, ["Rust", "Straße"]);
+    }
 }
 
 fn authorized_rotation(
@@ -934,6 +967,32 @@ fn fixture_strings(fixture: &serde_json::Value, field: &str) -> Vec<String> {
                 .to_owned()
         })
         .collect()
+}
+
+fn fixture_invitation_authority(
+    fixture: &serde_json::Value,
+    padding_class: AccountEnvelopePaddingClassV1,
+) -> ContextInvitationAuthorityV1 {
+    let authority = &fixture["invitationAuthority"];
+    ContextInvitationAuthorityV1 {
+        envelope_id: fixture_hex(authority, &["envelopeIdHex"])
+            .try_into()
+            .unwrap(),
+        invite_id: fixture_hex(authority, &["inviteIdHex"]).try_into().unwrap(),
+        sender_account_id: fixture_hex(authority, &["senderAccountIdHex"])
+            .try_into()
+            .unwrap(),
+        sender_generation: authority["senderGeneration"].as_u64().unwrap(),
+        recipient_account_id: fixture_hex(authority, &["recipientAccountIdHex"])
+            .try_into()
+            .unwrap(),
+        recipient_generation: authority["recipientGeneration"].as_u64().unwrap(),
+        authority_attempt: authority["authorityAttempt"].as_u64().unwrap(),
+        relay_slot_version: authority["relaySlotVersion"].as_u64().unwrap(),
+        server_created_at_unix_ms: authority["serverCreatedAtUnixMs"].as_u64().unwrap(),
+        server_expires_at_unix_ms: authority["serverExpiresAtUnixMs"].as_u64().unwrap(),
+        padding_class,
+    }
 }
 
 fn decode_hex_vec(input: &str) -> Vec<u8> {

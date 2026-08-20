@@ -274,49 +274,82 @@ void main() {
 
       final unicode = fixture['unicode17']! as List<Object?>;
       final normalized = unicode[0]! as Map<String, Object?>;
-      final sender = _generateInitial(_senderAccountId, _senderRootId);
-      final recipient = _generateInitial(_recipientAccountId, _recipientRootId);
-      final authority = _invitationAuthority();
-      final envelope = AccountEnvelopeCrypto.sealContextInvitationPreviewV1(
-        authority: authority,
-        expectedLocalPrivateBundleAuthority: _privateAuthority(
-          _senderAccountId,
-          _senderRootId,
-        ),
-        preview: ContextInvitationPreviewInputV1(
-          title: normalized['inputTitle']! as String,
-          tags: (normalized['inputTags']! as List<Object?>).cast<String>(),
-        ),
-        recipientPublicBundle: recipient.publicBundle,
-        senderPrivateBundle: sender.privateBundle,
+      final invitationAuthority =
+          fixture['invitationAuthority']! as Map<String, Object?>;
+      final invitationRecipient =
+          fixture['invitationRecipient']! as Map<String, Object?>;
+      final invitationEnvelopes =
+          fixture['invitationEnvelopesHex']! as Map<String, Object?>;
+      final recipientPrivate = _hexBytes(
+        invitationRecipient['privateBundleHex']! as String,
       );
-      final opened =
-          AccountEnvelopeCrypto.verifyAndOpenContextInvitationPreviewV1(
-            envelope: envelope,
-            expectedAuthority: ExpectedContextInvitationAuthorityInputV1(
-              invitation: authority,
-              localRootInstallationId: _recipientRootId,
-              localRootAuthorityGeneration: BigInt.one,
+      final recipientPublic = _hexBytes(
+        invitationRecipient['publicBundleHex']! as String,
+      );
+      final recipientRootId = _hexBytes(
+        invitationRecipient['rootInstallationIdHex']! as String,
+      );
+      for (final vector
+          in <
+            ({
+              String name,
+              AccountEnvelopePaddingClassV1 paddingClass,
+              int length,
+            })
+          >[
+            (
+              name: 'bytes512',
+              paddingClass: AccountEnvelopePaddingClassV1.bytes512,
+              length: 741,
             ),
-            recipientPrivateBundle: recipient.privateBundle,
-            senderPublicBundle: sender.publicBundle,
-          );
-      expect(opened.title, normalized['normalizedTitle']);
-      expect(opened.tags, normalized['normalizedTags']);
+            (
+              name: 'bytes1024',
+              paddingClass: AccountEnvelopePaddingClassV1.bytes1024,
+              length: 1253,
+            ),
+            (
+              name: 'bytes2048',
+              paddingClass: AccountEnvelopePaddingClassV1.bytes2048,
+              length: 2277,
+            ),
+          ]) {
+        final authority = _fixtureInvitationAuthority(
+          invitationAuthority,
+          vector.paddingClass,
+        );
+        final envelope = _hexBytes(invitationEnvelopes[vector.name]! as String);
+        expect(envelope, hasLength(vector.length));
+        final opened =
+            AccountEnvelopeCrypto.verifyAndOpenContextInvitationPreviewV1(
+              envelope: envelope,
+              expectedAuthority: ExpectedContextInvitationAuthorityInputV1(
+                invitation: authority,
+                localRootInstallationId: recipientRootId,
+                localRootAuthorityGeneration: BigInt.one,
+              ),
+              recipientPrivateBundle: recipientPrivate,
+              senderPublicBundle: initial.bytes,
+            );
+        expect(opened.title, normalized['normalizedTitle']);
+        expect(opened.tags, normalized['normalizedTags']);
+      }
 
       final duplicate = unicode[1]! as Map<String, Object?>;
       expect(
         () => AccountEnvelopeCrypto.sealContextInvitationPreviewV1(
-          authority: authority,
+          authority: _fixtureInvitationAuthority(
+            invitationAuthority,
+            AccountEnvelopePaddingClassV1.bytes2048,
+          ),
           expectedLocalPrivateBundleAuthority: _privateAuthority(
-            _senderAccountId,
-            _senderRootId,
+            accountId,
+            rootId,
           ),
           preview: ContextInvitationPreviewInputV1(
             tags: (duplicate['duplicateTags']! as List<Object?>).cast<String>(),
           ),
-          recipientPublicBundle: recipient.publicBundle,
-          senderPrivateBundle: sender.privateBundle,
+          recipientPublicBundle: recipientPublic,
+          senderPrivateBundle: firstPrivate,
         ),
         throwsA(
           isA<AccountEnvelopeErrorV1>().having(
@@ -447,6 +480,27 @@ Uint8List _uuid(int firstByte) => Uint8List.fromList(<int>[
 
 Uint8List _fixtureHex(Map<String, Object?> fixture, String field) =>
     _hexBytes(fixture[field]! as String);
+
+ContextInvitationAuthorityInputV1 _fixtureInvitationAuthority(
+  Map<String, Object?> authority,
+  AccountEnvelopePaddingClassV1 paddingClass,
+) => ContextInvitationAuthorityInputV1(
+  envelopeId: _hexBytes(authority['envelopeIdHex']! as String),
+  inviteId: _hexBytes(authority['inviteIdHex']! as String),
+  senderAccountId: _hexBytes(authority['senderAccountIdHex']! as String),
+  senderGeneration: BigInt.from(authority['senderGeneration']! as int),
+  recipientAccountId: _hexBytes(authority['recipientAccountIdHex']! as String),
+  recipientGeneration: BigInt.from(authority['recipientGeneration']! as int),
+  authorityAttempt: BigInt.from(authority['authorityAttempt']! as int),
+  relaySlotVersion: BigInt.from(authority['relaySlotVersion']! as int),
+  serverCreatedAtUnixMs: BigInt.from(
+    authority['serverCreatedAtUnixMs']! as int,
+  ),
+  serverExpiresAtUnixMs: BigInt.from(
+    authority['serverExpiresAtUnixMs']! as int,
+  ),
+  paddingClass: paddingClass,
+);
 
 Uint8List _hexBytes(String input) => Uint8List.fromList(<int>[
   for (var index = 0; index < input.length; index += 2)
