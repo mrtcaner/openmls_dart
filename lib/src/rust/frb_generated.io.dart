@@ -3,6 +3,8 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
+import 'api/account_envelope/bridge.dart';
+import 'api/account_envelope/types.dart';
 import 'api/config.dart';
 import 'api/credential.dart';
 import 'api/group_e2ee.dart';
@@ -26,12 +28,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   });
 
   CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_AccountEnvelopeCryptoPtr => wire
+      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCryptoPtr;
+
+  CrossPlatformFinalizerArg
   get rust_arc_decrement_strong_count_MlsCredentialPtr => wire
       ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredentialPtr;
 
   CrossPlatformFinalizerArg
   get rust_arc_decrement_strong_count_MlsSignatureKeyPairPtr => wire
       ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPairPtr;
+
+  @protected
+  AccountEnvelopeCrypto
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    dynamic raw,
+  );
 
   @protected
   MlsCredential
@@ -58,6 +70,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  AccountEnvelopeCrypto
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    dynamic raw,
+  );
+
+  @protected
   MlsCredential
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     dynamic raw,
@@ -73,7 +91,77 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String dco_decode_String(dynamic raw);
 
   @protected
+  AccountEnvelopeActivationKindV1
+  dco_decode_account_envelope_activation_kind_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopeContinuityDispositionV1
+  dco_decode_account_envelope_continuity_disposition_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopeErrorCodeV1 dco_decode_account_envelope_error_code_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  AccountEnvelopeErrorV1 dco_decode_account_envelope_error_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopePaddingClassV1 dco_decode_account_envelope_padding_class_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  dco_decode_account_envelope_private_bundle_authority_input_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopePublicBundleCandidateKindV1
+  dco_decode_account_envelope_public_bundle_candidate_kind_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopePublicBundleCandidateV1
+  dco_decode_account_envelope_public_bundle_candidate_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopePublicBundleSummaryOutputV1
+  dco_decode_account_envelope_public_bundle_summary_output_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopeResetReasonV1 dco_decode_account_envelope_reset_reason_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  AccountEnvelopeSuccessorAuthorizationV1
+  dco_decode_account_envelope_successor_authorization_v_1(dynamic raw);
+
+  @protected
   bool dco_decode_bool(dynamic raw);
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  dco_decode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  AccountEnvelopeResetReasonV1
+  dco_decode_box_autoadd_account_envelope_reset_reason_v_1(dynamic raw);
+
+  @protected
+  ContextInvitationAuthorityInputV1
+  dco_decode_box_autoadd_context_invitation_authority_input_v_1(dynamic raw);
+
+  @protected
+  ContextInvitationPreviewInputV1
+  dco_decode_box_autoadd_context_invitation_preview_input_v_1(dynamic raw);
+
+  @protected
+  ExpectedContextInvitationAuthorityInputV1
+  dco_decode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    dynamic raw,
+  );
 
   @protected
   MlsAuthorizedOwnerV1 dco_decode_box_autoadd_mls_authorized_owner_v_1(
@@ -100,6 +188,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int dco_decode_box_autoadd_u_32(dynamic raw);
 
   @protected
+  ContextInvitationAuthorityInputV1
+  dco_decode_context_invitation_authority_input_v_1(dynamic raw);
+
+  @protected
+  ContextInvitationPreviewInputV1
+  dco_decode_context_invitation_preview_input_v_1(dynamic raw);
+
+  @protected
+  ContextInvitationPreviewOutputV1
+  dco_decode_context_invitation_preview_output_v_1(dynamic raw);
+
+  @protected
   CreateGroupWithStorageResult dco_decode_create_group_with_storage_result(
     dynamic raw,
   );
@@ -114,12 +214,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExpectedContextInvitationAuthorityInputV1
+  dco_decode_expected_context_invitation_authority_input_v_1(dynamic raw);
+
+  @protected
+  GenerateAccountEnvelopeKeyBundleOutputV1
+  dco_decode_generate_account_envelope_key_bundle_output_v_1(dynamic raw);
+
+  @protected
   int dco_decode_i_32(dynamic raw);
 
   @protected
   JoinGroupWithStorageResult dco_decode_join_group_with_storage_result(
     dynamic raw,
   );
+
+  @protected
+  List<String> dco_decode_list_String(dynamic raw);
 
   @protected
   List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw);
@@ -192,6 +303,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsWireFormatPolicy dco_decode_mls_wire_format_policy(dynamic raw);
 
   @protected
+  String? dco_decode_opt_String(dynamic raw);
+
+  @protected
+  AccountEnvelopeResetReasonV1?
+  dco_decode_opt_box_autoadd_account_envelope_reset_reason_v_1(dynamic raw);
+
+  @protected
   MlsProposalType? dco_decode_opt_box_autoadd_mls_proposal_type(dynamic raw);
 
   @protected
@@ -230,6 +348,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt dco_decode_usize(dynamic raw);
 
   @protected
+  VerifyAccountEnvelopeContinuityOutputV1
+  dco_decode_verify_account_envelope_continuity_output_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopeCrypto
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsCredential
   sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     SseDeserializer deserializer,
@@ -254,6 +382,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  AccountEnvelopeCrypto
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsCredential
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     SseDeserializer deserializer,
@@ -269,7 +403,97 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
+  AccountEnvelopeActivationKindV1
+  sse_decode_account_envelope_activation_kind_v_1(SseDeserializer deserializer);
+
+  @protected
+  AccountEnvelopeContinuityDispositionV1
+  sse_decode_account_envelope_continuity_disposition_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopeErrorCodeV1 sse_decode_account_envelope_error_code_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopeErrorV1 sse_decode_account_envelope_error_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopePaddingClassV1 sse_decode_account_envelope_padding_class_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  sse_decode_account_envelope_private_bundle_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopePublicBundleCandidateKindV1
+  sse_decode_account_envelope_public_bundle_candidate_kind_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopePublicBundleCandidateV1
+  sse_decode_account_envelope_public_bundle_candidate_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopePublicBundleSummaryOutputV1
+  sse_decode_account_envelope_public_bundle_summary_output_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopeResetReasonV1 sse_decode_account_envelope_reset_reason_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopeSuccessorAuthorizationV1
+  sse_decode_account_envelope_successor_authorization_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   bool sse_decode_bool(SseDeserializer deserializer);
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  sse_decode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopeResetReasonV1
+  sse_decode_box_autoadd_account_envelope_reset_reason_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ContextInvitationAuthorityInputV1
+  sse_decode_box_autoadd_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ContextInvitationPreviewInputV1
+  sse_decode_box_autoadd_context_invitation_preview_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExpectedContextInvitationAuthorityInputV1
+  sse_decode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
 
   @protected
   MlsAuthorizedOwnerV1 sse_decode_box_autoadd_mls_authorized_owner_v_1(
@@ -300,6 +524,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
 
   @protected
+  ContextInvitationAuthorityInputV1
+  sse_decode_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ContextInvitationPreviewInputV1
+  sse_decode_context_invitation_preview_input_v_1(SseDeserializer deserializer);
+
+  @protected
+  ContextInvitationPreviewOutputV1
+  sse_decode_context_invitation_preview_output_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   CreateGroupWithStorageResult sse_decode_create_group_with_storage_result(
     SseDeserializer deserializer,
   );
@@ -316,12 +556,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExpectedContextInvitationAuthorityInputV1
+  sse_decode_expected_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  GenerateAccountEnvelopeKeyBundleOutputV1
+  sse_decode_generate_account_envelope_key_bundle_output_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
   JoinGroupWithStorageResult sse_decode_join_group_with_storage_result(
     SseDeserializer deserializer,
   );
+
+  @protected
+  List<String> sse_decode_list_String(SseDeserializer deserializer);
 
   @protected
   List<Uint8List> sse_decode_list_list_prim_u_8_strict(
@@ -412,6 +667,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer);
+
+  @protected
+  AccountEnvelopeResetReasonV1?
+  sse_decode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsProposalType? sse_decode_opt_box_autoadd_mls_proposal_type(
     SseDeserializer deserializer,
   );
@@ -454,9 +718,79 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt sse_decode_usize(SseDeserializer deserializer);
 
   @protected
+  VerifyAccountEnvelopeContinuityOutputV1
+  sse_decode_verify_account_envelope_continuity_output_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_String(String raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return cst_encode_list_prim_u_8_strict(utf8.encoder.convert(raw));
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_account_envelope_private_bundle_authority_input_v_1>
+  cst_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire
+        .cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1();
+    cst_api_fill_to_wire_account_envelope_private_bundle_authority_input_v_1(
+      raw,
+      ptr.ref,
+    );
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<ffi.Int32>
+  cst_encode_box_autoadd_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return wire.cst_new_box_autoadd_account_envelope_reset_reason_v_1(
+      cst_encode_account_envelope_reset_reason_v_1(raw),
+    );
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_context_invitation_authority_input_v_1>
+  cst_encode_box_autoadd_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire
+        .cst_new_box_autoadd_context_invitation_authority_input_v_1();
+    cst_api_fill_to_wire_context_invitation_authority_input_v_1(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_context_invitation_preview_input_v_1>
+  cst_encode_box_autoadd_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_context_invitation_preview_input_v_1();
+    cst_api_fill_to_wire_context_invitation_preview_input_v_1(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_expected_context_invitation_authority_input_v_1>
+  cst_encode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire
+        .cst_new_box_autoadd_expected_context_invitation_authority_input_v_1();
+    cst_api_fill_to_wire_expected_context_invitation_authority_input_v_1(
+      raw,
+      ptr.ref,
+    );
+    return ptr;
   }
 
   @protected
@@ -511,6 +845,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ffi.Pointer<ffi.Uint32> cst_encode_box_autoadd_u_32(int raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return wire.cst_new_box_autoadd_u_32(cst_encode_u_32(raw));
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_list_String> cst_encode_list_String(List<String> raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ans = wire.cst_new_list_String(raw.length);
+    for (var i = 0; i < raw.length; ++i) {
+      ans.ref.ptr[i] = cst_encode_String(raw[i]);
+    }
+    return ans;
   }
 
   @protected
@@ -606,6 +950,25 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_opt_String(
+    String? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null ? ffi.nullptr : cst_encode_String(raw);
+  }
+
+  @protected
+  ffi.Pointer<ffi.Int32>
+  cst_encode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? ffi.nullptr
+        : cst_encode_box_autoadd_account_envelope_reset_reason_v_1(raw);
+  }
+
+  @protected
   ffi.Pointer<ffi.Int32> cst_encode_opt_box_autoadd_mls_proposal_type(
     MlsProposalType? raw,
   ) {
@@ -641,6 +1004,129 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_account_envelope_error_v_1(
+    AccountEnvelopeErrorV1 apiObj,
+    wire_cst_account_envelope_error_v_1 wireObj,
+  ) {
+    wireObj.code = cst_encode_account_envelope_error_code_v_1(apiObj.code);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 apiObj,
+    wire_cst_account_envelope_private_bundle_authority_input_v_1 wireObj,
+  ) {
+    wireObj.account_id = cst_encode_list_prim_u_8_strict(apiObj.accountId);
+    wireObj.generation = cst_encode_u_64(apiObj.generation);
+    wireObj.root_installation_id = cst_encode_list_prim_u_8_strict(
+      apiObj.rootInstallationId,
+    );
+    wireObj.root_authority_generation = cst_encode_u_64(
+      apiObj.rootAuthorityGeneration,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_account_envelope_public_bundle_candidate_v_1(
+    AccountEnvelopePublicBundleCandidateV1 apiObj,
+    wire_cst_account_envelope_public_bundle_candidate_v_1 wireObj,
+  ) {
+    wireObj.kind = cst_encode_account_envelope_public_bundle_candidate_kind_v_1(
+      apiObj.kind,
+    );
+    wireObj.bytes = cst_encode_list_prim_u_8_strict(apiObj.bytes);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_account_envelope_public_bundle_summary_output_v_1(
+    AccountEnvelopePublicBundleSummaryOutputV1 apiObj,
+    wire_cst_account_envelope_public_bundle_summary_output_v_1 wireObj,
+  ) {
+    wireObj.account_id = cst_encode_list_prim_u_8_strict(apiObj.accountId);
+    wireObj.generation = cst_encode_u_64(apiObj.generation);
+    wireObj.hpke_public_key = cst_encode_list_prim_u_8_strict(
+      apiObj.hpkePublicKey,
+    );
+    wireObj.signature_public_key = cst_encode_list_prim_u_8_strict(
+      apiObj.signaturePublicKey,
+    );
+    wireObj.activation_kind = cst_encode_account_envelope_activation_kind_v_1(
+      apiObj.activationKind,
+    );
+    wireObj.previous_generation = cst_encode_u_64(apiObj.previousGeneration);
+    wireObj.reset_reason =
+        cst_encode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+          apiObj.resetReason,
+        );
+    wireObj.digest_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.digestSha256,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_account_envelope_successor_authorization_v_1(
+    AccountEnvelopeSuccessorAuthorizationV1 apiObj,
+    wire_cst_account_envelope_successor_authorization_v_1 wireObj,
+  ) {
+    wireObj.authorized_canonical_successor_public_bundle =
+        cst_encode_list_prim_u_8_strict(
+          apiObj.authorizedCanonicalSuccessorPublicBundle,
+        );
+    wireObj.retired_previous_private_bundle_candidate =
+        cst_encode_list_prim_u_8_strict(
+          apiObj.retiredPreviousPrivateBundleCandidate,
+        );
+  }
+
+  @protected
+  void
+  cst_api_fill_to_wire_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 apiObj,
+    ffi.Pointer<wire_cst_account_envelope_private_bundle_authority_input_v_1>
+    wireObj,
+  ) {
+    cst_api_fill_to_wire_account_envelope_private_bundle_authority_input_v_1(
+      apiObj,
+      wireObj.ref,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 apiObj,
+    ffi.Pointer<wire_cst_context_invitation_authority_input_v_1> wireObj,
+  ) {
+    cst_api_fill_to_wire_context_invitation_authority_input_v_1(
+      apiObj,
+      wireObj.ref,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 apiObj,
+    ffi.Pointer<wire_cst_context_invitation_preview_input_v_1> wireObj,
+  ) {
+    cst_api_fill_to_wire_context_invitation_preview_input_v_1(
+      apiObj,
+      wireObj.ref,
+    );
+  }
+
+  @protected
+  void
+  cst_api_fill_to_wire_box_autoadd_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 apiObj,
+    ffi.Pointer<wire_cst_expected_context_invitation_authority_input_v_1>
+    wireObj,
+  ) {
+    cst_api_fill_to_wire_expected_context_invitation_authority_input_v_1(
+      apiObj,
+      wireObj.ref,
+    );
+  }
+
+  @protected
   void cst_api_fill_to_wire_box_autoadd_mls_authorized_owner_v_1(
     MlsAuthorizedOwnerV1 apiObj,
     ffi.Pointer<wire_cst_mls_authorized_owner_v_1> wireObj,
@@ -670,6 +1156,52 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     ffi.Pointer<wire_cst_mls_group_config> wireObj,
   ) {
     cst_api_fill_to_wire_mls_group_config(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 apiObj,
+    wire_cst_context_invitation_authority_input_v_1 wireObj,
+  ) {
+    wireObj.envelope_id = cst_encode_list_prim_u_8_strict(apiObj.envelopeId);
+    wireObj.invite_id = cst_encode_list_prim_u_8_strict(apiObj.inviteId);
+    wireObj.sender_account_id = cst_encode_list_prim_u_8_strict(
+      apiObj.senderAccountId,
+    );
+    wireObj.sender_generation = cst_encode_u_64(apiObj.senderGeneration);
+    wireObj.recipient_account_id = cst_encode_list_prim_u_8_strict(
+      apiObj.recipientAccountId,
+    );
+    wireObj.recipient_generation = cst_encode_u_64(apiObj.recipientGeneration);
+    wireObj.authority_attempt = cst_encode_u_64(apiObj.authorityAttempt);
+    wireObj.relay_slot_version = cst_encode_u_64(apiObj.relaySlotVersion);
+    wireObj.server_created_at_unix_ms = cst_encode_u_64(
+      apiObj.serverCreatedAtUnixMs,
+    );
+    wireObj.server_expires_at_unix_ms = cst_encode_u_64(
+      apiObj.serverExpiresAtUnixMs,
+    );
+    wireObj.padding_class = cst_encode_account_envelope_padding_class_v_1(
+      apiObj.paddingClass,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 apiObj,
+    wire_cst_context_invitation_preview_input_v_1 wireObj,
+  ) {
+    wireObj.title = cst_encode_opt_String(apiObj.title);
+    wireObj.tags = cst_encode_list_String(apiObj.tags);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_context_invitation_preview_output_v_1(
+    ContextInvitationPreviewOutputV1 apiObj,
+    wire_cst_context_invitation_preview_output_v_1 wireObj,
+  ) {
+    wireObj.title = cst_encode_opt_String(apiObj.title);
+    wireObj.tags = cst_encode_list_String(apiObj.tags);
   }
 
   @protected
@@ -711,6 +1243,33 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     cst_api_fill_to_wire_mls_storage_batch(
       apiObj.storageBatch,
       wireObj.storage_batch,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 apiObj,
+    wire_cst_expected_context_invitation_authority_input_v_1 wireObj,
+  ) {
+    cst_api_fill_to_wire_context_invitation_authority_input_v_1(
+      apiObj.invitation,
+      wireObj.invitation,
+    );
+    wireObj.local_root_installation_id = cst_encode_list_prim_u_8_strict(
+      apiObj.localRootInstallationId,
+    );
+    wireObj.local_root_authority_generation = cst_encode_u_64(
+      apiObj.localRootAuthorityGeneration,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_generate_account_envelope_key_bundle_output_v_1(
+    GenerateAccountEnvelopeKeyBundleOutputV1 apiObj,
+    wire_cst_generate_account_envelope_key_bundle_output_v_1 wireObj,
+  ) {
+    wireObj.private_bundle = cst_encode_list_prim_u_8_strict(
+      apiObj.privateBundle,
     );
   }
 
@@ -938,6 +1497,30 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_verify_account_envelope_continuity_output_v_1(
+    VerifyAccountEnvelopeContinuityOutputV1 apiObj,
+    wire_cst_verify_account_envelope_continuity_output_v_1 wireObj,
+  ) {
+    wireObj.disposition =
+        cst_encode_account_envelope_continuity_disposition_v_1(
+          apiObj.disposition,
+        );
+    wireObj.verified_public_bundle = cst_encode_list_prim_u_8_strict(
+      apiObj.verifiedPublicBundle,
+    );
+    cst_api_fill_to_wire_account_envelope_public_bundle_summary_output_v_1(
+      apiObj.verifiedSummary,
+      wireObj.verified_summary,
+    );
+  }
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto raw,
+  );
+
+  @protected
   int
   cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential raw,
@@ -963,6 +1546,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto raw,
+  );
+
+  @protected
+  int
   cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential raw,
   );
@@ -971,6 +1560,36 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int
   cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair(
     MlsSignatureKeyPair raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_activation_kind_v_1(
+    AccountEnvelopeActivationKindV1 raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_continuity_disposition_v_1(
+    AccountEnvelopeContinuityDispositionV1 raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_error_code_v_1(
+    AccountEnvelopeErrorCodeV1 raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_padding_class_v_1(
+    AccountEnvelopePaddingClassV1 raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_public_bundle_candidate_kind_v_1(
+    AccountEnvelopePublicBundleCandidateKindV1 raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 raw,
   );
 
   @protected
@@ -1005,6 +1624,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential self,
     SseSerializer serializer,
@@ -1033,6 +1659,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential self,
     SseSerializer serializer,
@@ -1049,7 +1682,104 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
+  void sse_encode_account_envelope_activation_kind_v_1(
+    AccountEnvelopeActivationKindV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_continuity_disposition_v_1(
+    AccountEnvelopeContinuityDispositionV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_error_code_v_1(
+    AccountEnvelopeErrorCodeV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_error_v_1(
+    AccountEnvelopeErrorV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_padding_class_v_1(
+    AccountEnvelopePaddingClassV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_public_bundle_candidate_kind_v_1(
+    AccountEnvelopePublicBundleCandidateKindV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_public_bundle_candidate_v_1(
+    AccountEnvelopePublicBundleCandidateV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_public_bundle_summary_output_v_1(
+    AccountEnvelopePublicBundleSummaryOutputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_successor_authorization_v_1(
+    AccountEnvelopeSuccessorAuthorizationV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void
+  sse_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_mls_authorized_owner_v_1(
@@ -1085,6 +1815,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
 
   @protected
+  void sse_encode_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_context_invitation_preview_output_v_1(
+    ContextInvitationPreviewOutputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_create_group_with_storage_result(
     CreateGroupWithStorageResult self,
     SseSerializer serializer,
@@ -1103,6 +1851,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_generate_account_envelope_key_bundle_output_v_1(
+    GenerateAccountEnvelopeKeyBundleOutputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
 
   @protected
@@ -1110,6 +1870,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     JoinGroupWithStorageResult self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_list_String(List<String> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_list_prim_u_8_strict(
@@ -1235,6 +1998,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_mls_proposal_type(
     MlsProposalType? self,
     SseSerializer serializer,
@@ -1284,6 +2056,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_usize(BigInt self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_verify_account_envelope_continuity_output_v_1(
+    VerifyAccountEnvelopeContinuityOutputV1 self,
+    SseSerializer serializer,
+  );
 }
 
 // Section: wire_class
@@ -1322,6 +2100,269 @@ class RustLibWire implements BaseWire {
       );
   late final _store_dart_post_cobject = _store_dart_post_cobjectPtr
       .asFunction<void Function(DartPostCObjectFnType)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1(
+    ffi.Pointer<wire_cst_account_envelope_private_bundle_authority_input_v_1>
+    expected_previous_local_private_bundle_authority,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> previous_private_bundle,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose>
+    self_signed_successor_public_bundle,
+  ) {
+    return _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1(
+      expected_previous_local_private_bundle_authority,
+      previous_private_bundle,
+      self_signed_successor_public_bundle,
+    );
+  }
+
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(
+            ffi.Pointer<
+              wire_cst_account_envelope_private_bundle_authority_input_v_1
+            >,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1',
+      );
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1 =
+      _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1Ptr
+          .asFunction<
+            WireSyncRust2DartDco Function(
+              ffi.Pointer<
+                wire_cst_account_envelope_private_bundle_authority_input_v_1
+              >,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            )
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1(
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> account_id,
+    int generation,
+    int activation_kind,
+    ffi.Pointer<ffi.Int32> reset_reason,
+    int previous_generation,
+    ffi.Pointer<wire_cst_account_envelope_private_bundle_authority_input_v_1>
+    expected_local_private_bundle_authority,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> private_bundle,
+  ) {
+    return _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1(
+      account_id,
+      generation,
+      activation_kind,
+      reset_reason,
+      previous_generation,
+      expected_local_private_bundle_authority,
+      private_bundle,
+    );
+  }
+
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Uint64,
+            ffi.Int32,
+            ffi.Pointer<ffi.Int32>,
+            ffi.Uint64,
+            ffi.Pointer<
+              wire_cst_account_envelope_private_bundle_authority_input_v_1
+            >,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1',
+      );
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1 =
+      _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1Ptr
+          .asFunction<
+            WireSyncRust2DartDco Function(
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              int,
+              int,
+              ffi.Pointer<ffi.Int32>,
+              int,
+              ffi.Pointer<
+                wire_cst_account_envelope_private_bundle_authority_input_v_1
+              >,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            )
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1(
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> account_id,
+    int generation,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> root_installation_id,
+    int root_authority_generation,
+  ) {
+    return _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1(
+      account_id,
+      generation,
+      root_installation_id,
+      root_authority_generation,
+    );
+  }
+
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Uint64,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Uint64,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1',
+      );
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1 =
+      _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1Ptr
+          .asFunction<
+            WireSyncRust2DartDco Function(
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              int,
+            )
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1(
+    ffi.Pointer<wire_cst_context_invitation_authority_input_v_1> authority,
+    ffi.Pointer<wire_cst_account_envelope_private_bundle_authority_input_v_1>
+    expected_local_private_bundle_authority,
+    ffi.Pointer<wire_cst_context_invitation_preview_input_v_1> preview,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> recipient_public_bundle,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> sender_private_bundle,
+  ) {
+    return _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1(
+      authority,
+      expected_local_private_bundle_authority,
+      preview,
+      recipient_public_bundle,
+      sender_private_bundle,
+    );
+  }
+
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(
+            ffi.Pointer<wire_cst_context_invitation_authority_input_v_1>,
+            ffi.Pointer<
+              wire_cst_account_envelope_private_bundle_authority_input_v_1
+            >,
+            ffi.Pointer<wire_cst_context_invitation_preview_input_v_1>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1',
+      );
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1 =
+      _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1Ptr
+          .asFunction<
+            WireSyncRust2DartDco Function(
+              ffi.Pointer<wire_cst_context_invitation_authority_input_v_1>,
+              ffi.Pointer<
+                wire_cst_account_envelope_private_bundle_authority_input_v_1
+              >,
+              ffi.Pointer<wire_cst_context_invitation_preview_input_v_1>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            )
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1(
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> envelope,
+    ffi.Pointer<wire_cst_expected_context_invitation_authority_input_v_1>
+    expected_authority,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> recipient_private_bundle,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> sender_public_bundle,
+  ) {
+    return _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1(
+      envelope,
+      expected_authority,
+      recipient_private_bundle,
+      sender_public_bundle,
+    );
+  }
+
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<
+              wire_cst_expected_context_invitation_authority_input_v_1
+            >,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1',
+      );
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1 =
+      _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1Ptr
+          .asFunction<
+            WireSyncRust2DartDco Function(
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<
+                wire_cst_expected_context_invitation_authority_input_v_1
+              >,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            )
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1(
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> pinned_public_bundle,
+    ffi.Pointer<wire_cst_list_list_prim_u_8_strict> continuity_public_bundles,
+    bool manual_reanchor_authorized,
+  ) {
+    return _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1(
+      pinned_public_bundle,
+      continuity_public_bundles,
+      manual_reanchor_authorized,
+    );
+  }
+
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
+            ffi.Bool,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1',
+      );
+  late final _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1 =
+      _wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1Ptr
+          .asFunction<
+            WireSyncRust2DartDco Function(
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
+              bool,
+            )
+          >();
 
   WireSyncRust2DartDco wire__crate__api__credential__MlsCredential_basic(
     ffi.Pointer<wire_cst_list_prim_u_8_loose> identity,
@@ -2353,6 +3394,40 @@ class RustLibWire implements BaseWire {
           >();
 
   void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCryptoPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_openmls_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto',
+      );
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto =
+      _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCryptoPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCryptoPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_openmls_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto',
+      );
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto =
+      _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCryptoPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void
   rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     ffi.Pointer<ffi.Void> ptr,
   ) {
@@ -2419,6 +3494,109 @@ class RustLibWire implements BaseWire {
   late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair =
       _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPairPtr
           .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  ffi.Pointer<wire_cst_account_envelope_private_bundle_authority_input_v_1>
+  cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1() {
+    return _cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1();
+  }
+
+  late final _cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<
+            wire_cst_account_envelope_private_bundle_authority_input_v_1
+          >
+          Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1',
+      );
+  late final _cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1 =
+      _cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1Ptr
+          .asFunction<
+            ffi.Pointer<
+              wire_cst_account_envelope_private_bundle_authority_input_v_1
+            >
+            Function()
+          >();
+
+  ffi.Pointer<ffi.Int32> cst_new_box_autoadd_account_envelope_reset_reason_v_1(
+    int value,
+  ) {
+    return _cst_new_box_autoadd_account_envelope_reset_reason_v_1(value);
+  }
+
+  late final _cst_new_box_autoadd_account_envelope_reset_reason_v_1Ptr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Int32> Function(ffi.Int32)>>(
+        'frbgen_openmls_cst_new_box_autoadd_account_envelope_reset_reason_v_1',
+      );
+  late final _cst_new_box_autoadd_account_envelope_reset_reason_v_1 =
+      _cst_new_box_autoadd_account_envelope_reset_reason_v_1Ptr
+          .asFunction<ffi.Pointer<ffi.Int32> Function(int)>();
+
+  ffi.Pointer<wire_cst_context_invitation_authority_input_v_1>
+  cst_new_box_autoadd_context_invitation_authority_input_v_1() {
+    return _cst_new_box_autoadd_context_invitation_authority_input_v_1();
+  }
+
+  late final _cst_new_box_autoadd_context_invitation_authority_input_v_1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_context_invitation_authority_input_v_1>
+          Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_context_invitation_authority_input_v_1',
+      );
+  late final _cst_new_box_autoadd_context_invitation_authority_input_v_1 =
+      _cst_new_box_autoadd_context_invitation_authority_input_v_1Ptr
+          .asFunction<
+            ffi.Pointer<wire_cst_context_invitation_authority_input_v_1>
+            Function()
+          >();
+
+  ffi.Pointer<wire_cst_context_invitation_preview_input_v_1>
+  cst_new_box_autoadd_context_invitation_preview_input_v_1() {
+    return _cst_new_box_autoadd_context_invitation_preview_input_v_1();
+  }
+
+  late final _cst_new_box_autoadd_context_invitation_preview_input_v_1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_context_invitation_preview_input_v_1> Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_context_invitation_preview_input_v_1',
+      );
+  late final _cst_new_box_autoadd_context_invitation_preview_input_v_1 =
+      _cst_new_box_autoadd_context_invitation_preview_input_v_1Ptr
+          .asFunction<
+            ffi.Pointer<wire_cst_context_invitation_preview_input_v_1>
+            Function()
+          >();
+
+  ffi.Pointer<wire_cst_expected_context_invitation_authority_input_v_1>
+  cst_new_box_autoadd_expected_context_invitation_authority_input_v_1() {
+    return _cst_new_box_autoadd_expected_context_invitation_authority_input_v_1();
+  }
+
+  late final _cst_new_box_autoadd_expected_context_invitation_authority_input_v_1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_expected_context_invitation_authority_input_v_1>
+          Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_expected_context_invitation_authority_input_v_1',
+      );
+  late final _cst_new_box_autoadd_expected_context_invitation_authority_input_v_1 =
+      _cst_new_box_autoadd_expected_context_invitation_authority_input_v_1Ptr
+          .asFunction<
+            ffi.Pointer<
+              wire_cst_expected_context_invitation_authority_input_v_1
+            >
+            Function()
+          >();
 
   ffi.Pointer<wire_cst_mls_authorized_owner_v_1>
   cst_new_box_autoadd_mls_authorized_owner_v_1() {
@@ -2506,6 +3684,19 @@ class RustLibWire implements BaseWire {
       );
   late final _cst_new_box_autoadd_u_32 = _cst_new_box_autoadd_u_32Ptr
       .asFunction<ffi.Pointer<ffi.Uint32> Function(int)>();
+
+  ffi.Pointer<wire_cst_list_String> cst_new_list_String(int len) {
+    return _cst_new_list_String(len);
+  }
+
+  late final _cst_new_list_StringPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_list_String> Function(ffi.Int32)
+        >
+      >('frbgen_openmls_cst_new_list_String');
+  late final _cst_new_list_String = _cst_new_list_StringPtr
+      .asFunction<ffi.Pointer<wire_cst_list_String> Function(int)>();
 
   ffi.Pointer<wire_cst_list_list_prim_u_8_strict>
   cst_new_list_list_prim_u_8_strict(int len) {
@@ -2644,6 +3835,46 @@ class RustLibWire implements BaseWire {
   late final _cst_new_list_prim_u_8_strict = _cst_new_list_prim_u_8_strictPtr
       .asFunction<ffi.Pointer<wire_cst_list_prim_u_8_strict> Function(int)>();
 
+  OpenMlsReceiveV1Buffer openmls_receive_v1_execute(
+    ffi.Pointer<ffi.Uint8> request_data,
+    int request_len,
+  ) {
+    return _openmls_receive_v1_execute(request_data, request_len);
+  }
+
+  late final _openmls_receive_v1_executePtr =
+      _lookup<
+        ffi.NativeFunction<
+          OpenMlsReceiveV1Buffer Function(ffi.Pointer<ffi.Uint8>, ffi.UintPtr)
+        >
+      >('openmls_receive_v1_execute');
+  late final _openmls_receive_v1_execute = _openmls_receive_v1_executePtr
+      .asFunction<
+        OpenMlsReceiveV1Buffer Function(ffi.Pointer<ffi.Uint8>, int)
+      >();
+
+  void openmls_receive_v1_free(OpenMlsReceiveV1Buffer buffer) {
+    return _openmls_receive_v1_free(buffer);
+  }
+
+  late final _openmls_receive_v1_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(OpenMlsReceiveV1Buffer)>>(
+        'openmls_receive_v1_free',
+      );
+  late final _openmls_receive_v1_free = _openmls_receive_v1_freePtr
+      .asFunction<void Function(OpenMlsReceiveV1Buffer)>();
+
+  int openmls_receive_v1_version() {
+    return _openmls_receive_v1_version();
+  }
+
+  late final _openmls_receive_v1_versionPtr =
+      _lookup<ffi.NativeFunction<ffi.Uint16 Function()>>(
+        'openmls_receive_v1_version',
+      );
+  late final _openmls_receive_v1_version = _openmls_receive_v1_versionPtr
+      .asFunction<int Function()>();
+
   int dummy_method_to_enforce_bundling() {
     return _dummy_method_to_enforce_bundling();
   }
@@ -2665,6 +3896,26 @@ typedef DartDartPostCObjectFnTypeFunction =
 typedef DartPostCObjectFnType =
     ffi.Pointer<ffi.NativeFunction<DartPostCObjectFnTypeFunction>>;
 
+final class wire_cst_list_prim_u_8_strict extends ffi.Struct {
+  external ffi.Pointer<ffi.Uint8> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_cst_account_envelope_private_bundle_authority_input_v_1
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> account_id;
+
+  @ffi.Uint64()
+  external int generation;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> root_installation_id;
+
+  @ffi.Uint64()
+  external int root_authority_generation;
+}
+
 final class wire_cst_list_prim_u_8_loose extends ffi.Struct {
   external ffi.Pointer<ffi.Uint8> ptr;
 
@@ -2672,11 +3923,59 @@ final class wire_cst_list_prim_u_8_loose extends ffi.Struct {
   external int len;
 }
 
-final class wire_cst_list_prim_u_8_strict extends ffi.Struct {
-  external ffi.Pointer<ffi.Uint8> ptr;
+final class wire_cst_context_invitation_authority_input_v_1 extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> envelope_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> invite_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> sender_account_id;
+
+  @ffi.Uint64()
+  external int sender_generation;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> recipient_account_id;
+
+  @ffi.Uint64()
+  external int recipient_generation;
+
+  @ffi.Uint64()
+  external int authority_attempt;
+
+  @ffi.Uint64()
+  external int relay_slot_version;
+
+  @ffi.Uint64()
+  external int server_created_at_unix_ms;
+
+  @ffi.Uint64()
+  external int server_expires_at_unix_ms;
+
+  @ffi.Int32()
+  external int padding_class;
+}
+
+final class wire_cst_list_String extends ffi.Struct {
+  external ffi.Pointer<ffi.Pointer<wire_cst_list_prim_u_8_strict>> ptr;
 
   @ffi.Int32()
   external int len;
+}
+
+final class wire_cst_context_invitation_preview_input_v_1 extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> title;
+
+  external ffi.Pointer<wire_cst_list_String> tags;
+}
+
+final class wire_cst_expected_context_invitation_authority_input_v_1
+    extends ffi.Struct {
+  external wire_cst_context_invitation_authority_input_v_1 invitation;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  local_root_installation_id;
+
+  @ffi.Uint64()
+  external int local_root_authority_generation;
 }
 
 final class wire_cst_list_list_prim_u_8_strict extends ffi.Struct {
@@ -2813,6 +4112,66 @@ final class wire_cst_list_mls_ciphersuite extends ffi.Struct {
   external int len;
 }
 
+final class OpenMlsReceiveV1Buffer extends ffi.Struct {
+  external ffi.Pointer<ffi.Uint8> data;
+
+  @ffi.UintPtr()
+  external int len;
+
+  @ffi.UintPtr()
+  external int capacity;
+}
+
+final class wire_cst_account_envelope_error_v_1 extends ffi.Struct {
+  @ffi.Int32()
+  external int code;
+}
+
+final class wire_cst_account_envelope_public_bundle_candidate_v_1
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int kind;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> bytes;
+}
+
+final class wire_cst_account_envelope_public_bundle_summary_output_v_1
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> account_id;
+
+  @ffi.Uint64()
+  external int generation;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> hpke_public_key;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> signature_public_key;
+
+  @ffi.Int32()
+  external int activation_kind;
+
+  @ffi.Uint64()
+  external int previous_generation;
+
+  external ffi.Pointer<ffi.Int32> reset_reason;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> digest_sha256;
+}
+
+final class wire_cst_account_envelope_successor_authorization_v_1
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  authorized_canonical_successor_public_bundle;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  retired_previous_private_bundle_candidate;
+}
+
+final class wire_cst_context_invitation_preview_output_v_1 extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> title;
+
+  external ffi.Pointer<wire_cst_list_String> tags;
+}
+
 final class wire_cst_mls_roster_summary_v_1 extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
 
@@ -2853,6 +4212,11 @@ final class wire_cst_create_message_with_storage_result extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> ciphertext;
 
   external wire_cst_mls_storage_batch storage_batch;
+}
+
+final class wire_cst_generate_account_envelope_key_bundle_output_v_1
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> private_bundle;
 }
 
 final class wire_cst_join_group_with_storage_result extends ffi.Struct {
@@ -2910,4 +4274,43 @@ final class wire_cst_process_message_with_storage_result extends ffi.Struct {
   external wire_cst_mls_storage_batch storage_batch;
 }
 
+final class wire_cst_verify_account_envelope_continuity_output_v_1
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int disposition;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> verified_public_bundle;
+
+  external wire_cst_account_envelope_public_bundle_summary_output_v_1
+  verified_summary;
+}
+
 const int MLS_STORAGE_FORMAT_VERSION = 1;
+
+const int NATIVE_RECEIVE_CONTRACT_VERSION = 1;
+
+const int NATIVE_RECEIVE_PROFILE_V1 = 1;
+
+const int NATIVE_RECEIVE_REQUEST_MAX_BYTES = 12582912;
+
+const int NATIVE_RECEIVE_RESULT_MAX_BYTES = 8388608;
+
+const int NATIVE_RECEIVE_STORAGE_MAX_BYTES = 6291456;
+
+const int NATIVE_RECEIVE_STORAGE_MAX_ENTRIES = 4096;
+
+const int NATIVE_RECEIVE_STORAGE_KEY_MAX_BYTES = 4096;
+
+const int NATIVE_RECEIVE_STORAGE_VALUE_MAX_BYTES = 2097152;
+
+const int NATIVE_RECEIVE_MLS_MESSAGE_MAX_BYTES = 1048576;
+
+const int NATIVE_RECEIVE_RATCHET_TREE_MAX_BYTES = 2097152;
+
+const int NATIVE_RECEIVE_AAD_MAX_BYTES = 16384;
+
+const int NATIVE_RECEIVE_SIGNER_MAX_BYTES = 4096;
+
+const int NATIVE_RECEIVE_PLAINTEXT_MAX_BYTES = 262144;
+
+const int NATIVE_RECEIVE_ROSTER_MAX_LEAVES = 256;

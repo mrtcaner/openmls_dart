@@ -9,8 +9,9 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'storage.dart';
 import 'types.dart';
 
-// These functions are ignored because they are not marked as `pub`: `checked_u32`, `ensure_local_signer`, `ensure_signer_public_key`, `group_state_digest_from_entries`, `hash_len_prefixed`, `leaf_matches_owner`, `prepare_membership_commit_with_storage`, `prepared_result`, `proposal_type`, `provider_with_base_digest`, `roster_digest`, `roster_from_group`, `validate_additions`, `validate_canonical_leaves`, `validate_exact_delta`, `validate_expected_roster`, `validate_removals`, `validate_self_authority`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`
+// These functions are ignored because they are not marked as `pub`: `checked_u32`, `ensure_local_signer_public_key`, `ensure_local_signer`, `ensure_signer_public_key`, `group_state_digest_from_entries`, `hash_len_prefixed`, `join_group_from_welcome_with_storage_typed`, `leaf_matches_owner`, `prepare_membership_commit_with_storage`, `prepared_result`, `process_message_with_storage_typed`, `proposal_type`, `provider_with_base_digest`, `roster_digest`, `roster_from_group`, `selected_key_package_sha256`, `strict_receive_error`, `validate_additions`, `validate_canonical_leaves`, `validate_exact_delta`, `validate_expected_roster_typed`, `validate_expected_roster`, `validate_removals`, `validate_self_authority`, `zeroize_processed_content`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `StrictJoinGroupWithStorageResult`, `StrictReceiveErrorKind`, `StrictReceiveError`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 /// Compute the canonical version-1 roster digest from caller-supplied fields.
 Uint8List mlsRosterDigestV1({

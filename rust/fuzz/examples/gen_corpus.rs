@@ -39,7 +39,9 @@ fn write_seed(dir: &Path, name: &str, bytes: &[u8]) {
 }
 
 fn main() {
-    let base = std::env::args().nth(1).unwrap_or_else(|| "corpus".to_string());
+    let base = std::env::args()
+        .nth(1)
+        .unwrap_or_else(|| "corpus".to_string());
     let base = Path::new(&base);
 
     // --- credential target (fuzz_targets/credential.rs) ---
@@ -74,6 +76,18 @@ fn main() {
         "valid_header_empty_payload",
         b"KMLS\x00\x01\x01\x00\x00\x00\x00\x00",
     );
+
+    // --- account_envelope_v1 target ---
+    // The first byte selects one of the bounded decoders. Valid cryptographic
+    // fixtures are committed separately; these minimal seeds make every parser
+    // branch reachable even when the fixture generator has not run.
+    for selector in 0_u8..6 {
+        write_seed(
+            &base.join("account_envelope_v1"),
+            &format!("selector_{selector}"),
+            &[selector],
+        );
+    }
 
     println!("Seed corpus generation complete.");
 }

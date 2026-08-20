@@ -26,6 +26,7 @@
 
 // Section: imports
 
+use crate::api::account_envelope::bridge::*;
 use crate::api::credential::*;
 use crate::api::keys::*;
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
@@ -40,7 +41,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueNom,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1316209983;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1674661336;
 
 // Section: executor
 
@@ -48,6 +49,86 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
+fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1_impl(
+    expected_previous_local_private_bundle_authority: impl CstDecode<
+        crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1,
+    >,
+    previous_private_bundle: impl CstDecode<Vec<u8>>,
+    self_signed_successor_public_bundle: impl CstDecode<Vec<u8>>,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "AccountEnvelopeCrypto_authorize_successor_public_bundle_v1", port: None, mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync }, move || { let api_expected_previous_local_private_bundle_authority = expected_previous_local_private_bundle_authority.cst_decode();let api_previous_private_bundle = previous_private_bundle.cst_decode();let api_self_signed_successor_public_bundle = self_signed_successor_public_bundle.cst_decode();
+                transform_result_dco::<_, _, crate::api::account_envelope::types::AccountEnvelopeErrorV1>((move || {
+                     let output_ok = crate::api::account_envelope::bridge::AccountEnvelopeCrypto::authorize_successor_public_bundle_v1(api_expected_previous_local_private_bundle_authority, api_previous_private_bundle, api_self_signed_successor_public_bundle)?;   Ok(output_ok)
+                })()) })
+}
+fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1_impl(
+    account_id: impl CstDecode<Vec<u8>>,
+    generation: impl CstDecode<u64>,
+    activation_kind: impl CstDecode<
+        crate::api::account_envelope::types::AccountEnvelopeActivationKindV1,
+    >,
+    reset_reason: impl CstDecode<
+        Option<crate::api::account_envelope::types::AccountEnvelopeResetReasonV1>,
+    >,
+    previous_generation: impl CstDecode<u64>,
+    expected_local_private_bundle_authority: impl CstDecode<
+        crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1,
+    >,
+    private_bundle: impl CstDecode<Vec<u8>>,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "AccountEnvelopeCrypto_create_self_signed_public_bundle_v1", port: None, mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync }, move || { let api_account_id = account_id.cst_decode();let api_generation = generation.cst_decode();let api_activation_kind = activation_kind.cst_decode();let api_reset_reason = reset_reason.cst_decode();let api_previous_generation = previous_generation.cst_decode();let api_expected_local_private_bundle_authority = expected_local_private_bundle_authority.cst_decode();let api_private_bundle = private_bundle.cst_decode();
+                transform_result_dco::<_, _, crate::api::account_envelope::types::AccountEnvelopeErrorV1>((move || {
+                     let output_ok = crate::api::account_envelope::bridge::AccountEnvelopeCrypto::create_self_signed_public_bundle_v1(api_account_id, api_generation, api_activation_kind, api_reset_reason, api_previous_generation, api_expected_local_private_bundle_authority, api_private_bundle)?;   Ok(output_ok)
+                })()) })
+}
+fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1_impl(
+    account_id: impl CstDecode<Vec<u8>>,
+    generation: impl CstDecode<u64>,
+    root_installation_id: impl CstDecode<Vec<u8>>,
+    root_authority_generation: impl CstDecode<u64>,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "AccountEnvelopeCrypto_generate_key_bundle_v1", port: None, mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync }, move || { let api_account_id = account_id.cst_decode();let api_generation = generation.cst_decode();let api_root_installation_id = root_installation_id.cst_decode();let api_root_authority_generation = root_authority_generation.cst_decode();
+                transform_result_dco::<_, _, crate::api::account_envelope::types::AccountEnvelopeErrorV1>((move || {
+                     let output_ok = crate::api::account_envelope::bridge::AccountEnvelopeCrypto::generate_key_bundle_v1(api_account_id, api_generation, api_root_installation_id, api_root_authority_generation)?;   Ok(output_ok)
+                })()) })
+}
+fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1_impl(
+    authority: impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1>,
+    expected_local_private_bundle_authority: impl CstDecode<
+        crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1,
+    >,
+    preview: impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1>,
+    recipient_public_bundle: impl CstDecode<Vec<u8>>,
+    sender_private_bundle: impl CstDecode<Vec<u8>>,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "AccountEnvelopeCrypto_seal_context_invitation_preview_v1", port: None, mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync }, move || { let api_authority = authority.cst_decode();let api_expected_local_private_bundle_authority = expected_local_private_bundle_authority.cst_decode();let api_preview = preview.cst_decode();let api_recipient_public_bundle = recipient_public_bundle.cst_decode();let api_sender_private_bundle = sender_private_bundle.cst_decode();
+                transform_result_dco::<_, _, crate::api::account_envelope::types::AccountEnvelopeErrorV1>((move || {
+                     let output_ok = crate::api::account_envelope::bridge::AccountEnvelopeCrypto::seal_context_invitation_preview_v1(api_authority, api_expected_local_private_bundle_authority, api_preview, api_recipient_public_bundle, api_sender_private_bundle)?;   Ok(output_ok)
+                })()) })
+}
+fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1_impl(
+    envelope: impl CstDecode<Vec<u8>>,
+    expected_authority: impl CstDecode<
+        crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1,
+    >,
+    recipient_private_bundle: impl CstDecode<Vec<u8>>,
+    sender_public_bundle: impl CstDecode<Vec<u8>>,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1", port: None, mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync }, move || { let api_envelope = envelope.cst_decode();let api_expected_authority = expected_authority.cst_decode();let api_recipient_private_bundle = recipient_private_bundle.cst_decode();let api_sender_public_bundle = sender_public_bundle.cst_decode();
+                transform_result_dco::<_, _, crate::api::account_envelope::types::AccountEnvelopeErrorV1>((move || {
+                     let output_ok = crate::api::account_envelope::bridge::AccountEnvelopeCrypto::verify_and_open_context_invitation_preview_v1(api_envelope, api_expected_authority, api_recipient_private_bundle, api_sender_public_bundle)?;   Ok(output_ok)
+                })()) })
+}
+fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1_impl(
+    pinned_public_bundle: impl CstDecode<Option<Vec<u8>>>,
+    continuity_public_bundles: impl CstDecode<Vec<Vec<u8>>>,
+    manual_reanchor_authorized: impl CstDecode<bool>,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "AccountEnvelopeCrypto_verify_continuity_response_v1", port: None, mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync }, move || { let api_pinned_public_bundle = pinned_public_bundle.cst_decode();let api_continuity_public_bundles = continuity_public_bundles.cst_decode();let api_manual_reanchor_authorized = manual_reanchor_authorized.cst_decode();
+                transform_result_dco::<_, _, crate::api::account_envelope::types::AccountEnvelopeErrorV1>((move || {
+                     let output_ok = crate::api::account_envelope::bridge::AccountEnvelopeCrypto::verify_continuity_response_v1(api_pinned_public_bundle, api_continuity_public_bundles, api_manual_reanchor_authorized)?;   Ok(output_ok)
+                })()) })
+}
 fn wire__crate__api__credential__MlsCredential_basic_impl(
     identity: impl CstDecode<Vec<u8>>,
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
@@ -1103,6 +1184,93 @@ fn wire__crate__api__group_e2ee__swap_members_with_storage_impl(
 
 // Section: dart2rust
 
+impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeActivationKindV1> for i32 {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(self) -> crate::api::account_envelope::types::AccountEnvelopeActivationKindV1 {
+        match self {
+            0 => crate::api::account_envelope::types::AccountEnvelopeActivationKindV1::Initial,
+1 => crate::api::account_envelope::types::AccountEnvelopeActivationKindV1::Rotation,
+2 => crate::api::account_envelope::types::AccountEnvelopeActivationKindV1::ContinuityReset,
+            _ => unreachable!("Invalid variant for AccountEnvelopeActivationKindV1: {}", self),
+        }
+    }
+}
+impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1>
+    for i32
+{
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(
+        self,
+    ) -> crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1 {
+        match self {
+            0 => crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::FirstObservation,
+1 => crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::PinnedUnchanged,
+2 => crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::RotationChainVerified,
+3 => crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::ResetAnchorRequiresAcceptance,
+4 => crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::ManualReanchorVerified,
+            _ => unreachable!("Invalid variant for AccountEnvelopeContinuityDispositionV1: {}", self),
+        }
+    }
+}
+impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1> for i32 {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(self) -> crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1 {
+        match self {
+            0 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::AuthorityMismatch,
+1 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::UnsupportedVersion,
+2 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::NonCanonicalEncoding,
+3 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::SignatureInvalid,
+4 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::HpkeOpenFailed,
+5 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid,
+6 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::BoundsExceeded,
+7 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::PrivateBundleInvalid,
+8 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::InternalCryptoFailure,
+            _ => unreachable!("Invalid variant for AccountEnvelopeErrorCodeV1: {}", self),
+        }
+    }
+}
+impl CstDecode<crate::api::account_envelope::types::AccountEnvelopePaddingClassV1> for i32 {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(self) -> crate::api::account_envelope::types::AccountEnvelopePaddingClassV1 {
+        match self {
+            0 => crate::api::account_envelope::types::AccountEnvelopePaddingClassV1::Bytes512,
+            1 => crate::api::account_envelope::types::AccountEnvelopePaddingClassV1::Bytes1024,
+            2 => crate::api::account_envelope::types::AccountEnvelopePaddingClassV1::Bytes2048,
+            _ => unreachable!(
+                "Invalid variant for AccountEnvelopePaddingClassV1: {}",
+                self
+            ),
+        }
+    }
+}
+impl CstDecode<crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1>
+    for i32
+{
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(
+        self,
+    ) -> crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1 {
+        match self {
+            0 => crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1::CanonicalPublicBundle,
+1 => crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1::NonPublishableRotationCandidate,
+            _ => unreachable!("Invalid variant for AccountEnvelopePublicBundleCandidateKindV1: {}", self),
+        }
+    }
+}
+impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeResetReasonV1> for i32 {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(self) -> crate::api::account_envelope::types::AccountEnvelopeResetReasonV1 {
+        match self {
+            0 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::IdentityReset,
+1 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::ChatStoreReset,
+2 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::RootInstallationMove,
+3 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::RootOrDatabaseKeyLoss,
+4 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::AccountRecovery,
+5 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::Compromise,
+            _ => unreachable!("Invalid variant for AccountEnvelopeResetReasonV1: {}", self),
+        }
+    }
+}
 impl CstDecode<bool> for bool {
     // Codec=Cst (C-struct based), see doc to use other codecs
     fn cst_decode(self) -> bool {
@@ -1193,6 +1361,16 @@ impl CstDecode<usize> for usize {
         self
     }
 }
+impl SseDecode for AccountEnvelopeCrypto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <RustOpaqueNom<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>,
+        >>::sse_decode(deserializer);
+        return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
+    }
+}
+
 impl SseDecode for MlsCredential {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1210,6 +1388,18 @@ impl SseDecode for MlsSignatureKeyPair {
             flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsSignatureKeyPair>,
         >>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
+    }
+}
+
+impl SseDecode
+    for RustOpaqueNom<
+        flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>,
+    >
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <usize>::sse_decode(deserializer);
+        return unsafe { decode_rust_opaque_nom(inner) };
     }
 }
 
@@ -1241,10 +1431,240 @@ impl SseDecode for String {
     }
 }
 
+impl SseDecode for crate::api::account_envelope::types::AccountEnvelopeActivationKindV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::account_envelope::types::AccountEnvelopeActivationKindV1::Initial,
+1 => crate::api::account_envelope::types::AccountEnvelopeActivationKindV1::Rotation,
+2 => crate::api::account_envelope::types::AccountEnvelopeActivationKindV1::ContinuityReset,
+            _ => unreachable!("Invalid variant for AccountEnvelopeActivationKindV1: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::FirstObservation,
+1 => crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::PinnedUnchanged,
+2 => crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::RotationChainVerified,
+3 => crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::ResetAnchorRequiresAcceptance,
+4 => crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::ManualReanchorVerified,
+            _ => unreachable!("Invalid variant for AccountEnvelopeContinuityDispositionV1: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::AuthorityMismatch,
+1 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::UnsupportedVersion,
+2 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::NonCanonicalEncoding,
+3 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::SignatureInvalid,
+4 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::HpkeOpenFailed,
+5 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid,
+6 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::BoundsExceeded,
+7 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::PrivateBundleInvalid,
+8 => crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::InternalCryptoFailure,
+            _ => unreachable!("Invalid variant for AccountEnvelopeErrorCodeV1: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::types::AccountEnvelopeErrorV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_code =
+            <crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1>::sse_decode(
+                deserializer,
+            );
+        return crate::api::account_envelope::types::AccountEnvelopeErrorV1 { code: var_code };
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::types::AccountEnvelopePaddingClassV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::account_envelope::types::AccountEnvelopePaddingClassV1::Bytes512,
+            1 => crate::api::account_envelope::types::AccountEnvelopePaddingClassV1::Bytes1024,
+            2 => crate::api::account_envelope::types::AccountEnvelopePaddingClassV1::Bytes2048,
+            _ => unreachable!(
+                "Invalid variant for AccountEnvelopePaddingClassV1: {}",
+                inner
+            ),
+        };
+    }
+}
+
+impl SseDecode
+    for crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_accountId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_generation = <u64>::sse_decode(deserializer);
+        let mut var_rootInstallationId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_rootAuthorityGeneration = <u64>::sse_decode(deserializer);
+        return crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1{account_id: var_accountId, generation: var_generation, root_installation_id: var_rootInstallationId, root_authority_generation: var_rootAuthorityGeneration};
+    }
+}
+
+impl SseDecode
+    for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1::CanonicalPublicBundle,
+1 => crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1::NonPublishableRotationCandidate,
+            _ => unreachable!("Invalid variant for AccountEnvelopePublicBundleCandidateKindV1: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_kind = <crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1>::sse_decode(deserializer);
+        let mut var_bytes = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1 {
+            kind: var_kind,
+            bytes: var_bytes,
+        };
+    }
+}
+
+impl SseDecode
+    for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_accountId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_generation = <u64>::sse_decode(deserializer);
+        let mut var_hpkePublicKey = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_signaturePublicKey = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_activationKind =
+            <crate::api::account_envelope::types::AccountEnvelopeActivationKindV1>::sse_decode(
+                deserializer,
+            );
+        let mut var_previousGeneration = <u64>::sse_decode(deserializer);
+        let mut var_resetReason = <Option<
+            crate::api::account_envelope::types::AccountEnvelopeResetReasonV1,
+        >>::sse_decode(deserializer);
+        let mut var_digestSha256 = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1 {
+            account_id: var_accountId,
+            generation: var_generation,
+            hpke_public_key: var_hpkePublicKey,
+            signature_public_key: var_signaturePublicKey,
+            activation_kind: var_activationKind,
+            previous_generation: var_previousGeneration,
+            reset_reason: var_resetReason,
+            digest_sha256: var_digestSha256,
+        };
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::types::AccountEnvelopeResetReasonV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::IdentityReset,
+1 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::ChatStoreReset,
+2 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::RootInstallationMove,
+3 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::RootOrDatabaseKeyLoss,
+4 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::AccountRecovery,
+5 => crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::Compromise,
+            _ => unreachable!("Invalid variant for AccountEnvelopeResetReasonV1: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_authorizedCanonicalSuccessorPublicBundle = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_retiredPreviousPrivateBundleCandidate = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1 {
+            authorized_canonical_successor_public_bundle:
+                var_authorizedCanonicalSuccessorPublicBundle,
+            retired_previous_private_bundle_candidate: var_retiredPreviousPrivateBundleCandidate,
+        };
+    }
+}
+
 impl SseDecode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_u8().unwrap() != 0
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_envelopeId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_inviteId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_senderAccountId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_senderGeneration = <u64>::sse_decode(deserializer);
+        let mut var_recipientAccountId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_recipientGeneration = <u64>::sse_decode(deserializer);
+        let mut var_authorityAttempt = <u64>::sse_decode(deserializer);
+        let mut var_relaySlotVersion = <u64>::sse_decode(deserializer);
+        let mut var_serverCreatedAtUnixMs = <u64>::sse_decode(deserializer);
+        let mut var_serverExpiresAtUnixMs = <u64>::sse_decode(deserializer);
+        let mut var_paddingClass =
+            <crate::api::account_envelope::types::AccountEnvelopePaddingClassV1>::sse_decode(
+                deserializer,
+            );
+        return crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1 {
+            envelope_id: var_envelopeId,
+            invite_id: var_inviteId,
+            sender_account_id: var_senderAccountId,
+            sender_generation: var_senderGeneration,
+            recipient_account_id: var_recipientAccountId,
+            recipient_generation: var_recipientGeneration,
+            authority_attempt: var_authorityAttempt,
+            relay_slot_version: var_relaySlotVersion,
+            server_created_at_unix_ms: var_serverCreatedAtUnixMs,
+            server_expires_at_unix_ms: var_serverExpiresAtUnixMs,
+            padding_class: var_paddingClass,
+        };
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_title = <Option<String>>::sse_decode(deserializer);
+        let mut var_tags = <Vec<String>>::sse_decode(deserializer);
+        return crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1 {
+            title: var_title,
+            tags: var_tags,
+        };
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_title = <Option<String>>::sse_decode(deserializer);
+        let mut var_tags = <Vec<String>>::sse_decode(deserializer);
+        return crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1 {
+            title: var_title,
+            tags: var_tags,
+        };
     }
 }
 
@@ -1287,6 +1707,33 @@ impl SseDecode for crate::api::storage::CreateMessageWithStorageResult {
     }
 }
 
+impl SseDecode for crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_invitation =
+            <crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1>::sse_decode(
+                deserializer,
+            );
+        let mut var_localRootInstallationId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_localRootAuthorityGeneration = <u64>::sse_decode(deserializer);
+        return crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1 {
+            invitation: var_invitation,
+            local_root_installation_id: var_localRootInstallationId,
+            local_root_authority_generation: var_localRootAuthorityGeneration,
+        };
+    }
+}
+
+impl SseDecode for crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_privateBundle = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1 {
+            private_bundle: var_privateBundle,
+        };
+    }
+}
+
 impl SseDecode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1306,6 +1753,18 @@ impl SseDecode for crate::api::group_e2ee::JoinGroupWithStorageResult {
             resulting_roster: var_resultingRoster,
             storage_batch: var_storageBatch,
         };
+    }
+}
+
+impl SseDecode for Vec<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<String>::sse_decode(deserializer));
+        }
+        return ans_;
     }
 }
 
@@ -1598,6 +2057,32 @@ impl SseDecode for crate::api::types::MlsWireFormatPolicy {
     }
 }
 
+impl SseDecode for Option<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<String>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::account_envelope::types::AccountEnvelopeResetReasonV1> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(
+                <crate::api::account_envelope::types::AccountEnvelopeResetReasonV1>::sse_decode(
+                    deserializer,
+                ),
+            );
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<crate::api::types::MlsProposalType> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1746,6 +2231,20 @@ impl SseDecode for usize {
     }
 }
 
+impl SseDecode for crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_disposition = <crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1>::sse_decode(deserializer);
+        let mut var_verifiedPublicBundle = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_verifiedSummary = <crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1>::sse_decode(deserializer);
+        return crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1 {
+            disposition: var_disposition,
+            verified_public_bundle: var_verifiedPublicBundle,
+            verified_summary: var_verifiedSummary,
+        };
+    }
+}
+
 fn pde_ffi_dispatcher_primary_impl(
     func_id: i32,
     port: flutter_rust_bridge::for_generated::MessagePort,
@@ -1772,6 +2271,26 @@ fn pde_ffi_dispatcher_sync_impl(
 }
 
 // Section: rust2dart
+
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<AccountEnvelopeCrypto> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, StdArc<_>>(self.0)
+            .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for FrbWrapper<AccountEnvelopeCrypto>
+{
+}
+
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<AccountEnvelopeCrypto>>
+    for AccountEnvelopeCrypto
+{
+    fn into_into_dart(self) -> FrbWrapper<AccountEnvelopeCrypto> {
+        self.into()
+    }
+}
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for FrbWrapper<MlsCredential> {
@@ -1806,6 +2325,405 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<MlsSignatureKeyPair>> for MlsS
     }
 }
 
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::types::AccountEnvelopeActivationKindV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Initial => 0.into_dart(),
+            Self::Rotation => 1.into_dart(),
+            Self::ContinuityReset => 2.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::types::AccountEnvelopeActivationKindV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::types::AccountEnvelopeActivationKindV1,
+    > for crate::api::account_envelope::types::AccountEnvelopeActivationKindV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::types::AccountEnvelopeActivationKindV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::FirstObservation => 0.into_dart(),
+            Self::PinnedUnchanged => 1.into_dart(),
+            Self::RotationChainVerified => 2.into_dart(),
+            Self::ResetAnchorRequiresAcceptance => 3.into_dart(),
+            Self::ManualReanchorVerified => 4.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1,
+    > for crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::AuthorityMismatch => 0.into_dart(),
+            Self::UnsupportedVersion => 1.into_dart(),
+            Self::NonCanonicalEncoding => 2.into_dart(),
+            Self::SignatureInvalid => 3.into_dart(),
+            Self::HpkeOpenFailed => 4.into_dart(),
+            Self::PlaintextSchemaInvalid => 5.into_dart(),
+            Self::BoundsExceeded => 6.into_dart(),
+            Self::PrivateBundleInvalid => 7.into_dart(),
+            Self::InternalCryptoFailure => 8.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1,
+    > for crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1
+{
+    fn into_into_dart(self) -> crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::account_envelope::types::AccountEnvelopeErrorV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [self.code.into_into_dart().into_dart()].into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::types::AccountEnvelopeErrorV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::account_envelope::types::AccountEnvelopeErrorV1>
+    for crate::api::account_envelope::types::AccountEnvelopeErrorV1
+{
+    fn into_into_dart(self) -> crate::api::account_envelope::types::AccountEnvelopeErrorV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::types::AccountEnvelopePaddingClassV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Bytes512 => 0.into_dart(),
+            Self::Bytes1024 => 1.into_dart(),
+            Self::Bytes2048 => 2.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::types::AccountEnvelopePaddingClassV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::types::AccountEnvelopePaddingClassV1,
+    > for crate::api::account_envelope::types::AccountEnvelopePaddingClassV1
+{
+    fn into_into_dart(self) -> crate::api::account_envelope::types::AccountEnvelopePaddingClassV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.account_id.into_into_dart().into_dart(),
+            self.generation.into_into_dart().into_dart(),
+            self.root_installation_id.into_into_dart().into_dart(),
+            self.root_authority_generation.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1,
+    > for crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::CanonicalPublicBundle => 0.into_dart(),
+            Self::NonPublishableRotationCandidate => 1.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1,
+    > for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.kind.into_into_dart().into_dart(),
+            self.bytes.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1,
+    > for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.account_id.into_into_dart().into_dart(),
+            self.generation.into_into_dart().into_dart(),
+            self.hpke_public_key.into_into_dart().into_dart(),
+            self.signature_public_key.into_into_dart().into_dart(),
+            self.activation_kind.into_into_dart().into_dart(),
+            self.previous_generation.into_into_dart().into_dart(),
+            self.reset_reason.into_into_dart().into_dart(),
+            self.digest_sha256.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1,
+    > for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::types::AccountEnvelopeResetReasonV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::IdentityReset => 0.into_dart(),
+            Self::ChatStoreReset => 1.into_dart(),
+            Self::RootInstallationMove => 2.into_dart(),
+            Self::RootOrDatabaseKeyLoss => 3.into_dart(),
+            Self::AccountRecovery => 4.into_dart(),
+            Self::Compromise => 5.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::types::AccountEnvelopeResetReasonV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::types::AccountEnvelopeResetReasonV1,
+    > for crate::api::account_envelope::types::AccountEnvelopeResetReasonV1
+{
+    fn into_into_dart(self) -> crate::api::account_envelope::types::AccountEnvelopeResetReasonV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.authorized_canonical_successor_public_bundle
+                .into_into_dart()
+                .into_dart(),
+            self.retired_previous_private_bundle_candidate
+                .into_into_dart()
+                .into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1,
+    > for crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.envelope_id.into_into_dart().into_dart(),
+            self.invite_id.into_into_dart().into_dart(),
+            self.sender_account_id.into_into_dart().into_dart(),
+            self.sender_generation.into_into_dart().into_dart(),
+            self.recipient_account_id.into_into_dart().into_dart(),
+            self.recipient_generation.into_into_dart().into_dart(),
+            self.authority_attempt.into_into_dart().into_dart(),
+            self.relay_slot_version.into_into_dart().into_dart(),
+            self.server_created_at_unix_ms.into_into_dart().into_dart(),
+            self.server_expires_at_unix_ms.into_into_dart().into_dart(),
+            self.padding_class.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1,
+    > for crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.title.into_into_dart().into_dart(),
+            self.tags.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1,
+    > for crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.title.into_into_dart().into_dart(),
+            self.tags.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1,
+    > for crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1 {
+        self
+    }
+}
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::CreateGroupWithStorageResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
@@ -1867,6 +2785,59 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::storage::CreateMessageWithSto
     for crate::api::storage::CreateMessageWithStorageResult
 {
     fn into_into_dart(self) -> crate::api::storage::CreateMessageWithStorageResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.invitation.into_into_dart().into_dart(),
+            self.local_root_installation_id.into_into_dart().into_dart(),
+            self.local_root_authority_generation
+                .into_into_dart()
+                .into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1,
+    > for crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [self.private_bundle.into_into_dart().into_dart()].into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1,
+    > for crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1 {
         self
     }
 }
@@ -2287,6 +3258,46 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::ProcessedMessageType>
         self
     }
 }
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.disposition.into_into_dart().into_dart(),
+            self.verified_public_bundle.into_into_dart().into_dart(),
+            self.verified_summary.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1,
+    > for crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1
+{
+    fn into_into_dart(
+        self,
+    ) -> crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1 {
+        self
+    }
+}
+
+impl SseEncode for AccountEnvelopeCrypto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <RustOpaqueNom<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>,
+        >>::sse_encode(
+            flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, StdArc<_>>(self),
+            serializer,
+        );
+    }
+}
 
 impl SseEncode for MlsCredential {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2299,6 +3310,19 @@ impl SseEncode for MlsSignatureKeyPair {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsSignatureKeyPair>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, StdArc<_>>(self), serializer);
+    }
+}
+
+impl SseEncode
+    for RustOpaqueNom<
+        flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>,
+    >
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        let (ptr, size) = self.sse_encode_raw();
+        <usize>::sse_encode(ptr, serializer);
+        <i32>::sse_encode(size, serializer);
     }
 }
 
@@ -2331,10 +3355,187 @@ impl SseEncode for String {
     }
 }
 
+impl SseEncode for crate::api::account_envelope::types::AccountEnvelopeActivationKindV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(match self {crate::api::account_envelope::types::AccountEnvelopeActivationKindV1::Initial => { 0 }
+crate::api::account_envelope::types::AccountEnvelopeActivationKindV1::Rotation => { 1 }
+crate::api::account_envelope::types::AccountEnvelopeActivationKindV1::ContinuityReset => { 2 }
+ _ => { unimplemented!(""); }}, serializer);
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(match self {crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::FirstObservation => { 0 }
+crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::PinnedUnchanged => { 1 }
+crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::RotationChainVerified => { 2 }
+crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::ResetAnchorRequiresAcceptance => { 3 }
+crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1::ManualReanchorVerified => { 4 }
+ _ => { unimplemented!(""); }}, serializer);
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(match self {crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::AuthorityMismatch => { 0 }
+crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::UnsupportedVersion => { 1 }
+crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::NonCanonicalEncoding => { 2 }
+crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::SignatureInvalid => { 3 }
+crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::HpkeOpenFailed => { 4 }
+crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid => { 5 }
+crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::BoundsExceeded => { 6 }
+crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::PrivateBundleInvalid => { 7 }
+crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1::InternalCryptoFailure => { 8 }
+ _ => { unimplemented!(""); }}, serializer);
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::types::AccountEnvelopeErrorV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1>::sse_encode(
+            self.code, serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::types::AccountEnvelopePaddingClassV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::account_envelope::types::AccountEnvelopePaddingClassV1::Bytes512 => 0,
+                crate::api::account_envelope::types::AccountEnvelopePaddingClassV1::Bytes1024 => 1,
+                crate::api::account_envelope::types::AccountEnvelopePaddingClassV1::Bytes2048 => 2,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode
+    for crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.account_id, serializer);
+        <u64>::sse_encode(self.generation, serializer);
+        <Vec<u8>>::sse_encode(self.root_installation_id, serializer);
+        <u64>::sse_encode(self.root_authority_generation, serializer);
+    }
+}
+
+impl SseEncode
+    for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(match self {crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1::CanonicalPublicBundle => { 0 }
+crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1::NonPublishableRotationCandidate => { 1 }
+ _ => { unimplemented!(""); }}, serializer);
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1>::sse_encode(self.kind, serializer);
+        <Vec<u8>>::sse_encode(self.bytes, serializer);
+    }
+}
+
+impl SseEncode
+    for crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.account_id, serializer);
+        <u64>::sse_encode(self.generation, serializer);
+        <Vec<u8>>::sse_encode(self.hpke_public_key, serializer);
+        <Vec<u8>>::sse_encode(self.signature_public_key, serializer);
+        <crate::api::account_envelope::types::AccountEnvelopeActivationKindV1>::sse_encode(
+            self.activation_kind,
+            serializer,
+        );
+        <u64>::sse_encode(self.previous_generation, serializer);
+        <Option<crate::api::account_envelope::types::AccountEnvelopeResetReasonV1>>::sse_encode(
+            self.reset_reason,
+            serializer,
+        );
+        <Vec<u8>>::sse_encode(self.digest_sha256, serializer);
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::types::AccountEnvelopeResetReasonV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(match self {crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::IdentityReset => { 0 }
+crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::ChatStoreReset => { 1 }
+crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::RootInstallationMove => { 2 }
+crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::RootOrDatabaseKeyLoss => { 3 }
+crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::AccountRecovery => { 4 }
+crate::api::account_envelope::types::AccountEnvelopeResetReasonV1::Compromise => { 5 }
+ _ => { unimplemented!(""); }}, serializer);
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(
+            self.authorized_canonical_successor_public_bundle,
+            serializer,
+        );
+        <Vec<u8>>::sse_encode(self.retired_previous_private_bundle_candidate, serializer);
+    }
+}
+
 impl SseEncode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_u8(self as _).unwrap();
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.envelope_id, serializer);
+        <Vec<u8>>::sse_encode(self.invite_id, serializer);
+        <Vec<u8>>::sse_encode(self.sender_account_id, serializer);
+        <u64>::sse_encode(self.sender_generation, serializer);
+        <Vec<u8>>::sse_encode(self.recipient_account_id, serializer);
+        <u64>::sse_encode(self.recipient_generation, serializer);
+        <u64>::sse_encode(self.authority_attempt, serializer);
+        <u64>::sse_encode(self.relay_slot_version, serializer);
+        <u64>::sse_encode(self.server_created_at_unix_ms, serializer);
+        <u64>::sse_encode(self.server_expires_at_unix_ms, serializer);
+        <crate::api::account_envelope::types::AccountEnvelopePaddingClassV1>::sse_encode(
+            self.padding_class,
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<String>>::sse_encode(self.title, serializer);
+        <Vec<String>>::sse_encode(self.tags, serializer);
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<String>>::sse_encode(self.title, serializer);
+        <Vec<String>>::sse_encode(self.tags, serializer);
     }
 }
 
@@ -2363,6 +3564,25 @@ impl SseEncode for crate::api::storage::CreateMessageWithStorageResult {
     }
 }
 
+impl SseEncode for crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1>::sse_encode(
+            self.invitation,
+            serializer,
+        );
+        <Vec<u8>>::sse_encode(self.local_root_installation_id, serializer);
+        <u64>::sse_encode(self.local_root_authority_generation, serializer);
+    }
+}
+
+impl SseEncode for crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.private_bundle, serializer);
+    }
+}
+
 impl SseEncode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2376,6 +3596,16 @@ impl SseEncode for crate::api::group_e2ee::JoinGroupWithStorageResult {
         <Vec<u8>>::sse_encode(self.group_id, serializer);
         <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
         <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
+    }
+}
+
+impl SseEncode for Vec<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <String>::sse_encode(item, serializer);
+        }
     }
 }
 
@@ -2593,6 +3823,28 @@ impl SseEncode for crate::api::types::MlsWireFormatPolicy {
     }
 }
 
+impl SseEncode for Option<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <String>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::account_envelope::types::AccountEnvelopeResetReasonV1> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::account_envelope::types::AccountEnvelopeResetReasonV1>::sse_encode(
+                value, serializer,
+            );
+        }
+    }
+}
+
 impl SseEncode for Option<crate::api::types::MlsProposalType> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2714,6 +3966,18 @@ impl SseEncode for usize {
     }
 }
 
+impl SseEncode for crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1>::sse_encode(
+            self.disposition,
+            serializer,
+        );
+        <Vec<u8>>::sse_encode(self.verified_public_bundle, serializer);
+        <crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1>::sse_encode(self.verified_summary, serializer);
+    }
+}
+
 #[cfg(not(target_family = "wasm"))]
 mod io {
     // This file is automatically generated, so please do not edit it.
@@ -2722,6 +3986,7 @@ mod io {
     // Section: imports
 
     use super::*;
+    use crate::api::account_envelope::bridge::*;
     use crate::api::credential::*;
     use crate::api::keys::*;
     use flutter_rust_bridge::for_generated::byteorder::{
@@ -2736,6 +4001,18 @@ mod io {
 
     // Section: dart2rust
 
+    impl CstDecode<AccountEnvelopeCrypto> for usize {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> AccountEnvelopeCrypto {
+            flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(CstDecode::<
+                RustOpaqueNom<
+                    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>,
+                >,
+            >::cst_decode(
+                self
+            ))
+        }
+    }
     impl CstDecode<MlsCredential> for usize {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> MlsCredential {
@@ -2758,6 +4035,22 @@ mod io {
             >::cst_decode(
                 self
             ))
+        }
+    }
+    impl
+        CstDecode<
+            RustOpaqueNom<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>,
+            >,
+        > for usize
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> RustOpaqueNom<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>,
+        > {
+            unsafe { decode_rust_opaque_nom(self as _) }
         }
     }
     impl
@@ -2794,6 +4087,145 @@ mod io {
         fn cst_decode(self) -> String {
             let vec: Vec<u8> = self.cst_decode();
             String::from_utf8(vec).unwrap()
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeErrorV1>
+        for wire_cst_account_envelope_error_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::account_envelope::types::AccountEnvelopeErrorV1 {
+            crate::api::account_envelope::types::AccountEnvelopeErrorV1 {
+                code: self.code.cst_decode(),
+            }
+        }
+    }
+    impl
+        CstDecode<
+            crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1,
+        > for wire_cst_account_envelope_private_bundle_authority_input_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1
+        {
+            crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1 {
+                account_id: self.account_id.cst_decode(),
+                generation: self.generation.cst_decode(),
+                root_installation_id: self.root_installation_id.cst_decode(),
+                root_authority_generation: self.root_authority_generation.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1>
+        for wire_cst_account_envelope_public_bundle_candidate_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1 {
+            crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1 {
+                kind: self.kind.cst_decode(),
+                bytes: self.bytes.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1>
+        for wire_cst_account_envelope_public_bundle_summary_output_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1
+        {
+            crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1 {
+                account_id: self.account_id.cst_decode(),
+                generation: self.generation.cst_decode(),
+                hpke_public_key: self.hpke_public_key.cst_decode(),
+                signature_public_key: self.signature_public_key.cst_decode(),
+                activation_kind: self.activation_kind.cst_decode(),
+                previous_generation: self.previous_generation.cst_decode(),
+                reset_reason: self.reset_reason.cst_decode(),
+                digest_sha256: self.digest_sha256.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1>
+        for wire_cst_account_envelope_successor_authorization_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1 {
+            crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1 {
+                authorized_canonical_successor_public_bundle: self
+                    .authorized_canonical_successor_public_bundle
+                    .cst_decode(),
+                retired_previous_private_bundle_candidate: self
+                    .retired_previous_private_bundle_candidate
+                    .cst_decode(),
+            }
+        }
+    }
+    impl
+        CstDecode<
+            crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1,
+        > for *mut wire_cst_account_envelope_private_bundle_authority_input_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1
+        {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<
+                crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1,
+            >::cst_decode(*wrap)
+            .into()
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeResetReasonV1> for *mut i32 {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::account_envelope::types::AccountEnvelopeResetReasonV1 {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::account_envelope::types::AccountEnvelopeResetReasonV1>::cst_decode(*wrap).into()
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1>
+        for *mut wire_cst_context_invitation_authority_input_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1 {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1>::cst_decode(*wrap).into()
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1>
+        for *mut wire_cst_context_invitation_preview_input_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1 {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1>::cst_decode(*wrap).into()
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1>
+        for *mut wire_cst_expected_context_invitation_authority_input_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1
+        {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<
+                crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1,
+            >::cst_decode(*wrap)
+            .into()
         }
     }
     impl CstDecode<crate::api::group_e2ee::MlsAuthorizedOwnerV1>
@@ -2843,6 +4275,54 @@ mod io {
             unsafe { *flutter_rust_bridge::for_generated::box_from_leak_ptr(self) }
         }
     }
+    impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1>
+        for wire_cst_context_invitation_authority_input_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1 {
+            crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1 {
+                envelope_id: self.envelope_id.cst_decode(),
+                invite_id: self.invite_id.cst_decode(),
+                sender_account_id: self.sender_account_id.cst_decode(),
+                sender_generation: self.sender_generation.cst_decode(),
+                recipient_account_id: self.recipient_account_id.cst_decode(),
+                recipient_generation: self.recipient_generation.cst_decode(),
+                authority_attempt: self.authority_attempt.cst_decode(),
+                relay_slot_version: self.relay_slot_version.cst_decode(),
+                server_created_at_unix_ms: self.server_created_at_unix_ms.cst_decode(),
+                server_expires_at_unix_ms: self.server_expires_at_unix_ms.cst_decode(),
+                padding_class: self.padding_class.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1>
+        for wire_cst_context_invitation_preview_input_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1 {
+            crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1 {
+                title: self.title.cst_decode(),
+                tags: self.tags.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1>
+        for wire_cst_context_invitation_preview_output_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1 {
+            crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1 {
+                title: self.title.cst_decode(),
+                tags: self.tags.cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::CreateGroupWithStorageResult>
         for wire_cst_create_group_with_storage_result
     {
@@ -2877,6 +4357,34 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1>
+        for wire_cst_expected_context_invitation_authority_input_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1
+        {
+            crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1 {
+                invitation: self.invitation.cst_decode(),
+                local_root_installation_id: self.local_root_installation_id.cst_decode(),
+                local_root_authority_generation: self.local_root_authority_generation.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1>
+        for wire_cst_generate_account_envelope_key_bundle_output_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1
+        {
+            crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1 {
+                private_bundle: self.private_bundle.cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::JoinGroupWithStorageResult>
         for wire_cst_join_group_with_storage_result
     {
@@ -2887,6 +4395,16 @@ mod io {
                 resulting_roster: self.resulting_roster.cst_decode(),
                 storage_batch: self.storage_batch.cst_decode(),
             }
+        }
+    }
+    impl CstDecode<Vec<String>> for *mut wire_cst_list_String {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> Vec<String> {
+            let vec = unsafe {
+                let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
+                flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
+            };
+            vec.into_iter().map(CstDecode::cst_decode).collect()
         }
     }
     impl CstDecode<Vec<Vec<u8>>> for *mut wire_cst_list_list_prim_u_8_strict {
@@ -3124,6 +4642,140 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1>
+        for wire_cst_verify_account_envelope_continuity_output_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1 {
+            crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1 {
+                disposition: self.disposition.cst_decode(),
+                verified_public_bundle: self.verified_public_bundle.cst_decode(),
+                verified_summary: self.verified_summary.cst_decode(),
+            }
+        }
+    }
+    impl NewWithNullPtr for wire_cst_account_envelope_error_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                code: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_account_envelope_error_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_account_envelope_private_bundle_authority_input_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                account_id: core::ptr::null_mut(),
+                generation: Default::default(),
+                root_installation_id: core::ptr::null_mut(),
+                root_authority_generation: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_account_envelope_private_bundle_authority_input_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_account_envelope_public_bundle_candidate_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                kind: Default::default(),
+                bytes: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_account_envelope_public_bundle_candidate_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_account_envelope_public_bundle_summary_output_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                account_id: core::ptr::null_mut(),
+                generation: Default::default(),
+                hpke_public_key: core::ptr::null_mut(),
+                signature_public_key: core::ptr::null_mut(),
+                activation_kind: Default::default(),
+                previous_generation: Default::default(),
+                reset_reason: core::ptr::null_mut(),
+                digest_sha256: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_account_envelope_public_bundle_summary_output_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_account_envelope_successor_authorization_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                authorized_canonical_successor_public_bundle: core::ptr::null_mut(),
+                retired_previous_private_bundle_candidate: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_account_envelope_successor_authorization_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_context_invitation_authority_input_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                envelope_id: core::ptr::null_mut(),
+                invite_id: core::ptr::null_mut(),
+                sender_account_id: core::ptr::null_mut(),
+                sender_generation: Default::default(),
+                recipient_account_id: core::ptr::null_mut(),
+                recipient_generation: Default::default(),
+                authority_attempt: Default::default(),
+                relay_slot_version: Default::default(),
+                server_created_at_unix_ms: Default::default(),
+                server_expires_at_unix_ms: Default::default(),
+                padding_class: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_context_invitation_authority_input_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_context_invitation_preview_input_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                title: core::ptr::null_mut(),
+                tags: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_context_invitation_preview_input_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_context_invitation_preview_output_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                title: core::ptr::null_mut(),
+                tags: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_context_invitation_preview_output_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
     impl NewWithNullPtr for wire_cst_create_group_with_storage_result {
         fn new_with_null_ptr() -> Self {
             Self {
@@ -3160,6 +4812,32 @@ mod io {
         }
     }
     impl Default for wire_cst_create_message_with_storage_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_expected_context_invitation_authority_input_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                invitation: Default::default(),
+                local_root_installation_id: core::ptr::null_mut(),
+                local_root_authority_generation: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_expected_context_invitation_authority_input_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_generate_account_envelope_key_bundle_output_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                private_bundle: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_generate_account_envelope_key_bundle_output_v_1 {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -3364,6 +5042,82 @@ mod io {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
+    }
+    impl NewWithNullPtr for wire_cst_verify_account_envelope_continuity_output_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                disposition: Default::default(),
+                verified_public_bundle: core::ptr::null_mut(),
+                verified_summary: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_verify_account_envelope_continuity_output_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1(
+        expected_previous_local_private_bundle_authority: *mut wire_cst_account_envelope_private_bundle_authority_input_v_1,
+        previous_private_bundle: *mut wire_cst_list_prim_u_8_loose,
+        self_signed_successor_public_bundle: *mut wire_cst_list_prim_u_8_loose,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1_impl(expected_previous_local_private_bundle_authority, previous_private_bundle, self_signed_successor_public_bundle)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1(
+        account_id: *mut wire_cst_list_prim_u_8_loose,
+        generation: u64,
+        activation_kind: i32,
+        reset_reason: *mut i32,
+        previous_generation: u64,
+        expected_local_private_bundle_authority: *mut wire_cst_account_envelope_private_bundle_authority_input_v_1,
+        private_bundle: *mut wire_cst_list_prim_u_8_loose,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1_impl(account_id, generation, activation_kind, reset_reason, previous_generation, expected_local_private_bundle_authority, private_bundle)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1(
+        account_id: *mut wire_cst_list_prim_u_8_loose,
+        generation: u64,
+        root_installation_id: *mut wire_cst_list_prim_u_8_loose,
+        root_authority_generation: u64,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1_impl(account_id, generation, root_installation_id, root_authority_generation)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1(
+        authority: *mut wire_cst_context_invitation_authority_input_v_1,
+        expected_local_private_bundle_authority: *mut wire_cst_account_envelope_private_bundle_authority_input_v_1,
+        preview: *mut wire_cst_context_invitation_preview_input_v_1,
+        recipient_public_bundle: *mut wire_cst_list_prim_u_8_loose,
+        sender_private_bundle: *mut wire_cst_list_prim_u_8_loose,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1_impl(authority, expected_local_private_bundle_authority, preview, recipient_public_bundle, sender_private_bundle)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1(
+        envelope: *mut wire_cst_list_prim_u_8_loose,
+        expected_authority: *mut wire_cst_expected_context_invitation_authority_input_v_1,
+        recipient_private_bundle: *mut wire_cst_list_prim_u_8_loose,
+        sender_public_bundle: *mut wire_cst_list_prim_u_8_loose,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1_impl(envelope, expected_authority, recipient_private_bundle, sender_public_bundle)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1(
+        pinned_public_bundle: *mut wire_cst_list_prim_u_8_strict,
+        continuity_public_bundles: *mut wire_cst_list_list_prim_u_8_strict,
+        manual_reanchor_authorized: bool,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1_impl(pinned_public_bundle, continuity_public_bundles, manual_reanchor_authorized)
     }
 
     #[unsafe(no_mangle)]
@@ -3784,6 +5538,24 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+        ptr: *const std::ffi::c_void,
+    ) {
+        unsafe {
+            StdArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>>::increment_strong_count(ptr as _);
+        }
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+        ptr: *const std::ffi::c_void,
+    ) {
+        unsafe {
+            StdArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>>::decrement_strong_count(ptr as _);
+        }
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
         ptr: *const std::ffi::c_void,
     ) {
@@ -3817,6 +5589,45 @@ mod io {
         unsafe {
             StdArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsSignatureKeyPair>>::decrement_strong_count(ptr as _);
         }
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    ) -> *mut wire_cst_account_envelope_private_bundle_authority_input_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_account_envelope_private_bundle_authority_input_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_account_envelope_reset_reason_v_1(
+        value: i32,
+    ) -> *mut i32 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(value)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_context_invitation_authority_input_v_1(
+    ) -> *mut wire_cst_context_invitation_authority_input_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_context_invitation_authority_input_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_context_invitation_preview_input_v_1(
+    ) -> *mut wire_cst_context_invitation_preview_input_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_context_invitation_preview_input_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_expected_context_invitation_authority_input_v_1(
+    ) -> *mut wire_cst_expected_context_invitation_authority_input_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_expected_context_invitation_authority_input_v_1::new_with_null_ptr(),
+        )
     }
 
     #[unsafe(no_mangle)]
@@ -3859,6 +5670,18 @@ mod io {
     #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_u_32(value: u32) -> *mut u32 {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(value)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_list_String(len: i32) -> *mut wire_cst_list_String {
+        let wrap = wire_cst_list_String {
+            ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
+                <*mut wire_cst_list_prim_u_8_strict>::new_with_null_ptr(),
+                len,
+            ),
+            len,
+        };
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
     }
 
     #[unsafe(no_mangle)]
@@ -3966,6 +5789,70 @@ mod io {
 
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_account_envelope_error_v_1 {
+        code: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_account_envelope_private_bundle_authority_input_v_1 {
+        account_id: *mut wire_cst_list_prim_u_8_strict,
+        generation: u64,
+        root_installation_id: *mut wire_cst_list_prim_u_8_strict,
+        root_authority_generation: u64,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_account_envelope_public_bundle_candidate_v_1 {
+        kind: i32,
+        bytes: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_account_envelope_public_bundle_summary_output_v_1 {
+        account_id: *mut wire_cst_list_prim_u_8_strict,
+        generation: u64,
+        hpke_public_key: *mut wire_cst_list_prim_u_8_strict,
+        signature_public_key: *mut wire_cst_list_prim_u_8_strict,
+        activation_kind: i32,
+        previous_generation: u64,
+        reset_reason: *mut i32,
+        digest_sha256: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_account_envelope_successor_authorization_v_1 {
+        authorized_canonical_successor_public_bundle: *mut wire_cst_list_prim_u_8_strict,
+        retired_previous_private_bundle_candidate: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_context_invitation_authority_input_v_1 {
+        envelope_id: *mut wire_cst_list_prim_u_8_strict,
+        invite_id: *mut wire_cst_list_prim_u_8_strict,
+        sender_account_id: *mut wire_cst_list_prim_u_8_strict,
+        sender_generation: u64,
+        recipient_account_id: *mut wire_cst_list_prim_u_8_strict,
+        recipient_generation: u64,
+        authority_attempt: u64,
+        relay_slot_version: u64,
+        server_created_at_unix_ms: u64,
+        server_expires_at_unix_ms: u64,
+        padding_class: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_context_invitation_preview_input_v_1 {
+        title: *mut wire_cst_list_prim_u_8_strict,
+        tags: *mut wire_cst_list_String,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_context_invitation_preview_output_v_1 {
+        title: *mut wire_cst_list_prim_u_8_strict,
+        tags: *mut wire_cst_list_String,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_create_group_with_storage_result {
         group_id: *mut wire_cst_list_prim_u_8_strict,
         resulting_roster: wire_cst_mls_roster_summary_v_1,
@@ -3985,10 +5872,28 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_expected_context_invitation_authority_input_v_1 {
+        invitation: wire_cst_context_invitation_authority_input_v_1,
+        local_root_installation_id: *mut wire_cst_list_prim_u_8_strict,
+        local_root_authority_generation: u64,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_generate_account_envelope_key_bundle_output_v_1 {
+        private_bundle: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_join_group_with_storage_result {
         group_id: *mut wire_cst_list_prim_u_8_strict,
         resulting_roster: wire_cst_mls_roster_summary_v_1,
         storage_batch: wire_cst_mls_storage_batch,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_list_String {
+        ptr: *mut *mut wire_cst_list_prim_u_8_strict,
+        len: i32,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
@@ -4141,6 +6046,13 @@ mod io {
         resulting_roster: wire_cst_mls_roster_summary_v_1,
         storage_batch: wire_cst_mls_storage_batch,
     }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_verify_account_envelope_continuity_output_v_1 {
+        disposition: i32,
+        verified_public_bundle: *mut wire_cst_list_prim_u_8_strict,
+        verified_summary: wire_cst_account_envelope_public_bundle_summary_output_v_1,
+    }
 }
 #[cfg(not(target_family = "wasm"))]
 pub use io::*;
@@ -4154,6 +6066,7 @@ mod web {
     // Section: imports
 
     use super::*;
+    use crate::api::account_envelope::bridge::*;
     use crate::api::credential::*;
     use crate::api::keys::*;
     use flutter_rust_bridge::for_generated::byteorder::{
@@ -4174,6 +6087,200 @@ mod web {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> String {
             self
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeErrorV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::account_envelope::types::AccountEnvelopeErrorV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                1,
+                "Expected 1 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::types::AccountEnvelopeErrorV1 {
+                code: self_.get(0).cst_decode(),
+            }
+        }
+    }
+    impl
+        CstDecode<
+            crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1,
+        > for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1
+        {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                4,
+                "Expected 4 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1 {
+                account_id: self_.get(0).cst_decode(),
+                generation: self_.get(1).cst_decode(),
+                root_installation_id: self_.get(2).cst_decode(),
+                root_authority_generation: self_.get(3).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                2,
+                "Expected 2 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateV1 {
+                kind: self_.get(0).cst_decode(),
+                bytes: self_.get(1).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1
+        {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                8,
+                "Expected 8 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::bridge::AccountEnvelopePublicBundleSummaryOutputV1 {
+                account_id: self_.get(0).cst_decode(),
+                generation: self_.get(1).cst_decode(),
+                hpke_public_key: self_.get(2).cst_decode(),
+                signature_public_key: self_.get(3).cst_decode(),
+                activation_kind: self_.get(4).cst_decode(),
+                previous_generation: self_.get(5).cst_decode(),
+                reset_reason: self_.get(6).cst_decode(),
+                digest_sha256: self_.get(7).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                2,
+                "Expected 2 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::bridge::AccountEnvelopeSuccessorAuthorizationV1 {
+                authorized_canonical_successor_public_bundle: self_.get(0).cst_decode(),
+                retired_previous_private_bundle_candidate: self_.get(1).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                11,
+                "Expected 11 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1 {
+                envelope_id: self_.get(0).cst_decode(),
+                invite_id: self_.get(1).cst_decode(),
+                sender_account_id: self_.get(2).cst_decode(),
+                sender_generation: self_.get(3).cst_decode(),
+                recipient_account_id: self_.get(4).cst_decode(),
+                recipient_generation: self_.get(5).cst_decode(),
+                authority_attempt: self_.get(6).cst_decode(),
+                relay_slot_version: self_.get(7).cst_decode(),
+                server_created_at_unix_ms: self_.get(8).cst_decode(),
+                server_expires_at_unix_ms: self_.get(9).cst_decode(),
+                padding_class: self_.get(10).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                2,
+                "Expected 2 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1 {
+                title: self_.get(0).cst_decode(),
+                tags: self_.get(1).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                2,
+                "Expected 2 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::bridge::ContextInvitationPreviewOutputV1 {
+                title: self_.get(0).cst_decode(),
+                tags: self_.get(1).cst_decode(),
+            }
         }
     }
     impl CstDecode<crate::api::group_e2ee::CreateGroupWithStorageResult>
@@ -4237,6 +6344,52 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1
+        {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                3,
+                "Expected 3 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1 {
+                invitation: self_.get(0).cst_decode(),
+                local_root_installation_id: self_.get(1).cst_decode(),
+                local_root_authority_generation: self_.get(2).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1
+        {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                1,
+                "Expected 1 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1 {
+                private_bundle: self_.get(0).cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::JoinGroupWithStorageResult>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -4256,6 +6409,16 @@ mod web {
                 resulting_roster: self_.get(1).cst_decode(),
                 storage_batch: self_.get(2).cst_decode(),
             }
+        }
+    }
+    impl CstDecode<Vec<String>> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> Vec<String> {
+            self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap()
+                .iter()
+                .map(CstDecode::cst_decode)
+                .collect()
         }
     }
     impl CstDecode<Vec<Vec<u8>>> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
@@ -4550,6 +6713,12 @@ mod web {
             }
         }
     }
+    impl CstDecode<Option<String>> for Option<String> {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> Option<String> {
+            self.map(CstDecode::cst_decode)
+        }
+    }
     impl CstDecode<Option<Vec<u8>>> for Option<Box<[u8]>> {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> Option<Vec<u8>> {
@@ -4611,6 +6780,43 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                3,
+                "Expected 3 elements, got {}",
+                self_.length()
+            );
+            crate::api::account_envelope::bridge::VerifyAccountEnvelopeContinuityOutputV1 {
+                disposition: self_.get(0).cst_decode(),
+                verified_public_bundle: self_.get(1).cst_decode(),
+                verified_summary: self_.get(2).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<AccountEnvelopeCrypto>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> AccountEnvelopeCrypto {
+            flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(CstDecode::<
+                RustOpaqueNom<
+                    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>,
+                >,
+            >::cst_decode(
+                self
+            ))
+        }
+    }
     impl CstDecode<MlsCredential> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> MlsCredential {
@@ -4633,6 +6839,26 @@ mod web {
             >::cst_decode(
                 self
             ))
+        }
+    }
+    impl
+        CstDecode<
+            RustOpaqueNom<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>,
+            >,
+        > for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> RustOpaqueNom<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>,
+        > {
+            #[cfg(target_pointer_width = "64")]
+            {
+                compile_error!("64-bit pointers are not supported.");
+            }
+            unsafe { decode_rust_opaque_nom((self.as_f64().unwrap() as usize) as _) }
         }
     }
     impl
@@ -4676,6 +6902,61 @@ mod web {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> String {
             self.as_string().expect("non-UTF-8 string, or not a string")
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeActivationKindV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::types::AccountEnvelopeActivationKindV1 {
+            (self.unchecked_into_f64() as i32).cst_decode()
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::types::AccountEnvelopeContinuityDispositionV1 {
+            (self.unchecked_into_f64() as i32).cst_decode()
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::account_envelope::types::AccountEnvelopeErrorCodeV1 {
+            (self.unchecked_into_f64() as i32).cst_decode()
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::types::AccountEnvelopePaddingClassV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::account_envelope::types::AccountEnvelopePaddingClassV1 {
+            (self.unchecked_into_f64() as i32).cst_decode()
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(
+            self,
+        ) -> crate::api::account_envelope::bridge::AccountEnvelopePublicBundleCandidateKindV1
+        {
+            (self.unchecked_into_f64() as i32).cst_decode()
+        }
+    }
+    impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeResetReasonV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::account_envelope::types::AccountEnvelopeResetReasonV1 {
+            (self.unchecked_into_f64() as i32).cst_decode()
         }
     }
     impl CstDecode<bool> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
@@ -4759,6 +7040,68 @@ mod web {
         fn cst_decode(self) -> usize {
             ::std::convert::TryInto::<u64>::try_into(self).unwrap() as _
         }
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1(
+        expected_previous_local_private_bundle_authority: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        previous_private_bundle: Box<[u8]>,
+        self_signed_successor_public_bundle: Box<[u8]>,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1_impl(expected_previous_local_private_bundle_authority, previous_private_bundle, self_signed_successor_public_bundle)
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1(
+        account_id: Box<[u8]>,
+        generation: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        activation_kind: i32,
+        reset_reason: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        previous_generation: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_local_private_bundle_authority: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        private_bundle: Box<[u8]>,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1_impl(account_id, generation, activation_kind, reset_reason, previous_generation, expected_local_private_bundle_authority, private_bundle)
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1(
+        account_id: Box<[u8]>,
+        generation: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        root_installation_id: Box<[u8]>,
+        root_authority_generation: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1_impl(account_id, generation, root_installation_id, root_authority_generation)
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1(
+        authority: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_local_private_bundle_authority: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        preview: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        recipient_public_bundle: Box<[u8]>,
+        sender_private_bundle: Box<[u8]>,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1_impl(authority, expected_local_private_bundle_authority, preview, recipient_public_bundle, sender_private_bundle)
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1(
+        envelope: Box<[u8]>,
+        expected_authority: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        recipient_private_bundle: Box<[u8]>,
+        sender_public_bundle: Box<[u8]>,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1_impl(envelope, expected_authority, recipient_private_bundle, sender_public_bundle)
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1(
+        pinned_public_bundle: Option<Box<[u8]>>,
+        continuity_public_bundles: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        manual_reanchor_authorized: bool,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1_impl(pinned_public_bundle, continuity_public_bundles, manual_reanchor_authorized)
     }
 
     #[wasm_bindgen]
@@ -5176,6 +7519,24 @@ mod web {
             storage_entries,
             storage_format_version,
         )
+    }
+
+    #[wasm_bindgen]
+    pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+        ptr: *const std::ffi::c_void,
+    ) {
+        unsafe {
+            StdArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>>::increment_strong_count(ptr as _);
+        }
+    }
+
+    #[wasm_bindgen]
+    pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+        ptr: *const std::ffi::c_void,
+    ) {
+        unsafe {
+            StdArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AccountEnvelopeCrypto>>::decrement_strong_count(ptr as _);
+        }
     }
 
     #[wasm_bindgen]

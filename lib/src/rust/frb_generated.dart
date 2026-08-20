@@ -3,6 +3,8 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
+import 'api/account_envelope/bridge.dart';
+import 'api/account_envelope/types.dart';
 import 'api/config.dart';
 import 'api/credential.dart';
 import 'api/group_e2ee.dart';
@@ -71,7 +73,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => -1316209983;
+  int get rustContentHash => 1674661336;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -83,6 +85,59 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  AccountEnvelopeSuccessorAuthorizationV1
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoAuthorizeSuccessorPublicBundleV1({
+    required AccountEnvelopePrivateBundleAuthorityInputV1
+    expectedPreviousLocalPrivateBundleAuthority,
+    required List<int> previousPrivateBundle,
+    required List<int> selfSignedSuccessorPublicBundle,
+  });
+
+  AccountEnvelopePublicBundleCandidateV1
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoCreateSelfSignedPublicBundleV1({
+    required List<int> accountId,
+    required BigInt generation,
+    required AccountEnvelopeActivationKindV1 activationKind,
+    AccountEnvelopeResetReasonV1? resetReason,
+    required BigInt previousGeneration,
+    required AccountEnvelopePrivateBundleAuthorityInputV1
+    expectedLocalPrivateBundleAuthority,
+    required List<int> privateBundle,
+  });
+
+  GenerateAccountEnvelopeKeyBundleOutputV1
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoGenerateKeyBundleV1({
+    required List<int> accountId,
+    required BigInt generation,
+    required List<int> rootInstallationId,
+    required BigInt rootAuthorityGeneration,
+  });
+
+  Uint8List
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoSealContextInvitationPreviewV1({
+    required ContextInvitationAuthorityInputV1 authority,
+    required AccountEnvelopePrivateBundleAuthorityInputV1
+    expectedLocalPrivateBundleAuthority,
+    required ContextInvitationPreviewInputV1 preview,
+    required List<int> recipientPublicBundle,
+    required List<int> senderPrivateBundle,
+  });
+
+  ContextInvitationPreviewOutputV1
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoVerifyAndOpenContextInvitationPreviewV1({
+    required List<int> envelope,
+    required ExpectedContextInvitationAuthorityInputV1 expectedAuthority,
+    required List<int> recipientPrivateBundle,
+    required List<int> senderPublicBundle,
+  });
+
+  VerifyAccountEnvelopeContinuityOutputV1
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoVerifyContinuityResponseV1({
+    Uint8List? pinnedPublicBundle,
+    required List<Uint8List> continuityPublicBundles,
+    required bool manualReanchorAuthorized,
+  });
+
   MlsCredential crateApiCredentialMlsCredentialBasic({
     required List<int> identity,
   });
@@ -292,6 +347,15 @@ abstract class RustLibApi extends BaseApi {
   });
 
   RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_AccountEnvelopeCrypto;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_AccountEnvelopeCrypto;
+
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_AccountEnvelopeCryptoPtr;
+
+  RustArcIncrementStrongCountFnType
   get rust_arc_increment_strong_count_MlsCredential;
 
   RustArcDecrementStrongCountFnType
@@ -317,6 +381,363 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     required super.generalizedFrbRustBinding,
     required super.portManager,
   });
+
+  @override
+  AccountEnvelopeSuccessorAuthorizationV1
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoAuthorizeSuccessorPublicBundleV1({
+    required AccountEnvelopePrivateBundleAuthorityInputV1
+    expectedPreviousLocalPrivateBundleAuthority,
+    required List<int> previousPrivateBundle,
+    required List<int> selfSignedSuccessorPublicBundle,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          var arg0 =
+              cst_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+                expectedPreviousLocalPrivateBundleAuthority,
+              );
+          var arg1 = cst_encode_list_prim_u_8_loose(previousPrivateBundle);
+          var arg2 = cst_encode_list_prim_u_8_loose(
+            selfSignedSuccessorPublicBundle,
+          );
+          return wire
+              .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1(
+                arg0,
+                arg1,
+                arg2,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData:
+              dco_decode_account_envelope_successor_authorization_v_1,
+          decodeErrorData: dco_decode_account_envelope_error_v_1,
+        ),
+        constMeta:
+            kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoAuthorizeSuccessorPublicBundleV1ConstMeta,
+        argValues: [
+          expectedPreviousLocalPrivateBundleAuthority,
+          previousPrivateBundle,
+          selfSignedSuccessorPublicBundle,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoAuthorizeSuccessorPublicBundleV1ConstMeta =>
+      const TaskConstMeta(
+        debugName: "AccountEnvelopeCrypto_authorize_successor_public_bundle_v1",
+        argNames: [
+          "expectedPreviousLocalPrivateBundleAuthority",
+          "previousPrivateBundle",
+          "selfSignedSuccessorPublicBundle",
+        ],
+      );
+
+  @override
+  AccountEnvelopePublicBundleCandidateV1
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoCreateSelfSignedPublicBundleV1({
+    required List<int> accountId,
+    required BigInt generation,
+    required AccountEnvelopeActivationKindV1 activationKind,
+    AccountEnvelopeResetReasonV1? resetReason,
+    required BigInt previousGeneration,
+    required AccountEnvelopePrivateBundleAuthorityInputV1
+    expectedLocalPrivateBundleAuthority,
+    required List<int> privateBundle,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          var arg0 = cst_encode_list_prim_u_8_loose(accountId);
+          var arg1 = cst_encode_u_64(generation);
+          var arg2 = cst_encode_account_envelope_activation_kind_v_1(
+            activationKind,
+          );
+          var arg3 =
+              cst_encode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+                resetReason,
+              );
+          var arg4 = cst_encode_u_64(previousGeneration);
+          var arg5 =
+              cst_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+                expectedLocalPrivateBundleAuthority,
+              );
+          var arg6 = cst_encode_list_prim_u_8_loose(privateBundle);
+          return wire
+              .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1(
+                arg0,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5,
+                arg6,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData:
+              dco_decode_account_envelope_public_bundle_candidate_v_1,
+          decodeErrorData: dco_decode_account_envelope_error_v_1,
+        ),
+        constMeta:
+            kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoCreateSelfSignedPublicBundleV1ConstMeta,
+        argValues: [
+          accountId,
+          generation,
+          activationKind,
+          resetReason,
+          previousGeneration,
+          expectedLocalPrivateBundleAuthority,
+          privateBundle,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoCreateSelfSignedPublicBundleV1ConstMeta =>
+      const TaskConstMeta(
+        debugName: "AccountEnvelopeCrypto_create_self_signed_public_bundle_v1",
+        argNames: [
+          "accountId",
+          "generation",
+          "activationKind",
+          "resetReason",
+          "previousGeneration",
+          "expectedLocalPrivateBundleAuthority",
+          "privateBundle",
+        ],
+      );
+
+  @override
+  GenerateAccountEnvelopeKeyBundleOutputV1
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoGenerateKeyBundleV1({
+    required List<int> accountId,
+    required BigInt generation,
+    required List<int> rootInstallationId,
+    required BigInt rootAuthorityGeneration,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          var arg0 = cst_encode_list_prim_u_8_loose(accountId);
+          var arg1 = cst_encode_u_64(generation);
+          var arg2 = cst_encode_list_prim_u_8_loose(rootInstallationId);
+          var arg3 = cst_encode_u_64(rootAuthorityGeneration);
+          return wire
+              .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1(
+                arg0,
+                arg1,
+                arg2,
+                arg3,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData:
+              dco_decode_generate_account_envelope_key_bundle_output_v_1,
+          decodeErrorData: dco_decode_account_envelope_error_v_1,
+        ),
+        constMeta:
+            kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoGenerateKeyBundleV1ConstMeta,
+        argValues: [
+          accountId,
+          generation,
+          rootInstallationId,
+          rootAuthorityGeneration,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoGenerateKeyBundleV1ConstMeta =>
+      const TaskConstMeta(
+        debugName: "AccountEnvelopeCrypto_generate_key_bundle_v1",
+        argNames: [
+          "accountId",
+          "generation",
+          "rootInstallationId",
+          "rootAuthorityGeneration",
+        ],
+      );
+
+  @override
+  Uint8List
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoSealContextInvitationPreviewV1({
+    required ContextInvitationAuthorityInputV1 authority,
+    required AccountEnvelopePrivateBundleAuthorityInputV1
+    expectedLocalPrivateBundleAuthority,
+    required ContextInvitationPreviewInputV1 preview,
+    required List<int> recipientPublicBundle,
+    required List<int> senderPrivateBundle,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          var arg0 =
+              cst_encode_box_autoadd_context_invitation_authority_input_v_1(
+                authority,
+              );
+          var arg1 =
+              cst_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+                expectedLocalPrivateBundleAuthority,
+              );
+          var arg2 =
+              cst_encode_box_autoadd_context_invitation_preview_input_v_1(
+                preview,
+              );
+          var arg3 = cst_encode_list_prim_u_8_loose(recipientPublicBundle);
+          var arg4 = cst_encode_list_prim_u_8_loose(senderPrivateBundle);
+          return wire
+              .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1(
+                arg0,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_list_prim_u_8_strict,
+          decodeErrorData: dco_decode_account_envelope_error_v_1,
+        ),
+        constMeta:
+            kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoSealContextInvitationPreviewV1ConstMeta,
+        argValues: [
+          authority,
+          expectedLocalPrivateBundleAuthority,
+          preview,
+          recipientPublicBundle,
+          senderPrivateBundle,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoSealContextInvitationPreviewV1ConstMeta =>
+      const TaskConstMeta(
+        debugName: "AccountEnvelopeCrypto_seal_context_invitation_preview_v1",
+        argNames: [
+          "authority",
+          "expectedLocalPrivateBundleAuthority",
+          "preview",
+          "recipientPublicBundle",
+          "senderPrivateBundle",
+        ],
+      );
+
+  @override
+  ContextInvitationPreviewOutputV1
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoVerifyAndOpenContextInvitationPreviewV1({
+    required List<int> envelope,
+    required ExpectedContextInvitationAuthorityInputV1 expectedAuthority,
+    required List<int> recipientPrivateBundle,
+    required List<int> senderPublicBundle,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          var arg0 = cst_encode_list_prim_u_8_loose(envelope);
+          var arg1 =
+              cst_encode_box_autoadd_expected_context_invitation_authority_input_v_1(
+                expectedAuthority,
+              );
+          var arg2 = cst_encode_list_prim_u_8_loose(recipientPrivateBundle);
+          var arg3 = cst_encode_list_prim_u_8_loose(senderPublicBundle);
+          return wire
+              .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1(
+                arg0,
+                arg1,
+                arg2,
+                arg3,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_context_invitation_preview_output_v_1,
+          decodeErrorData: dco_decode_account_envelope_error_v_1,
+        ),
+        constMeta:
+            kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoVerifyAndOpenContextInvitationPreviewV1ConstMeta,
+        argValues: [
+          envelope,
+          expectedAuthority,
+          recipientPrivateBundle,
+          senderPublicBundle,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoVerifyAndOpenContextInvitationPreviewV1ConstMeta =>
+      const TaskConstMeta(
+        debugName:
+            "AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1",
+        argNames: [
+          "envelope",
+          "expectedAuthority",
+          "recipientPrivateBundle",
+          "senderPublicBundle",
+        ],
+      );
+
+  @override
+  VerifyAccountEnvelopeContinuityOutputV1
+  crateApiAccountEnvelopeBridgeAccountEnvelopeCryptoVerifyContinuityResponseV1({
+    Uint8List? pinnedPublicBundle,
+    required List<Uint8List> continuityPublicBundles,
+    required bool manualReanchorAuthorized,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          var arg0 = cst_encode_opt_list_prim_u_8_strict(pinnedPublicBundle);
+          var arg1 = cst_encode_list_list_prim_u_8_strict(
+            continuityPublicBundles,
+          );
+          var arg2 = cst_encode_bool(manualReanchorAuthorized);
+          return wire
+              .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1(
+                arg0,
+                arg1,
+                arg2,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData:
+              dco_decode_verify_account_envelope_continuity_output_v_1,
+          decodeErrorData: dco_decode_account_envelope_error_v_1,
+        ),
+        constMeta:
+            kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoVerifyContinuityResponseV1ConstMeta,
+        argValues: [
+          pinnedPublicBundle,
+          continuityPublicBundles,
+          manualReanchorAuthorized,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiAccountEnvelopeBridgeAccountEnvelopeCryptoVerifyContinuityResponseV1ConstMeta =>
+      const TaskConstMeta(
+        debugName: "AccountEnvelopeCrypto_verify_continuity_response_v1",
+        argNames: [
+          "pinnedPublicBundle",
+          "continuityPublicBundles",
+          "manualReanchorAuthorized",
+        ],
+      );
 
   @override
   MlsCredential crateApiCredentialMlsCredentialBasic({
@@ -1744,6 +2165,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_AccountEnvelopeCrypto => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_AccountEnvelopeCrypto => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto;
+
+  RustArcIncrementStrongCountFnType
   get rust_arc_increment_strong_count_MlsCredential => wire
       .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential;
 
@@ -1758,6 +2187,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   RustArcDecrementStrongCountFnType
   get rust_arc_decrement_strong_count_MlsSignatureKeyPair => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair;
+
+  @protected
+  AccountEnvelopeCrypto
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AccountEnvelopeCryptoImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
 
   @protected
   MlsCredential
@@ -1796,6 +2234,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AccountEnvelopeCrypto
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AccountEnvelopeCryptoImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
   MlsCredential
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     dynamic raw,
@@ -1820,9 +2267,172 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AccountEnvelopeActivationKindV1
+  dco_decode_account_envelope_activation_kind_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AccountEnvelopeActivationKindV1.values[raw as int];
+  }
+
+  @protected
+  AccountEnvelopeContinuityDispositionV1
+  dco_decode_account_envelope_continuity_disposition_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AccountEnvelopeContinuityDispositionV1.values[raw as int];
+  }
+
+  @protected
+  AccountEnvelopeErrorCodeV1 dco_decode_account_envelope_error_code_v_1(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AccountEnvelopeErrorCodeV1.values[raw as int];
+  }
+
+  @protected
+  AccountEnvelopeErrorV1 dco_decode_account_envelope_error_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1)
+      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return AccountEnvelopeErrorV1(
+      code: dco_decode_account_envelope_error_code_v_1(arr[0]),
+    );
+  }
+
+  @protected
+  AccountEnvelopePaddingClassV1 dco_decode_account_envelope_padding_class_v_1(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AccountEnvelopePaddingClassV1.values[raw as int];
+  }
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  dco_decode_account_envelope_private_bundle_authority_input_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return AccountEnvelopePrivateBundleAuthorityInputV1(
+      accountId: dco_decode_list_prim_u_8_strict(arr[0]),
+      generation: dco_decode_u_64(arr[1]),
+      rootInstallationId: dco_decode_list_prim_u_8_strict(arr[2]),
+      rootAuthorityGeneration: dco_decode_u_64(arr[3]),
+    );
+  }
+
+  @protected
+  AccountEnvelopePublicBundleCandidateKindV1
+  dco_decode_account_envelope_public_bundle_candidate_kind_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AccountEnvelopePublicBundleCandidateKindV1.values[raw as int];
+  }
+
+  @protected
+  AccountEnvelopePublicBundleCandidateV1
+  dco_decode_account_envelope_public_bundle_candidate_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return AccountEnvelopePublicBundleCandidateV1(
+      kind: dco_decode_account_envelope_public_bundle_candidate_kind_v_1(
+        arr[0],
+      ),
+      bytes: dco_decode_list_prim_u_8_strict(arr[1]),
+    );
+  }
+
+  @protected
+  AccountEnvelopePublicBundleSummaryOutputV1
+  dco_decode_account_envelope_public_bundle_summary_output_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    return AccountEnvelopePublicBundleSummaryOutputV1(
+      accountId: dco_decode_list_prim_u_8_strict(arr[0]),
+      generation: dco_decode_u_64(arr[1]),
+      hpkePublicKey: dco_decode_list_prim_u_8_strict(arr[2]),
+      signaturePublicKey: dco_decode_list_prim_u_8_strict(arr[3]),
+      activationKind: dco_decode_account_envelope_activation_kind_v_1(arr[4]),
+      previousGeneration: dco_decode_u_64(arr[5]),
+      resetReason: dco_decode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+        arr[6],
+      ),
+      digestSha256: dco_decode_list_prim_u_8_strict(arr[7]),
+    );
+  }
+
+  @protected
+  AccountEnvelopeResetReasonV1 dco_decode_account_envelope_reset_reason_v_1(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AccountEnvelopeResetReasonV1.values[raw as int];
+  }
+
+  @protected
+  AccountEnvelopeSuccessorAuthorizationV1
+  dco_decode_account_envelope_successor_authorization_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return AccountEnvelopeSuccessorAuthorizationV1(
+      authorizedCanonicalSuccessorPublicBundle: dco_decode_list_prim_u_8_strict(
+        arr[0],
+      ),
+      retiredPreviousPrivateBundleCandidate: dco_decode_list_prim_u_8_strict(
+        arr[1],
+      ),
+    );
+  }
+
+  @protected
   bool dco_decode_bool(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as bool;
+  }
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  dco_decode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_account_envelope_private_bundle_authority_input_v_1(raw);
+  }
+
+  @protected
+  AccountEnvelopeResetReasonV1
+  dco_decode_box_autoadd_account_envelope_reset_reason_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_account_envelope_reset_reason_v_1(raw);
+  }
+
+  @protected
+  ContextInvitationAuthorityInputV1
+  dco_decode_box_autoadd_context_invitation_authority_input_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_context_invitation_authority_input_v_1(raw);
+  }
+
+  @protected
+  ContextInvitationPreviewInputV1
+  dco_decode_box_autoadd_context_invitation_preview_input_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_context_invitation_preview_input_v_1(raw);
+  }
+
+  @protected
+  ExpectedContextInvitationAuthorityInputV1
+  dco_decode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_expected_context_invitation_authority_input_v_1(raw);
   }
 
   @protected
@@ -1868,6 +2478,54 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ContextInvitationAuthorityInputV1
+  dco_decode_context_invitation_authority_input_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 11)
+      throw Exception('unexpected arr length: expect 11 but see ${arr.length}');
+    return ContextInvitationAuthorityInputV1(
+      envelopeId: dco_decode_list_prim_u_8_strict(arr[0]),
+      inviteId: dco_decode_list_prim_u_8_strict(arr[1]),
+      senderAccountId: dco_decode_list_prim_u_8_strict(arr[2]),
+      senderGeneration: dco_decode_u_64(arr[3]),
+      recipientAccountId: dco_decode_list_prim_u_8_strict(arr[4]),
+      recipientGeneration: dco_decode_u_64(arr[5]),
+      authorityAttempt: dco_decode_u_64(arr[6]),
+      relaySlotVersion: dco_decode_u_64(arr[7]),
+      serverCreatedAtUnixMs: dco_decode_u_64(arr[8]),
+      serverExpiresAtUnixMs: dco_decode_u_64(arr[9]),
+      paddingClass: dco_decode_account_envelope_padding_class_v_1(arr[10]),
+    );
+  }
+
+  @protected
+  ContextInvitationPreviewInputV1
+  dco_decode_context_invitation_preview_input_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return ContextInvitationPreviewInputV1(
+      title: dco_decode_opt_String(arr[0]),
+      tags: dco_decode_list_String(arr[1]),
+    );
+  }
+
+  @protected
+  ContextInvitationPreviewOutputV1
+  dco_decode_context_invitation_preview_output_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return ContextInvitationPreviewOutputV1(
+      title: dco_decode_opt_String(arr[0]),
+      tags: dco_decode_list_String(arr[1]),
+    );
+  }
+
+  @protected
   CreateGroupWithStorageResult dco_decode_create_group_with_storage_result(
     dynamic raw,
   ) {
@@ -1910,6 +2568,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExpectedContextInvitationAuthorityInputV1
+  dco_decode_expected_context_invitation_authority_input_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return ExpectedContextInvitationAuthorityInputV1(
+      invitation: dco_decode_context_invitation_authority_input_v_1(arr[0]),
+      localRootInstallationId: dco_decode_list_prim_u_8_strict(arr[1]),
+      localRootAuthorityGeneration: dco_decode_u_64(arr[2]),
+    );
+  }
+
+  @protected
+  GenerateAccountEnvelopeKeyBundleOutputV1
+  dco_decode_generate_account_envelope_key_bundle_output_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1)
+      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return GenerateAccountEnvelopeKeyBundleOutputV1(
+      privateBundle: dco_decode_list_prim_u_8_strict(arr[0]),
+    );
+  }
+
+  @protected
   int dco_decode_i_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -1928,6 +2612,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       resultingRoster: dco_decode_mls_roster_summary_v_1(arr[1]),
       storageBatch: dco_decode_mls_storage_batch(arr[2]),
     );
+  }
+
+  @protected
+  List<String> dco_decode_list_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_String).toList();
   }
 
   @protected
@@ -2144,6 +2834,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  String? dco_decode_opt_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_String(raw);
+  }
+
+  @protected
+  AccountEnvelopeResetReasonV1?
+  dco_decode_opt_box_autoadd_account_envelope_reset_reason_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null
+        ? null
+        : dco_decode_box_autoadd_account_envelope_reset_reason_v_1(raw);
+  }
+
+  @protected
   MlsProposalType? dco_decode_opt_box_autoadd_mls_proposal_type(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_mls_proposal_type(raw);
@@ -2245,6 +2950,35 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  VerifyAccountEnvelopeContinuityOutputV1
+  dco_decode_verify_account_envelope_continuity_output_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return VerifyAccountEnvelopeContinuityOutputV1(
+      disposition: dco_decode_account_envelope_continuity_disposition_v_1(
+        arr[0],
+      ),
+      verifiedPublicBundle: dco_decode_list_prim_u_8_strict(arr[1]),
+      verifiedSummary:
+          dco_decode_account_envelope_public_bundle_summary_output_v_1(arr[2]),
+    );
+  }
+
+  @protected
+  AccountEnvelopeCrypto
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return AccountEnvelopeCryptoImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   MlsCredential
   sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     SseDeserializer deserializer,
@@ -2293,6 +3027,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AccountEnvelopeCrypto
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return AccountEnvelopeCryptoImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   MlsCredential
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     SseDeserializer deserializer,
@@ -2324,9 +3070,207 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AccountEnvelopeActivationKindV1
+  sse_decode_account_envelope_activation_kind_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return AccountEnvelopeActivationKindV1.values[inner];
+  }
+
+  @protected
+  AccountEnvelopeContinuityDispositionV1
+  sse_decode_account_envelope_continuity_disposition_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return AccountEnvelopeContinuityDispositionV1.values[inner];
+  }
+
+  @protected
+  AccountEnvelopeErrorCodeV1 sse_decode_account_envelope_error_code_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return AccountEnvelopeErrorCodeV1.values[inner];
+  }
+
+  @protected
+  AccountEnvelopeErrorV1 sse_decode_account_envelope_error_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_code = sse_decode_account_envelope_error_code_v_1(deserializer);
+    return AccountEnvelopeErrorV1(code: var_code);
+  }
+
+  @protected
+  AccountEnvelopePaddingClassV1 sse_decode_account_envelope_padding_class_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return AccountEnvelopePaddingClassV1.values[inner];
+  }
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  sse_decode_account_envelope_private_bundle_authority_input_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_accountId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_generation = sse_decode_u_64(deserializer);
+    var var_rootInstallationId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_rootAuthorityGeneration = sse_decode_u_64(deserializer);
+    return AccountEnvelopePrivateBundleAuthorityInputV1(
+      accountId: var_accountId,
+      generation: var_generation,
+      rootInstallationId: var_rootInstallationId,
+      rootAuthorityGeneration: var_rootAuthorityGeneration,
+    );
+  }
+
+  @protected
+  AccountEnvelopePublicBundleCandidateKindV1
+  sse_decode_account_envelope_public_bundle_candidate_kind_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return AccountEnvelopePublicBundleCandidateKindV1.values[inner];
+  }
+
+  @protected
+  AccountEnvelopePublicBundleCandidateV1
+  sse_decode_account_envelope_public_bundle_candidate_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_kind = sse_decode_account_envelope_public_bundle_candidate_kind_v_1(
+      deserializer,
+    );
+    var var_bytes = sse_decode_list_prim_u_8_strict(deserializer);
+    return AccountEnvelopePublicBundleCandidateV1(
+      kind: var_kind,
+      bytes: var_bytes,
+    );
+  }
+
+  @protected
+  AccountEnvelopePublicBundleSummaryOutputV1
+  sse_decode_account_envelope_public_bundle_summary_output_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_accountId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_generation = sse_decode_u_64(deserializer);
+    var var_hpkePublicKey = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_signaturePublicKey = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_activationKind = sse_decode_account_envelope_activation_kind_v_1(
+      deserializer,
+    );
+    var var_previousGeneration = sse_decode_u_64(deserializer);
+    var var_resetReason =
+        sse_decode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+          deserializer,
+        );
+    var var_digestSha256 = sse_decode_list_prim_u_8_strict(deserializer);
+    return AccountEnvelopePublicBundleSummaryOutputV1(
+      accountId: var_accountId,
+      generation: var_generation,
+      hpkePublicKey: var_hpkePublicKey,
+      signaturePublicKey: var_signaturePublicKey,
+      activationKind: var_activationKind,
+      previousGeneration: var_previousGeneration,
+      resetReason: var_resetReason,
+      digestSha256: var_digestSha256,
+    );
+  }
+
+  @protected
+  AccountEnvelopeResetReasonV1 sse_decode_account_envelope_reset_reason_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return AccountEnvelopeResetReasonV1.values[inner];
+  }
+
+  @protected
+  AccountEnvelopeSuccessorAuthorizationV1
+  sse_decode_account_envelope_successor_authorization_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_authorizedCanonicalSuccessorPublicBundle =
+        sse_decode_list_prim_u_8_strict(deserializer);
+    var var_retiredPreviousPrivateBundleCandidate =
+        sse_decode_list_prim_u_8_strict(deserializer);
+    return AccountEnvelopeSuccessorAuthorizationV1(
+      authorizedCanonicalSuccessorPublicBundle:
+          var_authorizedCanonicalSuccessorPublicBundle,
+      retiredPreviousPrivateBundleCandidate:
+          var_retiredPreviousPrivateBundleCandidate,
+    );
+  }
+
+  @protected
   bool sse_decode_bool(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8() != 0;
+  }
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  sse_decode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_account_envelope_private_bundle_authority_input_v_1(
+      deserializer,
+    ));
+  }
+
+  @protected
+  AccountEnvelopeResetReasonV1
+  sse_decode_box_autoadd_account_envelope_reset_reason_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_account_envelope_reset_reason_v_1(deserializer));
+  }
+
+  @protected
+  ContextInvitationAuthorityInputV1
+  sse_decode_box_autoadd_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_context_invitation_authority_input_v_1(deserializer));
+  }
+
+  @protected
+  ContextInvitationPreviewInputV1
+  sse_decode_box_autoadd_context_invitation_preview_input_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_context_invitation_preview_input_v_1(deserializer));
+  }
+
+  @protected
+  ExpectedContextInvitationAuthorityInputV1
+  sse_decode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_expected_context_invitation_authority_input_v_1(
+      deserializer,
+    ));
   }
 
   @protected
@@ -2376,6 +3320,62 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ContextInvitationAuthorityInputV1
+  sse_decode_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_envelopeId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_inviteId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_senderAccountId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_senderGeneration = sse_decode_u_64(deserializer);
+    var var_recipientAccountId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_recipientGeneration = sse_decode_u_64(deserializer);
+    var var_authorityAttempt = sse_decode_u_64(deserializer);
+    var var_relaySlotVersion = sse_decode_u_64(deserializer);
+    var var_serverCreatedAtUnixMs = sse_decode_u_64(deserializer);
+    var var_serverExpiresAtUnixMs = sse_decode_u_64(deserializer);
+    var var_paddingClass = sse_decode_account_envelope_padding_class_v_1(
+      deserializer,
+    );
+    return ContextInvitationAuthorityInputV1(
+      envelopeId: var_envelopeId,
+      inviteId: var_inviteId,
+      senderAccountId: var_senderAccountId,
+      senderGeneration: var_senderGeneration,
+      recipientAccountId: var_recipientAccountId,
+      recipientGeneration: var_recipientGeneration,
+      authorityAttempt: var_authorityAttempt,
+      relaySlotVersion: var_relaySlotVersion,
+      serverCreatedAtUnixMs: var_serverCreatedAtUnixMs,
+      serverExpiresAtUnixMs: var_serverExpiresAtUnixMs,
+      paddingClass: var_paddingClass,
+    );
+  }
+
+  @protected
+  ContextInvitationPreviewInputV1
+  sse_decode_context_invitation_preview_input_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_title = sse_decode_opt_String(deserializer);
+    var var_tags = sse_decode_list_String(deserializer);
+    return ContextInvitationPreviewInputV1(title: var_title, tags: var_tags);
+  }
+
+  @protected
+  ContextInvitationPreviewOutputV1
+  sse_decode_context_invitation_preview_output_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_title = sse_decode_opt_String(deserializer);
+    var var_tags = sse_decode_list_String(deserializer);
+    return ContextInvitationPreviewOutputV1(title: var_title, tags: var_tags);
+  }
+
+  @protected
   CreateGroupWithStorageResult sse_decode_create_group_with_storage_result(
     SseDeserializer deserializer,
   ) {
@@ -2418,6 +3418,38 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExpectedContextInvitationAuthorityInputV1
+  sse_decode_expected_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_invitation = sse_decode_context_invitation_authority_input_v_1(
+      deserializer,
+    );
+    var var_localRootInstallationId = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_localRootAuthorityGeneration = sse_decode_u_64(deserializer);
+    return ExpectedContextInvitationAuthorityInputV1(
+      invitation: var_invitation,
+      localRootInstallationId: var_localRootInstallationId,
+      localRootAuthorityGeneration: var_localRootAuthorityGeneration,
+    );
+  }
+
+  @protected
+  GenerateAccountEnvelopeKeyBundleOutputV1
+  sse_decode_generate_account_envelope_key_bundle_output_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_privateBundle = sse_decode_list_prim_u_8_strict(deserializer);
+    return GenerateAccountEnvelopeKeyBundleOutputV1(
+      privateBundle: var_privateBundle,
+    );
+  }
+
+  @protected
   int sse_decode_i_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getInt32();
@@ -2436,6 +3468,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       resultingRoster: var_resultingRoster,
       storageBatch: var_storageBatch,
     );
+  }
+
+  @protected
+  List<String> sse_decode_list_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <String>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_String(deserializer));
+    }
+    return ans_;
   }
 
   @protected
@@ -2731,6 +3775,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_String(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  AccountEnvelopeResetReasonV1?
+  sse_decode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_account_envelope_reset_reason_v_1(
+        deserializer,
+      ));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   MlsProposalType? sse_decode_opt_box_autoadd_mls_proposal_type(
     SseDeserializer deserializer,
   ) {
@@ -2870,6 +3941,38 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  VerifyAccountEnvelopeContinuityOutputV1
+  sse_decode_verify_account_envelope_continuity_output_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_disposition =
+        sse_decode_account_envelope_continuity_disposition_v_1(deserializer);
+    var var_verifiedPublicBundle = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_verifiedSummary =
+        sse_decode_account_envelope_public_bundle_summary_output_v_1(
+          deserializer,
+        );
+    return VerifyAccountEnvelopeContinuityOutputV1(
+      disposition: var_disposition,
+      verifiedPublicBundle: var_verifiedPublicBundle,
+      verifiedSummary: var_verifiedSummary,
+    );
+  }
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    // ignore: invalid_use_of_internal_member
+    return (raw as AccountEnvelopeCryptoImpl).frbInternalCstEncode(move: true);
+  }
+
+  @protected
   int
   cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential raw,
@@ -2911,6 +4014,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    // ignore: invalid_use_of_internal_member
+    return (raw as AccountEnvelopeCryptoImpl).frbInternalCstEncode();
+  }
+
+  @protected
+  int
   cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential raw,
   ) {
@@ -2927,6 +4040,54 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Cst (C-struct based), see doc to use other codecs
     // ignore: invalid_use_of_internal_member
     return (raw as MlsSignatureKeyPairImpl).frbInternalCstEncode();
+  }
+
+  @protected
+  int cst_encode_account_envelope_activation_kind_v_1(
+    AccountEnvelopeActivationKindV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_i_32(raw.index);
+  }
+
+  @protected
+  int cst_encode_account_envelope_continuity_disposition_v_1(
+    AccountEnvelopeContinuityDispositionV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_i_32(raw.index);
+  }
+
+  @protected
+  int cst_encode_account_envelope_error_code_v_1(
+    AccountEnvelopeErrorCodeV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_i_32(raw.index);
+  }
+
+  @protected
+  int cst_encode_account_envelope_padding_class_v_1(
+    AccountEnvelopePaddingClassV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_i_32(raw.index);
+  }
+
+  @protected
+  int cst_encode_account_envelope_public_bundle_candidate_kind_v_1(
+    AccountEnvelopePublicBundleCandidateKindV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_i_32(raw.index);
+  }
+
+  @protected
+  int cst_encode_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_i_32(raw.index);
   }
 
   @protected
@@ -2991,6 +4152,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as AccountEnvelopeCryptoImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
+  void
   sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential self,
     SseSerializer serializer,
@@ -3043,6 +4217,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as AccountEnvelopeCryptoImpl).frbInternalSseEncode(move: null),
+      serializer,
+    );
+  }
+
+  @protected
+  void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential self,
     SseSerializer serializer,
@@ -3074,9 +4261,187 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_account_envelope_activation_kind_v_1(
+    AccountEnvelopeActivationKindV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_account_envelope_continuity_disposition_v_1(
+    AccountEnvelopeContinuityDispositionV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_account_envelope_error_code_v_1(
+    AccountEnvelopeErrorCodeV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_account_envelope_error_v_1(
+    AccountEnvelopeErrorV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_account_envelope_error_code_v_1(self.code, serializer);
+  }
+
+  @protected
+  void sse_encode_account_envelope_padding_class_v_1(
+    AccountEnvelopePaddingClassV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.accountId, serializer);
+    sse_encode_u_64(self.generation, serializer);
+    sse_encode_list_prim_u_8_strict(self.rootInstallationId, serializer);
+    sse_encode_u_64(self.rootAuthorityGeneration, serializer);
+  }
+
+  @protected
+  void sse_encode_account_envelope_public_bundle_candidate_kind_v_1(
+    AccountEnvelopePublicBundleCandidateKindV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_account_envelope_public_bundle_candidate_v_1(
+    AccountEnvelopePublicBundleCandidateV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_account_envelope_public_bundle_candidate_kind_v_1(
+      self.kind,
+      serializer,
+    );
+    sse_encode_list_prim_u_8_strict(self.bytes, serializer);
+  }
+
+  @protected
+  void sse_encode_account_envelope_public_bundle_summary_output_v_1(
+    AccountEnvelopePublicBundleSummaryOutputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.accountId, serializer);
+    sse_encode_u_64(self.generation, serializer);
+    sse_encode_list_prim_u_8_strict(self.hpkePublicKey, serializer);
+    sse_encode_list_prim_u_8_strict(self.signaturePublicKey, serializer);
+    sse_encode_account_envelope_activation_kind_v_1(
+      self.activationKind,
+      serializer,
+    );
+    sse_encode_u_64(self.previousGeneration, serializer);
+    sse_encode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+      self.resetReason,
+      serializer,
+    );
+    sse_encode_list_prim_u_8_strict(self.digestSha256, serializer);
+  }
+
+  @protected
+  void sse_encode_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_account_envelope_successor_authorization_v_1(
+    AccountEnvelopeSuccessorAuthorizationV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(
+      self.authorizedCanonicalSuccessorPublicBundle,
+      serializer,
+    );
+    sse_encode_list_prim_u_8_strict(
+      self.retiredPreviousPrivateBundleCandidate,
+      serializer,
+    );
+  }
+
+  @protected
   void sse_encode_bool(bool self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self ? 1 : 0);
+  }
+
+  @protected
+  void
+  sse_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_account_envelope_private_bundle_authority_input_v_1(
+      self,
+      serializer,
+    );
+  }
+
+  @protected
+  void sse_encode_box_autoadd_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_account_envelope_reset_reason_v_1(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_context_invitation_authority_input_v_1(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_context_invitation_preview_input_v_1(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_expected_context_invitation_authority_input_v_1(
+      self,
+      serializer,
+    );
   }
 
   @protected
@@ -3131,6 +4496,48 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.envelopeId, serializer);
+    sse_encode_list_prim_u_8_strict(self.inviteId, serializer);
+    sse_encode_list_prim_u_8_strict(self.senderAccountId, serializer);
+    sse_encode_u_64(self.senderGeneration, serializer);
+    sse_encode_list_prim_u_8_strict(self.recipientAccountId, serializer);
+    sse_encode_u_64(self.recipientGeneration, serializer);
+    sse_encode_u_64(self.authorityAttempt, serializer);
+    sse_encode_u_64(self.relaySlotVersion, serializer);
+    sse_encode_u_64(self.serverCreatedAtUnixMs, serializer);
+    sse_encode_u_64(self.serverExpiresAtUnixMs, serializer);
+    sse_encode_account_envelope_padding_class_v_1(
+      self.paddingClass,
+      serializer,
+    );
+  }
+
+  @protected
+  void sse_encode_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_opt_String(self.title, serializer);
+    sse_encode_list_String(self.tags, serializer);
+  }
+
+  @protected
+  void sse_encode_context_invitation_preview_output_v_1(
+    ContextInvitationPreviewOutputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_opt_String(self.title, serializer);
+    sse_encode_list_String(self.tags, serializer);
+  }
+
+  @protected
   void sse_encode_create_group_with_storage_result(
     CreateGroupWithStorageResult self,
     SseSerializer serializer,
@@ -3162,6 +4569,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_context_invitation_authority_input_v_1(
+      self.invitation,
+      serializer,
+    );
+    sse_encode_list_prim_u_8_strict(self.localRootInstallationId, serializer);
+    sse_encode_u_64(self.localRootAuthorityGeneration, serializer);
+  }
+
+  @protected
+  void sse_encode_generate_account_envelope_key_bundle_output_v_1(
+    GenerateAccountEnvelopeKeyBundleOutputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.privateBundle, serializer);
+  }
+
+  @protected
   void sse_encode_i_32(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putInt32(self);
@@ -3176,6 +4606,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_list_prim_u_8_strict(self.groupId, serializer);
     sse_encode_mls_roster_summary_v_1(self.resultingRoster, serializer);
     sse_encode_mls_storage_batch(self.storageBatch, serializer);
+  }
+
+  @protected
+  void sse_encode_list_String(List<String> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_String(item, serializer);
+    }
   }
 
   @protected
@@ -3440,6 +4879,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_String(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_account_envelope_reset_reason_v_1(
+        self,
+        serializer,
+      );
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_mls_proposal_type(
     MlsProposalType? self,
     SseSerializer serializer,
@@ -3553,6 +5018,52 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putBigUint64(self);
   }
+
+  @protected
+  void sse_encode_verify_account_envelope_continuity_output_v_1(
+    VerifyAccountEnvelopeContinuityOutputV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_account_envelope_continuity_disposition_v_1(
+      self.disposition,
+      serializer,
+    );
+    sse_encode_list_prim_u_8_strict(self.verifiedPublicBundle, serializer);
+    sse_encode_account_envelope_public_bundle_summary_output_v_1(
+      self.verifiedSummary,
+      serializer,
+    );
+  }
+}
+
+@sealed
+class AccountEnvelopeCryptoImpl extends RustOpaque
+    implements AccountEnvelopeCrypto {
+  // Not to be used by end users
+  AccountEnvelopeCryptoImpl.frbInternalDcoDecode(List<dynamic> wire)
+    : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  AccountEnvelopeCryptoImpl.frbInternalSseDecode(
+    BigInt ptr,
+    int externalSizeOnNative,
+  ) : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount: RustLib
+        .instance
+        .api
+        .rust_arc_increment_strong_count_AccountEnvelopeCrypto,
+    rustArcDecrementStrongCount: RustLib
+        .instance
+        .api
+        .rust_arc_decrement_strong_count_AccountEnvelopeCrypto,
+    rustArcDecrementStrongCountPtr: RustLib
+        .instance
+        .api
+        .rust_arc_decrement_strong_count_AccountEnvelopeCryptoPtr,
+  );
 }
 
 @sealed

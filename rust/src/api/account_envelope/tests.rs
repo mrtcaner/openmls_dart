@@ -1,13 +1,15 @@
 use openmls_rust_crypto::RustCrypto;
 use openmls_traits::{
     crypto::OpenMlsCrypto,
-    types::{HpkeAeadType, HpkeConfig, HpkeKdfType, HpkeKemType, SignatureScheme},
+    types::{HpkeAeadType, HpkeCiphertext, HpkeConfig, HpkeKdfType, HpkeKemType, SignatureScheme},
 };
 use zeroize::Zeroizing;
 
 use super::codec::{decode_private_bundle, encode_private_bundle};
 use super::crypto::{hpke_round_trip_for_test, private_bundle_from_test_material};
-use super::invitation::default_case_fold;
+use super::invitation::{
+    canonicalize_and_encode_preview, decode_canonical_preview, default_case_fold,
+};
 use super::types::{
     AccountEnvelopeErrorCodeV1, AccountEnvelopePaddingClassV1,
     AccountEnvelopePrivateBundleAuthorityV1, PRIVATE_BUNDLE_ACTIVE_BYTES,
@@ -237,7 +239,7 @@ fn rotation_is_nonpublishable_until_predecessor_authorizes_it() {
 }
 
 #[test]
-fn authority_mismatch_and_corruption_return_no_result() {
+fn caller_authority_mismatch_and_invalid_private_bundle_are_distinct() {
     let generated = generated(1);
     let wrong_authority = AccountEnvelopePrivateBundleAuthorityV1 {
         root_authority_generation: 2,
@@ -254,6 +256,20 @@ fn authority_mismatch_and_corruption_return_no_result() {
     );
     assert_eq!(
         mismatch.err().map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PrivateBundleInvalid)
+    );
+
+    let contradictory_arguments = create_self_signed_public_bundle_v1(
+        RECIPIENT_ACCOUNT_ID,
+        1,
+        AccountEnvelopeActivationKindV1::Initial,
+        None,
+        0,
+        authority(1),
+        generated.private_bundle.to_vec(),
+    );
+    assert_eq!(
+        contradictory_arguments.err().map(|error| error.code),
         Some(AccountEnvelopeErrorCodeV1::AuthorityMismatch)
     );
 
@@ -303,6 +319,51 @@ fn retired_frame_cannot_sign_and_reencoding_is_canonical() {
 }
 
 #[test]
+fn decoded_private_bundle_owned_secret_material_zeroizes() {
+    let generated = generated(1);
+    let mut decoded = decode_private_bundle(&generated.private_bundle).unwrap();
+    assert!(decoded.hpke_private_key.iter().any(|byte| *byte != 0));
+    assert!(
+        decoded
+            .signature_private_key
+            .as_ref()
+            .unwrap()
+            .iter()
+            .any(|byte| *byte != 0)
+    );
+
+    decoded.zeroize_secret_material();
+    assert!(decoded.hpke_private_key.iter().all(|byte| *byte == 0));
+    assert!(
+        decoded
+            .signature_private_key
+            .as_ref()
+            .unwrap()
+            .iter()
+            .all(|byte| *byte == 0)
+    );
+}
+
+#[test]
+fn production_account_envelope_sources_contain_no_logging_macros() {
+    for (name, source) in [
+        ("bridge.rs", include_str!("bridge.rs")),
+        ("codec.rs", include_str!("codec.rs")),
+        ("crypto.rs", include_str!("crypto.rs")),
+        ("invitation.rs", include_str!("invitation.rs")),
+        ("mod.rs", include_str!("mod.rs")),
+        ("types.rs", include_str!("types.rs")),
+    ] {
+        for forbidden in ["log::", "tracing::", "println!", "eprintln!", "dbg!"] {
+            assert!(
+                !source.contains(forbidden),
+                "{name} contains forbidden logging marker {forbidden}"
+            );
+        }
+    }
+}
+
+#[test]
 fn rfc_8032_ed25519_test_vector_one_matches_provider() {
     let private =
         decode_hex::<32>("9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60");
@@ -347,6 +408,45 @@ fn rfc_9180_appendix_a1_recipient_key_derivation_matches_provider() {
         .expect("RFC 9180 DeriveKeyPair must succeed");
     assert_eq!(key_pair.public, expected_public);
     assert_eq!(&*key_pair.private, expected_private.as_slice());
+}
+
+#[test]
+fn rfc_9180_appendix_a1_base_ciphertext_opens_with_provider() {
+    let provider = RustCrypto::default();
+    let recipient_private = Zeroizing::new(decode_hex::<32>(
+        "4612c550263fc8ad58375df3f557aac531d26850903e55a9f23f21d8534e8ac8",
+    ));
+    let ciphertext = HpkeCiphertext {
+        kem_output: decode_hex::<32>(
+            "37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431",
+        )
+        .to_vec()
+        .into(),
+        ciphertext: decode_hex_vec(
+            "f938558b5d72f1a23810b4be2ab4f84331acc02fc97babc53a52ae8218a355a9\
+             6d8770ac83d07bea87e13c512a",
+        )
+        .into(),
+    };
+    let opened = Zeroizing::new(
+        provider
+            .hpke_open(
+                HpkeConfig(
+                    HpkeKemType::DhKem25519,
+                    HpkeKdfType::HkdfSha256,
+                    HpkeAeadType::AesGcm128,
+                ),
+                &ciphertext,
+                recipient_private.as_slice(),
+                &decode_hex_vec("4f6465206f6e2061204772656369616e2055726e"),
+                &decode_hex_vec("436f756e742d30"),
+            )
+            .expect("RFC 9180 Appendix A.1 base ciphertext must open"),
+    );
+    assert_eq!(
+        opened.as_slice(),
+        decode_hex_vec("4265617574792069732074727574682c20747275746820626561757479")
+    );
 }
 
 #[test]
@@ -411,6 +511,56 @@ fn bundle_parser_rejects_trailing_bytes_and_signature_changes() {
             .map(|error| error.code),
         Some(AccountEnvelopeErrorCodeV1::SignatureInvalid)
     );
+}
+
+#[test]
+fn private_and_public_bundle_component_mutations_fail_closed() {
+    let generated = generated(1);
+    for (offset, mask) in [
+        (0, 1),
+        (1, 1),
+        (2, 1),
+        (18, 1),
+        (26, 1),
+        (42, 1),
+        (50, 1),
+        (52, 1),
+        (54, 1),
+        (56, 1),
+        // X25519 clamps the three low bits of the private scalar, so mutate a
+        // non-clamped bit when proving public/private consistency validation.
+        (58, 0x08),
+        (90, 1),
+        (122, 1),
+        (123, 1),
+        (155, 1),
+    ] {
+        let mut mutated = generated.private_bundle.to_vec();
+        mutated[offset] ^= mask;
+        assert!(
+            create_self_signed_public_bundle_v1(
+                ACCOUNT_ID,
+                1,
+                AccountEnvelopeActivationKindV1::Initial,
+                None,
+                0,
+                authority(1),
+                mutated,
+            )
+            .is_err(),
+            "private-bundle mutation at offset {offset} unexpectedly succeeded"
+        );
+    }
+
+    let public = initial_public_bundle(authority(1), &generated.private_bundle);
+    for offset in [0, 1, 17, 25, 27, 29, 31, 33, 65, 97, 98, 106, 107, 170, 171] {
+        let mut mutated = public.clone();
+        mutated[offset] ^= 1;
+        assert!(
+            verify_canonical_public_bundle_v1(&mutated).is_err(),
+            "public-bundle mutation at offset {offset} unexpectedly verified"
+        );
+    }
 }
 
 #[test]
@@ -543,6 +693,193 @@ fn invitation_expected_authority_and_signature_fail_closed() {
 }
 
 #[test]
+fn invitation_component_mutations_and_noncanonical_lengths_fail_closed() {
+    let sender = generated(1);
+    let recipient = generate_key_bundle_v1(recipient_authority(1)).unwrap();
+    let sender_public = initial_public_bundle(authority(1), &sender.private_bundle);
+    let recipient_public = initial_public_bundle(recipient_authority(1), &recipient.private_bundle);
+    let invitation = invitation_authority(AccountEnvelopePaddingClassV1::Bytes512);
+    let envelope = seal_context_invitation_preview_v1(
+        invitation,
+        authority(1),
+        ContextInvitationPreviewV1 {
+            title: Some("Mutation matrix".to_owned()),
+            tags: vec!["security".to_owned()],
+        },
+        recipient_public,
+        sender.private_bundle.to_vec(),
+    )
+    .unwrap()
+    .canonical_envelope;
+    let expected = ExpectedContextInvitationAuthorityV1 {
+        invitation,
+        local_root_installation_id: RECIPIENT_ROOT_ID,
+        local_root_authority_generation: 1,
+    };
+
+    // One representative byte from every clear-header field, the HPKE
+    // encapsulation, ciphertext body/tag, and signature. Every mutation must
+    // fail without returning any plaintext.
+    let ciphertext_start = super::types::INVITATION_HEADER_BYTES + 32 + 2;
+    let signature_start = envelope.len() - 64;
+    for offset in [
+        0,
+        1,
+        17,
+        18,
+        34,
+        42,
+        58,
+        66,
+        82,
+        90,
+        98,
+        106,
+        114,
+        115,
+        147,
+        ciphertext_start,
+        signature_start - 1,
+        signature_start,
+    ] {
+        let mut mutated = envelope.clone();
+        mutated[offset] ^= 1;
+        assert!(
+            verify_and_open_context_invitation_preview_v1(
+                mutated,
+                expected,
+                recipient.private_bundle.to_vec(),
+                sender_public.clone(),
+            )
+            .is_err(),
+            "mutation at offset {offset} unexpectedly returned plaintext"
+        );
+    }
+
+    for malformed in [
+        envelope[..envelope.len() - 1].to_vec(),
+        {
+            let mut trailing = envelope.clone();
+            trailing.push(0);
+            trailing
+        },
+        vec![0_u8; super::types::INVITATION_ENVELOPE_MAX_BYTES + 1],
+    ] {
+        assert!(
+            verify_and_open_context_invitation_preview_v1(
+                malformed,
+                expected,
+                recipient.private_bundle.to_vec(),
+                sender_public.clone(),
+            )
+            .is_err()
+        );
+    }
+}
+
+#[test]
+fn invitation_valid_signature_still_rejects_invalid_hpke_and_plaintext() {
+    let sender = generated(1);
+    let recipient = generate_key_bundle_v1(recipient_authority(1)).unwrap();
+    let sender_public = initial_public_bundle(authority(1), &sender.private_bundle);
+    let recipient_public = initial_public_bundle(recipient_authority(1), &recipient.private_bundle);
+    let invitation = invitation_authority(AccountEnvelopePaddingClassV1::Bytes512);
+    let expected = ExpectedContextInvitationAuthorityV1 {
+        invitation,
+        local_root_installation_id: RECIPIENT_ROOT_ID,
+        local_root_authority_generation: 1,
+    };
+
+    let valid = seal_context_invitation_preview_v1(
+        invitation,
+        authority(1),
+        ContextInvitationPreviewV1 {
+            title: Some("HPKE validation".to_owned()),
+            tags: vec![],
+        },
+        recipient_public.clone(),
+        sender.private_bundle.to_vec(),
+    )
+    .unwrap()
+    .canonical_envelope;
+    let mut all_zero_encapsulation = valid;
+    all_zero_encapsulation[115..147].fill(0);
+    resign_test_envelope(&mut all_zero_encapsulation, &sender.private_bundle);
+    assert_eq!(
+        verify_and_open_context_invitation_preview_v1(
+            all_zero_encapsulation,
+            expected,
+            recipient.private_bundle.to_vec(),
+            sender_public.clone(),
+        )
+        .err()
+        .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::HpkeOpenFailed)
+    );
+
+    let mut nonzero_padding = valid_test_plaintext(b"Padding", 0);
+    *nonzero_padding.last_mut().unwrap() = 1;
+    let envelope = seal_test_plaintext(
+        invitation,
+        &recipient_public,
+        &sender.private_bundle,
+        &nonzero_padding,
+    );
+    assert_eq!(
+        verify_and_open_context_invitation_preview_v1(
+            envelope,
+            expected,
+            recipient.private_bundle.to_vec(),
+            sender_public.clone(),
+        )
+        .err()
+        .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid)
+    );
+
+    // titlePresent=1, titleLength=1, invalid UTF-8 title byte, tagCount=0.
+    let invalid_utf8 = valid_test_plaintext(&[1, 0, 1, 0xff, 0], 0);
+    let envelope = seal_test_plaintext(
+        invitation,
+        &recipient_public,
+        &sender.private_bundle,
+        &invalid_utf8,
+    );
+    assert_eq!(
+        verify_and_open_context_invitation_preview_v1(
+            envelope,
+            expected,
+            recipient.private_bundle.to_vec(),
+            sender_public,
+        )
+        .err()
+        .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid)
+    );
+
+    // titlePresent=1, decomposed e + acute accent, tagCount=0. The decoded
+    // representation must already be NFC; opening never silently normalizes.
+    let non_nfc = valid_test_plaintext(&[1, 0, 3, b'e', 0xcc, 0x81, 0], 0);
+    let envelope = seal_test_plaintext(
+        invitation,
+        &recipient_public,
+        &sender.private_bundle,
+        &non_nfc,
+    );
+    assert_eq!(
+        verify_and_open_context_invitation_preview_v1(
+            envelope,
+            expected,
+            recipient.private_bundle.to_vec(),
+            initial_public_bundle(authority(1), &sender.private_bundle),
+        )
+        .err()
+        .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid)
+    );
+}
+
+#[test]
 fn continuity_first_observation_and_zero_link_pin_are_explicit() {
     let generated = generated(1);
     let pinned = initial_public_bundle(authority(1), &generated.private_bundle);
@@ -612,6 +949,78 @@ fn continuity_verifies_consecutive_rotations_and_rejects_reordering() {
 }
 
 #[test]
+fn continuity_rejects_rollback_conflict_truncation_and_mixed_reset() {
+    let generation_one = generated(1);
+    let initial = initial_public_bundle(authority(1), &generation_one.private_bundle);
+    let generation_two = generated(2);
+    let rotation_two = authorized_rotation(&generation_one, &generation_two, 1, 2);
+
+    let rollback = verify_continuity_response_v1(
+        Some(rotation_two.clone()),
+        AccountEnvelopeContinuityResponseV1 {
+            public_bundles: vec![initial.clone()],
+        },
+        false,
+    );
+    assert_eq!(
+        rollback.err().map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::AuthorityMismatch)
+    );
+
+    let conflicting_predecessor = generated(1);
+    let conflicting_rotation = authorized_rotation(&conflicting_predecessor, &generated(2), 1, 2);
+    let conflict = verify_continuity_response_v1(
+        Some(initial.clone()),
+        AccountEnvelopeContinuityResponseV1 {
+            public_bundles: vec![conflicting_rotation],
+        },
+        false,
+    );
+    assert_eq!(
+        conflict.err().map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::SignatureInvalid)
+    );
+
+    let truncated = verify_continuity_response_v1(
+        Some(initial.clone()),
+        AccountEnvelopeContinuityResponseV1 {
+            public_bundles: vec![rotation_two[..rotation_two.len() - 1].to_vec()],
+        },
+        false,
+    );
+    assert_eq!(
+        truncated.err().map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::NonCanonicalEncoding)
+    );
+
+    let generation_three = generated(3);
+    let reset = create_self_signed_public_bundle_v1(
+        ACCOUNT_ID,
+        3,
+        AccountEnvelopeActivationKindV1::ContinuityReset,
+        Some(AccountEnvelopeResetReasonV1::AccountRecovery),
+        2,
+        authority(3),
+        generation_three.private_bundle.to_vec(),
+    )
+    .unwrap();
+    let SelfSignedPublicBundleResultV1::CanonicalPublicBundle(reset) = reset else {
+        unreachable!()
+    };
+    let mixed = verify_continuity_response_v1(
+        Some(initial),
+        AccountEnvelopeContinuityResponseV1 {
+            public_bundles: vec![rotation_two, reset],
+        },
+        false,
+    );
+    assert_eq!(
+        mixed.err().map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::NonCanonicalEncoding)
+    );
+}
+
+#[test]
 fn continuity_reset_requires_acceptance_and_manual_reanchor_is_separate() {
     let generation_one = generated(1);
     let pinned = initial_public_bundle(authority(1), &generation_one.private_bundle);
@@ -676,6 +1085,50 @@ fn continuity_rejects_more_than_32_links_before_parsing_them() {
 }
 
 #[test]
+fn decoder_limits_fail_closed_before_nested_parsing() {
+    assert_eq!(
+        decode_private_bundle(&vec![0_u8; 257])
+            .err()
+            .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PrivateBundleInvalid)
+    );
+    assert_eq!(
+        verify_canonical_public_bundle_v1(&vec![0_u8; 257])
+            .err()
+            .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::NonCanonicalEncoding)
+    );
+    assert_eq!(
+        verify_continuity_response_v1(
+            None,
+            AccountEnvelopeContinuityResponseV1 {
+                public_bundles: vec![vec![0_u8; 65_537]],
+            },
+            false,
+        )
+        .err()
+        .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::BoundsExceeded)
+    );
+    assert_eq!(
+        super::invitation::parse_invitation_envelope(&vec![0_u8; 4_097])
+            .err()
+            .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::BoundsExceeded)
+    );
+
+    let mut oversized_nested_title = vec![1, 0x02, 0x01];
+    oversized_nested_title.extend(std::iter::repeat_n(b'a', 513));
+    oversized_nested_title.push(0);
+    assert_eq!(
+        decode_canonical_preview(&oversized_nested_title)
+            .err()
+            .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid)
+    );
+}
+
+#[test]
 fn continuity_accepts_exactly_32_consecutive_rotation_links() {
     let mut previous = generated(1);
     let pinned = initial_public_bundle(authority(1), &previous.private_bundle);
@@ -703,6 +1156,206 @@ fn continuity_accepts_exactly_32_consecutive_rotation_links() {
         verified.disposition,
         AccountEnvelopeContinuityDispositionV1::RotationChainVerified
     );
+}
+
+#[test]
+fn stateless_generate_seal_open_is_thread_safe() {
+    let workers: Vec<_> = (0..8)
+        .map(|_| {
+            std::thread::spawn(|| {
+                let sender = generated(1);
+                let recipient = generate_key_bundle_v1(recipient_authority(1)).unwrap();
+                let sender_public = initial_public_bundle(authority(1), &sender.private_bundle);
+                let recipient_public =
+                    initial_public_bundle(recipient_authority(1), &recipient.private_bundle);
+                let invitation = invitation_authority(AccountEnvelopePaddingClassV1::Bytes512);
+                let envelope = seal_context_invitation_preview_v1(
+                    invitation,
+                    authority(1),
+                    ContextInvitationPreviewV1 {
+                        title: Some("Concurrent operation".to_owned()),
+                        tags: vec!["stateless".to_owned()],
+                    },
+                    recipient_public,
+                    sender.private_bundle.to_vec(),
+                )
+                .unwrap()
+                .canonical_envelope;
+                verify_and_open_context_invitation_preview_v1(
+                    envelope,
+                    ExpectedContextInvitationAuthorityV1 {
+                        invitation,
+                        local_root_installation_id: RECIPIENT_ROOT_ID,
+                        local_root_authority_generation: 1,
+                    },
+                    recipient.private_bundle.to_vec(),
+                    sender_public,
+                )
+                .unwrap()
+                .preview
+            })
+        })
+        .collect();
+
+    for worker in workers {
+        let preview = worker.join().expect("worker must not panic");
+        assert_eq!(preview.title.as_deref(), Some("Concurrent operation"));
+        assert_eq!(preview.tags, ["stateless"]);
+    }
+}
+
+#[test]
+fn committed_account_envelope_fixture_replays_exactly() {
+    let fixture: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../test/fixtures/account_envelope_v1.json"
+    ))
+    .expect("committed fixture must be valid JSON");
+    assert_eq!(
+        fixture["format"].as_str(),
+        Some("openmls_dart/account-envelope-fixtures/v1")
+    );
+
+    let account_id: [u8; 16] = fixture_hex(&fixture, &["accountIdHex"])
+        .try_into()
+        .expect("fixture account ID must be 16 bytes");
+    let root_installation_id: [u8; 16] = fixture_hex(&fixture, &["rootInstallationIdHex"])
+        .try_into()
+        .expect("fixture root installation ID must be 16 bytes");
+    assert_eq!(account_id, ACCOUNT_ID);
+    assert_eq!(root_installation_id, ROOT_INSTALLATION_ID);
+
+    let first_private = fixture_hex(&fixture, &["privateBundlesHex", "generation1"]);
+    let second_private = fixture_hex(&fixture, &["privateBundlesHex", "generation2"]);
+    let third_private = fixture_hex(&fixture, &["privateBundlesHex", "generation3"]);
+    let initial = initial_public_bundle(authority(1), &first_private);
+    assert_eq!(
+        initial,
+        fixture_hex(&fixture, &["publicBundlesHex", "initial"])
+    );
+    let rotation_candidate = create_self_signed_public_bundle_v1(
+        ACCOUNT_ID,
+        2,
+        AccountEnvelopeActivationKindV1::Rotation,
+        None,
+        1,
+        authority(2),
+        second_private.clone(),
+    )
+    .unwrap();
+    let SelfSignedPublicBundleResultV1::NonPublishableRotationCandidate(rotation_candidate) =
+        rotation_candidate
+    else {
+        unreachable!()
+    };
+    assert_eq!(
+        rotation_candidate,
+        fixture_hex(&fixture, &["publicBundlesHex", "rotationCandidate"])
+    );
+    let authorization = authorize_successor_public_bundle_v1(
+        authority(1),
+        first_private,
+        rotation_candidate.clone(),
+    )
+    .unwrap();
+    assert_eq!(
+        authorization.authorized_canonical_successor_public_bundle,
+        fixture_hex(&fixture, &["publicBundlesHex", "authorizedRotation"])
+    );
+    assert_eq!(
+        authorization
+            .retired_previous_private_bundle_candidate
+            .as_slice(),
+        fixture_hex(&fixture, &["retiredGeneration1PrivateBundleHex"])
+    );
+    let reset = create_self_signed_public_bundle_v1(
+        ACCOUNT_ID,
+        3,
+        AccountEnvelopeActivationKindV1::ContinuityReset,
+        Some(AccountEnvelopeResetReasonV1::AccountRecovery),
+        2,
+        authority(3),
+        third_private,
+    )
+    .unwrap();
+    let SelfSignedPublicBundleResultV1::CanonicalPublicBundle(reset) = reset else {
+        unreachable!()
+    };
+    assert_eq!(
+        reset,
+        fixture_hex(&fixture, &["publicBundlesHex", "continuityReset"])
+    );
+
+    for (bundle, digest_path) in [
+        (initial, ["digestsSha256Hex", "initial"]),
+        (
+            authorization.authorized_canonical_successor_public_bundle,
+            ["digestsSha256Hex", "authorizedRotation"],
+        ),
+        (reset, ["digestsSha256Hex", "continuityReset"]),
+    ] {
+        let summary = verify_canonical_public_bundle_v1(&bundle).unwrap();
+        assert_eq!(
+            summary.digest_sha256.as_slice(),
+            fixture_hex(&fixture, &digest_path)
+        );
+    }
+
+    let unicode = &fixture["unicode17"][0];
+    let preview = ContextInvitationPreviewV1 {
+        title: unicode["inputTitle"].as_str().map(ToOwned::to_owned),
+        tags: fixture_strings(unicode, "inputTags"),
+    };
+    let canonical = canonicalize_and_encode_preview(&preview).unwrap();
+    let decoded = decode_canonical_preview(&canonical).unwrap();
+    assert_eq!(
+        decoded.title.as_deref(),
+        unicode["normalizedTitle"].as_str()
+    );
+    assert_eq!(decoded.tags, fixture_strings(unicode, "normalizedTags"));
+
+    let duplicate_preview = ContextInvitationPreviewV1 {
+        title: None,
+        tags: fixture_strings(&fixture["unicode17"][1], "duplicateTags"),
+    };
+    assert_eq!(
+        canonicalize_and_encode_preview(&duplicate_preview)
+            .err()
+            .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid)
+    );
+
+    let sender_public = fixture_hex(&fixture, &["publicBundlesHex", "initial"]);
+    let recipient_private = fixture_hex(&fixture, &["invitationRecipient", "privateBundleHex"]);
+    assert_eq!(
+        fixture_hex(&fixture, &["invitationRecipient", "rootInstallationIdHex"]),
+        RECIPIENT_ROOT_ID
+    );
+    let recipient_public = initial_public_bundle(recipient_authority(1), &recipient_private);
+    assert_eq!(
+        recipient_public,
+        fixture_hex(&fixture, &["invitationRecipient", "publicBundleHex"])
+    );
+    for (name, padding_class, expected_len) in [
+        ("bytes512", AccountEnvelopePaddingClassV1::Bytes512, 741),
+        ("bytes1024", AccountEnvelopePaddingClassV1::Bytes1024, 1253),
+        ("bytes2048", AccountEnvelopePaddingClassV1::Bytes2048, 2277),
+    ] {
+        let envelope = fixture_hex(&fixture, &["invitationEnvelopesHex", name]);
+        assert_eq!(envelope.len(), expected_len);
+        let opened = verify_and_open_context_invitation_preview_v1(
+            envelope,
+            ExpectedContextInvitationAuthorityV1 {
+                invitation: fixture_invitation_authority(&fixture, padding_class),
+                local_root_installation_id: RECIPIENT_ROOT_ID,
+                local_root_authority_generation: 1,
+            },
+            recipient_private.clone(),
+            sender_public.clone(),
+        )
+        .unwrap();
+        assert_eq!(opened.preview.title.as_deref(), Some("Café"));
+        assert_eq!(opened.preview.tags, ["Rust", "Straße"]);
+    }
 }
 
 fn authorized_rotation(
@@ -734,6 +1387,70 @@ fn authorized_rotation(
     .authorized_canonical_successor_public_bundle
 }
 
+fn resign_test_envelope(envelope: &mut [u8], sender_private_bundle: &[u8]) {
+    let sender = decode_private_bundle(sender_private_bundle).unwrap();
+    let signature_private_key = sender.signature_private_key.as_ref().unwrap();
+    let signature_start = envelope.len() - 64;
+    let ciphertext_start = super::types::INVITATION_HEADER_BYTES + 32 + 2;
+    let signature = super::crypto::sign_domain_message(
+        super::crypto::ENVELOPE_SIGNATURE_DOMAIN_V1,
+        &[
+            &envelope[..super::types::INVITATION_HEADER_BYTES],
+            &envelope
+                [super::types::INVITATION_HEADER_BYTES..super::types::INVITATION_HEADER_BYTES + 32],
+            &envelope[super::types::INVITATION_HEADER_BYTES + 32..ciphertext_start],
+            &envelope[ciphertext_start..signature_start],
+        ],
+        signature_private_key,
+    )
+    .unwrap();
+    envelope[signature_start..].copy_from_slice(&signature);
+}
+
+fn valid_test_plaintext(inner: &[u8], fill: u8) -> Vec<u8> {
+    let mut plaintext = vec![fill; AccountEnvelopePaddingClassV1::Bytes512.plaintext_bytes()];
+    let inner_len = u16::try_from(inner.len()).unwrap();
+    plaintext[..2].copy_from_slice(&inner_len.to_be_bytes());
+    plaintext[2..2 + inner.len()].copy_from_slice(inner);
+    plaintext
+}
+
+fn seal_test_plaintext(
+    authority: ContextInvitationAuthorityV1,
+    recipient_public_bundle: &[u8],
+    sender_private_bundle: &[u8],
+    plaintext: &[u8],
+) -> Vec<u8> {
+    let recipient = verify_canonical_public_bundle_v1(recipient_public_bundle).unwrap();
+    let sender = decode_private_bundle(sender_private_bundle).unwrap();
+    let canonical_header = super::invitation::encode_invitation_header(&authority).unwrap();
+    let (encapsulation, ciphertext) = super::crypto::hpke_seal_invitation(
+        &recipient.hpke_public_key,
+        &canonical_header,
+        plaintext,
+    )
+    .unwrap();
+    let ciphertext_len = u16::try_from(ciphertext.len()).unwrap();
+    let signature = super::crypto::sign_domain_message(
+        super::crypto::ENVELOPE_SIGNATURE_DOMAIN_V1,
+        &[
+            &canonical_header,
+            &encapsulation,
+            &ciphertext_len.to_be_bytes(),
+            &ciphertext,
+        ],
+        sender.signature_private_key.as_ref().unwrap(),
+    )
+    .unwrap();
+    super::invitation::encode_invitation_envelope(
+        &canonical_header,
+        &encapsulation,
+        &ciphertext,
+        &signature,
+    )
+    .unwrap()
+}
+
 fn decode_hex<const N: usize>(input: &str) -> [u8; N] {
     let compact: String = input
         .chars()
@@ -745,4 +1462,60 @@ fn decode_hex<const N: usize>(input: &str) -> [u8; N] {
         *byte = u8::from_str_radix(&compact[index * 2..index * 2 + 2], 16).unwrap();
     }
     output
+}
+
+fn fixture_hex(fixture: &serde_json::Value, path: &[&str]) -> Vec<u8> {
+    let mut value = fixture;
+    for part in path {
+        value = &value[*part];
+    }
+    decode_hex_vec(value.as_str().expect("fixture hex field must be a string"))
+}
+
+fn fixture_strings(fixture: &serde_json::Value, field: &str) -> Vec<String> {
+    fixture[field]
+        .as_array()
+        .expect("fixture string field must be an array")
+        .iter()
+        .map(|value| {
+            value
+                .as_str()
+                .expect("fixture array member must be a string")
+                .to_owned()
+        })
+        .collect()
+}
+
+fn fixture_invitation_authority(
+    fixture: &serde_json::Value,
+    padding_class: AccountEnvelopePaddingClassV1,
+) -> ContextInvitationAuthorityV1 {
+    let authority = &fixture["invitationAuthority"];
+    ContextInvitationAuthorityV1 {
+        envelope_id: fixture_hex(authority, &["envelopeIdHex"])
+            .try_into()
+            .unwrap(),
+        invite_id: fixture_hex(authority, &["inviteIdHex"]).try_into().unwrap(),
+        sender_account_id: fixture_hex(authority, &["senderAccountIdHex"])
+            .try_into()
+            .unwrap(),
+        sender_generation: authority["senderGeneration"].as_u64().unwrap(),
+        recipient_account_id: fixture_hex(authority, &["recipientAccountIdHex"])
+            .try_into()
+            .unwrap(),
+        recipient_generation: authority["recipientGeneration"].as_u64().unwrap(),
+        authority_attempt: authority["authorityAttempt"].as_u64().unwrap(),
+        relay_slot_version: authority["relaySlotVersion"].as_u64().unwrap(),
+        server_created_at_unix_ms: authority["serverCreatedAtUnixMs"].as_u64().unwrap(),
+        server_expires_at_unix_ms: authority["serverExpiresAtUnixMs"].as_u64().unwrap(),
+        padding_class,
+    }
+}
+
+fn decode_hex_vec(input: &str) -> Vec<u8> {
+    assert_eq!(input.len() % 2, 0);
+    (0..input.len())
+        .step_by(2)
+        .map(|index| u8::from_str_radix(&input[index..index + 2], 16).unwrap())
+        .collect()
 }

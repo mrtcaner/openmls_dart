@@ -300,14 +300,6 @@ List<_FileCheck> _buildIosChecks(String expected) {
       replacement: (v) => 'IPHONEOS_DEPLOYMENT_TARGET = $v;',
     ),
     _FileCheck(
-      label: 'iOS AppFrameworkInfo.plist',
-      relativePath: 'example/ios/Flutter/AppFrameworkInfo.plist',
-      pattern: RegExp(
-        r'<key>MinimumOSVersion</key>\s*\n\s*<string>([^<]+)</string>',
-      ),
-      replacement: (v) => '<key>MinimumOSVersion</key>\n  <string>$v</string>',
-    ),
-    _FileCheck(
       label: 'README iOS version',
       relativePath: 'README.md',
       // Matches: | **Support** | SDK 24+ | 13.0+ | ...
@@ -482,8 +474,7 @@ Files checked:
   iOS (ios_min_version):
     1. .github/workflows/build-openmls.yml (IPHONEOS_DEPLOYMENT_TARGET)
     2. example/ios/Runner.xcodeproj/project.pbxproj
-    3. example/ios/Flutter/AppFrameworkInfo.plist
-    4. README.md platform table
+    3. README.md platform table
 
   macOS (macos_min_version):
     1. .github/workflows/build-openmls.yml (MACOSX_DEPLOYMENT_TARGET)
