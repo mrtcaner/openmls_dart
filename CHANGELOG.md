@@ -1,3 +1,36 @@
+## [Unreleased]
+
+### For Users
+
+#### ✨ Highlights
+
+- **openmls_frb v3.2.0** — sealed account-envelope key continuity and invitation crypto
+
+### Added
+
+- A versioned high-level `AccountEnvelopeCrypto` API for generating opaque
+  account key bundles, producing and authorizing successor bundles, verifying
+  continuity chains, and sealing or opening bounded context-invitation
+  previews. Raw HPKE, Ed25519, component keys, and private key material are not
+  exposed as general-purpose Dart primitives.
+- Canonical binary bundle and envelope formats with strict account,
+  installation, generation, and root-authority binding; stable typed errors;
+  fixed padding classes; and fail-closed size and lifecycle validation.
+- Fixed cryptographic suites using DHKEM(X25519, HKDF-SHA256), HKDF-SHA256,
+  AES-128-GCM, and Ed25519 through the package's existing Rust crypto provider.
+- Checked-in cross-language fixtures, Unicode 17 normalization and case-folding
+  vectors, fuzz coverage, secret-hygiene checks, mobile integration gates, and
+  release artifact inspection for the new surface.
+
+### Compatibility
+
+- This is an additive Dart and native API. It is logically separate from MLS,
+  does not derive or reuse MLS groups, credentials, KeyPackages, or exporters,
+  and does not change caller-owned MLS storage format version `1`.
+- The package returns opaque bytes and verified summaries only. Applications
+  continue to own encrypted persistence, transactions, lifecycle promotion,
+  network coordination, and foreground access to private bundles.
+
 ## [3.1.0] - 2026-08-17
 
 ### For Users
