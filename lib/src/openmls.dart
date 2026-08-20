@@ -117,9 +117,9 @@ class Openmls {
       return platform.openLibraryFromPath(customPath); // coverage:ignore-line
     }
 
-    // 2. Try build hook locations (Dart 3.10+ with build hook)
-    // JIT mode: .dart_tool/lib/
-    // AOT mode: ../lib/ relative to executable
+    // 2. Try build hook locations (Dart 3.10+ with build hook):
+    // `dart run`/`dart test`, `flutter test`, and AOT bundles each install the
+    // registered CodeAsset somewhere different.
     final nativeAssetLib = platform.tryLoadNativeAsset(_nativeAssetId);
     if (nativeAssetLib != null) {
       return nativeAssetLib;

@@ -52,13 +52,20 @@ make check-template-updates ARGS="--json"
 
 # CI mode (write outputs to file)
 make check-template-updates ARGS="--ci-output /path/to/output"
+
+# Apply a reviewed version locally (Copier tasks stay disabled)
+make update-template ARGS="--version v4.5.0 --skip-changelog"
 ```
 
-This script is used by the `check-template-updates.yml` workflow, which creates notification PRs with changelog and update instructions.
+The `check-template-updates.yml` workflow installs the pinned Copier version,
+applies the real template diff, reports any conflicts, runs contributor gates,
+and opens an update PR. It does not force-push an existing update branch.
 
 Both scheduled update workflows require the repository-scoped GitHub App
 described in [`.github/UPDATER_APP.md`](../.github/UPDATER_APP.md). The required
-Actions configuration is the `APP_ID` variable and `APP_PRIVATE_KEY` secret.
+Actions configuration is the `APP_ID` variable and `APP_PRIVATE_KEY` secret;
+the App also needs Workflows read/write because template changes can include
+workflow files.
 
 ## Regenerating FRB Bindings
 
@@ -127,6 +134,7 @@ The `check-openmls-updates.yml` workflow:
 The `check-template-updates.yml` workflow:
 1. Runs daily to check for new copier template versions
 2. Compares with current version in `.copier-answers.yml`
-3. Reuses the notification PR when that exact version already has one open
-4. Otherwise creates a notification PR with changelog and update instructions
+3. Reuses the update PR when that exact version already has one open
+4. Otherwise applies the template and creates a signed update PR, using draft
+   status when Copier reports conflicts or fails to record `_commit`
 5. Rejects an orphaned update branch instead of force-pushing it

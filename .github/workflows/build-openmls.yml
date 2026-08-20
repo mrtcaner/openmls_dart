@@ -524,6 +524,35 @@ jobs:
           VERSION=${{ env.VERSION }}
           TAG="openmls_frb-${VERSION}"
           TITLE="openmls_frb ${VERSION} - Native Libraries"
+          CHECKSUM_FILE="release-archives/openmls_frb-${VERSION}-checksums.sha256"
+          SIGSTORE_FILE="release-archives/openmls_frb-${VERSION}.sigstore.jsonl"
+
+          # Build the upload list from the checksum file instead of repeating
+          # its 13 subjects manually. The 3.2.0 workflow checksummed and
+          # attested the artifact report but omitted it from `gh release
+          # create`; deriving the arguments here makes that mismatch
+          # structurally impossible.
+          mapfile -t CHECKSUM_ASSETS < <(awk '{print $2}' "$CHECKSUM_FILE")
+          if [ "${#CHECKSUM_ASSETS[@]}" -ne 13 ]; then
+            echo "::error::Expected 13 checksum subjects (12 archives plus the artifact report), found ${#CHECKSUM_ASSETS[@]}."
+            exit 1
+          fi
+
+          RELEASE_ASSETS=()
+          for asset_name in "${CHECKSUM_ASSETS[@]}"; do
+            asset_path="release-archives/${asset_name}"
+            if [ ! -s "$asset_path" ]; then
+              echo "::error::Checksum-listed release asset is missing or empty: $asset_name"
+              exit 1
+            fi
+            RELEASE_ASSETS+=("$asset_path")
+          done
+          RELEASE_ASSETS+=("$CHECKSUM_FILE" "$SIGSTORE_FILE")
+
+          if [ ! -s "$CHECKSUM_FILE" ] || [ ! -s "$SIGSTORE_FILE" ] || [ "${#RELEASE_ASSETS[@]}" -ne 15 ]; then
+            echo "::error::Release inventory must contain 15 assets: 12 archives, report, checksums, and Sigstore bundle."
+            exit 1
+          fi
 
           # No delete-then-recreate: check-release skips the whole run when the
           # release for this crate version already exists, and if a dispatch/tag
@@ -562,6 +591,8 @@ jobs:
 
           ### Checksums
           SHA256 checksums are available in \`openmls_frb-${VERSION}-checksums.sha256\`
+          Exact raw/compressed sizes and baseline deltas are available in
+          \`openmls_frb-${VERSION}-artifact-report.json\`.
 
           Every platform archive includes this fork's \`LICENSE\` and a
           \`THIRD_PARTY_NOTICES.txt\` generated deterministically from the
@@ -575,17 +606,11 @@ jobs:
           Offline verification: use the attached \`openmls_frb-${VERSION}.sigstore.jsonl\` bundle with \`--bundle\` (see SECURITY.md).
           EOF
           )" \
-            release-archives/openmls_frb-${VERSION}-linux-x86_64.tar.gz \
-            release-archives/openmls_frb-${VERSION}-linux-arm64.tar.gz \
-            release-archives/openmls_frb-${VERSION}-macos-arm64.tar.gz \
-            release-archives/openmls_frb-${VERSION}-macos-x86_64.tar.gz \
-            release-archives/openmls_frb-${VERSION}-windows-x86_64.tar.gz \
-            release-archives/openmls_frb-${VERSION}-android-arm64-v8a.tar.gz \
-            release-archives/openmls_frb-${VERSION}-android-armeabi-v7a.tar.gz \
-            release-archives/openmls_frb-${VERSION}-android-x86_64.tar.gz \
-            release-archives/openmls_frb-${VERSION}-ios-device-arm64.tar.gz \
-            release-archives/openmls_frb-${VERSION}-ios-simulator-arm64.tar.gz \
-            release-archives/openmls_frb-${VERSION}-ios-simulator-x86_64.tar.gz \
-            release-archives/openmls_frb-${VERSION}-wasm32.tar.gz \
-            release-archives/openmls_frb-${VERSION}-checksums.sha256 \
-            release-archives/openmls_frb-${VERSION}.sigstore.jsonl
+            "${RELEASE_ASSETS[@]}"
+
+          printf '%s\n' "${RELEASE_ASSETS[@]##*/}" | sort > "$RUNNER_TEMP/expected-release-assets.txt"
+          gh release view "$TAG" --json assets --jq '.assets[].name' | sort > "$RUNNER_TEMP/published-release-assets.txt"
+          if ! diff -u "$RUNNER_TEMP/expected-release-assets.txt" "$RUNNER_TEMP/published-release-assets.txt"; then
+            echo "::error::Published release assets differ from the checksum-derived inventory. The release is incomplete and must not be consumed."
+            exit 1
+          fi

@@ -1,4 +1,11 @@
-# This generated notice is hash-verified against native release metadata.
-# Preserve its exact UTF-8 bytes on Windows instead of applying CRLF checkout
-# conversion.
+# The generated notice is compared byte-for-byte by
+# `make verify-third-party-notices`, so Git must round-trip it unchanged.
+# `-text` also prevents Windows `core.autocrlf` from rewriting embedded licence
+# text. This fork stores the package notice under `assets/`, not at the template
+# root.
 assets/THIRD_PARTY_NOTICES.txt -text
+
+# FVM rewrites `.fvmrc` unless it already has FVM's exact key order, LF bytes,
+# and no trailing newline. Disable Git EOL conversion so that invariant also
+# holds on Windows.
+.fvmrc -text

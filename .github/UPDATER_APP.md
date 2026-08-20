@@ -1,6 +1,6 @@
 # Updater GitHub App
 
-**Last verified:** 2026-07-23
+**Last verified:** 2026-08-21
 
 The scheduled OpenMLS and Copier template update workflows authenticate as a
 dedicated GitHub App. Do not replace this with a personal access token or grant
@@ -17,6 +17,7 @@ events run the normal CI workflows.
 3. Grant these repository permissions:
    - **Contents:** Read and write
    - **Pull requests:** Read and write
+   - **Workflows:** Read and write
    - **Metadata:** Read-only (automatically granted)
 4. Install the App on **Only select repositories** and select
    `mrtcaner/openmls_dart`.
@@ -28,15 +29,18 @@ events run the normal CI workflows.
 7. Manually run both updater workflows and confirm their token-generation and
    check steps pass.
 
-The **Workflows: Read and write** permission is not required by the current
-notification/update behavior. Add it only if a future updater is deliberately
-changed to commit files under `.github/workflows/`.
+The Copier updater applies the actual template diff, and template releases can
+change files under `.github/workflows/`. GitHub rejects those commits unless
+the App has **Workflows: Read and write**. After adding that permission to an
+existing App, also accept the installation's permission-update request before
+running the workflow; changing the App definition alone does not update issued
+installation tokens.
 
 ## Expected no-update result
 
-As of 2026-07-23:
+As of 2026-08-21:
 
-- Copier template: current and latest `v3.0.3`
+- Copier template: current `v4.5.0`
 - OpenMLS: current and latest `openmls-v0.8.1`
 
 Both workflows should finish successfully without creating a pull request when
@@ -53,11 +57,14 @@ Checker exit code 1 means an update is available and continues into PR
 creation; configuration, parsing, or network errors use exit code 2 and fail
 the workflow instead of being silently ignored.
 
-Update PR creation is idempotent. If the exact version already has an open PR,
-the scheduled workflow reuses it and does not rewrite its signed branch. If an
-automation branch exists without an open PR, the workflow fails before any
-write and asks an owner to inspect and delete that stale branch. It never
-force-pushes through the repository-wide signed-commit ruleset.
+Update PR creation is idempotent. The Copier workflow applies the update with
+the pinned `copier==9.11.1`, disables template tasks, reports conflicts, and
+opens a draft whenever the generated result needs human resolution. If the
+exact version already has an open PR, the scheduled workflow reuses it and does
+not rewrite its signed branch. If an automation branch exists without an open
+PR, the workflow fails before any write and asks an owner to inspect and delete
+that stale branch. It has no force-update path and never force-pushes through
+the repository-wide signed-commit ruleset.
 
 This double validation is intentional: fetched tags must not become unsafe
 GitHub output or branch-name data, and manual inputs must not reach Make's

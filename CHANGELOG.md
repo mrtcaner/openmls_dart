@@ -1,3 +1,20 @@
+## [Unreleased]
+
+### For Contributors
+
+#### Changed
+
+- **Copier template adopted: v4.1.0 → v4.5.0** — template updates now apply
+  the real generated diff through a short-lived GitHub App token, report merge
+  conflicts explicitly, and never force-push an existing update branch. The
+  migration also pins Copier 9.11.1, makes the pre-commit hook executable,
+  avoids unnecessary Rust checks for non-Rust commits, stabilizes FVM/VS Code
+  files, improves GitHub API diagnostics and release retry behavior, and keeps
+  this fork's manifest-based native test loading intact.
+- **Native release inventory fails closed** — the machine-readable artifact
+  report is derived from the checksum list passed to `gh release create`, so a
+  checksum-listed asset cannot be silently omitted from a release again.
+
 ## [3.2.0] - 2026-08-21
 
 ### For Users
@@ -456,7 +473,7 @@ and [`#7`](https://github.com/mrtcaner/openmls_dart/issues/7).
 - X.509 `x509()` documents that application layer must validate certificate chains
 - SECURITY.md: sensitive API table, known limitations, web deployment recommendations, vulnerability reporting via GitHub Security Advisories
 
-[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/f460b9be9a7ade1235d52bd08e58349729113b17...HEAD
+[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/45cc7ceb7857790deda97af9d4013593965a6fc0...HEAD
 [3.2.0]: https://github.com/mrtcaner/openmls_dart/compare/v3.1.0...f460b9be9a7ade1235d52bd08e58349729113b17
 [3.1.0]: https://github.com/mrtcaner/openmls_dart/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/mrtcaner/openmls_dart/compare/v2.1.0...v3.0.0

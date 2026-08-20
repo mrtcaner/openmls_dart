@@ -8,7 +8,7 @@
 # On Windows CI (Git Bash), use cmd to run fvm.bat from PATH:
 # Example: make build ARGS="--target x86_64-pc-windows-msvc" FVM="cmd //c fvm"
 
-.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test test-account-envelope-mobile coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets third-party-notices verify-third-party-notices verify-release-artifacts rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree generate-account-envelope-casefold fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
+.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test test-account-envelope-mobile coverage analyze format format-check get clean version get-version check-new-openmls-version check-exists-openmls-frb-release check-template-updates update-template check-targets third-party-notices verify-third-party-notices verify-release-artifacts rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree generate-account-envelope-casefold fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
 
 # FVM command - can be overridden to provide full path on Windows CI
 FVM ?= fvm
@@ -74,6 +74,8 @@ help:
 	@echo "                                        Example: make check-new-openmls-version ARGS=\"--update\""
 	@echo "    make check-exists-openmls-frb-release - Check if FRB release exists on GitHub"
 	@echo "    make check-template-updates       - Check for new copier template version"
+	@echo "    make update-template              - Apply a copier template update"
+	@echo "                                        Example: make update-template ARGS=\"--version v4.5.0\""
 	@echo "    make check-targets                - Check deployment target consistency (iOS/macOS/Android)"
 	@echo "                                        Example: make check-targets ARGS=\"--ios --set 14.0\""
 	@echo "    make verify-third-party-notices   - Verify bundled native dependency notices"
@@ -374,6 +376,12 @@ check-exists-openmls-frb-release:
 
 check-template-updates:
 	@$(FVM) dart scripts/check_template_updates.dart $(ARGS)
+
+# Applies a template update: runs copier, reports what it could not merge, and
+# records the adoption in the CHANGELOG. Needs `copier` on PATH (see
+# CONTRIBUTING) and AI_MODELS_TOKEN for the CHANGELOG entry.
+update-template:
+	@$(FVM) dart scripts/update_template.dart $(ARGS)
 
 check-targets:
 	@$(DART) scripts/check_deployment_targets.dart $(ARGS)

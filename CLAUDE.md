@@ -94,6 +94,7 @@ make verify-third-party-notices   # Check it matches the dependency graph
 make check-new-openmls-version  # Check for new upstream openmls version
 make check-new-openmls-version ARGS="--update"  # Apply update
 make check-template-updates       # Check for copier template updates
+make update-template ARGS="--version vX.Y.Z"  # Apply a template update (runs copier)
 make check-targets                # Check deployment targets (iOS/macOS/Android)
 make check-targets ARGS="--ios --set 14.0"  # Set iOS target everywhere
 make update-changelog ARGS="--version vX.Y.Z"  # Update CHANGELOG with AI
@@ -248,6 +249,13 @@ make update-changelog ARGS="--version openmls-vX.Y.Z"  # Generate AI changelog e
 ```
 
 ### AI-Powered Changelog
+
+> **Currently non-functional.** GitHub Models is being retired and answers
+> `GitHub Models is temporarily unavailable as part of a scheduled retirement
+> brownout`, so this command fails no matter what token it is given. The
+> workflows that call it degrade as designed — they still open the pull request
+> and label it `changelog-needed` — and the entry is written by hand until a
+> replacement provider is wired into `scripts/src/update_changelog.dart`.
 
 The `update-changelog` command uses GitHub Models API to analyze release notes and generate changelog entries. Requires `AI_MODELS_TOKEN` environment variable:
 

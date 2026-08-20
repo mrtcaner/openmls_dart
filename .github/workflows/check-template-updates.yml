@@ -1,12 +1,25 @@
-# Check for new copier template versions and create notification PR
+# Check for new copier template versions and open an update PR
 #
 # This workflow:
 # 1. Runs daily (or manually) to check for new template releases
-# 2. Compares with current template version in .copier-answers.yml
-# 3. If newer version found, creates a notification PR with:
-#    - Version comparison
-#    - Changelog between versions
-#    - Step-by-step update instructions
+# 2. Compares with the current template version in .copier-answers.yml
+# 3. If a newer version is found:
+#    - Applies it with `copier update` (make update-template)
+#    - Reports anything copier could not merge, and whether the version bump
+#      actually landed in .copier-answers.yml
+#    - Writes a CHANGELOG entry with AI (GitHub Models)
+#    - Runs the same gates the pre-commit hook runs
+#    - Opens a PR — as a draft when it needs a human to finish it
+#
+# It used to only *notify*: it opened a PR whose body carried the changelog and
+# manual instructions, and whose diff was empty by design. That worked only by
+# accident. `create-pull-request` opens nothing when there is no diff, and the
+# diff those PRs actually carried was `.fvmrc`, rewritten by `fvm install` on
+# every run — noise, not payload. Once that drift was fixed in template v4.2.0
+# the tree stayed clean and the notification would have gone silent while the
+# job still reported success. Two things here come directly from that:
+# the update now has a real payload, and the "PR was expected but none exists"
+# case is an explicit failure instead of an absence nobody sees.
 
 name: Check Template Updates
 
@@ -17,13 +30,13 @@ on:
   workflow_dispatch:
     inputs:
       target_version:
-        description: 'Specific version to check against (leave empty for latest)'
+        description: 'Specific version to update to (leave empty for latest)'
         required: false
         default: ''
         type: string
 
 jobs:
-  check-template:
+  update-template:
     runs-on: ubuntu-latest
     # All writes (checkout push, PR creation, branch push) go through the App
     # token; the default GITHUB_TOKEN needs no write access here.
@@ -59,6 +72,12 @@ jobs:
         id: check
         env:
           TARGET_VERSION: ${{ inputs.target_version }}
+          # Quota, not access — the template repository is public. An
+          # unauthenticated call is capped at 60/hour counted per *source IP*,
+          # and hosted runners share theirs, so this step can be refused with a
+          # 403 that reads like a permission problem, on a schedule nobody
+          # controls. The job's own read-only token gives it a quota of its own.
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           # Build arguments
           ARGS="--ci-output $GITHUB_OUTPUT"
@@ -88,11 +107,11 @@ jobs:
           echo "Check completed. Outputs:"
           cat "$GITHUB_OUTPUT"
 
-      # A notification PR is intentionally one-shot for each template version.
+      # An update PR is intentionally one-shot for each template version.
       # Rebuilding it after main advances makes create-pull-request replace its
       # single signed commit with a different history, which requires a force
       # push. Repository rules prohibit that, so reuse the existing open PR.
-      - name: Check for existing notification PR
+      - name: Check for existing update PR
         id: existing
         if: steps.check.outputs.needs_update == 'true'
         env:
@@ -111,7 +130,7 @@ jobs:
             echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
             echo "url=https://github.com/${GITHUB_REPOSITORY}/pull/${PR_NUMBER}" >> "$GITHUB_OUTPUT"
-            echo "::notice::Notification PR #$PR_NUMBER for $LATEST_VERSION already exists; leaving its signed branch unchanged."
+            echo "::notice::Update PR #$PR_NUMBER for $LATEST_VERSION already exists; leaving its signed branch unchanged."
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
@@ -119,7 +138,7 @@ jobs:
       # A closed PR can leave its protected branch behind. Do not let the PR
       # action discover it and attempt an opaque force-push; fail before any
       # write with the exact manual cleanup required.
-      - name: Reject orphaned notification branch
+      - name: Reject orphaned update branch
         if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
         env:
           LATEST_VERSION: ${{ steps.check.outputs.latest_version }}
@@ -130,51 +149,132 @@ jobs:
             exit 1
           fi
 
-      - name: Create Notification PR
+      # Pinned for the same reason the actions are pinned by SHA and fvm by
+      # version: this runs unattended, and a copier release that changed how it
+      # merges would show up as a conflict-shaped diff rather than a clean
+      # failure. jinja2-strcase is a template dependency (_jinja_extensions).
+      - name: Install copier
+        if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install 'copier==9.11.1' 'jinja2-strcase==0.0.2'
+          copier --version
+
+      # Everything the update needs is read from .copier-answers.yml, so the
+      # only argument is the version. The step never fails on a conflict: a
+      # half-merged update is still worth a pull request, and what a reviewer
+      # has to know travels in the outputs, not the exit code.
+      #
+      # Copier refuses to run against a dirty destination — untracked files
+      # included — so this step is also where anything that modified the tree
+      # earlier in the job surfaces, named, instead of as copier's own
+      # "Destination repository is dirty".
+      - name: Apply template update
+        id: update
+        if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
+        env:
+          AI_MODELS_TOKEN: ${{ secrets.AI_MODELS_TOKEN }}
+          LATEST_VERSION: ${{ steps.check.outputs.latest_version }}
+        run: |
+          make update-template ARGS="--version $LATEST_VERSION --ci-output $GITHUB_OUTPUT"
+
+      - name: Setup Rust
+        if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
+        continue-on-error: true
+        uses: ./.github/actions/setup-rust
+
+      - name: Get Dart dependencies
+        if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
+        continue-on-error: true
+        run: make get
+
+      # The same three checks the pre-commit hook runs, so the PR states up
+      # front what a maintainer would otherwise find out by pulling the branch.
+      # They are reported, never enforced: a template update that breaks a gate
+      # is exactly the update a human most needs to see.
+      #
+      # They cannot stand in for the conflict report, either. All three read
+      # only Dart and Rust, and conflicts are not confined to those: a single
+      # real update left them in Makefile, pubspec.yaml, rust/Cargo.toml,
+      # rust/src/frb_generated.rs and two Dart scripts. The ones in Makefile
+      # and Markdown pass all three gates intact.
+      #
+      # A failing gate cannot fail this step, and must not: the pull request is
+      # the whole point of the run, and losing it would trip the "no PR was
+      # opened" check below with an error naming the wrong cause. That is what
+      # the `if`/`fi` around each gate is for, not style — GitHub runs this with
+      # `bash -e`, where a command in an `if` condition does not trigger the
+      # exit, and the block itself returns the status of the `echo` (verified:
+      # a script of `if false; then …; else …; fi` exits 0 under `bash -e`).
+      # `continue-on-error` is deliberately absent, so a genuine failure — the
+      # output write itself — still fails the step. Do not "fix" the `if`s into
+      # bare commands.
+      - name: Run quality gates
+        id: gates
+        if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
+        run: |
+          if make format-check; then echo "format=true" >> $GITHUB_OUTPUT; else echo "format=false" >> $GITHUB_OUTPUT; fi
+          if make rust-check;   then echo "rust=true"   >> $GITHUB_OUTPUT; else echo "rust=false"   >> $GITHUB_OUTPUT; fi
+          if make analyze ARGS="--fatal-infos"; then echo "analyze=true" >> $GITHUB_OUTPUT; else echo "analyze=false" >> $GITHUB_OUTPUT; fi
+
+      - name: Create Pull Request
+        id: cpr
         if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ steps.app-token.outputs.token }}
           sign-commits: true
+          # A draft when a human has to finish it. Conflicts can land in files
+          # every gate above passes — Makefile and Markdown among them — so
+          # nothing else would stop this branch being merged as-is.
+          draft: ${{ steps.update.outputs.has_conflicts == 'true' || steps.update.outputs.commit_landed != 'true' }}
           commit-message: |
-            chore: template update available (${{ steps.check.outputs.latest_version }})
-          title: "Template update available: ${{ steps.check.outputs.latest_version }}"
+            chore: adopt copier template ${{ steps.check.outputs.current_version }} → ${{ steps.check.outputs.latest_version }}
+          title: "Adopt copier template ${{ steps.check.outputs.current_version }} → ${{ steps.check.outputs.latest_version }}"
           body: |
-            ## Template Update Available
+            ## Automated Template Update
 
-            A new version of the [copier-dart-frb-wrapper](https://github.com/${{ steps.check.outputs.template_repo }}) template is available.
+            `copier update` has been applied to this branch.
 
-            ### Version Change
-
-            | Component | Current | Latest |
-            |-----------|---------|--------|
+            | Component | Current | New |
+            |-----------|---------|-----|
             | Template  | ${{ steps.check.outputs.current_version }} | ${{ steps.check.outputs.latest_version }} |
 
-            ${{ steps.check.outputs.changelog != '' && '### What Changed' || '' }}
+            ${{ steps.update.outputs.has_conflicts == 'true' && '> [!WARNING]' || '' }}
+            ${{ steps.update.outputs.has_conflicts == 'true' && '> **Conflicts — this PR is a draft.** Copier could not merge the files below and left both sides in them. Do not rely on the gates above to catch this: conflicts can land in files none of them read, so the branch would otherwise look mergeable.' || '' }}
+
+            ${{ steps.update.outputs.conflict_files }}
+
+            ${{ steps.update.outputs.commit_landed != 'true' && '> [!CAUTION]' || '' }}
+            ${{ steps.update.outputs.commit_landed != 'true' && '> **`_commit` did not land.** `.copier-answers.yml` still records the old version, so merging this leaves the project looking un-updated and every future run will re-open this same PR. Fix the file before merging.' || '' }}
+
+            ### Checks
+
+            | Check | Result |
+            |-------|--------|
+            | `_commit` bumped | ${{ steps.update.outputs.commit_landed == 'true' && 'yes' || '**NO**' }} |
+            | Conflicts | ${{ steps.update.outputs.has_conflicts == 'true' && format('**{0}**', steps.update.outputs.conflict_count) || 'none' }} |
+            | `make format-check` | ${{ steps.gates.outputs.format == 'true' && 'pass' || '**fail**' }} |
+            | `make rust-check` | ${{ steps.gates.outputs.rust == 'true' && 'pass' || '**fail**' }} |
+            | `make analyze --fatal-infos` | ${{ steps.gates.outputs.analyze == 'true' && 'pass' || '**fail**' }} |
+            | CHANGELOG entry | ${{ steps.update.outputs.changelog_updated == 'true' && 'written by AI' || format('**not written** ({0})', steps.update.outputs.changelog_error) }} |
+
+            ### Template changelog for this range
 
             ${{ steps.check.outputs.changelog }}
 
-            ### How to Update
+            ### Before merge
 
-            1. **Install/update copier:**
-               ```bash
-               pip install copier jinja2-strcase
-               ```
-
-            2. **Run copier update:**
-               ```bash
-               copier update --trust --vcs-ref=${{ steps.check.outputs.latest_version }}
-               ```
-
-            3. **Review changes** — resolve any conflicts, check generated files
-
-            4. **Run quality checks:**
-               ```bash
-               make analyze
-               make test
-               ```
-
-            5. **Commit the changes**
+            1. **Review the CHANGELOG entry.** It is filed under `### For
+               Contributors` → `#### Changed`, which is where template adoptions
+               belong by default. Move it to `### For Users` if this release
+               changes what the published package does at build or run time —
+               that call is a human's, and the entry is written only from the
+               diff that actually landed here.
+            2. **Read the diff, not just the summary.** A template release
+               describes changes for every project generated from it; parts of
+               it can arrive as a no-op here.
+            3. ${{ steps.update.outputs.has_conflicts == 'true' && '**Resolve the conflicts listed above**, then mark this PR ready for review.' || 'Check that nothing project-specific was overwritten.' }}
 
             ### Links
 
@@ -188,30 +288,88 @@ jobs:
           labels: |
             template
             automated
+            ${{ steps.update.outputs.has_conflicts == 'true' && 'conflicts' || '' }}
+            ${{ steps.update.outputs.commit_landed != 'true' && 'commit-not-landed' || '' }}
+            ${{ steps.update.outputs.changelog_updated != 'true' && 'changelog-needed' || '' }}
+
+      # GitHub refuses to let an App write a file under `.github/workflows/`
+      # unless the App holds the `Workflows` permission, and `create-pull-request`
+      # relays that refusal exactly as GitHub words it: `Resource not accessible
+      # by integration` on `POST /git/trees`, naming neither the file nor the
+      # permission — and only *after* every blob has been created, which is
+      # itself a `Contents: write` call and so reads like anything but a
+      # permission problem. Template updates touch workflows regularly, and the
+      # first one that does is the first time the gap can possibly show, so this
+      # note costs a step and saves the investigation.
+      - name: Explain a failed pull request
+        if: failure() && steps.cpr.outcome == 'failure'
+        run: |
+          echo "::error::Could not open the pull request. If the error above is 'Resource not accessible by integration', the App behind APP_ID is missing 'Workflows: Read and write' — needed whenever an update touches .github/workflows/**. Two traps: 'Actions' is a different permission and does not cover this, and adding the permission does not reach the App's tokens until the installation accepts it (Settings -> Applications -> Installed GitHub Apps -> your app -> Review request)."
+
+      # The check this workflow did not have, and the reason it went unnoticed
+      # that it had stopped working. `create-pull-request` opens nothing when
+      # there is no diff and exits successfully, so "an update was found but no
+      # PR exists" used to be indistinguishable from a healthy run — visible
+      # only as the absence of something nobody was watching for.
+      - name: Verify a PR was opened
+        if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.skip != 'true'
+        env:
+          PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
+          COMMIT_LANDED: ${{ steps.update.outputs.commit_landed }}
+        run: |
+          if [ -z "$PR_NUMBER" ]; then
+            echo "::error::An update was available but no pull request was created — create-pull-request found no diff to commit. Do NOT read this run as 'nothing to do'."
+            exit 1
+          fi
+          echo "::notice::Opened PR #${PR_NUMBER}."
+
+          # Failed after the PR exists, on purpose: the applied update is worth
+          # keeping, and this state has to be loud because it is the one that
+          # repeats forever if ignored.
+          if [ "$COMMIT_LANDED" != "true" ]; then
+            echo "::error::copier did not bump _commit in .copier-answers.yml. PR #${PR_NUMBER} must be fixed before merge, or this update will be re-opened on every run."
+            exit 1
+          fi
 
       - name: Summary
+        if: always()
         env:
           NEEDS_UPDATE: ${{ steps.check.outputs.needs_update }}
+          SKIP_EXISTING: ${{ steps.existing.outputs.skip }}
           TEMPLATE_REPO: ${{ steps.check.outputs.template_repo }}
           CURRENT_VERSION: ${{ steps.check.outputs.current_version }}
           LATEST_VERSION: ${{ steps.check.outputs.latest_version }}
-          EXISTING_PR: ${{ steps.existing.outputs.skip }}
           EXISTING_PR_NUMBER: ${{ steps.existing.outputs.number }}
           EXISTING_PR_URL: ${{ steps.existing.outputs.url }}
+          PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
+          HAS_CONFLICTS: ${{ steps.update.outputs.has_conflicts }}
+          CONFLICT_COUNT: ${{ steps.update.outputs.conflict_count }}
+          COMMIT_LANDED: ${{ steps.update.outputs.commit_landed }}
+          CHANGELOG_OK: ${{ steps.update.outputs.changelog_updated }}
         run: |
-          if [ "$NEEDS_UPDATE" = "true" ]; then
-            echo "## Template Update Available" >> $GITHUB_STEP_SUMMARY
+          if [ "$SKIP_EXISTING" = "true" ]; then
+            echo "## Update PR Already Open" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "An open PR for **${LATEST_VERSION}** already exists — nothing to do." >> $GITHUB_STEP_SUMMARY
+            echo "Existing update PR [#${EXISTING_PR_NUMBER}](${EXISTING_PR_URL}) remains authoritative; its signed branch was not rewritten." >> $GITHUB_STEP_SUMMARY
+          elif [ "$NEEDS_UPDATE" = "true" ]; then
+            echo "## Template Update Applied" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
             echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
             echo "| Template | ${TEMPLATE_REPO} |" >> $GITHUB_STEP_SUMMARY
             echo "| Current | ${CURRENT_VERSION} |" >> $GITHUB_STEP_SUMMARY
             echo "| Latest | ${LATEST_VERSION} |" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            if [ "$EXISTING_PR" = "true" ]; then
-              echo "Existing notification PR [#${EXISTING_PR_NUMBER}](${EXISTING_PR_URL}) remains authoritative; its protected branch was not rewritten." >> $GITHUB_STEP_SUMMARY
-            else
-              echo "A notification PR has been created." >> $GITHUB_STEP_SUMMARY
+            echo "| Pull request | ${PR_NUMBER:-**none created**} |" >> $GITHUB_STEP_SUMMARY
+            echo "| Conflicts | ${CONFLICT_COUNT:-0} |" >> $GITHUB_STEP_SUMMARY
+            # Defaulted because this step runs with `always()`: when the update
+            # step itself failed there are no outputs to read, and an empty
+            # cell reads as "no" rather than "never got that far".
+            echo "| \`_commit\` bumped | ${COMMIT_LANDED:-did not run} |" >> $GITHUB_STEP_SUMMARY
+            echo "| AI CHANGELOG | ${CHANGELOG_OK:-did not run} |" >> $GITHUB_STEP_SUMMARY
+            if [ "$HAS_CONFLICTS" = "true" ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "> **Conflicts**: the PR is a draft and needs manual resolution." >> $GITHUB_STEP_SUMMARY
             fi
           else
             echo "## Template Up to Date" >> $GITHUB_STEP_SUMMARY
