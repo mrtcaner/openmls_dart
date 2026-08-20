@@ -8,7 +8,7 @@
 # On Windows CI (Git Bash), use cmd to run fvm.bat from PATH:
 # Example: make build ARGS="--target x86_64-pc-windows-msvc" FVM="cmd //c fvm"
 
-.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets third-party-notices verify-third-party-notices rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
+.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets third-party-notices verify-third-party-notices rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree generate-account-envelope-casefold fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
 
 # FVM command - can be overridden to provide full path on Windows CI
 FVM ?= fvm
@@ -87,6 +87,7 @@ help:
 	@echo "    make rust-clippy                  - Lint Rust code with clippy (warnings = errors)"
 	@echo "    make rust-format-files            - Format Rust files listed in ARGS"
 	@echo "    make rust-tree                    - Inspect the resolved Rust dependency tree"
+	@echo "    make generate-account-envelope-casefold - Regenerate pinned Unicode case-fold data"
 	@echo "    make rust-audit                   - Audit Rust dependencies for vulnerabilities"
 	@echo "    make rust-deny                    - Check advisories/licenses/sources (cargo-deny)"
 	@echo ""
@@ -305,6 +306,13 @@ rust-format-files:
 
 rust-tree:
 	$(CARGO) tree --manifest-path rust/Cargo.toml $(ARGS)
+
+# Regenerate the package-owned Unicode 17 full default case-folding table.
+# ARGS must name an official CaseFolding-17.0.0.txt file.
+generate-account-envelope-casefold:
+	@test -n "$(ARGS)" || (echo 'Pass CaseFolding-17.0.0.txt via ARGS="..."' && exit 1)
+	$(DART) scripts/generate_account_envelope_casefold.dart $(ARGS) \
+		rust/src/api/account_envelope/unicode17_casefold.rs
 
 # Generate deterministic license/notice attribution for the locked normal and
 # build dependency graph on every release target. Dev dependencies are omitted.

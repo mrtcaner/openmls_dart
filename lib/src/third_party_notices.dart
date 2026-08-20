@@ -11,4 +11,4 @@ const String openmlsThirdPartyNoticesNativeVersion = '3.1.0';
 
 /// SHA-256 of the UTF-8 bytes at [openmlsThirdPartyNoticesAssetKey].
 const String openmlsThirdPartyNoticesSha256 =
-    '3943d6e88df3cf06a37f17766f43a2b7a5603aab4ffb0fb088a915de1bcfca66';
+    '56b5e95efa5ab191d8767a8dbe012204811b17f6f27f000e02dcb99c0dde531e';
