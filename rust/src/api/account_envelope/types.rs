@@ -32,7 +32,7 @@ pub(super) const SIGNATURE_SCHEME_ID: u16 = 0x0807;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(u16)]
-pub(crate) enum AccountEnvelopeErrorCodeV1 {
+pub enum AccountEnvelopeErrorCodeV1 {
     AuthorityMismatch = 1,
     UnsupportedVersion = 2,
     NonCanonicalEncoding = 3,
@@ -45,7 +45,7 @@ pub(crate) enum AccountEnvelopeErrorCodeV1 {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct AccountEnvelopeErrorV1 {
+pub struct AccountEnvelopeErrorV1 {
     pub code: AccountEnvelopeErrorCodeV1,
 }
 
@@ -103,7 +103,7 @@ pub(super) fn is_canonical_uuid(value: &[u8; 16]) -> bool {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(u8)]
-pub(crate) enum AccountEnvelopeActivationKindV1 {
+pub enum AccountEnvelopeActivationKindV1 {
     Initial = 1,
     Rotation = 2,
     ContinuityReset = 3,
@@ -123,21 +123,33 @@ impl AccountEnvelopeActivationKindV1 {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct AccountEnvelopeResetReasonV1(u8);
+#[repr(u8)]
+pub enum AccountEnvelopeResetReasonV1 {
+    IdentityReset = 1,
+    ChatStoreReset = 2,
+    RootInstallationMove = 3,
+    RootOrDatabaseKeyLoss = 4,
+    AccountRecovery = 5,
+    Compromise = 6,
+}
 
 impl AccountEnvelopeResetReasonV1 {
     pub(crate) fn new(value: u8) -> AccountEnvelopeResult<Self> {
-        if (1..=6).contains(&value) {
-            Ok(Self(value))
-        } else {
-            Err(AccountEnvelopeErrorV1::new(
+        match value {
+            1 => Ok(Self::IdentityReset),
+            2 => Ok(Self::ChatStoreReset),
+            3 => Ok(Self::RootInstallationMove),
+            4 => Ok(Self::RootOrDatabaseKeyLoss),
+            5 => Ok(Self::AccountRecovery),
+            6 => Ok(Self::Compromise),
+            _ => Err(AccountEnvelopeErrorV1::new(
                 AccountEnvelopeErrorCodeV1::NonCanonicalEncoding,
-            ))
+            )),
         }
     }
 
     pub(super) const fn value(self) -> u8 {
-        self.0
+        self as u8
     }
 }
 
@@ -196,6 +208,7 @@ pub(crate) struct AccountEnvelopePublicBundleSummaryV1 {
     pub digest_sha256: [u8; 32],
 }
 
+#[flutter_rust_bridge::frb(ignore)]
 pub(crate) struct GenerateAccountEnvelopeKeyBundleResultV1 {
     pub private_bundle: Zeroizing<Vec<u8>>,
 }
@@ -206,6 +219,7 @@ pub(crate) enum SelfSignedPublicBundleResultV1 {
     NonPublishableRotationCandidate(Vec<u8>),
 }
 
+#[flutter_rust_bridge::frb(ignore)]
 pub(crate) struct AuthorizeSuccessorPublicBundleResultV1 {
     pub authorized_canonical_successor_public_bundle: Vec<u8>,
     pub retired_previous_private_bundle_candidate: Zeroizing<Vec<u8>>,
@@ -213,7 +227,7 @@ pub(crate) struct AuthorizeSuccessorPublicBundleResultV1 {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(u8)]
-pub(crate) enum AccountEnvelopePaddingClassV1 {
+pub enum AccountEnvelopePaddingClassV1 {
     Bytes512 = 1,
     Bytes1024 = 2,
     Bytes2048 = 3,
@@ -343,7 +357,7 @@ pub(crate) struct AccountEnvelopeContinuityResponseV1 {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum AccountEnvelopeContinuityDispositionV1 {
+pub enum AccountEnvelopeContinuityDispositionV1 {
     FirstObservation,
     PinnedUnchanged,
     RotationChainVerified,

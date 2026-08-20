@@ -7,7 +7,9 @@ use zeroize::Zeroizing;
 
 use super::codec::{decode_private_bundle, encode_private_bundle};
 use super::crypto::{hpke_round_trip_for_test, private_bundle_from_test_material};
-use super::invitation::default_case_fold;
+use super::invitation::{
+    canonicalize_and_encode_preview, decode_canonical_preview, default_case_fold,
+};
 use super::types::{
     AccountEnvelopeErrorCodeV1, AccountEnvelopePaddingClassV1,
     AccountEnvelopePrivateBundleAuthorityV1, PRIVATE_BUNDLE_ACTIVE_BYTES,
@@ -676,6 +678,50 @@ fn continuity_rejects_more_than_32_links_before_parsing_them() {
 }
 
 #[test]
+fn decoder_limits_fail_closed_before_nested_parsing() {
+    assert_eq!(
+        decode_private_bundle(&vec![0_u8; 257])
+            .err()
+            .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PrivateBundleInvalid)
+    );
+    assert_eq!(
+        verify_canonical_public_bundle_v1(&vec![0_u8; 257])
+            .err()
+            .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::NonCanonicalEncoding)
+    );
+    assert_eq!(
+        verify_continuity_response_v1(
+            None,
+            AccountEnvelopeContinuityResponseV1 {
+                public_bundles: vec![vec![0_u8; 65_537]],
+            },
+            false,
+        )
+        .err()
+        .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::BoundsExceeded)
+    );
+    assert_eq!(
+        super::invitation::parse_invitation_envelope(&vec![0_u8; 4_097])
+            .err()
+            .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::BoundsExceeded)
+    );
+
+    let mut oversized_nested_title = vec![1, 0x02, 0x01];
+    oversized_nested_title.extend(std::iter::repeat_n(b'a', 513));
+    oversized_nested_title.push(0);
+    assert_eq!(
+        decode_canonical_preview(&oversized_nested_title)
+            .err()
+            .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid)
+    );
+}
+
+#[test]
 fn continuity_accepts_exactly_32_consecutive_rotation_links() {
     let mut previous = generated(1);
     let pinned = initial_public_bundle(authority(1), &previous.private_bundle);
@@ -702,6 +748,127 @@ fn continuity_accepts_exactly_32_consecutive_rotation_links() {
     assert_eq!(
         verified.disposition,
         AccountEnvelopeContinuityDispositionV1::RotationChainVerified
+    );
+}
+
+#[test]
+fn committed_account_envelope_fixture_replays_exactly() {
+    let fixture: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../test/fixtures/account_envelope_v1.json"
+    ))
+    .expect("committed fixture must be valid JSON");
+    assert_eq!(
+        fixture["format"].as_str(),
+        Some("openmls_dart/account-envelope-fixtures/v1")
+    );
+
+    let account_id: [u8; 16] = fixture_hex(&fixture, &["accountIdHex"])
+        .try_into()
+        .expect("fixture account ID must be 16 bytes");
+    let root_installation_id: [u8; 16] = fixture_hex(&fixture, &["rootInstallationIdHex"])
+        .try_into()
+        .expect("fixture root installation ID must be 16 bytes");
+    assert_eq!(account_id, ACCOUNT_ID);
+    assert_eq!(root_installation_id, ROOT_INSTALLATION_ID);
+
+    let first_private = fixture_hex(&fixture, &["privateBundlesHex", "generation1"]);
+    let second_private = fixture_hex(&fixture, &["privateBundlesHex", "generation2"]);
+    let third_private = fixture_hex(&fixture, &["privateBundlesHex", "generation3"]);
+    let initial = initial_public_bundle(authority(1), &first_private);
+    assert_eq!(
+        initial,
+        fixture_hex(&fixture, &["publicBundlesHex", "initial"])
+    );
+    let rotation_candidate = create_self_signed_public_bundle_v1(
+        ACCOUNT_ID,
+        2,
+        AccountEnvelopeActivationKindV1::Rotation,
+        None,
+        1,
+        authority(2),
+        second_private.clone(),
+    )
+    .unwrap();
+    let SelfSignedPublicBundleResultV1::NonPublishableRotationCandidate(rotation_candidate) =
+        rotation_candidate
+    else {
+        unreachable!()
+    };
+    assert_eq!(
+        rotation_candidate,
+        fixture_hex(&fixture, &["publicBundlesHex", "rotationCandidate"])
+    );
+    let authorization = authorize_successor_public_bundle_v1(
+        authority(1),
+        first_private,
+        rotation_candidate.clone(),
+    )
+    .unwrap();
+    assert_eq!(
+        authorization.authorized_canonical_successor_public_bundle,
+        fixture_hex(&fixture, &["publicBundlesHex", "authorizedRotation"])
+    );
+    assert_eq!(
+        authorization
+            .retired_previous_private_bundle_candidate
+            .as_slice(),
+        fixture_hex(&fixture, &["retiredGeneration1PrivateBundleHex"])
+    );
+    let reset = create_self_signed_public_bundle_v1(
+        ACCOUNT_ID,
+        3,
+        AccountEnvelopeActivationKindV1::ContinuityReset,
+        Some(AccountEnvelopeResetReasonV1::AccountRecovery),
+        2,
+        authority(3),
+        third_private,
+    )
+    .unwrap();
+    let SelfSignedPublicBundleResultV1::CanonicalPublicBundle(reset) = reset else {
+        unreachable!()
+    };
+    assert_eq!(
+        reset,
+        fixture_hex(&fixture, &["publicBundlesHex", "continuityReset"])
+    );
+
+    for (bundle, digest_path) in [
+        (initial, ["digestsSha256Hex", "initial"]),
+        (
+            authorization.authorized_canonical_successor_public_bundle,
+            ["digestsSha256Hex", "authorizedRotation"],
+        ),
+        (reset, ["digestsSha256Hex", "continuityReset"]),
+    ] {
+        let summary = verify_canonical_public_bundle_v1(&bundle).unwrap();
+        assert_eq!(
+            summary.digest_sha256.as_slice(),
+            fixture_hex(&fixture, &digest_path)
+        );
+    }
+
+    let unicode = &fixture["unicode17"][0];
+    let preview = ContextInvitationPreviewV1 {
+        title: unicode["inputTitle"].as_str().map(ToOwned::to_owned),
+        tags: fixture_strings(unicode, "inputTags"),
+    };
+    let canonical = canonicalize_and_encode_preview(&preview).unwrap();
+    let decoded = decode_canonical_preview(&canonical).unwrap();
+    assert_eq!(
+        decoded.title.as_deref(),
+        unicode["normalizedTitle"].as_str()
+    );
+    assert_eq!(decoded.tags, fixture_strings(unicode, "normalizedTags"));
+
+    let duplicate_preview = ContextInvitationPreviewV1 {
+        title: None,
+        tags: fixture_strings(&fixture["unicode17"][1], "duplicateTags"),
+    };
+    assert_eq!(
+        canonicalize_and_encode_preview(&duplicate_preview)
+            .err()
+            .map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PlaintextSchemaInvalid)
     );
 }
 
@@ -745,4 +912,34 @@ fn decode_hex<const N: usize>(input: &str) -> [u8; N] {
         *byte = u8::from_str_radix(&compact[index * 2..index * 2 + 2], 16).unwrap();
     }
     output
+}
+
+fn fixture_hex(fixture: &serde_json::Value, path: &[&str]) -> Vec<u8> {
+    let mut value = fixture;
+    for part in path {
+        value = &value[*part];
+    }
+    decode_hex_vec(value.as_str().expect("fixture hex field must be a string"))
+}
+
+fn fixture_strings(fixture: &serde_json::Value, field: &str) -> Vec<String> {
+    fixture[field]
+        .as_array()
+        .expect("fixture string field must be an array")
+        .iter()
+        .map(|value| {
+            value
+                .as_str()
+                .expect("fixture array member must be a string")
+                .to_owned()
+        })
+        .collect()
+}
+
+fn decode_hex_vec(input: &str) -> Vec<u8> {
+    assert_eq!(input.len() % 2, 0);
+    (0..input.len())
+        .step_by(2)
+        .map(|index| u8::from_str_radix(&input[index..index + 2], 16).unwrap())
+        .collect()
 }

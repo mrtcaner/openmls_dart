@@ -17,6 +17,7 @@ crate-type = ["cdylib", "staticlib", "rlib"]
 # Generator for committed native receive v1 binary interop fixtures. Excluded
 # from package/release builds.
 native-receive-fixtures = []
+account-envelope-fuzzing = []
 
 [dependencies]
 flutter_rust_bridge = "=2.12.0"

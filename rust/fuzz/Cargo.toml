@@ -14,6 +14,7 @@ libfuzzer-sys = "0.4"
 
 [dependencies.openmls_frb]
 path = ".."
+features = ["account-envelope-fuzzing"]
 
 # Keep overflow and debug-assertion checks on even for optimized fuzzing runs
 # so arithmetic bugs surface as crashes instead of silent wraparound.
@@ -44,6 +45,13 @@ bench = false
 [[bin]]
 name = "native_receive_v1"
 path = "fuzz_targets/native_receive_v1.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "account_envelope_v1"
+path = "fuzz_targets/account_envelope_v1.rs"
 test = false
 doc = false
 bench = false

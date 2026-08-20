@@ -2,23 +2,36 @@
 //!
 //! This module is deliberately separate from MLS. It does not read or mutate an
 //! MLS group, KeyPackage, credential, exporter, storage snapshot, or native
-//! receive operation. Phase 1 remains crate-private until the high-level FRB
-//! surface is reviewed and generated in Phase 2.
+//! receive operation. The public surface is the stateless, high-level
+//! [`AccountEnvelopeCrypto`] facade; codec and provider details stay internal.
 
+pub mod bridge;
 mod codec;
 mod crypto;
 mod invitation;
-mod types;
+pub mod types;
 mod unicode17_casefold;
 
 use sha2::{Digest, Sha256};
 use zeroize::Zeroizing;
 
-pub(crate) use types::{
+pub use bridge::{
+    AccountEnvelopeCrypto, AccountEnvelopePrivateBundleAuthorityInputV1,
+    AccountEnvelopePublicBundleCandidateKindV1, AccountEnvelopePublicBundleCandidateV1,
+    AccountEnvelopePublicBundleSummaryOutputV1, AccountEnvelopeSuccessorAuthorizationV1,
+    ContextInvitationAuthorityInputV1, ContextInvitationPreviewInputV1,
+    ContextInvitationPreviewOutputV1, ExpectedContextInvitationAuthorityInputV1,
+    GenerateAccountEnvelopeKeyBundleOutputV1, VerifyAccountEnvelopeContinuityOutputV1,
+};
+pub use types::{
     AccountEnvelopeActivationKindV1, AccountEnvelopeContinuityDispositionV1,
-    AccountEnvelopeContinuityResponseV1, AccountEnvelopeErrorCodeV1, AccountEnvelopeErrorV1,
-    AccountEnvelopePrivateBundleAuthorityV1, AccountEnvelopePublicBundleSummaryV1,
-    AccountEnvelopeResetReasonV1, AuthorizeSuccessorPublicBundleResultV1,
+    AccountEnvelopeErrorCodeV1, AccountEnvelopeErrorV1, AccountEnvelopePaddingClassV1,
+    AccountEnvelopeResetReasonV1,
+};
+
+pub(crate) use types::{
+    AccountEnvelopeContinuityResponseV1, AccountEnvelopePrivateBundleAuthorityV1,
+    AccountEnvelopePublicBundleSummaryV1, AuthorizeSuccessorPublicBundleResultV1,
     ContextInvitationAuthorityV1, ContextInvitationPreviewV1, ExpectedContextInvitationAuthorityV1,
     GenerateAccountEnvelopeKeyBundleResultV1, OpenContextInvitationPreviewResultV1,
     SealContextInvitationPreviewResultV1, SelfSignedPublicBundleResultV1,
@@ -531,6 +544,39 @@ fn bounds_exceeded() -> AccountEnvelopeErrorV1 {
 
 fn noncanonical() -> AccountEnvelopeErrorV1 {
     AccountEnvelopeErrorV1::new(AccountEnvelopeErrorCodeV1::NonCanonicalEncoding)
+}
+
+/// Decoder-only entry point for the separate cargo-fuzz crate.
+///
+/// This feature is never enabled by normal or release builds. It intentionally
+/// returns no parsed value and exposes no cryptographic primitive.
+#[cfg(feature = "account-envelope-fuzzing")]
+pub fn fuzz_decode_account_envelope_v1(input: &[u8]) {
+    let Some((&selector, payload)) = input.split_first() else {
+        return;
+    };
+    match selector % 6 {
+        0 => {
+            let _ = parse_complete_public_bundle(payload);
+        }
+        1 => {
+            let _ = parse_rotation_candidate(payload);
+        }
+        2 => {
+            let _ = decode_private_bundle(payload);
+        }
+        3 => {
+            let _ = decode_canonical_preview(payload);
+        }
+        4 => {
+            let _ = parse_invitation_envelope(payload);
+        }
+        _ => {
+            if let Ok(text) = std::str::from_utf8(payload) {
+                let _ = invitation::default_case_fold(text);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
