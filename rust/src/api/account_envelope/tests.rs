@@ -319,6 +319,51 @@ fn retired_frame_cannot_sign_and_reencoding_is_canonical() {
 }
 
 #[test]
+fn decoded_private_bundle_owned_secret_material_zeroizes() {
+    let generated = generated(1);
+    let mut decoded = decode_private_bundle(&generated.private_bundle).unwrap();
+    assert!(decoded.hpke_private_key.iter().any(|byte| *byte != 0));
+    assert!(
+        decoded
+            .signature_private_key
+            .as_ref()
+            .unwrap()
+            .iter()
+            .any(|byte| *byte != 0)
+    );
+
+    decoded.zeroize_secret_material();
+    assert!(decoded.hpke_private_key.iter().all(|byte| *byte == 0));
+    assert!(
+        decoded
+            .signature_private_key
+            .as_ref()
+            .unwrap()
+            .iter()
+            .all(|byte| *byte == 0)
+    );
+}
+
+#[test]
+fn production_account_envelope_sources_contain_no_logging_macros() {
+    for (name, source) in [
+        ("bridge.rs", include_str!("bridge.rs")),
+        ("codec.rs", include_str!("codec.rs")),
+        ("crypto.rs", include_str!("crypto.rs")),
+        ("invitation.rs", include_str!("invitation.rs")),
+        ("mod.rs", include_str!("mod.rs")),
+        ("types.rs", include_str!("types.rs")),
+    ] {
+        for forbidden in ["log::", "tracing::", "println!", "eprintln!", "dbg!"] {
+            assert!(
+                !source.contains(forbidden),
+                "{name} contains forbidden logging marker {forbidden}"
+            );
+        }
+    }
+}
+
+#[test]
 fn rfc_8032_ed25519_test_vector_one_matches_provider() {
     let private =
         decode_hex::<32>("9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60");

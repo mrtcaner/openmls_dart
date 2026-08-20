@@ -187,12 +187,18 @@ pub(super) struct DecodedPrivateBundleV1 {
     pub signature_public_key: [u8; KEY_BYTES],
 }
 
-impl Drop for DecodedPrivateBundleV1 {
-    fn drop(&mut self) {
+impl DecodedPrivateBundleV1 {
+    pub(super) fn zeroize_secret_material(&mut self) {
         self.hpke_private_key.zeroize();
         if let Some(private_key) = &mut self.signature_private_key {
             private_key.zeroize();
         }
+    }
+}
+
+impl Drop for DecodedPrivateBundleV1 {
+    fn drop(&mut self) {
+        self.zeroize_secret_material();
     }
 }
 
