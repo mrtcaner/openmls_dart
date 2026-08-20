@@ -140,6 +140,7 @@ impl AccountEnvelopeCrypto {
         expected_local_private_bundle_authority: AccountEnvelopePrivateBundleAuthorityInputV1,
         private_bundle: Vec<u8>,
     ) -> Result<AccountEnvelopePublicBundleCandidateV1, AccountEnvelopeErrorV1> {
+        let mut private_bundle = Zeroizing::new(private_bundle);
         let account_id = exact_uuid(account_id)?;
         let expected = expected_local_private_bundle_authority.try_into_core()?;
         let result = super::create_self_signed_public_bundle_v1(
@@ -149,7 +150,7 @@ impl AccountEnvelopeCrypto {
             reset_reason,
             previous_generation,
             expected,
-            private_bundle,
+            take_zeroizing(&mut private_bundle),
         )?;
         Ok(match result {
             SelfSignedPublicBundleResultV1::CanonicalPublicBundle(bytes) => {
@@ -174,10 +175,11 @@ impl AccountEnvelopeCrypto {
         previous_private_bundle: Vec<u8>,
         self_signed_successor_public_bundle: Vec<u8>,
     ) -> Result<AccountEnvelopeSuccessorAuthorizationV1, AccountEnvelopeErrorV1> {
+        let mut previous_private_bundle = Zeroizing::new(previous_private_bundle);
         let expected = expected_previous_local_private_bundle_authority.try_into_core()?;
         let mut result = super::authorize_successor_public_bundle_v1(
             expected,
-            previous_private_bundle,
+            take_zeroizing(&mut previous_private_bundle),
             self_signed_successor_public_bundle,
         )?;
         Ok(AccountEnvelopeSuccessorAuthorizationV1 {
@@ -217,6 +219,7 @@ impl AccountEnvelopeCrypto {
         recipient_public_bundle: Vec<u8>,
         sender_private_bundle: Vec<u8>,
     ) -> Result<Vec<u8>, AccountEnvelopeErrorV1> {
+        let mut sender_private_bundle = Zeroizing::new(sender_private_bundle);
         let result = super::seal_context_invitation_preview_v1(
             authority.try_into_core()?,
             expected_local_private_bundle_authority.try_into_core()?,
@@ -225,7 +228,7 @@ impl AccountEnvelopeCrypto {
                 tags: preview.tags,
             },
             recipient_public_bundle,
-            sender_private_bundle,
+            take_zeroizing(&mut sender_private_bundle),
         )?;
         Ok(result.canonical_envelope)
     }
@@ -237,10 +240,11 @@ impl AccountEnvelopeCrypto {
         recipient_private_bundle: Vec<u8>,
         sender_public_bundle: Vec<u8>,
     ) -> Result<ContextInvitationPreviewOutputV1, AccountEnvelopeErrorV1> {
+        let mut recipient_private_bundle = Zeroizing::new(recipient_private_bundle);
         let result = super::verify_and_open_context_invitation_preview_v1(
             envelope,
             expected_authority.try_into_core()?,
-            recipient_private_bundle,
+            take_zeroizing(&mut recipient_private_bundle),
             sender_public_bundle,
         )?;
         let mut preview = result.preview;

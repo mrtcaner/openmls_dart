@@ -73,13 +73,13 @@ pub(crate) fn create_self_signed_public_bundle_v1(
     expected_local_private_bundle_authority: AccountEnvelopePrivateBundleAuthorityV1,
     private_bundle: Vec<u8>,
 ) -> AccountEnvelopeResult<SelfSignedPublicBundleResultV1> {
+    let private_bundle_bytes = Zeroizing::new(private_bundle);
     expected_local_private_bundle_authority.validate()?;
     if account_id != expected_local_private_bundle_authority.account_id
         || generation != expected_local_private_bundle_authority.generation
     {
         return Err(authority_mismatch());
     }
-    let private_bundle_bytes = Zeroizing::new(private_bundle);
     let decoded = decode_and_validate_private_bundle(
         &private_bundle_bytes,
         expected_local_private_bundle_authority,
@@ -126,8 +126,8 @@ pub(crate) fn authorize_successor_public_bundle_v1(
     previous_private_bundle: Vec<u8>,
     self_signed_successor_public_bundle: Vec<u8>,
 ) -> AccountEnvelopeResult<AuthorizeSuccessorPublicBundleResultV1> {
-    expected_previous_local_private_bundle_authority.validate()?;
     let previous_private_bytes = Zeroizing::new(previous_private_bundle);
+    expected_previous_local_private_bundle_authority.validate()?;
     let mut previous = decode_and_validate_private_bundle(
         &previous_private_bytes,
         expected_previous_local_private_bundle_authority,
@@ -346,6 +346,7 @@ pub(crate) fn seal_context_invitation_preview_v1(
     recipient_public_bundle: Vec<u8>,
     sender_private_bundle: Vec<u8>,
 ) -> AccountEnvelopeResult<SealContextInvitationPreviewResultV1> {
+    let sender_private_bytes = Zeroizing::new(sender_private_bundle);
     authority.validate()?;
     expected_local_private_bundle_authority.validate()?;
     if expected_local_private_bundle_authority.account_id != authority.sender_account_id
@@ -353,7 +354,6 @@ pub(crate) fn seal_context_invitation_preview_v1(
     {
         return Err(authority_mismatch());
     }
-    let sender_private_bytes = Zeroizing::new(sender_private_bundle);
     let sender = decode_and_validate_private_bundle(
         &sender_private_bytes,
         expected_local_private_bundle_authority,
@@ -417,6 +417,7 @@ pub(crate) fn verify_and_open_context_invitation_preview_v1(
     recipient_private_bundle: Vec<u8>,
     sender_public_bundle: Vec<u8>,
 ) -> AccountEnvelopeResult<OpenContextInvitationPreviewResultV1> {
+    let recipient_private_bytes = Zeroizing::new(recipient_private_bundle);
     expected_authority.validate()?;
     let parsed = parse_invitation_envelope(&envelope)?;
     if parsed.authority != expected_authority.invitation {
@@ -434,7 +435,6 @@ pub(crate) fn verify_and_open_context_invitation_preview_v1(
         root_installation_id: expected_authority.local_root_installation_id,
         root_authority_generation: expected_authority.local_root_authority_generation,
     };
-    let recipient_private_bytes = Zeroizing::new(recipient_private_bundle);
     let recipient = decode_and_validate_private_bundle(
         &recipient_private_bytes,
         expected_recipient_authority,
