@@ -10,7 +10,10 @@
 ///
 /// The commit/tag/push run with an inherited terminal, so you enter your
 /// signing passphrase interactively during the command — no separate manual
-/// commit/tag step.
+/// commit/tag step. A failed signing step is retried automatically — the error
+/// is printed and the passphrase is asked for again, with Ctrl-C as the way out.
+/// A failed push stops normally, and a run interrupted after its commit is
+/// resumed by re-running the same command.
 ///
 /// Usage:
 ///   make release-frb ARGS="--version X.Y.Z"
@@ -79,6 +82,12 @@ What it does:
   4. Creates a SIGNED commit and SIGNED tag "openmls_frb-X.Y.Z"
      (you enter your passphrase during the command).
   5. Pushes main and the tag, which triggers the native build workflow.
+
+If a signing step fails — a mistyped passphrase is the usual cause, and signing
+tools do not re-prompt on their own — it is run again, so the passphrase prompt
+comes back. Press Ctrl-C to give up. A push failure stops normally rather than
+retrying a protected-branch rejection forever. Re-run the same command to resume
+at the tag/push step.
 
 After the native build succeeds, cut the Dart package release (stage 2).
 ''');

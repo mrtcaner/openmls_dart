@@ -12,7 +12,10 @@
 ///
 /// The commit/tag/push run with an inherited terminal, so you enter your
 /// signing passphrase interactively during the command — no separate manual
-/// commit/tag step.
+/// commit/tag step. A failed signing step is retried automatically — the error
+/// is printed and the passphrase is asked for again, with Ctrl-C as the way out.
+/// A failed push stops normally, and a run interrupted after its commit is
+/// resumed by re-running the same command.
 ///
 /// Usage:
 ///   make release ARGS="--version X.Y.Z"
@@ -100,6 +103,12 @@ What it does:
   6. Creates a SIGNED commit and SIGNED tag "vX.Y.Z" (you enter your passphrase
      during the command).
   7. Pushes main and the tag, which triggers the pub.dev publish workflow.
+
+If a signing step fails — a mistyped passphrase is the usual cause, and signing
+tools do not re-prompt on their own — it is run again, so the passphrase prompt
+comes back. Press Ctrl-C to give up. A push failure stops normally rather than
+retrying a protected-branch rejection forever. Re-run the same command to resume
+at the tag/push step.
 
 This is stage 2. Run stage 1 first (make release-frb) and let its native build
 finish, so the binary exists before the published package downloads it.
