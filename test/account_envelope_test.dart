@@ -401,6 +401,33 @@ void main() {
           ),
         ),
       );
+
+      final generated = AccountEnvelopeCrypto.generateKeyBundleV1(
+        accountId: _senderAccountId,
+        generation: BigInt.one,
+        rootInstallationId: _senderRootId,
+        rootAuthorityGeneration: BigInt.one,
+      );
+      expect(
+        () => AccountEnvelopeCrypto.createSelfSignedPublicBundleV1(
+          accountId: _senderAccountId,
+          generation: BigInt.one,
+          activationKind: AccountEnvelopeActivationKindV1.initial,
+          previousGeneration: BigInt.zero,
+          expectedLocalPrivateBundleAuthority: _privateAuthority(
+            _senderAccountId,
+            _recipientRootId,
+          ),
+          privateBundle: generated.privateBundle,
+        ),
+        throwsA(
+          isA<AccountEnvelopeErrorV1>().having(
+            (error) => error.code,
+            'code',
+            AccountEnvelopeErrorCodeV1.privateBundleInvalid,
+          ),
+        ),
+      );
     },
   );
 }

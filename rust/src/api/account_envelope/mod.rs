@@ -497,7 +497,7 @@ fn decode_and_validate_private_bundle(
 ) -> AccountEnvelopeResult<DecodedPrivateBundleV1> {
     let decoded = decode_private_bundle(private_bundle)?;
     if decoded.authority != expected_authority {
-        return Err(authority_mismatch());
+        return Err(private_bundle_invalid());
     }
     if require_active && decoded.state != PrivateBundleStateV1::ActiveFull {
         return Err(private_bundle_invalid());

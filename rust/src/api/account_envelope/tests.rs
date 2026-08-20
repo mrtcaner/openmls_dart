@@ -239,7 +239,7 @@ fn rotation_is_nonpublishable_until_predecessor_authorizes_it() {
 }
 
 #[test]
-fn authority_mismatch_and_corruption_return_no_result() {
+fn caller_authority_mismatch_and_invalid_private_bundle_are_distinct() {
     let generated = generated(1);
     let wrong_authority = AccountEnvelopePrivateBundleAuthorityV1 {
         root_authority_generation: 2,
@@ -256,6 +256,20 @@ fn authority_mismatch_and_corruption_return_no_result() {
     );
     assert_eq!(
         mismatch.err().map(|error| error.code),
+        Some(AccountEnvelopeErrorCodeV1::PrivateBundleInvalid)
+    );
+
+    let contradictory_arguments = create_self_signed_public_bundle_v1(
+        RECIPIENT_ACCOUNT_ID,
+        1,
+        AccountEnvelopeActivationKindV1::Initial,
+        None,
+        0,
+        authority(1),
+        generated.private_bundle.to_vec(),
+    );
+    assert_eq!(
+        contradictory_arguments.err().map(|error| error.code),
         Some(AccountEnvelopeErrorCodeV1::AuthorityMismatch)
     );
 
