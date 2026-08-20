@@ -8,7 +8,7 @@
 # On Windows CI (Git Bash), use cmd to run fvm.bat from PATH:
 # Example: make build ARGS="--target x86_64-pc-windows-msvc" FVM="cmd //c fvm"
 
-.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets third-party-notices verify-third-party-notices rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree generate-account-envelope-casefold fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
+.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test test-account-envelope-mobile coverage analyze format format-check get clean version check-new-openmls-version check-exists-openmls-frb-release check-template-updates check-targets third-party-notices verify-third-party-notices rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree generate-account-envelope-casefold fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
 
 # FVM command - can be overridden to provide full path on Windows CI
 FVM ?= fvm
@@ -100,6 +100,8 @@ help:
 	@echo "  DART QUALITY"
 	@echo "    make test                         - Run tests"
 	@echo "                                        Example: make test ARGS=\"test/example_test.dart\""
+	@echo "    make test-account-envelope-mobile - Run native account-envelope integration test"
+	@echo "                                        Example: make test-account-envelope-mobile ARGS=\"-d emulator-5554\""
 	@echo "    make coverage                     - Run tests with coverage report"
 	@echo "    make analyze                      - Run static analysis"
 	@echo "                                        Example: make analyze ARGS=\"--fatal-infos\""
@@ -408,6 +410,11 @@ release:
 
 test:
 	$(DART) test $(ARGS)
+
+# Exercise the real generated API and native asset inside an Android emulator,
+# iOS simulator, or physical device selected with ARGS="-d <device>".
+test-account-envelope-mobile:
+	cd example && $(FLUTTER) test integration_test/account_envelope_test.dart $(ARGS)
 
 # Run tests through Flutter's host test runner. This specifically exercises the
 # NativeAssetsManifest path used by Flutter applications on macOS/Linux/Windows.
