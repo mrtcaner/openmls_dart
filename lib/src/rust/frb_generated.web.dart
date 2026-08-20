@@ -6,6 +6,8 @@
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
+import 'api/account_envelope/bridge.dart';
+import 'api/account_envelope/types.dart';
 import 'api/config.dart';
 import 'api/credential.dart';
 import 'api/group_e2ee.dart';
@@ -28,12 +30,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   });
 
   CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_AccountEnvelopeCryptoPtr => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto;
+
+  CrossPlatformFinalizerArg
   get rust_arc_decrement_strong_count_MlsCredentialPtr => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential;
 
   CrossPlatformFinalizerArg
   get rust_arc_decrement_strong_count_MlsSignatureKeyPairPtr => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair;
+
+  @protected
+  AccountEnvelopeCrypto
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    dynamic raw,
+  );
 
   @protected
   MlsCredential
@@ -60,6 +72,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  AccountEnvelopeCrypto
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    dynamic raw,
+  );
+
+  @protected
   MlsCredential
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     dynamic raw,
@@ -75,7 +93,77 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String dco_decode_String(dynamic raw);
 
   @protected
+  AccountEnvelopeActivationKindV1
+  dco_decode_account_envelope_activation_kind_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopeContinuityDispositionV1
+  dco_decode_account_envelope_continuity_disposition_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopeErrorCodeV1 dco_decode_account_envelope_error_code_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  AccountEnvelopeErrorV1 dco_decode_account_envelope_error_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopePaddingClassV1 dco_decode_account_envelope_padding_class_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  dco_decode_account_envelope_private_bundle_authority_input_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopePublicBundleCandidateKindV1
+  dco_decode_account_envelope_public_bundle_candidate_kind_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopePublicBundleCandidateV1
+  dco_decode_account_envelope_public_bundle_candidate_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopePublicBundleSummaryOutputV1
+  dco_decode_account_envelope_public_bundle_summary_output_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopeResetReasonV1 dco_decode_account_envelope_reset_reason_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  AccountEnvelopeSuccessorAuthorizationV1
+  dco_decode_account_envelope_successor_authorization_v_1(dynamic raw);
+
+  @protected
   bool dco_decode_bool(dynamic raw);
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  dco_decode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  AccountEnvelopeResetReasonV1
+  dco_decode_box_autoadd_account_envelope_reset_reason_v_1(dynamic raw);
+
+  @protected
+  ContextInvitationAuthorityInputV1
+  dco_decode_box_autoadd_context_invitation_authority_input_v_1(dynamic raw);
+
+  @protected
+  ContextInvitationPreviewInputV1
+  dco_decode_box_autoadd_context_invitation_preview_input_v_1(dynamic raw);
+
+  @protected
+  ExpectedContextInvitationAuthorityInputV1
+  dco_decode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    dynamic raw,
+  );
 
   @protected
   MlsAuthorizedOwnerV1 dco_decode_box_autoadd_mls_authorized_owner_v_1(
@@ -102,6 +190,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int dco_decode_box_autoadd_u_32(dynamic raw);
 
   @protected
+  ContextInvitationAuthorityInputV1
+  dco_decode_context_invitation_authority_input_v_1(dynamic raw);
+
+  @protected
+  ContextInvitationPreviewInputV1
+  dco_decode_context_invitation_preview_input_v_1(dynamic raw);
+
+  @protected
+  ContextInvitationPreviewOutputV1
+  dco_decode_context_invitation_preview_output_v_1(dynamic raw);
+
+  @protected
   CreateGroupWithStorageResult dco_decode_create_group_with_storage_result(
     dynamic raw,
   );
@@ -116,12 +216,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExpectedContextInvitationAuthorityInputV1
+  dco_decode_expected_context_invitation_authority_input_v_1(dynamic raw);
+
+  @protected
+  GenerateAccountEnvelopeKeyBundleOutputV1
+  dco_decode_generate_account_envelope_key_bundle_output_v_1(dynamic raw);
+
+  @protected
   int dco_decode_i_32(dynamic raw);
 
   @protected
   JoinGroupWithStorageResult dco_decode_join_group_with_storage_result(
     dynamic raw,
   );
+
+  @protected
+  List<String> dco_decode_list_String(dynamic raw);
 
   @protected
   List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw);
@@ -194,6 +305,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsWireFormatPolicy dco_decode_mls_wire_format_policy(dynamic raw);
 
   @protected
+  String? dco_decode_opt_String(dynamic raw);
+
+  @protected
+  AccountEnvelopeResetReasonV1?
+  dco_decode_opt_box_autoadd_account_envelope_reset_reason_v_1(dynamic raw);
+
+  @protected
   MlsProposalType? dco_decode_opt_box_autoadd_mls_proposal_type(dynamic raw);
 
   @protected
@@ -232,6 +350,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt dco_decode_usize(dynamic raw);
 
   @protected
+  VerifyAccountEnvelopeContinuityOutputV1
+  dco_decode_verify_account_envelope_continuity_output_v_1(dynamic raw);
+
+  @protected
+  AccountEnvelopeCrypto
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsCredential
   sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     SseDeserializer deserializer,
@@ -256,6 +384,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  AccountEnvelopeCrypto
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsCredential
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     SseDeserializer deserializer,
@@ -271,7 +405,97 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
+  AccountEnvelopeActivationKindV1
+  sse_decode_account_envelope_activation_kind_v_1(SseDeserializer deserializer);
+
+  @protected
+  AccountEnvelopeContinuityDispositionV1
+  sse_decode_account_envelope_continuity_disposition_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopeErrorCodeV1 sse_decode_account_envelope_error_code_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopeErrorV1 sse_decode_account_envelope_error_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopePaddingClassV1 sse_decode_account_envelope_padding_class_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  sse_decode_account_envelope_private_bundle_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopePublicBundleCandidateKindV1
+  sse_decode_account_envelope_public_bundle_candidate_kind_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopePublicBundleCandidateV1
+  sse_decode_account_envelope_public_bundle_candidate_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopePublicBundleSummaryOutputV1
+  sse_decode_account_envelope_public_bundle_summary_output_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopeResetReasonV1 sse_decode_account_envelope_reset_reason_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopeSuccessorAuthorizationV1
+  sse_decode_account_envelope_successor_authorization_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   bool sse_decode_bool(SseDeserializer deserializer);
+
+  @protected
+  AccountEnvelopePrivateBundleAuthorityInputV1
+  sse_decode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AccountEnvelopeResetReasonV1
+  sse_decode_box_autoadd_account_envelope_reset_reason_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ContextInvitationAuthorityInputV1
+  sse_decode_box_autoadd_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ContextInvitationPreviewInputV1
+  sse_decode_box_autoadd_context_invitation_preview_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExpectedContextInvitationAuthorityInputV1
+  sse_decode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
 
   @protected
   MlsAuthorizedOwnerV1 sse_decode_box_autoadd_mls_authorized_owner_v_1(
@@ -302,6 +526,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
 
   @protected
+  ContextInvitationAuthorityInputV1
+  sse_decode_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ContextInvitationPreviewInputV1
+  sse_decode_context_invitation_preview_input_v_1(SseDeserializer deserializer);
+
+  @protected
+  ContextInvitationPreviewOutputV1
+  sse_decode_context_invitation_preview_output_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   CreateGroupWithStorageResult sse_decode_create_group_with_storage_result(
     SseDeserializer deserializer,
   );
@@ -318,12 +558,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExpectedContextInvitationAuthorityInputV1
+  sse_decode_expected_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  GenerateAccountEnvelopeKeyBundleOutputV1
+  sse_decode_generate_account_envelope_key_bundle_output_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
   JoinGroupWithStorageResult sse_decode_join_group_with_storage_result(
     SseDeserializer deserializer,
   );
+
+  @protected
+  List<String> sse_decode_list_String(SseDeserializer deserializer);
 
   @protected
   List<Uint8List> sse_decode_list_list_prim_u_8_strict(
@@ -414,6 +669,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer);
+
+  @protected
+  AccountEnvelopeResetReasonV1?
+  sse_decode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsProposalType? sse_decode_opt_box_autoadd_mls_proposal_type(
     SseDeserializer deserializer,
   );
@@ -456,9 +720,120 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt sse_decode_usize(SseDeserializer deserializer);
 
   @protected
+  VerifyAccountEnvelopeContinuityOutputV1
+  sse_decode_verify_account_envelope_continuity_output_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   String cst_encode_String(String raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw;
+  }
+
+  @protected
+  JSAny cst_encode_account_envelope_error_v_1(AccountEnvelopeErrorV1 raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [cst_encode_account_envelope_error_code_v_1(raw.code)].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.accountId),
+      cst_encode_u_64(raw.generation),
+      cst_encode_list_prim_u_8_strict(raw.rootInstallationId),
+      cst_encode_u_64(raw.rootAuthorityGeneration),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_account_envelope_public_bundle_candidate_v_1(
+    AccountEnvelopePublicBundleCandidateV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_account_envelope_public_bundle_candidate_kind_v_1(raw.kind),
+      cst_encode_list_prim_u_8_strict(raw.bytes),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_account_envelope_public_bundle_summary_output_v_1(
+    AccountEnvelopePublicBundleSummaryOutputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.accountId),
+      cst_encode_u_64(raw.generation),
+      cst_encode_list_prim_u_8_strict(raw.hpkePublicKey),
+      cst_encode_list_prim_u_8_strict(raw.signaturePublicKey),
+      cst_encode_account_envelope_activation_kind_v_1(raw.activationKind),
+      cst_encode_u_64(raw.previousGeneration),
+      cst_encode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+        raw.resetReason,
+      ),
+      cst_encode_list_prim_u_8_strict(raw.digestSha256),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_account_envelope_successor_authorization_v_1(
+    AccountEnvelopeSuccessorAuthorizationV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(
+        raw.authorizedCanonicalSuccessorPublicBundle,
+      ),
+      cst_encode_list_prim_u_8_strict(
+        raw.retiredPreviousPrivateBundleCandidate,
+      ),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny
+  cst_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_account_envelope_private_bundle_authority_input_v_1(raw);
+  }
+
+  @protected
+  int cst_encode_box_autoadd_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_account_envelope_reset_reason_v_1(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_context_invitation_authority_input_v_1(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_context_invitation_preview_input_v_1(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_expected_context_invitation_authority_input_v_1(raw);
   }
 
   @protected
@@ -504,6 +879,48 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.envelopeId),
+      cst_encode_list_prim_u_8_strict(raw.inviteId),
+      cst_encode_list_prim_u_8_strict(raw.senderAccountId),
+      cst_encode_u_64(raw.senderGeneration),
+      cst_encode_list_prim_u_8_strict(raw.recipientAccountId),
+      cst_encode_u_64(raw.recipientGeneration),
+      cst_encode_u_64(raw.authorityAttempt),
+      cst_encode_u_64(raw.relaySlotVersion),
+      cst_encode_u_64(raw.serverCreatedAtUnixMs),
+      cst_encode_u_64(raw.serverExpiresAtUnixMs),
+      cst_encode_account_envelope_padding_class_v_1(raw.paddingClass),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_opt_String(raw.title),
+      cst_encode_list_String(raw.tags),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_context_invitation_preview_output_v_1(
+    ContextInvitationPreviewOutputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_opt_String(raw.title),
+      cst_encode_list_String(raw.tags),
+    ].jsify()!;
+  }
+
+  @protected
   JSAny cst_encode_create_group_with_storage_result(
     CreateGroupWithStorageResult raw,
   ) {
@@ -538,6 +955,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_context_invitation_authority_input_v_1(raw.invitation),
+      cst_encode_list_prim_u_8_strict(raw.localRootInstallationId),
+      cst_encode_u_64(raw.localRootAuthorityGeneration),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_generate_account_envelope_key_bundle_output_v_1(
+    GenerateAccountEnvelopeKeyBundleOutputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [cst_encode_list_prim_u_8_strict(raw.privateBundle)].jsify()!;
+  }
+
+  @protected
   JSAny cst_encode_join_group_with_storage_result(
     JoinGroupWithStorageResult raw,
   ) {
@@ -547,6 +984,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
       cst_encode_mls_storage_batch(raw.storageBatch),
     ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_list_String(List<String> raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw.map(cst_encode_String).toList().jsify()!;
   }
 
   @protected
@@ -710,6 +1153,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  String? cst_encode_opt_String(String? raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null ? null : cst_encode_String(raw);
+  }
+
+  @protected
+  int? cst_encode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? null
+        : cst_encode_box_autoadd_account_envelope_reset_reason_v_1(raw);
+  }
+
+  @protected
   int? cst_encode_opt_box_autoadd_mls_proposal_type(MlsProposalType? raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw == null ? null : cst_encode_box_autoadd_mls_proposal_type(raw);
@@ -777,6 +1236,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_verify_account_envelope_continuity_output_v_1(
+    VerifyAccountEnvelopeContinuityOutputV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_account_envelope_continuity_disposition_v_1(raw.disposition),
+      cst_encode_list_prim_u_8_strict(raw.verifiedPublicBundle),
+      cst_encode_account_envelope_public_bundle_summary_output_v_1(
+        raw.verifiedSummary,
+      ),
+    ].jsify()!;
+  }
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto raw,
+  );
+
+  @protected
   int
   cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential raw,
@@ -802,6 +1281,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto raw,
+  );
+
+  @protected
+  int
   cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential raw,
   );
@@ -810,6 +1295,36 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int
   cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair(
     MlsSignatureKeyPair raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_activation_kind_v_1(
+    AccountEnvelopeActivationKindV1 raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_continuity_disposition_v_1(
+    AccountEnvelopeContinuityDispositionV1 raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_error_code_v_1(
+    AccountEnvelopeErrorCodeV1 raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_padding_class_v_1(
+    AccountEnvelopePaddingClassV1 raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_public_bundle_candidate_kind_v_1(
+    AccountEnvelopePublicBundleCandidateKindV1 raw,
+  );
+
+  @protected
+  int cst_encode_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 raw,
   );
 
   @protected
@@ -844,6 +1359,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential self,
     SseSerializer serializer,
@@ -872,6 +1394,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    AccountEnvelopeCrypto self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     MlsCredential self,
     SseSerializer serializer,
@@ -888,7 +1417,104 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
+  void sse_encode_account_envelope_activation_kind_v_1(
+    AccountEnvelopeActivationKindV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_continuity_disposition_v_1(
+    AccountEnvelopeContinuityDispositionV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_error_code_v_1(
+    AccountEnvelopeErrorCodeV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_error_v_1(
+    AccountEnvelopeErrorV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_padding_class_v_1(
+    AccountEnvelopePaddingClassV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_public_bundle_candidate_kind_v_1(
+    AccountEnvelopePublicBundleCandidateKindV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_public_bundle_candidate_v_1(
+    AccountEnvelopePublicBundleCandidateV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_public_bundle_summary_output_v_1(
+    AccountEnvelopePublicBundleSummaryOutputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_account_envelope_successor_authorization_v_1(
+    AccountEnvelopeSuccessorAuthorizationV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void
+  sse_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
+    AccountEnvelopePrivateBundleAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_mls_authorized_owner_v_1(
@@ -924,6 +1550,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
 
   @protected
+  void sse_encode_context_invitation_authority_input_v_1(
+    ContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_context_invitation_preview_input_v_1(
+    ContextInvitationPreviewInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_context_invitation_preview_output_v_1(
+    ContextInvitationPreviewOutputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_create_group_with_storage_result(
     CreateGroupWithStorageResult self,
     SseSerializer serializer,
@@ -942,6 +1586,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_expected_context_invitation_authority_input_v_1(
+    ExpectedContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_generate_account_envelope_key_bundle_output_v_1(
+    GenerateAccountEnvelopeKeyBundleOutputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
 
   @protected
@@ -949,6 +1605,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     JoinGroupWithStorageResult self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_list_String(List<String> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_list_prim_u_8_strict(
@@ -1074,6 +1733,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_account_envelope_reset_reason_v_1(
+    AccountEnvelopeResetReasonV1? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_mls_proposal_type(
     MlsProposalType? self,
     SseSerializer serializer,
@@ -1123,12 +1791,106 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_usize(BigInt self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_verify_account_envelope_continuity_output_v_1(
+    VerifyAccountEnvelopeContinuityOutputV1 self,
+    SseSerializer serializer,
+  );
 }
 
 // Section: wire_class
 
 class RustLibWire implements BaseWire {
   RustLibWire.fromExternalLibrary(ExternalLibrary lib);
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1(
+    JSAny expected_previous_local_private_bundle_authority,
+    JSAny previous_private_bundle,
+    JSAny self_signed_successor_public_bundle,
+  ) => wasmModule
+      .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1(
+        expected_previous_local_private_bundle_authority,
+        previous_private_bundle,
+        self_signed_successor_public_bundle,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1(
+    JSAny account_id,
+    JSAny generation,
+    int activation_kind,
+    int? reset_reason,
+    JSAny previous_generation,
+    JSAny expected_local_private_bundle_authority,
+    JSAny private_bundle,
+  ) => wasmModule
+      .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1(
+        account_id,
+        generation,
+        activation_kind,
+        reset_reason,
+        previous_generation,
+        expected_local_private_bundle_authority,
+        private_bundle,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1(
+    JSAny account_id,
+    JSAny generation,
+    JSAny root_installation_id,
+    JSAny root_authority_generation,
+  ) => wasmModule
+      .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1(
+        account_id,
+        generation,
+        root_installation_id,
+        root_authority_generation,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1(
+    JSAny authority,
+    JSAny expected_local_private_bundle_authority,
+    JSAny preview,
+    JSAny recipient_public_bundle,
+    JSAny sender_private_bundle,
+  ) => wasmModule
+      .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1(
+        authority,
+        expected_local_private_bundle_authority,
+        preview,
+        recipient_public_bundle,
+        sender_private_bundle,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1(
+    JSAny envelope,
+    JSAny expected_authority,
+    JSAny recipient_private_bundle,
+    JSAny sender_public_bundle,
+  ) => wasmModule
+      .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1(
+        envelope,
+        expected_authority,
+        recipient_private_bundle,
+        sender_public_bundle,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1(
+    JSAny? pinned_public_bundle,
+    JSAny continuity_public_bundles,
+    bool manual_reanchor_authorized,
+  ) => wasmModule
+      .wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1(
+        pinned_public_bundle,
+        continuity_public_bundles,
+        manual_reanchor_authorized,
+      );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__credential__MlsCredential_basic(JSAny identity) =>
@@ -1477,6 +2239,22 @@ class RustLibWire implements BaseWire {
   );
 
   void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+        ptr,
+      );
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+        ptr,
+      );
+
+  void
   rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
     int ptr,
   ) => wasmModule
@@ -1515,6 +2293,56 @@ external RustLibWasmModule get wasmModule;
 @JS()
 @anonymous
 extension type RustLibWasmModule._(JSObject _) implements JSObject {
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_authorize_successor_public_bundle_v1(
+    JSAny expected_previous_local_private_bundle_authority,
+    JSAny previous_private_bundle,
+    JSAny self_signed_successor_public_bundle,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_create_self_signed_public_bundle_v1(
+    JSAny account_id,
+    JSAny generation,
+    int activation_kind,
+    int? reset_reason,
+    JSAny previous_generation,
+    JSAny expected_local_private_bundle_authority,
+    JSAny private_bundle,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_generate_key_bundle_v1(
+    JSAny account_id,
+    JSAny generation,
+    JSAny root_installation_id,
+    JSAny root_authority_generation,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_seal_context_invitation_preview_v1(
+    JSAny authority,
+    JSAny expected_local_private_bundle_authority,
+    JSAny preview,
+    JSAny recipient_public_bundle,
+    JSAny sender_private_bundle,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_and_open_context_invitation_preview_v1(
+    JSAny envelope,
+    JSAny expected_authority,
+    JSAny recipient_private_bundle,
+    JSAny sender_public_bundle,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__account_envelope__bridge__AccountEnvelopeCrypto_verify_continuity_response_v1(
+    JSAny? pinned_public_bundle,
+    JSAny continuity_public_bundles,
+    bool manual_reanchor_authorized,
+  );
+
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__credential__MlsCredential_basic(JSAny identity);
 
@@ -1714,6 +2542,16 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny expected_previous_state,
     JSAny storage_entries,
     int storage_format_version,
+  );
+
+  external void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    int ptr,
+  );
+
+  external void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAccountEnvelopeCrypto(
+    int ptr,
   );
 
   external void

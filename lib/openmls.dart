@@ -42,6 +42,15 @@
 library;
 
 export 'src/openmls.dart';
+export 'src/rust/api/account_envelope/bridge.dart';
+export 'src/rust/api/account_envelope/types.dart'
+    show
+        AccountEnvelopeActivationKindV1,
+        AccountEnvelopeContinuityDispositionV1,
+        AccountEnvelopeErrorCodeV1,
+        AccountEnvelopeErrorV1,
+        AccountEnvelopePaddingClassV1,
+        AccountEnvelopeResetReasonV1;
 export 'src/rust/api/config.dart';
 export 'src/rust/api/credential.dart';
 export 'src/rust/api/group_e2ee.dart';

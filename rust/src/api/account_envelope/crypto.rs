@@ -161,6 +161,7 @@ pub(super) fn verify_domain_signature(
         .map_err(|_| AccountEnvelopeErrorV1::new(AccountEnvelopeErrorCodeV1::SignatureInvalid))
 }
 
+#[cfg(test)]
 pub(super) fn hpke_round_trip_for_test(
     public_key: &[u8; KEY_BYTES],
     private_key: &[u8; KEY_BYTES],

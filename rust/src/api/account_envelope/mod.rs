@@ -2,23 +2,36 @@
 //!
 //! This module is deliberately separate from MLS. It does not read or mutate an
 //! MLS group, KeyPackage, credential, exporter, storage snapshot, or native
-//! receive operation. Phase 1 remains crate-private until the high-level FRB
-//! surface is reviewed and generated in Phase 2.
+//! receive operation. The public surface is the stateless, high-level
+//! [`AccountEnvelopeCrypto`] facade; codec and provider details stay internal.
 
+pub mod bridge;
 mod codec;
 mod crypto;
 mod invitation;
-mod types;
+pub mod types;
 mod unicode17_casefold;
 
 use sha2::{Digest, Sha256};
 use zeroize::Zeroizing;
 
-pub(crate) use types::{
+pub use bridge::{
+    AccountEnvelopeCrypto, AccountEnvelopePrivateBundleAuthorityInputV1,
+    AccountEnvelopePublicBundleCandidateKindV1, AccountEnvelopePublicBundleCandidateV1,
+    AccountEnvelopePublicBundleSummaryOutputV1, AccountEnvelopeSuccessorAuthorizationV1,
+    ContextInvitationAuthorityInputV1, ContextInvitationPreviewInputV1,
+    ContextInvitationPreviewOutputV1, ExpectedContextInvitationAuthorityInputV1,
+    GenerateAccountEnvelopeKeyBundleOutputV1, VerifyAccountEnvelopeContinuityOutputV1,
+};
+pub use types::{
     AccountEnvelopeActivationKindV1, AccountEnvelopeContinuityDispositionV1,
-    AccountEnvelopeContinuityResponseV1, AccountEnvelopeErrorCodeV1, AccountEnvelopeErrorV1,
-    AccountEnvelopePrivateBundleAuthorityV1, AccountEnvelopePublicBundleSummaryV1,
-    AccountEnvelopeResetReasonV1, AuthorizeSuccessorPublicBundleResultV1,
+    AccountEnvelopeErrorCodeV1, AccountEnvelopeErrorV1, AccountEnvelopePaddingClassV1,
+    AccountEnvelopeResetReasonV1,
+};
+
+pub(crate) use types::{
+    AccountEnvelopeContinuityResponseV1, AccountEnvelopePrivateBundleAuthorityV1,
+    AccountEnvelopePublicBundleSummaryV1, AuthorizeSuccessorPublicBundleResultV1,
     ContextInvitationAuthorityV1, ContextInvitationPreviewV1, ExpectedContextInvitationAuthorityV1,
     GenerateAccountEnvelopeKeyBundleResultV1, OpenContextInvitationPreviewResultV1,
     SealContextInvitationPreviewResultV1, SelfSignedPublicBundleResultV1,
@@ -60,13 +73,13 @@ pub(crate) fn create_self_signed_public_bundle_v1(
     expected_local_private_bundle_authority: AccountEnvelopePrivateBundleAuthorityV1,
     private_bundle: Vec<u8>,
 ) -> AccountEnvelopeResult<SelfSignedPublicBundleResultV1> {
+    let private_bundle_bytes = Zeroizing::new(private_bundle);
     expected_local_private_bundle_authority.validate()?;
     if account_id != expected_local_private_bundle_authority.account_id
         || generation != expected_local_private_bundle_authority.generation
     {
         return Err(authority_mismatch());
     }
-    let private_bundle_bytes = Zeroizing::new(private_bundle);
     let decoded = decode_and_validate_private_bundle(
         &private_bundle_bytes,
         expected_local_private_bundle_authority,
@@ -113,8 +126,8 @@ pub(crate) fn authorize_successor_public_bundle_v1(
     previous_private_bundle: Vec<u8>,
     self_signed_successor_public_bundle: Vec<u8>,
 ) -> AccountEnvelopeResult<AuthorizeSuccessorPublicBundleResultV1> {
-    expected_previous_local_private_bundle_authority.validate()?;
     let previous_private_bytes = Zeroizing::new(previous_private_bundle);
+    expected_previous_local_private_bundle_authority.validate()?;
     let mut previous = decode_and_validate_private_bundle(
         &previous_private_bytes,
         expected_previous_local_private_bundle_authority,
@@ -333,6 +346,7 @@ pub(crate) fn seal_context_invitation_preview_v1(
     recipient_public_bundle: Vec<u8>,
     sender_private_bundle: Vec<u8>,
 ) -> AccountEnvelopeResult<SealContextInvitationPreviewResultV1> {
+    let sender_private_bytes = Zeroizing::new(sender_private_bundle);
     authority.validate()?;
     expected_local_private_bundle_authority.validate()?;
     if expected_local_private_bundle_authority.account_id != authority.sender_account_id
@@ -340,7 +354,6 @@ pub(crate) fn seal_context_invitation_preview_v1(
     {
         return Err(authority_mismatch());
     }
-    let sender_private_bytes = Zeroizing::new(sender_private_bundle);
     let sender = decode_and_validate_private_bundle(
         &sender_private_bytes,
         expected_local_private_bundle_authority,
@@ -404,6 +417,7 @@ pub(crate) fn verify_and_open_context_invitation_preview_v1(
     recipient_private_bundle: Vec<u8>,
     sender_public_bundle: Vec<u8>,
 ) -> AccountEnvelopeResult<OpenContextInvitationPreviewResultV1> {
+    let recipient_private_bytes = Zeroizing::new(recipient_private_bundle);
     expected_authority.validate()?;
     let parsed = parse_invitation_envelope(&envelope)?;
     if parsed.authority != expected_authority.invitation {
@@ -421,7 +435,6 @@ pub(crate) fn verify_and_open_context_invitation_preview_v1(
         root_installation_id: expected_authority.local_root_installation_id,
         root_authority_generation: expected_authority.local_root_authority_generation,
     };
-    let recipient_private_bytes = Zeroizing::new(recipient_private_bundle);
     let recipient = decode_and_validate_private_bundle(
         &recipient_private_bytes,
         expected_recipient_authority,
@@ -484,7 +497,7 @@ fn decode_and_validate_private_bundle(
 ) -> AccountEnvelopeResult<DecodedPrivateBundleV1> {
     let decoded = decode_private_bundle(private_bundle)?;
     if decoded.authority != expected_authority {
-        return Err(authority_mismatch());
+        return Err(private_bundle_invalid());
     }
     if require_active && decoded.state != PrivateBundleStateV1::ActiveFull {
         return Err(private_bundle_invalid());
@@ -531,6 +544,39 @@ fn bounds_exceeded() -> AccountEnvelopeErrorV1 {
 
 fn noncanonical() -> AccountEnvelopeErrorV1 {
     AccountEnvelopeErrorV1::new(AccountEnvelopeErrorCodeV1::NonCanonicalEncoding)
+}
+
+/// Decoder-only entry point for the separate cargo-fuzz crate.
+///
+/// This feature is never enabled by normal or release builds. It intentionally
+/// returns no parsed value and exposes no cryptographic primitive.
+#[cfg(feature = "account-envelope-fuzzing")]
+pub fn fuzz_decode_account_envelope_v1(input: &[u8]) {
+    let Some((&selector, payload)) = input.split_first() else {
+        return;
+    };
+    match selector % 6 {
+        0 => {
+            let _ = parse_complete_public_bundle(payload);
+        }
+        1 => {
+            let _ = parse_rotation_candidate(payload);
+        }
+        2 => {
+            let _ = decode_private_bundle(payload);
+        }
+        3 => {
+            let _ = decode_canonical_preview(payload);
+        }
+        4 => {
+            let _ = parse_invitation_envelope(payload);
+        }
+        _ => {
+            if let Ok(text) = std::str::from_utf8(payload) {
+                let _ = invitation::default_case_fold(text);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
