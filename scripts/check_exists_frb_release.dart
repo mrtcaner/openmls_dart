@@ -27,6 +27,7 @@ void main(List<String> args) async {
   final isCi = args.contains('--ci');
 
   final version = getCrateVersion();
+  final packageVersion = getPackageVersion();
 
   final upstreamVersion = getUpstreamVersion();
 
@@ -34,6 +35,7 @@ void main(List<String> args) async {
 
   logInfo('Checking release status...');
   logInfo('Crate version: $version');
+  logInfo('Current Dart package/native baseline: $packageVersion');
 
   logInfo('openmls version: $upstreamVersion');
 
@@ -60,6 +62,7 @@ void main(List<String> args) async {
       final file = File(outputFile);
       final buffer = StringBuffer()
         ..writeln('version=$version')
+        ..writeln('package_version=$packageVersion')
         ..writeln('openmls_version=$upstreamVersion')
         ..writeln('skip=${releaseExists ? 'true' : 'false'}');
       file.writeAsStringSync(buffer.toString(), mode: FileMode.append);

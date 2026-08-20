@@ -61,6 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.check.outputs.version }}
+      baseline_version: ${{ steps.check.outputs.package_version }}
       openmls_version: ${{ steps.check.outputs.openmls_version }}
       skip: ${{ steps.check.outputs.skip }}
     steps:
@@ -161,10 +162,13 @@ jobs:
       - name: Verify Apple native receive v1 exports
         run: |
           LIB="rust/target/${{ matrix.rust_target }}/release/libopenmls_frb.dylib"
-          SYMBOLS="$(nm -gU "$LIB")"
-          grep -q ' _openmls_receive_v1_execute$' <<< "$SYMBOLS"
-          grep -q ' _openmls_receive_v1_free$' <<< "$SYMBOLS"
-          grep -q ' _openmls_receive_v1_version$' <<< "$SYMBOLS"
+          ACTUAL="$(nm -gU "$LIB" | awk '{print $NF}' | sed 's/^_//' | grep '^openmls_receive_v1_' | LC_ALL=C sort)"
+          EXPECTED="$(printf '%s\n' openmls_receive_v1_execute openmls_receive_v1_free openmls_receive_v1_version | LC_ALL=C sort)"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::Unexpected Apple native receive v1 export set"
+            printf 'Expected:\n%s\nActual:\n%s\n' "$EXPECTED" "$ACTUAL"
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
@@ -215,10 +219,13 @@ jobs:
       - name: Verify Apple native receive v1 exports
         run: |
           LIB="rust/target/${{ matrix.rust_target }}/release/libopenmls_frb.dylib"
-          SYMBOLS="$(nm -gU "$LIB")"
-          grep -q ' _openmls_receive_v1_execute$' <<< "$SYMBOLS"
-          grep -q ' _openmls_receive_v1_free$' <<< "$SYMBOLS"
-          grep -q ' _openmls_receive_v1_version$' <<< "$SYMBOLS"
+          ACTUAL="$(nm -gU "$LIB" | awk '{print $NF}' | sed 's/^_//' | grep '^openmls_receive_v1_' | LC_ALL=C sort)"
+          EXPECTED="$(printf '%s\n' openmls_receive_v1_execute openmls_receive_v1_free openmls_receive_v1_version | LC_ALL=C sort)"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::Unexpected Apple native receive v1 export set"
+            printf 'Expected:\n%s\nActual:\n%s\n' "$EXPECTED" "$ACTUAL"
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
@@ -272,10 +279,14 @@ jobs:
       - name: Verify Android native receive v1 exports
         run: |
           LIB="rust/target/${{ matrix.rust_target }}/release/libopenmls_frb.so"
-          SYMBOLS="$(nm -D --defined-only "$LIB")"
-          grep -q 'Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeExecuteReceiveV1$' <<< "$SYMBOLS"
-          grep -q 'Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeZeroize$' <<< "$SYMBOLS"
-          grep -q 'Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeContractVersion$' <<< "$SYMBOLS"
+          PREFIX='Java_app_kurtuba_openmls_OpenMlsNativeReceive_'
+          ACTUAL="$(nm -D --defined-only "$LIB" | awk '{print $NF}' | grep "^${PREFIX}" | LC_ALL=C sort)"
+          EXPECTED="$(printf '%s\n' "${PREFIX}nativeContractVersion" "${PREFIX}nativeExecuteReceiveV1" "${PREFIX}nativeZeroize" | LC_ALL=C sort)"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::Unexpected Android native receive v1 export set"
+            printf 'Expected:\n%s\nActual:\n%s\n' "$EXPECTED" "$ACTUAL"
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
@@ -380,6 +391,7 @@ jobs:
     environment: native-build
     env:
       VERSION: ${{ needs.check-release.outputs.version }}
+      BASELINE_VERSION: ${{ needs.check-release.outputs.baseline_version }}
       NATIVE_VERSION: ${{ needs.check-release.outputs.openmls_version }}
     permissions:
       contents: write
@@ -398,6 +410,27 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           path: artifacts
+
+      - name: Download and extract previous native release for size deltas
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$BASELINE_VERSION" = "$VERSION" ]; then
+            echo "::error::Dart package baseline version must differ from the new native version"
+            exit 1
+          fi
+          mkdir -p baseline-archives baseline-artifacts
+          gh release download "openmls_frb-${BASELINE_VERSION}" \
+            --pattern "openmls_frb-${BASELINE_VERSION}-*.tar.gz" \
+            --dir baseline-archives
+          for archive in baseline-archives/*.tar.gz; do
+            name="$(basename "$archive")"
+            suffix="${name#openmls_frb-${BASELINE_VERSION}-}"
+            suffix="${suffix%.tar.gz}"
+            target="baseline-artifacts/openmls-${suffix}"
+            mkdir -p "$target"
+            tar -xzf "$archive" -C "$target"
+          done
 
       - name: Create release archives
         run: |
@@ -452,9 +485,16 @@ jobs:
           tar -czvf release-archives/openmls_frb-${VERSION}-wasm32.tar.gz \
             -C artifacts/openmls-wasm32 openmls_frb.js openmls_frb_bg.wasm LICENSE THIRD_PARTY_NOTICES.txt
 
-          # Generate SHA256 checksums
+          # Fail closed on an incomplete/extra platform inventory and on
+          # fixture, fuzz, deterministic-RNG, or proof-only release markers.
+          # The report records exact raw and compressed sizes plus SHA-256.
+          make verify-release-artifacts ARGS="--artifacts artifacts --archives release-archives --version ${VERSION} --baseline-artifacts baseline-artifacts --baseline-archives baseline-archives --baseline-version ${BASELINE_VERSION} --report release-archives/openmls_frb-${VERSION}-artifact-report.json"
+
+          # Generate SHA256 checksums, including the machine-readable report.
           cd release-archives
-          sha256sum openmls_frb-${VERSION}-*.tar.gz > openmls_frb-${VERSION}-checksums.sha256
+          sha256sum openmls_frb-${VERSION}-*.tar.gz \
+            openmls_frb-${VERSION}-artifact-report.json \
+            > openmls_frb-${VERSION}-checksums.sha256
           cd ..
 
           ls -lh release-archives/
