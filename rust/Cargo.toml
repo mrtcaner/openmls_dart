@@ -34,10 +34,10 @@ sha2 = "0.10"
 # folding uses the package-owned generated Unicode 17 table beside the codec.
 # Do not loosen this without updating cross-language fixtures and the protocol.
 unicode-normalization = "=0.1.25"
-openmls = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1", features = ["test-utils"] }
-openmls_rust_crypto = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
-openmls_basic_credential = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1", features = ["test-utils"] }
-openmls_traits = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
+openmls = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0", features = ["test-utils"] }
+openmls_rust_crypto = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0" }
+openmls_basic_credential = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0", features = ["test-utils"] }
+openmls_traits = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0" }
 
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.21"
@@ -45,7 +45,7 @@ jni = "0.21"
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 # OpenMLS requires `js` feature for WASM: enables fluvio_wasm_timer for time access
 # Cargo merges features from [dependencies] and [target.*.dependencies]
-openmls = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1", features = ["js"] }
+openmls = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0", features = ["js"] }
 # Diamond dependency: some upstream crates use getrandom 0.2, some use 0.3
 # Both need to be configured for WASM to work correctly
 getrandom_02 = { package = "getrandom", version = "0.2", features = ["js"] }
