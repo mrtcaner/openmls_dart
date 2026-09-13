@@ -1,5 +1,29 @@
 ## [Unreleased]
 
+### For Users
+
+#### ✨ Highlights
+
+- **openmls_frb v3.2.1** — lean production OpenMLS dependency features
+
+#### Changed
+
+- Removed OpenMLS's `test-utils` and direct `backtrace` features from production
+  builds, eliminating test-only backtrace construction from runtime code paths
+  while retaining the narrowly required Basic Credential private-key accessor.
+- Added a fail-closed production-feature check so future dependency changes
+  cannot silently restore those OpenMLS features.
+- Pinned the Dart Flutter Rust Bridge runtime to the same exact `2.12.0`
+  version used by Rust and code generation, preventing clean dependency
+  resolution from selecting an incompatible minor release.
+- Regenerated the locked dependency inventory and third-party notices after
+  pruning 26 unreachable test-support crates.
+
+### Compatibility
+
+- No public Dart API, native ABI, MLS protocol behavior, caller-owned storage
+  format, native receive contract, or account-envelope format changes.
+
 ### For Contributors
 
 #### Changed
