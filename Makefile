@@ -8,7 +8,7 @@
 # On Windows CI (Git Bash), use cmd to run fvm.bat from PATH:
 # Example: make build ARGS="--target x86_64-pc-windows-msvc" FVM="cmd //c fvm"
 
-.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test test-account-envelope-mobile coverage analyze format format-check get clean version get-version check-new-openmls-version check-exists-openmls-frb-release check-template-updates update-template check-targets third-party-notices verify-third-party-notices verify-release-artifacts rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree generate-account-envelope-casefold fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
+.PHONY: help setup setup-fvm setup-rust-tools setup-rust-components setup-frb-codegen setup-android setup-mobile-rust-targets setup-web setup-fuzz codegen regen build build-android build-ios build-web build-example-web test test-account-envelope-mobile coverage analyze format format-check get clean version get-version check-new-openmls-version check-exists-openmls-frb-release check-template-updates update-template check-targets check-openmls-production-features third-party-notices verify-third-party-notices verify-release-artifacts rust-audit rust-deny rust-check rust-test rust-clippy rust-format-files rust-tree generate-account-envelope-casefold fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
 
 # FVM command - can be overridden to provide full path on Windows CI
 FVM ?= fvm
@@ -78,6 +78,7 @@ help:
 	@echo "                                        Example: make update-template ARGS=\"--version v4.5.0\""
 	@echo "    make check-targets                - Check deployment target consistency (iOS/macOS/Android)"
 	@echo "                                        Example: make check-targets ARGS=\"--ios --set 14.0\""
+	@echo "    make check-openmls-production-features - Reject unsafe OpenMLS production features"
 	@echo "    make verify-third-party-notices   - Verify bundled native dependency notices"
 	@echo "    make verify-release-artifacts     - Verify native release inventory and forbidden symbols"
 	@echo "    make rust-update                  - Update Cargo.lock (cargo update)"
@@ -311,6 +312,10 @@ rust-format-files:
 
 rust-tree:
 	$(CARGO) tree --manifest-path rust/Cargo.toml $(ARGS)
+
+check-openmls-production-features:
+	@$(DART) scripts/check_openmls_production_features.dart \
+		--manifest-path rust/Cargo.toml
 
 # Regenerate the package-owned Unicode 17 full default case-folding table.
 # ARGS must name an official CaseFolding-17.0.0.txt file.

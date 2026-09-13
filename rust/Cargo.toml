@@ -34,8 +34,10 @@ sha2 = "0.10"
 # folding uses the package-owned generated Unicode 17 table beside the codec.
 # Do not loosen this without updating cross-language fixtures and the protocol.
 unicode-normalization = "=0.1.25"
-openmls = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1", features = ["test-utils"] }
+openmls = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
 openmls_rust_crypto = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
+# Required solely for SignatureKeyPair::private(), which the caller-owned
+# storage boundary uses to serialize private signing material.
 openmls_basic_credential = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1", features = ["test-utils"] }
 openmls_traits = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
 

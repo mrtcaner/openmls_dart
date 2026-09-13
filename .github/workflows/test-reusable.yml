@@ -160,6 +160,11 @@ jobs:
         run: make get
         shell: bash
 
+      - name: Verify production OpenMLS features
+        if: matrix.name == 'Linux x86_64'
+        run: make check-openmls-production-features
+        shell: bash
+
       # Both hosts verify the same committed bytes. This catches accidental
       # host-dependent build/proc-macro inventory without cross-job artifacts.
       - name: Verify bundled third-party notices
