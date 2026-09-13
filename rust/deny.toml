@@ -30,13 +30,12 @@ ignore = [
     # three RustCrypto suites exposed by this fork.
     "RUSTSEC-2026-0212",
 
-    # --- Unmaintained transitive dev/build dependencies (informational) ---
+    # --- Unmaintained transitive support dependencies (informational) ---
     # cargo-deny flags unmaintained advisories that `cargo audit` does not fail
-    # on. These crates are pulled transitively by upstream (openmls_test / proc
-    # macros / the WASM timer shim), are not in the shipped crypto path, and
-    # have no available upgrade we can pin. Kept explicit (not a blanket policy)
-    # so any newly-appearing unmaintained crate still surfaces for review.
-    "RUSTSEC-2021-0139", # ansi_term — via openmls_test (test-utils feature)
+    # on. These crates are pulled transitively by the upstream WASM timer shim
+    # and required hax proc macros, are not in the shipped crypto path, and have
+    # no available upgrade we can pin. Kept explicit (not a blanket policy) so
+    # any newly-appearing unmaintained crate still surfaces for review.
     "RUSTSEC-2024-0384", # instant — via fluvio-wasm-timer (openmls WASM time shim)
     "RUSTSEC-2026-0173", # proc-macro-error2 — build-time only via hax macros required by libcrux-sha3
 ]
