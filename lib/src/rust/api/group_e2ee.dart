@@ -6,12 +6,170 @@
 import '../frb_generated.dart';
 import 'config.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 import 'storage.dart';
 import 'types.dart';
+part 'group_e2ee.freezed.dart';
 
-// These functions are ignored because they are not marked as `pub`: `checked_u32`, `ensure_local_signer_public_key`, `ensure_local_signer`, `ensure_signer_public_key`, `group_state_digest_from_entries`, `hash_len_prefixed`, `join_group_from_welcome_with_storage_typed`, `leaf_matches_owner`, `prepare_membership_commit_with_storage`, `prepared_result`, `process_message_with_storage_typed`, `proposal_type`, `provider_with_base_digest`, `roster_digest`, `roster_from_group`, `selected_key_package_sha256`, `strict_receive_error`, `validate_additions`, `validate_canonical_leaves`, `validate_exact_delta`, `validate_expected_roster_typed`, `validate_expected_roster`, `validate_removals`, `validate_self_authority`, `zeroize_processed_content`
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `StrictJoinGroupWithStorageResult`, `StrictReceiveErrorKind`, `StrictReceiveError`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These functions are ignored because they are not marked as `pub`: `checked_u32`, `ensure_local_signer_public_key`, `ensure_local_signer`, `ensure_signer_public_key`, `group_state_digest_from_entries`, `hash_len_prefixed`, `join_group_from_welcome_with_storage_typed`, `leaf_matches_owner`, `lifecycle_guard`, `pending_result`, `proposal_type`, `provider_with_base_digest`, `roster_digest`, `roster_from_group`, `selected_key_package_sha256`, `strict_receive_error`, `validate_additions`, `validate_canonical_leaves`, `validate_exact_delta`, `validate_expected_roster_typed`, `validate_expected_roster`, `validate_removals`, `validate_self_authority`, `zeroize_processed_content`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `JoinedGroupState`, `StrictJoinedGroupState`, `StrictReceiveErrorKind`, `StrictReceiveError`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
+
+/// Create caller-owned initialization state. Product send-readiness is granted
+/// by the caller only after authenticated canonical initialization acceptance.
+Future<CreateGroupWithStorageOutcome> createGroupWithStorage({
+  required MlsGroupConfig config,
+  required List<int> signerBytes,
+  required List<int> explicitGroupId,
+  required List<int> incarnationId,
+  required MlsAuthorizedOwnerV1 expectedOwnerAuthority,
+  Uint8List? credentialBytes,
+  required List<MlsStorageEntry> storageEntries,
+  required int storageFormatVersion,
+}) => RustLib.instance.api.crateApiGroupE2EeCreateGroupWithStorage(
+  config: config,
+  signerBytes: signerBytes,
+  explicitGroupId: explicitGroupId,
+  incarnationId: incarnationId,
+  expectedOwnerAuthority: expectedOwnerAuthority,
+  credentialBytes: credentialBytes,
+  storageEntries: storageEntries,
+  storageFormatVersion: storageFormatVersion,
+);
+
+/// Join only exact canonical Welcome/local-leaf/KeyPackage authority. Welcome has no AAD.
+Future<JoinGroupFromWelcomeWithStorageOutcome> joinGroupFromWelcomeWithStorage({
+  required MlsGroupConfig config,
+  required List<int> incarnationId,
+  required List<int> welcomeBytes,
+  required List<int> expectedWelcomeSha256,
+  Uint8List? ratchetTreeBytes,
+  required List<int> signerBytes,
+  required MlsExpectedRosterStateV1 expectedResultingState,
+  required MlsRosterLeafV1 expectedLocalLeaf,
+  required List<int> expectedTargetKeyPackageSha256,
+  required List<MlsStorageEntry> storageEntries,
+  required int storageFormatVersion,
+}) => RustLib.instance.api.crateApiGroupE2EeJoinGroupFromWelcomeWithStorage(
+  config: config,
+  incarnationId: incarnationId,
+  welcomeBytes: welcomeBytes,
+  expectedWelcomeSha256: expectedWelcomeSha256,
+  ratchetTreeBytes: ratchetTreeBytes,
+  signerBytes: signerBytes,
+  expectedResultingState: expectedResultingState,
+  expectedLocalLeaf: expectedLocalLeaf,
+  expectedTargetKeyPackageSha256: expectedTargetKeyPackageSha256,
+  storageEntries: storageEntries,
+  storageFormatVersion: storageFormatVersion,
+);
+
+Future<AddMembersWithStorageOutcome> addMembersWithStorage({
+  required MlsGroupOperationContext context,
+  required MlsTransitionContext transition,
+  required List<int> signerBytes,
+  required List<MlsAuthorizedKeyPackageV1> authorizedKeyPackages,
+  required List<int> aad,
+}) => RustLib.instance.api.crateApiGroupE2EeAddMembersWithStorage(
+  context: context,
+  transition: transition,
+  signerBytes: signerBytes,
+  authorizedKeyPackages: authorizedKeyPackages,
+  aad: aad,
+);
+
+Future<RemoveMembersWithStorageOutcome> removeMembersWithStorage({
+  required MlsGroupOperationContext context,
+  required MlsTransitionContext transition,
+  required List<int> signerBytes,
+  required List<MlsAuthorizedRemovalV1> authorizedRemovals,
+  required List<int> aad,
+}) => RustLib.instance.api.crateApiGroupE2EeRemoveMembersWithStorage(
+  context: context,
+  transition: transition,
+  signerBytes: signerBytes,
+  authorizedRemovals: authorizedRemovals,
+  aad: aad,
+);
+
+Future<SwapMembersWithStorageOutcome> swapMembersWithStorage({
+  required MlsGroupOperationContext context,
+  required MlsTransitionContext transition,
+  required List<int> signerBytes,
+  required List<MlsAuthorizedKeyPackageV1> authorizedKeyPackages,
+  required List<MlsAuthorizedRemovalV1> authorizedRemovals,
+  required List<int> aad,
+}) => RustLib.instance.api.crateApiGroupE2EeSwapMembersWithStorage(
+  context: context,
+  transition: transition,
+  signerBytes: signerBytes,
+  authorizedKeyPackages: authorizedKeyPackages,
+  authorizedRemovals: authorizedRemovals,
+  aad: aad,
+);
+
+Future<SelfUpdateWithStorageOutcome> selfUpdateWithStorage({
+  required MlsGroupOperationContext context,
+  required MlsTransitionContext transition,
+  required List<int> signerBytes,
+  required MlsAuthorizedSelfV1 expectedSelfAuthority,
+  required List<int> aad,
+}) => RustLib.instance.api.crateApiGroupE2EeSelfUpdateWithStorage(
+  context: context,
+  transition: transition,
+  signerBytes: signerBytes,
+  expectedSelfAuthority: expectedSelfAuthority,
+  aad: aad,
+);
+
+/// Read exact persisted retry material; never generates another Commit or batch.
+Future<GetPendingCommitWithStorageOutcome> getPendingCommitWithStorage({
+  required MlsGroupOperationContext context,
+}) => RustLib.instance.api.crateApiGroupE2EeGetPendingCommitWithStorage(
+  context: context,
+);
+
+/// Merge exact authenticated acceptance into the latest live ratchets. The
+/// preparation digest is provenance, not the current local compare/apply digest.
+Future<MergePendingCommitWithStorageOutcome> mergePendingCommitWithStorage({
+  required MlsGroupOperationContext context,
+  required MlsCommitAcceptance acceptance,
+}) => RustLib.instance.api.crateApiGroupE2EeMergePendingCommitWithStorage(
+  context: context,
+  acceptance: acceptance,
+);
+
+/// Caller must establish authenticated definitive rejection, not timeout or
+/// unknown status. Completed settlement retries belong to the caller's journal.
+Future<DiscardPendingCommitWithStorageOutcome> discardPendingCommitWithStorage({
+  required MlsGroupOperationContext context,
+  required MlsPendingCommitBinding expectedPendingBinding,
+}) => RustLib.instance.api.crateApiGroupE2EeDiscardPendingCommitWithStorage(
+  context: context,
+  expectedPendingBinding: expectedPendingBinding,
+);
+
+/// Message epoch/sender authority may be retained historical state for an
+/// application. Current and resulting authority always describe the live group.
+Future<ProcessMessageWithStorageOutcome> processMessageWithStorage({
+  required MlsGroupOperationContext context,
+  required MlsReceiveKind expectedKind,
+  required List<int> messageBytes,
+  required List<int> expectedMessageSha256,
+  required List<int> expectedAad,
+  required MlsRosterLeafV1 expectedSender,
+  required MlsExpectedRosterStateV1 expectedMessageState,
+  required MlsExpectedRosterStateV1 expectedResultingState,
+}) => RustLib.instance.api.crateApiGroupE2EeProcessMessageWithStorage(
+  context: context,
+  expectedKind: expectedKind,
+  messageBytes: messageBytes,
+  expectedMessageSha256: expectedMessageSha256,
+  expectedAad: expectedAad,
+  expectedSender: expectedSender,
+  expectedMessageState: expectedMessageState,
+  expectedResultingState: expectedResultingState,
+);
 
 /// Compute the canonical version-1 roster digest from caller-supplied fields.
 Uint8List mlsRosterDigestV1({
@@ -38,155 +196,51 @@ Uint8List mlsGroupStateDigest({
   storageFormatVersion: storageFormatVersion,
 );
 
-/// Create an owner-only group with an explicit server-issued group ID.
-Future<CreateGroupWithStorageResult> createGroupWithStorage({
-  required MlsGroupConfig config,
-  required List<int> signerBytes,
-  required List<int> explicitGroupId,
-  required MlsAuthorizedOwnerV1 expectedOwnerAuthority,
-  Uint8List? credentialBytes,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeCreateGroupWithStorage(
-  config: config,
-  signerBytes: signerBytes,
-  explicitGroupId: explicitGroupId,
-  expectedOwnerAuthority: expectedOwnerAuthority,
-  credentialBytes: credentialBytes,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
+@freezed
+sealed class AddMembersWithStorageOutcome with _$AddMembersWithStorageOutcome {
+  const AddMembersWithStorageOutcome._();
 
-/// Add exact authorized members and return deferred candidate state.
-Future<PreparedCommitWithStorageResult> addMembersWithStorage({
-  required List<int> groupId,
-  required List<int> signerBytes,
-  required List<MlsAuthorizedKeyPackageV1> additions,
-  required List<int> aad,
-  required MlsExpectedRosterStateV1 expectedPreviousState,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeAddMembersWithStorage(
-  groupId: groupId,
-  signerBytes: signerBytes,
-  additions: additions,
-  aad: aad,
-  expectedPreviousState: expectedPreviousState,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
+  const factory AddMembersWithStorageOutcome.success(
+    PendingCommitWithStorageResult field0,
+  ) = AddMembersWithStorageOutcome_Success;
+  const factory AddMembersWithStorageOutcome.failure(MlsErrorCode field0) =
+      AddMembersWithStorageOutcome_Failure;
+}
 
-/// Remove exact authorized members and return deferred candidate state.
-Future<PreparedCommitWithStorageResult> removeMembersWithStorage({
-  required List<int> groupId,
-  required List<int> signerBytes,
-  required List<MlsAuthorizedRemovalV1> removals,
-  required List<int> aad,
-  required MlsExpectedRosterStateV1 expectedPreviousState,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeRemoveMembersWithStorage(
-  groupId: groupId,
-  signerBytes: signerBytes,
-  removals: removals,
-  aad: aad,
-  expectedPreviousState: expectedPreviousState,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
+@freezed
+sealed class CreateGroupWithStorageOutcome
+    with _$CreateGroupWithStorageOutcome {
+  const CreateGroupWithStorageOutcome._();
 
-/// Atomically replace members using one combined remove/add Commit.
-Future<PreparedCommitWithStorageResult> swapMembersWithStorage({
-  required List<int> groupId,
-  required List<int> signerBytes,
-  required List<MlsAuthorizedRemovalV1> removals,
-  required List<MlsAuthorizedKeyPackageV1> additions,
-  required List<int> aad,
-  required MlsExpectedRosterStateV1 expectedPreviousState,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeSwapMembersWithStorage(
-  groupId: groupId,
-  signerBytes: signerBytes,
-  removals: removals,
-  additions: additions,
-  aad: aad,
-  expectedPreviousState: expectedPreviousState,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
-
-/// Prepare a local self-update without changing installation identity or key.
-Future<PreparedCommitWithStorageResult> selfUpdateWithStorage({
-  required List<int> groupId,
-  required List<int> signerBytes,
-  required List<int> aad,
-  required MlsExpectedRosterStateV1 expectedPreviousState,
-  required MlsAuthorizedSelfV1 expectedSelfAuthority,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeSelfUpdateWithStorage(
-  groupId: groupId,
-  signerBytes: signerBytes,
-  aad: aad,
-  expectedPreviousState: expectedPreviousState,
-  expectedSelfAuthority: expectedSelfAuthority,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
-
-/// Join a Welcome only when its installed state matches canonical authority.
-Future<JoinGroupWithStorageResult> joinGroupFromWelcomeWithStorage({
-  required MlsGroupConfig config,
-  required List<int> welcomeBytes,
-  Uint8List? ratchetTreeBytes,
-  required List<int> signerBytes,
-  required MlsExpectedRosterStateV1 expectedResultingState,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeJoinGroupFromWelcomeWithStorage(
-  config: config,
-  welcomeBytes: welcomeBytes,
-  ratchetTreeBytes: ratchetTreeBytes,
-  signerBytes: signerBytes,
-  expectedResultingState: expectedResultingState,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
-
-/// Process a message only when both base and resulting roster authority match.
-Future<ProcessMessageWithStorageResult> processMessageWithStorage({
-  required List<int> groupId,
-  required List<int> messageBytes,
-  required List<int> expectedAad,
-  required MlsExpectedRosterStateV1 expectedPreviousState,
-  required MlsExpectedRosterStateV1 expectedResultingState,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiGroupE2EeProcessMessageWithStorage(
-  groupId: groupId,
-  messageBytes: messageBytes,
-  expectedAad: expectedAad,
-  expectedPreviousState: expectedPreviousState,
-  expectedResultingState: expectedResultingState,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
+  const factory CreateGroupWithStorageOutcome.success(
+    CreateGroupWithStorageResult field0,
+  ) = CreateGroupWithStorageOutcome_Success;
+  const factory CreateGroupWithStorageOutcome.failure(MlsErrorCode field0) =
+      CreateGroupWithStorageOutcome_Failure;
+}
 
 class CreateGroupWithStorageResult {
   final Uint8List groupId;
   final MlsRosterSummaryV1 resultingRoster;
+  final Uint8List resultingGroupStateSha256;
+  final int effectiveRetention;
   final MlsStorageBatch storageBatch;
 
   const CreateGroupWithStorageResult({
     required this.groupId,
     required this.resultingRoster,
+    required this.resultingGroupStateSha256,
+    required this.effectiveRetention,
     required this.storageBatch,
   });
 
   @override
   int get hashCode =>
-      groupId.hashCode ^ resultingRoster.hashCode ^ storageBatch.hashCode;
+      groupId.hashCode ^
+      resultingRoster.hashCode ^
+      resultingGroupStateSha256.hashCode ^
+      effectiveRetention.hashCode ^
+      storageBatch.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -195,23 +249,113 @@ class CreateGroupWithStorageResult {
           runtimeType == other.runtimeType &&
           groupId == other.groupId &&
           resultingRoster == other.resultingRoster &&
+          resultingGroupStateSha256 == other.resultingGroupStateSha256 &&
+          effectiveRetention == other.effectiveRetention &&
           storageBatch == other.storageBatch;
 }
 
-class JoinGroupWithStorageResult {
-  final Uint8List groupId;
+@freezed
+sealed class DiscardPendingCommitWithStorageOutcome
+    with _$DiscardPendingCommitWithStorageOutcome {
+  const DiscardPendingCommitWithStorageOutcome._();
+
+  const factory DiscardPendingCommitWithStorageOutcome.success(
+    DiscardPendingCommitWithStorageResult field0,
+  ) = DiscardPendingCommitWithStorageOutcome_Success;
+  const factory DiscardPendingCommitWithStorageOutcome.failure(
+    MlsErrorCode field0,
+  ) = DiscardPendingCommitWithStorageOutcome_Failure;
+}
+
+class DiscardPendingCommitWithStorageResult {
+  final MlsRosterSummaryV1 previousRoster;
   final MlsRosterSummaryV1 resultingRoster;
+  final Uint8List resultingGroupStateSha256;
+  final int effectiveRetention;
   final MlsStorageBatch storageBatch;
 
-  const JoinGroupWithStorageResult({
-    required this.groupId,
+  const DiscardPendingCommitWithStorageResult({
+    required this.previousRoster,
     required this.resultingRoster,
+    required this.resultingGroupStateSha256,
+    required this.effectiveRetention,
     required this.storageBatch,
   });
 
   @override
   int get hashCode =>
-      groupId.hashCode ^ resultingRoster.hashCode ^ storageBatch.hashCode;
+      previousRoster.hashCode ^
+      resultingRoster.hashCode ^
+      resultingGroupStateSha256.hashCode ^
+      effectiveRetention.hashCode ^
+      storageBatch.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DiscardPendingCommitWithStorageResult &&
+          runtimeType == other.runtimeType &&
+          previousRoster == other.previousRoster &&
+          resultingRoster == other.resultingRoster &&
+          resultingGroupStateSha256 == other.resultingGroupStateSha256 &&
+          effectiveRetention == other.effectiveRetention &&
+          storageBatch == other.storageBatch;
+}
+
+@freezed
+sealed class GetPendingCommitWithStorageOutcome
+    with _$GetPendingCommitWithStorageOutcome {
+  const GetPendingCommitWithStorageOutcome._();
+
+  const factory GetPendingCommitWithStorageOutcome.success([
+    PendingCommitInfo? field0,
+  ]) = GetPendingCommitWithStorageOutcome_Success;
+  const factory GetPendingCommitWithStorageOutcome.failure(
+    MlsErrorCode field0,
+  ) = GetPendingCommitWithStorageOutcome_Failure;
+}
+
+@freezed
+sealed class JoinGroupFromWelcomeWithStorageOutcome
+    with _$JoinGroupFromWelcomeWithStorageOutcome {
+  const JoinGroupFromWelcomeWithStorageOutcome._();
+
+  const factory JoinGroupFromWelcomeWithStorageOutcome.success(
+    JoinGroupWithStorageResult field0,
+  ) = JoinGroupFromWelcomeWithStorageOutcome_Success;
+  const factory JoinGroupFromWelcomeWithStorageOutcome.failure(
+    MlsErrorCode field0,
+  ) = JoinGroupFromWelcomeWithStorageOutcome_Failure;
+}
+
+class JoinGroupWithStorageResult {
+  final Uint8List groupId;
+  final MlsRosterLeafV1 localLeaf;
+  final Uint8List consumedKeyPackageSha256;
+  final MlsRosterSummaryV1 resultingRoster;
+  final Uint8List resultingGroupStateSha256;
+  final int effectiveRetention;
+  final MlsStorageBatch storageBatch;
+
+  const JoinGroupWithStorageResult({
+    required this.groupId,
+    required this.localLeaf,
+    required this.consumedKeyPackageSha256,
+    required this.resultingRoster,
+    required this.resultingGroupStateSha256,
+    required this.effectiveRetention,
+    required this.storageBatch,
+  });
+
+  @override
+  int get hashCode =>
+      groupId.hashCode ^
+      localLeaf.hashCode ^
+      consumedKeyPackageSha256.hashCode ^
+      resultingRoster.hashCode ^
+      resultingGroupStateSha256.hashCode ^
+      effectiveRetention.hashCode ^
+      storageBatch.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -219,7 +363,59 @@ class JoinGroupWithStorageResult {
       other is JoinGroupWithStorageResult &&
           runtimeType == other.runtimeType &&
           groupId == other.groupId &&
+          localLeaf == other.localLeaf &&
+          consumedKeyPackageSha256 == other.consumedKeyPackageSha256 &&
           resultingRoster == other.resultingRoster &&
+          resultingGroupStateSha256 == other.resultingGroupStateSha256 &&
+          effectiveRetention == other.effectiveRetention &&
+          storageBatch == other.storageBatch;
+}
+
+@freezed
+sealed class MergePendingCommitWithStorageOutcome
+    with _$MergePendingCommitWithStorageOutcome {
+  const MergePendingCommitWithStorageOutcome._();
+
+  const factory MergePendingCommitWithStorageOutcome.success(
+    MergePendingCommitWithStorageResult field0,
+  ) = MergePendingCommitWithStorageOutcome_Success;
+  const factory MergePendingCommitWithStorageOutcome.failure(
+    MlsErrorCode field0,
+  ) = MergePendingCommitWithStorageOutcome_Failure;
+}
+
+class MergePendingCommitWithStorageResult {
+  final MlsRosterSummaryV1 previousRoster;
+  final MlsRosterSummaryV1 resultingRoster;
+  final Uint8List resultingGroupStateSha256;
+  final int effectiveRetention;
+  final MlsStorageBatch storageBatch;
+
+  const MergePendingCommitWithStorageResult({
+    required this.previousRoster,
+    required this.resultingRoster,
+    required this.resultingGroupStateSha256,
+    required this.effectiveRetention,
+    required this.storageBatch,
+  });
+
+  @override
+  int get hashCode =>
+      previousRoster.hashCode ^
+      resultingRoster.hashCode ^
+      resultingGroupStateSha256.hashCode ^
+      effectiveRetention.hashCode ^
+      storageBatch.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MergePendingCommitWithStorageResult &&
+          runtimeType == other.runtimeType &&
+          previousRoster == other.previousRoster &&
+          resultingRoster == other.resultingRoster &&
+          resultingGroupStateSha256 == other.resultingGroupStateSha256 &&
+          effectiveRetention == other.effectiveRetention &&
           storageBatch == other.storageBatch;
 }
 
@@ -326,6 +522,83 @@ class MlsAuthorizedSelfV1 {
           expectedSignaturePublicKey == other.expectedSignaturePublicKey;
 }
 
+class MlsCommitAcceptance {
+  final MlsPendingCommitBinding binding;
+  final MlsExpectedRosterStateV1 resultingState;
+  final Uint8List preparationBaseGroupStateSha256;
+
+  const MlsCommitAcceptance({
+    required this.binding,
+    required this.resultingState,
+    required this.preparationBaseGroupStateSha256,
+  });
+
+  @override
+  int get hashCode =>
+      binding.hashCode ^
+      resultingState.hashCode ^
+      preparationBaseGroupStateSha256.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MlsCommitAcceptance &&
+          runtimeType == other.runtimeType &&
+          binding == other.binding &&
+          resultingState == other.resultingState &&
+          preparationBaseGroupStateSha256 ==
+              other.preparationBaseGroupStateSha256;
+}
+
+/// Stable mechanism outcomes shared by the foreground and native receive core.
+/// A failure never carries a usable mutation batch or plaintext.
+enum MlsErrorCode {
+  invalidFrame,
+  unsupportedContractVersion,
+  unsupportedProfile,
+  unsupportedOperation,
+  noncanonicalEncoding,
+  limitExceeded,
+  storageFormatMismatch,
+  invalidStorageSnapshot,
+  groupStateUnavailable,
+  baseStateMismatch,
+  configurationMismatch,
+  groupMismatch,
+  previousEpochMismatch,
+  previousRosterMismatch,
+  resultingEpochMismatch,
+  resultingRosterMismatch,
+  aadMismatch,
+  messageKindMismatch,
+  senderMismatch,
+  localLeafMismatch,
+  invalidSigner,
+  unsupportedCredential,
+  mlsDecodeRejected,
+  welcomeRejected,
+  mlsProtocolRejected,
+  expectedKeyPackageMismatch,
+  pendingCommitExists,
+  pendingCommitMissing,
+  pendingBindingMismatch,
+  acceptanceBindingMismatch,
+  messageEpochMismatch,
+  messageRosterMismatch,
+  inactiveGroup,
+  futureMessageEpoch,
+  requiredCommitEpochMismatch,
+  pastEpochUnavailable,
+  generationTooOld,
+  replay,
+  forwardDistanceExceeded,
+  unsupportedLocalMetadataVersion,
+  localMetadataMissing,
+  unsupportedRetention,
+  wireHashMismatch,
+  internalFailure,
+}
+
 class MlsExpectedRosterStateV1 {
   final Uint8List groupId;
   final BigInt epoch;
@@ -349,6 +622,104 @@ class MlsExpectedRosterStateV1 {
           epoch == other.epoch &&
           digestSha256 == other.digestSha256;
 }
+
+/// Current local state authority. Snapshot rows are copied for one call only.
+/// The caller owns writer/lifecycle fencing and atomic compare-and-apply.
+class MlsGroupOperationContext {
+  final Uint8List groupId;
+  final Uint8List incarnationId;
+  final MlsExpectedRosterStateV1 expectedCurrentState;
+  final Uint8List expectedBaseGroupStateSha256;
+  final int expectedRetention;
+  final List<MlsStorageEntry> storageEntries;
+  final int storageFormatVersion;
+
+  const MlsGroupOperationContext({
+    required this.groupId,
+    required this.incarnationId,
+    required this.expectedCurrentState,
+    required this.expectedBaseGroupStateSha256,
+    required this.expectedRetention,
+    required this.storageEntries,
+    required this.storageFormatVersion,
+  });
+
+  @override
+  int get hashCode =>
+      groupId.hashCode ^
+      incarnationId.hashCode ^
+      expectedCurrentState.hashCode ^
+      expectedBaseGroupStateSha256.hashCode ^
+      expectedRetention.hashCode ^
+      storageEntries.hashCode ^
+      storageFormatVersion.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MlsGroupOperationContext &&
+          runtimeType == other.runtimeType &&
+          groupId == other.groupId &&
+          incarnationId == other.incarnationId &&
+          expectedCurrentState == other.expectedCurrentState &&
+          expectedBaseGroupStateSha256 == other.expectedBaseGroupStateSha256 &&
+          expectedRetention == other.expectedRetention &&
+          storageEntries == other.storageEntries &&
+          storageFormatVersion == other.storageFormatVersion;
+}
+
+class MlsPendingCommitBinding {
+  final Uint8List groupId;
+  final Uint8List incarnationId;
+  final MlsTransitionContext transition;
+  final MlsRosterLeafV1 author;
+  final MlsExpectedRosterStateV1 previousState;
+  final Uint8List commitSha256;
+  final Uint8List aadSha256;
+  final Uint8List? welcomeSha256;
+  final Uint8List? groupInfoSha256;
+
+  const MlsPendingCommitBinding({
+    required this.groupId,
+    required this.incarnationId,
+    required this.transition,
+    required this.author,
+    required this.previousState,
+    required this.commitSha256,
+    required this.aadSha256,
+    this.welcomeSha256,
+    this.groupInfoSha256,
+  });
+
+  @override
+  int get hashCode =>
+      groupId.hashCode ^
+      incarnationId.hashCode ^
+      transition.hashCode ^
+      author.hashCode ^
+      previousState.hashCode ^
+      commitSha256.hashCode ^
+      aadSha256.hashCode ^
+      welcomeSha256.hashCode ^
+      groupInfoSha256.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MlsPendingCommitBinding &&
+          runtimeType == other.runtimeType &&
+          groupId == other.groupId &&
+          incarnationId == other.incarnationId &&
+          transition == other.transition &&
+          author == other.author &&
+          previousState == other.previousState &&
+          commitSha256 == other.commitSha256 &&
+          aadSha256 == other.aadSha256 &&
+          welcomeSha256 == other.welcomeSha256 &&
+          groupInfoSha256 == other.groupInfoSha256;
+}
+
+enum MlsReceiveKind { application, commit, proposal }
 
 class MlsRosterLeafV1 {
   final int leafIndex;
@@ -408,92 +779,179 @@ class MlsRosterSummaryV1 {
           digestSha256 == other.digestSha256;
 }
 
-class PreparedCommitWithStorageResult {
+class MlsTransitionContext {
+  final Uint8List commandId;
+  final Uint8List contextSha256;
+
+  const MlsTransitionContext({
+    required this.commandId,
+    required this.contextSha256,
+  });
+
+  @override
+  int get hashCode => commandId.hashCode ^ contextSha256.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MlsTransitionContext &&
+          runtimeType == other.runtimeType &&
+          commandId == other.commandId &&
+          contextSha256 == other.contextSha256;
+}
+
+class PendingCommitInfo {
+  final MlsPendingCommitBinding pendingBinding;
+  final MlsRosterSummaryV1 proposedResultingRoster;
   final Uint8List commit;
   final Uint8List? welcome;
   final Uint8List? groupInfo;
-  final Uint8List commitSha256;
-  final MlsRosterSummaryV1 previousRoster;
-  final MlsRosterSummaryV1 resultingRoster;
-  final Uint8List baseGroupStateSha256;
-  final MlsStorageBatch storageBatch;
+  final Uint8List preparationBaseGroupStateSha256;
 
-  const PreparedCommitWithStorageResult({
+  const PendingCommitInfo({
+    required this.pendingBinding,
+    required this.proposedResultingRoster,
     required this.commit,
     this.welcome,
     this.groupInfo,
-    required this.commitSha256,
+    required this.preparationBaseGroupStateSha256,
+  });
+
+  @override
+  int get hashCode =>
+      pendingBinding.hashCode ^
+      proposedResultingRoster.hashCode ^
+      commit.hashCode ^
+      welcome.hashCode ^
+      groupInfo.hashCode ^
+      preparationBaseGroupStateSha256.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PendingCommitInfo &&
+          runtimeType == other.runtimeType &&
+          pendingBinding == other.pendingBinding &&
+          proposedResultingRoster == other.proposedResultingRoster &&
+          commit == other.commit &&
+          welcome == other.welcome &&
+          groupInfo == other.groupInfo &&
+          preparationBaseGroupStateSha256 ==
+              other.preparationBaseGroupStateSha256;
+}
+
+/// Persist this unmerged pending batch immediately. It is not a stale merged
+/// candidate to apply later. Only exact acceptance permits merge.
+class PendingCommitWithStorageResult {
+  final MlsPendingCommitBinding pendingBinding;
+  final MlsRosterSummaryV1 previousRoster;
+  final MlsRosterSummaryV1 proposedResultingRoster;
+  final Uint8List commit;
+  final Uint8List? welcome;
+  final Uint8List? groupInfo;
+  final Uint8List preparationBaseGroupStateSha256;
+  final Uint8List resultingGroupStateSha256;
+  final int effectiveRetention;
+  final MlsStorageBatch storageBatch;
+
+  const PendingCommitWithStorageResult({
+    required this.pendingBinding,
     required this.previousRoster,
-    required this.resultingRoster,
-    required this.baseGroupStateSha256,
+    required this.proposedResultingRoster,
+    required this.commit,
+    this.welcome,
+    this.groupInfo,
+    required this.preparationBaseGroupStateSha256,
+    required this.resultingGroupStateSha256,
+    required this.effectiveRetention,
     required this.storageBatch,
   });
 
   @override
   int get hashCode =>
+      pendingBinding.hashCode ^
+      previousRoster.hashCode ^
+      proposedResultingRoster.hashCode ^
       commit.hashCode ^
       welcome.hashCode ^
       groupInfo.hashCode ^
-      commitSha256.hashCode ^
-      previousRoster.hashCode ^
-      resultingRoster.hashCode ^
-      baseGroupStateSha256.hashCode ^
+      preparationBaseGroupStateSha256.hashCode ^
+      resultingGroupStateSha256.hashCode ^
+      effectiveRetention.hashCode ^
       storageBatch.hashCode;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PreparedCommitWithStorageResult &&
+      other is PendingCommitWithStorageResult &&
           runtimeType == other.runtimeType &&
+          pendingBinding == other.pendingBinding &&
+          previousRoster == other.previousRoster &&
+          proposedResultingRoster == other.proposedResultingRoster &&
           commit == other.commit &&
           welcome == other.welcome &&
           groupInfo == other.groupInfo &&
-          commitSha256 == other.commitSha256 &&
-          previousRoster == other.previousRoster &&
-          resultingRoster == other.resultingRoster &&
-          baseGroupStateSha256 == other.baseGroupStateSha256 &&
+          preparationBaseGroupStateSha256 ==
+              other.preparationBaseGroupStateSha256 &&
+          resultingGroupStateSha256 == other.resultingGroupStateSha256 &&
+          effectiveRetention == other.effectiveRetention &&
           storageBatch == other.storageBatch;
+}
+
+@freezed
+sealed class ProcessMessageWithStorageOutcome
+    with _$ProcessMessageWithStorageOutcome {
+  const ProcessMessageWithStorageOutcome._();
+
+  const factory ProcessMessageWithStorageOutcome.success(
+    ProcessMessageWithStorageResult field0,
+  ) = ProcessMessageWithStorageOutcome_Success;
+  const factory ProcessMessageWithStorageOutcome.failure(MlsErrorCode field0) =
+      ProcessMessageWithStorageOutcome_Failure;
 }
 
 class ProcessMessageWithStorageResult {
   final ProcessedMessageType messageType;
-  final int? senderIndex;
+  final BigInt messageEpoch;
+  final MlsRosterLeafV1 authenticatedSender;
   final BigInt previousEpoch;
   final BigInt resultingEpoch;
   final Uint8List? applicationMessage;
-  final bool hasStagedCommit;
-  final bool hasProposal;
   final MlsProposalType? proposalType;
   final MlsRosterSummaryV1 previousRoster;
   final MlsRosterSummaryV1 resultingRoster;
+  final Uint8List resultingGroupStateSha256;
+  final int effectiveRetention;
   final MlsStorageBatch storageBatch;
 
   const ProcessMessageWithStorageResult({
     required this.messageType,
-    this.senderIndex,
+    required this.messageEpoch,
+    required this.authenticatedSender,
     required this.previousEpoch,
     required this.resultingEpoch,
     this.applicationMessage,
-    required this.hasStagedCommit,
-    required this.hasProposal,
     this.proposalType,
     required this.previousRoster,
     required this.resultingRoster,
+    required this.resultingGroupStateSha256,
+    required this.effectiveRetention,
     required this.storageBatch,
   });
 
   @override
   int get hashCode =>
       messageType.hashCode ^
-      senderIndex.hashCode ^
+      messageEpoch.hashCode ^
+      authenticatedSender.hashCode ^
       previousEpoch.hashCode ^
       resultingEpoch.hashCode ^
       applicationMessage.hashCode ^
-      hasStagedCommit.hashCode ^
-      hasProposal.hashCode ^
       proposalType.hashCode ^
       previousRoster.hashCode ^
       resultingRoster.hashCode ^
+      resultingGroupStateSha256.hashCode ^
+      effectiveRetention.hashCode ^
       storageBatch.hashCode;
 
   @override
@@ -502,14 +960,50 @@ class ProcessMessageWithStorageResult {
       other is ProcessMessageWithStorageResult &&
           runtimeType == other.runtimeType &&
           messageType == other.messageType &&
-          senderIndex == other.senderIndex &&
+          messageEpoch == other.messageEpoch &&
+          authenticatedSender == other.authenticatedSender &&
           previousEpoch == other.previousEpoch &&
           resultingEpoch == other.resultingEpoch &&
           applicationMessage == other.applicationMessage &&
-          hasStagedCommit == other.hasStagedCommit &&
-          hasProposal == other.hasProposal &&
           proposalType == other.proposalType &&
           previousRoster == other.previousRoster &&
           resultingRoster == other.resultingRoster &&
+          resultingGroupStateSha256 == other.resultingGroupStateSha256 &&
+          effectiveRetention == other.effectiveRetention &&
           storageBatch == other.storageBatch;
+}
+
+@freezed
+sealed class RemoveMembersWithStorageOutcome
+    with _$RemoveMembersWithStorageOutcome {
+  const RemoveMembersWithStorageOutcome._();
+
+  const factory RemoveMembersWithStorageOutcome.success(
+    PendingCommitWithStorageResult field0,
+  ) = RemoveMembersWithStorageOutcome_Success;
+  const factory RemoveMembersWithStorageOutcome.failure(MlsErrorCode field0) =
+      RemoveMembersWithStorageOutcome_Failure;
+}
+
+@freezed
+sealed class SelfUpdateWithStorageOutcome with _$SelfUpdateWithStorageOutcome {
+  const SelfUpdateWithStorageOutcome._();
+
+  const factory SelfUpdateWithStorageOutcome.success(
+    PendingCommitWithStorageResult field0,
+  ) = SelfUpdateWithStorageOutcome_Success;
+  const factory SelfUpdateWithStorageOutcome.failure(MlsErrorCode field0) =
+      SelfUpdateWithStorageOutcome_Failure;
+}
+
+@freezed
+sealed class SwapMembersWithStorageOutcome
+    with _$SwapMembersWithStorageOutcome {
+  const SwapMembersWithStorageOutcome._();
+
+  const factory SwapMembersWithStorageOutcome.success(
+    PendingCommitWithStorageResult field0,
+  ) = SwapMembersWithStorageOutcome_Success;
+  const factory SwapMembersWithStorageOutcome.failure(MlsErrorCode field0) =
+      SwapMembersWithStorageOutcome_Failure;
 }

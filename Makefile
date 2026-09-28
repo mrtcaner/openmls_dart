@@ -250,6 +250,16 @@ codegen:
 # Alias for codegen (common shorthand)
 regen: codegen
 
+.PHONY: native-receive-v2-vectors native-receive-v2-apple native-receive-v2-android
+native-receive-v2-vectors:
+	MLS_EXPORT_NATIVE_V2=1 $(MAKE) rust-test
+
+native-receive-v2-apple: build
+	sh native/receive_v2/apple/run_macos_harness.sh
+
+native-receive-v2-android:
+	sh native/receive_v2/android/run_avd_harness.sh $(ARGS)
+
 # =============================================================================
 # Build
 # =============================================================================
@@ -349,6 +359,10 @@ rust-deny:
 # =============================================================================
 
 # List the available libFuzzer targets.
+.PHONY: fuzz-check
+fuzz-check:
+	cargo check --manifest-path rust/fuzz/Cargo.toml --all-targets
+
 fuzz-list:
 	cd rust && cargo +nightly fuzz list
 

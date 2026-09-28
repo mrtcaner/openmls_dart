@@ -139,6 +139,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_account_envelope_successor_authorization_v_1(dynamic raw);
 
   @protected
+  AddMembersWithStorageOutcome dco_decode_add_members_with_storage_outcome(
+    dynamic raw,
+  );
+
+  @protected
   bool dco_decode_bool(dynamic raw);
 
   @protected
@@ -160,10 +165,32 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_box_autoadd_context_invitation_preview_input_v_1(dynamic raw);
 
   @protected
+  CreateGroupWithStorageResult
+  dco_decode_box_autoadd_create_group_with_storage_result(dynamic raw);
+
+  @protected
+  CreateMessageWithStorageResult
+  dco_decode_box_autoadd_create_message_with_storage_result(dynamic raw);
+
+  @protected
+  DiscardPendingCommitWithStorageResult
+  dco_decode_box_autoadd_discard_pending_commit_with_storage_result(
+    dynamic raw,
+  );
+
+  @protected
   ExpectedContextInvitationAuthorityInputV1
   dco_decode_box_autoadd_expected_context_invitation_authority_input_v_1(
     dynamic raw,
   );
+
+  @protected
+  JoinGroupWithStorageResult
+  dco_decode_box_autoadd_join_group_with_storage_result(dynamic raw);
+
+  @protected
+  MergePendingCommitWithStorageResult
+  dco_decode_box_autoadd_merge_pending_commit_with_storage_result(dynamic raw);
 
   @protected
   MlsAuthorizedOwnerV1 dco_decode_box_autoadd_mls_authorized_owner_v_1(
@@ -176,6 +203,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  MlsCommitAcceptance dco_decode_box_autoadd_mls_commit_acceptance(dynamic raw);
+
+  @protected
   MlsExpectedRosterStateV1 dco_decode_box_autoadd_mls_expected_roster_state_v_1(
     dynamic raw,
   );
@@ -184,10 +214,36 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsGroupConfig dco_decode_box_autoadd_mls_group_config(dynamic raw);
 
   @protected
+  MlsGroupOperationContext dco_decode_box_autoadd_mls_group_operation_context(
+    dynamic raw,
+  );
+
+  @protected
+  MlsPendingCommitBinding dco_decode_box_autoadd_mls_pending_commit_binding(
+    dynamic raw,
+  );
+
+  @protected
   MlsProposalType dco_decode_box_autoadd_mls_proposal_type(dynamic raw);
 
   @protected
-  int dco_decode_box_autoadd_u_32(dynamic raw);
+  MlsRosterLeafV1 dco_decode_box_autoadd_mls_roster_leaf_v_1(dynamic raw);
+
+  @protected
+  MlsTransitionContext dco_decode_box_autoadd_mls_transition_context(
+    dynamic raw,
+  );
+
+  @protected
+  PendingCommitInfo dco_decode_box_autoadd_pending_commit_info(dynamic raw);
+
+  @protected
+  PendingCommitWithStorageResult
+  dco_decode_box_autoadd_pending_commit_with_storage_result(dynamic raw);
+
+  @protected
+  ProcessMessageWithStorageResult
+  dco_decode_box_autoadd_process_message_with_storage_result(dynamic raw);
 
   @protected
   ContextInvitationAuthorityInputV1
@@ -202,6 +258,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_context_invitation_preview_output_v_1(dynamic raw);
 
   @protected
+  CreateGroupWithStorageOutcome dco_decode_create_group_with_storage_outcome(
+    dynamic raw,
+  );
+
+  @protected
   CreateGroupWithStorageResult dco_decode_create_group_with_storage_result(
     dynamic raw,
   );
@@ -211,9 +272,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_create_key_package_with_storage_result(dynamic raw);
 
   @protected
+  CreateMessageWithStorageOutcome
+  dco_decode_create_message_with_storage_outcome(dynamic raw);
+
+  @protected
   CreateMessageWithStorageResult dco_decode_create_message_with_storage_result(
     dynamic raw,
   );
+
+  @protected
+  DiscardPendingCommitWithStorageOutcome
+  dco_decode_discard_pending_commit_with_storage_outcome(dynamic raw);
+
+  @protected
+  DiscardPendingCommitWithStorageResult
+  dco_decode_discard_pending_commit_with_storage_result(dynamic raw);
 
   @protected
   ExpectedContextInvitationAuthorityInputV1
@@ -224,7 +297,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_generate_account_envelope_key_bundle_output_v_1(dynamic raw);
 
   @protected
+  GetPendingCommitWithStorageOutcome
+  dco_decode_get_pending_commit_with_storage_outcome(dynamic raw);
+
+  @protected
   int dco_decode_i_32(dynamic raw);
+
+  @protected
+  JoinGroupFromWelcomeWithStorageOutcome
+  dco_decode_join_group_from_welcome_with_storage_outcome(dynamic raw);
 
   @protected
   JoinGroupWithStorageResult dco_decode_join_group_with_storage_result(
@@ -262,6 +343,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  MergePendingCommitWithStorageOutcome
+  dco_decode_merge_pending_commit_with_storage_outcome(dynamic raw);
+
+  @protected
+  MergePendingCommitWithStorageResult
+  dco_decode_merge_pending_commit_with_storage_result(dynamic raw);
+
+  @protected
   MlsAuthorizedKeyPackageV1 dco_decode_mls_authorized_key_package_v_1(
     dynamic raw,
   );
@@ -279,6 +368,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsCiphersuite dco_decode_mls_ciphersuite(dynamic raw);
 
   @protected
+  MlsCommitAcceptance dco_decode_mls_commit_acceptance(dynamic raw);
+
+  @protected
+  MlsErrorCode dco_decode_mls_error_code(dynamic raw);
+
+  @protected
   MlsExpectedRosterStateV1 dco_decode_mls_expected_roster_state_v_1(
     dynamic raw,
   );
@@ -287,7 +382,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsGroupConfig dco_decode_mls_group_config(dynamic raw);
 
   @protected
+  MlsGroupOperationContext dco_decode_mls_group_operation_context(dynamic raw);
+
+  @protected
+  MlsPendingCommitBinding dco_decode_mls_pending_commit_binding(dynamic raw);
+
+  @protected
   MlsProposalType dco_decode_mls_proposal_type(dynamic raw);
+
+  @protected
+  MlsReceiveKind dco_decode_mls_receive_kind(dynamic raw);
 
   @protected
   MlsRosterLeafV1 dco_decode_mls_roster_leaf_v_1(dynamic raw);
@@ -300,6 +404,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   MlsStorageEntry dco_decode_mls_storage_entry(dynamic raw);
+
+  @protected
+  MlsTransitionContext dco_decode_mls_transition_context(dynamic raw);
 
   @protected
   MlsWireFormatPolicy dco_decode_mls_wire_format_policy(dynamic raw);
@@ -315,14 +422,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsProposalType? dco_decode_opt_box_autoadd_mls_proposal_type(dynamic raw);
 
   @protected
-  int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
+  PendingCommitInfo? dco_decode_opt_box_autoadd_pending_commit_info(
+    dynamic raw,
+  );
 
   @protected
   Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw);
 
   @protected
-  PreparedCommitWithStorageResult
-  dco_decode_prepared_commit_with_storage_result(dynamic raw);
+  PendingCommitInfo dco_decode_pending_commit_info(dynamic raw);
+
+  @protected
+  PendingCommitWithStorageResult dco_decode_pending_commit_with_storage_result(
+    dynamic raw,
+  );
+
+  @protected
+  ProcessMessageWithStorageOutcome
+  dco_decode_process_message_with_storage_outcome(dynamic raw);
 
   @protected
   ProcessMessageWithStorageResult
@@ -330,6 +447,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ProcessedMessageType dco_decode_processed_message_type(dynamic raw);
+
+  @protected
+  RemoveMembersWithStorageOutcome
+  dco_decode_remove_members_with_storage_outcome(dynamic raw);
+
+  @protected
+  SelfUpdateWithStorageOutcome dco_decode_self_update_with_storage_outcome(
+    dynamic raw,
+  );
+
+  @protected
+  SwapMembersWithStorageOutcome dco_decode_swap_members_with_storage_outcome(
+    dynamic raw,
+  );
 
   @protected
   int dco_decode_u_16(dynamic raw);
@@ -465,6 +596,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  AddMembersWithStorageOutcome sse_decode_add_members_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
@@ -492,8 +628,38 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  CreateGroupWithStorageResult
+  sse_decode_box_autoadd_create_group_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  CreateMessageWithStorageResult
+  sse_decode_box_autoadd_create_message_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  DiscardPendingCommitWithStorageResult
+  sse_decode_box_autoadd_discard_pending_commit_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ExpectedContextInvitationAuthorityInputV1
   sse_decode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  JoinGroupWithStorageResult
+  sse_decode_box_autoadd_join_group_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MergePendingCommitWithStorageResult
+  sse_decode_box_autoadd_merge_pending_commit_with_storage_result(
     SseDeserializer deserializer,
   );
 
@@ -508,6 +674,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  MlsCommitAcceptance sse_decode_box_autoadd_mls_commit_acceptance(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsExpectedRosterStateV1 sse_decode_box_autoadd_mls_expected_roster_state_v_1(
     SseDeserializer deserializer,
   );
@@ -518,12 +689,46 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  MlsGroupOperationContext sse_decode_box_autoadd_mls_group_operation_context(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsPendingCommitBinding sse_decode_box_autoadd_mls_pending_commit_binding(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsProposalType sse_decode_box_autoadd_mls_proposal_type(
     SseDeserializer deserializer,
   );
 
   @protected
-  int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
+  MlsRosterLeafV1 sse_decode_box_autoadd_mls_roster_leaf_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsTransitionContext sse_decode_box_autoadd_mls_transition_context(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PendingCommitInfo sse_decode_box_autoadd_pending_commit_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PendingCommitWithStorageResult
+  sse_decode_box_autoadd_pending_commit_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ProcessMessageWithStorageResult
+  sse_decode_box_autoadd_process_message_with_storage_result(
+    SseDeserializer deserializer,
+  );
 
   @protected
   ContextInvitationAuthorityInputV1
@@ -542,6 +747,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  CreateGroupWithStorageOutcome sse_decode_create_group_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   CreateGroupWithStorageResult sse_decode_create_group_with_storage_result(
     SseDeserializer deserializer,
   );
@@ -553,7 +763,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  CreateMessageWithStorageOutcome
+  sse_decode_create_message_with_storage_outcome(SseDeserializer deserializer);
+
+  @protected
   CreateMessageWithStorageResult sse_decode_create_message_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  DiscardPendingCommitWithStorageOutcome
+  sse_decode_discard_pending_commit_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  DiscardPendingCommitWithStorageResult
+  sse_decode_discard_pending_commit_with_storage_result(
     SseDeserializer deserializer,
   );
 
@@ -570,7 +796,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  GetPendingCommitWithStorageOutcome
+  sse_decode_get_pending_commit_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   int sse_decode_i_32(SseDeserializer deserializer);
+
+  @protected
+  JoinGroupFromWelcomeWithStorageOutcome
+  sse_decode_join_group_from_welcome_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
 
   @protected
   JoinGroupWithStorageResult sse_decode_join_group_with_storage_result(
@@ -616,6 +854,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  MergePendingCommitWithStorageOutcome
+  sse_decode_merge_pending_commit_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MergePendingCommitWithStorageResult
+  sse_decode_merge_pending_commit_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsAuthorizedKeyPackageV1 sse_decode_mls_authorized_key_package_v_1(
     SseDeserializer deserializer,
   );
@@ -639,6 +889,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsCiphersuite sse_decode_mls_ciphersuite(SseDeserializer deserializer);
 
   @protected
+  MlsCommitAcceptance sse_decode_mls_commit_acceptance(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsErrorCode sse_decode_mls_error_code(SseDeserializer deserializer);
+
+  @protected
   MlsExpectedRosterStateV1 sse_decode_mls_expected_roster_state_v_1(
     SseDeserializer deserializer,
   );
@@ -647,7 +905,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsGroupConfig sse_decode_mls_group_config(SseDeserializer deserializer);
 
   @protected
+  MlsGroupOperationContext sse_decode_mls_group_operation_context(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsPendingCommitBinding sse_decode_mls_pending_commit_binding(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsProposalType sse_decode_mls_proposal_type(SseDeserializer deserializer);
+
+  @protected
+  MlsReceiveKind sse_decode_mls_receive_kind(SseDeserializer deserializer);
 
   @protected
   MlsRosterLeafV1 sse_decode_mls_roster_leaf_v_1(SseDeserializer deserializer);
@@ -662,6 +933,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   MlsStorageEntry sse_decode_mls_storage_entry(SseDeserializer deserializer);
+
+  @protected
+  MlsTransitionContext sse_decode_mls_transition_context(
+    SseDeserializer deserializer,
+  );
 
   @protected
   MlsWireFormatPolicy sse_decode_mls_wire_format_policy(
@@ -683,14 +959,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
+  PendingCommitInfo? sse_decode_opt_box_autoadd_pending_commit_info(
+    SseDeserializer deserializer,
+  );
 
   @protected
   Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
-  PreparedCommitWithStorageResult
-  sse_decode_prepared_commit_with_storage_result(SseDeserializer deserializer);
+  PendingCommitInfo sse_decode_pending_commit_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PendingCommitWithStorageResult sse_decode_pending_commit_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ProcessMessageWithStorageOutcome
+  sse_decode_process_message_with_storage_outcome(SseDeserializer deserializer);
 
   @protected
   ProcessMessageWithStorageResult
@@ -698,6 +986,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ProcessedMessageType sse_decode_processed_message_type(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  RemoveMembersWithStorageOutcome
+  sse_decode_remove_members_with_storage_outcome(SseDeserializer deserializer);
+
+  @protected
+  SelfUpdateWithStorageOutcome sse_decode_self_update_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  SwapMembersWithStorageOutcome sse_decode_swap_members_with_storage_outcome(
     SseDeserializer deserializer,
   );
 
@@ -796,6 +1098,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_add_members_with_storage_outcome(
+    AddMembersWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is AddMembersWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_box_autoadd_pending_commit_with_storage_result(raw.field0),
+      ].jsify()!;
+    }
+    if (raw is AddMembersWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
+  }
+
+  @protected
   JSAny
   cst_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
     AccountEnvelopePrivateBundleAuthorityInputV1 raw,
@@ -829,11 +1149,51 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_box_autoadd_create_group_with_storage_result(
+    CreateGroupWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_create_group_with_storage_result(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_create_message_with_storage_result(
+    CreateMessageWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_create_message_with_storage_result(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_discard_pending_commit_with_storage_result(
+    DiscardPendingCommitWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_discard_pending_commit_with_storage_result(raw);
+  }
+
+  @protected
   JSAny cst_encode_box_autoadd_expected_context_invitation_authority_input_v_1(
     ExpectedContextInvitationAuthorityInputV1 raw,
   ) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return cst_encode_expected_context_invitation_authority_input_v_1(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_join_group_with_storage_result(
+    JoinGroupWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_join_group_with_storage_result(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_merge_pending_commit_with_storage_result(
+    MergePendingCommitWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_merge_pending_commit_with_storage_result(raw);
   }
 
   @protected
@@ -853,6 +1213,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_box_autoadd_mls_commit_acceptance(MlsCommitAcceptance raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_mls_commit_acceptance(raw);
+  }
+
+  @protected
   JSAny cst_encode_box_autoadd_mls_expected_roster_state_v_1(
     MlsExpectedRosterStateV1 raw,
   ) {
@@ -867,15 +1233,61 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_box_autoadd_mls_group_operation_context(
+    MlsGroupOperationContext raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_mls_group_operation_context(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_mls_pending_commit_binding(
+    MlsPendingCommitBinding raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_mls_pending_commit_binding(raw);
+  }
+
+  @protected
   int cst_encode_box_autoadd_mls_proposal_type(MlsProposalType raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return cst_encode_mls_proposal_type(raw);
   }
 
   @protected
-  int cst_encode_box_autoadd_u_32(int raw) {
+  JSAny cst_encode_box_autoadd_mls_roster_leaf_v_1(MlsRosterLeafV1 raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
-    return cst_encode_u_32(raw);
+    return cst_encode_mls_roster_leaf_v_1(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_mls_transition_context(
+    MlsTransitionContext raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_mls_transition_context(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_pending_commit_info(PendingCommitInfo raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_pending_commit_info(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_pending_commit_with_storage_result(
+    PendingCommitWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_pending_commit_with_storage_result(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_process_message_with_storage_result(
+    ProcessMessageWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_process_message_with_storage_result(raw);
   }
 
   @protected
@@ -921,6 +1333,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_create_group_with_storage_outcome(
+    CreateGroupWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is CreateGroupWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_box_autoadd_create_group_with_storage_result(raw.field0),
+      ].jsify()!;
+    }
+    if (raw is CreateGroupWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
+  }
+
+  @protected
   JSAny cst_encode_create_group_with_storage_result(
     CreateGroupWithStorageResult raw,
   ) {
@@ -928,6 +1358,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     return [
       cst_encode_list_prim_u_8_strict(raw.groupId),
       cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
+      cst_encode_list_prim_u_8_strict(raw.resultingGroupStateSha256),
+      cst_encode_u_32(raw.effectiveRetention),
       cst_encode_mls_storage_batch(raw.storageBatch),
     ].jsify()!;
   }
@@ -944,12 +1376,66 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_create_message_with_storage_outcome(
+    CreateMessageWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is CreateMessageWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_box_autoadd_create_message_with_storage_result(raw.field0),
+      ].jsify()!;
+    }
+    if (raw is CreateMessageWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
+  }
+
+  @protected
   JSAny cst_encode_create_message_with_storage_result(
     CreateMessageWithStorageResult raw,
   ) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return [
       cst_encode_list_prim_u_8_strict(raw.ciphertext),
+      cst_encode_list_prim_u_8_strict(raw.resultingGroupStateSha256),
+      cst_encode_u_32(raw.effectiveRetention),
+      cst_encode_mls_storage_batch(raw.storageBatch),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_discard_pending_commit_with_storage_outcome(
+    DiscardPendingCommitWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is DiscardPendingCommitWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_box_autoadd_discard_pending_commit_with_storage_result(
+          raw.field0,
+        ),
+      ].jsify()!;
+    }
+    if (raw is DiscardPendingCommitWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
+  }
+
+  @protected
+  JSAny cst_encode_discard_pending_commit_with_storage_result(
+    DiscardPendingCommitWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_mls_roster_summary_v_1(raw.previousRoster),
+      cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
+      cst_encode_list_prim_u_8_strict(raw.resultingGroupStateSha256),
+      cst_encode_u_32(raw.effectiveRetention),
       cst_encode_mls_storage_batch(raw.storageBatch),
     ].jsify()!;
   }
@@ -975,13 +1461,53 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_get_pending_commit_with_storage_outcome(
+    GetPendingCommitWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is GetPendingCommitWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_opt_box_autoadd_pending_commit_info(raw.field0),
+      ].jsify()!;
+    }
+    if (raw is GetPendingCommitWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
+  }
+
+  @protected
+  JSAny cst_encode_join_group_from_welcome_with_storage_outcome(
+    JoinGroupFromWelcomeWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is JoinGroupFromWelcomeWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_box_autoadd_join_group_with_storage_result(raw.field0),
+      ].jsify()!;
+    }
+    if (raw is JoinGroupFromWelcomeWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
+  }
+
+  @protected
   JSAny cst_encode_join_group_with_storage_result(
     JoinGroupWithStorageResult raw,
   ) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return [
       cst_encode_list_prim_u_8_strict(raw.groupId),
+      cst_encode_mls_roster_leaf_v_1(raw.localLeaf),
+      cst_encode_list_prim_u_8_strict(raw.consumedKeyPackageSha256),
       cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
+      cst_encode_list_prim_u_8_strict(raw.resultingGroupStateSha256),
+      cst_encode_u_32(raw.effectiveRetention),
       cst_encode_mls_storage_batch(raw.storageBatch),
     ].jsify()!;
   }
@@ -1045,6 +1571,40 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_merge_pending_commit_with_storage_outcome(
+    MergePendingCommitWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is MergePendingCommitWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_box_autoadd_merge_pending_commit_with_storage_result(
+          raw.field0,
+        ),
+      ].jsify()!;
+    }
+    if (raw is MergePendingCommitWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
+  }
+
+  @protected
+  JSAny cst_encode_merge_pending_commit_with_storage_result(
+    MergePendingCommitWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_mls_roster_summary_v_1(raw.previousRoster),
+      cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
+      cst_encode_list_prim_u_8_strict(raw.resultingGroupStateSha256),
+      cst_encode_u_32(raw.effectiveRetention),
+      cst_encode_mls_storage_batch(raw.storageBatch),
+    ].jsify()!;
+  }
+
+  @protected
   JSAny cst_encode_mls_authorized_key_package_v_1(
     MlsAuthorizedKeyPackageV1 raw,
   ) {
@@ -1086,6 +1646,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_mls_commit_acceptance(MlsCommitAcceptance raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_mls_pending_commit_binding(raw.binding),
+      cst_encode_mls_expected_roster_state_v_1(raw.resultingState),
+      cst_encode_list_prim_u_8_strict(raw.preparationBaseGroupStateSha256),
+    ].jsify()!;
+  }
+
+  @protected
   JSAny cst_encode_mls_expected_roster_state_v_1(MlsExpectedRosterStateV1 raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return [
@@ -1107,6 +1677,36 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_u_32(raw.senderRatchetMaxOutOfOrder),
       cst_encode_u_32(raw.senderRatchetMaxForwardDistance),
       cst_encode_u_32(raw.numberOfResumptionPsks),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_mls_group_operation_context(MlsGroupOperationContext raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.groupId),
+      cst_encode_list_prim_u_8_strict(raw.incarnationId),
+      cst_encode_mls_expected_roster_state_v_1(raw.expectedCurrentState),
+      cst_encode_list_prim_u_8_strict(raw.expectedBaseGroupStateSha256),
+      cst_encode_u_32(raw.expectedRetention),
+      cst_encode_list_mls_storage_entry(raw.storageEntries),
+      cst_encode_u_32(raw.storageFormatVersion),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_mls_pending_commit_binding(MlsPendingCommitBinding raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.groupId),
+      cst_encode_list_prim_u_8_strict(raw.incarnationId),
+      cst_encode_mls_transition_context(raw.transition),
+      cst_encode_mls_roster_leaf_v_1(raw.author),
+      cst_encode_mls_expected_roster_state_v_1(raw.previousState),
+      cst_encode_list_prim_u_8_strict(raw.commitSha256),
+      cst_encode_list_prim_u_8_strict(raw.aadSha256),
+      cst_encode_opt_list_prim_u_8_strict(raw.welcomeSha256),
+      cst_encode_opt_list_prim_u_8_strict(raw.groupInfoSha256),
     ].jsify()!;
   }
 
@@ -1153,6 +1753,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  JSAny cst_encode_mls_transition_context(MlsTransitionContext raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_prim_u_8_strict(raw.commandId),
+      cst_encode_list_prim_u_8_strict(raw.contextSha256),
+    ].jsify()!;
+  }
+
+  @protected
   String? cst_encode_opt_String(String? raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw == null ? null : cst_encode_String(raw);
@@ -1175,9 +1784,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  int? cst_encode_opt_box_autoadd_u_32(int? raw) {
+  JSAny? cst_encode_opt_box_autoadd_pending_commit_info(
+    PendingCommitInfo? raw,
+  ) {
     // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw == null ? null : cst_encode_box_autoadd_u_32(raw);
+    return raw == null ? null : cst_encode_box_autoadd_pending_commit_info(raw);
   }
 
   @protected
@@ -1187,20 +1798,53 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  JSAny cst_encode_prepared_commit_with_storage_result(
-    PreparedCommitWithStorageResult raw,
-  ) {
+  JSAny cst_encode_pending_commit_info(PendingCommitInfo raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return [
+      cst_encode_mls_pending_commit_binding(raw.pendingBinding),
+      cst_encode_mls_roster_summary_v_1(raw.proposedResultingRoster),
       cst_encode_list_prim_u_8_strict(raw.commit),
       cst_encode_opt_list_prim_u_8_strict(raw.welcome),
       cst_encode_opt_list_prim_u_8_strict(raw.groupInfo),
-      cst_encode_list_prim_u_8_strict(raw.commitSha256),
+      cst_encode_list_prim_u_8_strict(raw.preparationBaseGroupStateSha256),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_pending_commit_with_storage_result(
+    PendingCommitWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_mls_pending_commit_binding(raw.pendingBinding),
       cst_encode_mls_roster_summary_v_1(raw.previousRoster),
-      cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
-      cst_encode_list_prim_u_8_strict(raw.baseGroupStateSha256),
+      cst_encode_mls_roster_summary_v_1(raw.proposedResultingRoster),
+      cst_encode_list_prim_u_8_strict(raw.commit),
+      cst_encode_opt_list_prim_u_8_strict(raw.welcome),
+      cst_encode_opt_list_prim_u_8_strict(raw.groupInfo),
+      cst_encode_list_prim_u_8_strict(raw.preparationBaseGroupStateSha256),
+      cst_encode_list_prim_u_8_strict(raw.resultingGroupStateSha256),
+      cst_encode_u_32(raw.effectiveRetention),
       cst_encode_mls_storage_batch(raw.storageBatch),
     ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_process_message_with_storage_outcome(
+    ProcessMessageWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is ProcessMessageWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_box_autoadd_process_message_with_storage_result(raw.field0),
+      ].jsify()!;
+    }
+    if (raw is ProcessMessageWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
   }
 
   @protected
@@ -1210,17 +1854,72 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return [
       cst_encode_processed_message_type(raw.messageType),
-      cst_encode_opt_box_autoadd_u_32(raw.senderIndex),
+      cst_encode_u_64(raw.messageEpoch),
+      cst_encode_mls_roster_leaf_v_1(raw.authenticatedSender),
       cst_encode_u_64(raw.previousEpoch),
       cst_encode_u_64(raw.resultingEpoch),
       cst_encode_opt_list_prim_u_8_strict(raw.applicationMessage),
-      cst_encode_bool(raw.hasStagedCommit),
-      cst_encode_bool(raw.hasProposal),
       cst_encode_opt_box_autoadd_mls_proposal_type(raw.proposalType),
       cst_encode_mls_roster_summary_v_1(raw.previousRoster),
       cst_encode_mls_roster_summary_v_1(raw.resultingRoster),
+      cst_encode_list_prim_u_8_strict(raw.resultingGroupStateSha256),
+      cst_encode_u_32(raw.effectiveRetention),
       cst_encode_mls_storage_batch(raw.storageBatch),
     ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_remove_members_with_storage_outcome(
+    RemoveMembersWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is RemoveMembersWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_box_autoadd_pending_commit_with_storage_result(raw.field0),
+      ].jsify()!;
+    }
+    if (raw is RemoveMembersWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
+  }
+
+  @protected
+  JSAny cst_encode_self_update_with_storage_outcome(
+    SelfUpdateWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is SelfUpdateWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_box_autoadd_pending_commit_with_storage_result(raw.field0),
+      ].jsify()!;
+    }
+    if (raw is SelfUpdateWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
+  }
+
+  @protected
+  JSAny cst_encode_swap_members_with_storage_outcome(
+    SwapMembersWithStorageOutcome raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    if (raw is SwapMembersWithStorageOutcome_Success) {
+      return [
+        0,
+        cst_encode_box_autoadd_pending_commit_with_storage_result(raw.field0),
+      ].jsify()!;
+    }
+    if (raw is SwapMembersWithStorageOutcome_Failure) {
+      return [1, cst_encode_mls_error_code(raw.field0)].jsify()!;
+    }
+
+    throw Exception('unreachable');
   }
 
   @protected
@@ -1337,7 +2036,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int cst_encode_mls_ciphersuite(MlsCiphersuite raw);
 
   @protected
+  int cst_encode_mls_error_code(MlsErrorCode raw);
+
+  @protected
   int cst_encode_mls_proposal_type(MlsProposalType raw);
+
+  @protected
+  int cst_encode_mls_receive_kind(MlsReceiveKind raw);
 
   @protected
   int cst_encode_mls_wire_format_policy(MlsWireFormatPolicy raw);
@@ -1483,6 +2188,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_add_members_with_storage_outcome(
+    AddMembersWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
@@ -1511,8 +2222,38 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_create_group_with_storage_result(
+    CreateGroupWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_create_message_with_storage_result(
+    CreateMessageWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_discard_pending_commit_with_storage_result(
+    DiscardPendingCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_expected_context_invitation_authority_input_v_1(
     ExpectedContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_join_group_with_storage_result(
+    JoinGroupWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_merge_pending_commit_with_storage_result(
+    MergePendingCommitWithStorageResult self,
     SseSerializer serializer,
   );
 
@@ -1529,6 +2270,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_mls_commit_acceptance(
+    MlsCommitAcceptance self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_mls_expected_roster_state_v_1(
     MlsExpectedRosterStateV1 self,
     SseSerializer serializer,
@@ -1541,13 +2288,52 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_mls_group_operation_context(
+    MlsGroupOperationContext self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_mls_pending_commit_binding(
+    MlsPendingCommitBinding self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_mls_proposal_type(
     MlsProposalType self,
     SseSerializer serializer,
   );
 
   @protected
-  void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
+  void sse_encode_box_autoadd_mls_roster_leaf_v_1(
+    MlsRosterLeafV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_mls_transition_context(
+    MlsTransitionContext self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_pending_commit_info(
+    PendingCommitInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_pending_commit_with_storage_result(
+    PendingCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_process_message_with_storage_result(
+    ProcessMessageWithStorageResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_context_invitation_authority_input_v_1(
@@ -1568,6 +2354,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_create_group_with_storage_outcome(
+    CreateGroupWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_create_group_with_storage_result(
     CreateGroupWithStorageResult self,
     SseSerializer serializer,
@@ -1580,8 +2372,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_create_message_with_storage_outcome(
+    CreateMessageWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_create_message_with_storage_result(
     CreateMessageWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_discard_pending_commit_with_storage_outcome(
+    DiscardPendingCommitWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_discard_pending_commit_with_storage_result(
+    DiscardPendingCommitWithStorageResult self,
     SseSerializer serializer,
   );
 
@@ -1598,7 +2408,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_get_pending_commit_with_storage_outcome(
+    GetPendingCommitWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_join_group_from_welcome_with_storage_outcome(
+    JoinGroupFromWelcomeWithStorageOutcome self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_join_group_with_storage_result(
@@ -1655,6 +2477,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_merge_pending_commit_with_storage_outcome(
+    MergePendingCommitWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_merge_pending_commit_with_storage_result(
+    MergePendingCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_mls_authorized_key_package_v_1(
     MlsAuthorizedKeyPackageV1 self,
     SseSerializer serializer,
@@ -1685,6 +2519,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_mls_commit_acceptance(
+    MlsCommitAcceptance self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_error_code(MlsErrorCode self, SseSerializer serializer);
+
+  @protected
   void sse_encode_mls_expected_roster_state_v_1(
     MlsExpectedRosterStateV1 self,
     SseSerializer serializer,
@@ -1697,8 +2540,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_mls_group_operation_context(
+    MlsGroupOperationContext self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_pending_commit_binding(
+    MlsPendingCommitBinding self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_mls_proposal_type(
     MlsProposalType self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_receive_kind(
+    MlsReceiveKind self,
     SseSerializer serializer,
   );
 
@@ -1727,6 +2588,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_mls_transition_context(
+    MlsTransitionContext self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_mls_wire_format_policy(
     MlsWireFormatPolicy self,
     SseSerializer serializer,
@@ -1748,7 +2615,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
+  void sse_encode_opt_box_autoadd_pending_commit_info(
+    PendingCommitInfo? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_list_prim_u_8_strict(
@@ -1757,8 +2627,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_prepared_commit_with_storage_result(
-    PreparedCommitWithStorageResult self,
+  void sse_encode_pending_commit_info(
+    PendingCommitInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_pending_commit_with_storage_result(
+    PendingCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_process_message_with_storage_outcome(
+    ProcessMessageWithStorageOutcome self,
     SseSerializer serializer,
   );
 
@@ -1771,6 +2653,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_processed_message_type(
     ProcessedMessageType self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_remove_members_with_storage_outcome(
+    RemoveMembersWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_self_update_with_storage_outcome(
+    SelfUpdateWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_swap_members_with_storage_outcome(
+    SwapMembersWithStorageOutcome self,
     SseSerializer serializer,
   );
 
@@ -1973,22 +2873,18 @@ class RustLibWire implements BaseWire {
 
   void wire__crate__api__group_e2ee__add_members_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
+    JSAny transition,
     JSAny signer_bytes,
-    JSAny additions,
+    JSAny authorized_key_packages,
     JSAny aad,
-    JSAny expected_previous_state,
-    JSAny storage_entries,
-    int storage_format_version,
   ) => wasmModule.wire__crate__api__group_e2ee__add_members_with_storage(
     port_,
-    group_id,
+    context,
+    transition,
     signer_bytes,
-    additions,
+    authorized_key_packages,
     aad,
-    expected_previous_state,
-    storage_entries,
-    storage_format_version,
   );
 
   void wire__crate__api__group_e2ee__create_group_with_storage(
@@ -1996,6 +2892,7 @@ class RustLibWire implements BaseWire {
     JSAny config,
     JSAny signer_bytes,
     JSAny explicit_group_id,
+    JSAny incarnation_id,
     JSAny expected_owner_authority,
     JSAny? credential_bytes,
     JSAny storage_entries,
@@ -2005,6 +2902,7 @@ class RustLibWire implements BaseWire {
     config,
     signer_bytes,
     explicit_group_id,
+    incarnation_id,
     expected_owner_authority,
     credential_bytes,
     storage_entries,
@@ -2033,20 +2931,16 @@ class RustLibWire implements BaseWire {
 
   void wire__crate__api__storage__create_message_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
     JSAny signer_bytes,
     JSAny message,
     JSAny aad,
-    JSAny storage_entries,
-    int storage_format_version,
   ) => wasmModule.wire__crate__api__storage__create_message_with_storage(
     port_,
-    group_id,
+    context,
     signer_bytes,
     message,
     aad,
-    storage_entries,
-    storage_format_version,
   );
 
   void wire__crate__api__storage__delete_group_with_storage(
@@ -2061,6 +2955,25 @@ class RustLibWire implements BaseWire {
     storage_format_version,
   );
 
+  void wire__crate__api__group_e2ee__discard_pending_commit_with_storage(
+    NativePortType port_,
+    JSAny context,
+    JSAny expected_pending_binding,
+  ) => wasmModule
+      .wire__crate__api__group_e2ee__discard_pending_commit_with_storage(
+        port_,
+        context,
+        expected_pending_binding,
+      );
+
+  void wire__crate__api__group_e2ee__get_pending_commit_with_storage(
+    NativePortType port_,
+    JSAny context,
+  ) => wasmModule.wire__crate__api__group_e2ee__get_pending_commit_with_storage(
+    port_,
+    context,
+  );
+
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__init__init_openmls(String _library_path) =>
       wasmModule.wire__crate__api__init__init_openmls(_library_path);
@@ -2072,22 +2985,41 @@ class RustLibWire implements BaseWire {
   void wire__crate__api__group_e2ee__join_group_from_welcome_with_storage(
     NativePortType port_,
     JSAny config,
+    JSAny incarnation_id,
     JSAny welcome_bytes,
+    JSAny expected_welcome_sha256,
     JSAny? ratchet_tree_bytes,
     JSAny signer_bytes,
     JSAny expected_resulting_state,
+    JSAny expected_local_leaf,
+    JSAny expected_target_key_package_sha256,
     JSAny storage_entries,
     int storage_format_version,
   ) => wasmModule
       .wire__crate__api__group_e2ee__join_group_from_welcome_with_storage(
         port_,
         config,
+        incarnation_id,
         welcome_bytes,
+        expected_welcome_sha256,
         ratchet_tree_bytes,
         signer_bytes,
         expected_resulting_state,
+        expected_local_leaf,
+        expected_target_key_package_sha256,
         storage_entries,
         storage_format_version,
+      );
+
+  void wire__crate__api__group_e2ee__merge_pending_commit_with_storage(
+    NativePortType port_,
+    JSAny context,
+    JSAny acceptance,
+  ) => wasmModule
+      .wire__crate__api__group_e2ee__merge_pending_commit_with_storage(
+        port_,
+        context,
+        acceptance,
       );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
@@ -2143,62 +3075,56 @@ class RustLibWire implements BaseWire {
 
   void wire__crate__api__group_e2ee__process_message_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
+    int expected_kind,
     JSAny message_bytes,
+    JSAny expected_message_sha256,
     JSAny expected_aad,
-    JSAny expected_previous_state,
+    JSAny expected_sender,
+    JSAny expected_message_state,
     JSAny expected_resulting_state,
-    JSAny storage_entries,
-    int storage_format_version,
   ) => wasmModule.wire__crate__api__group_e2ee__process_message_with_storage(
     port_,
-    group_id,
+    context,
+    expected_kind,
     message_bytes,
+    expected_message_sha256,
     expected_aad,
-    expected_previous_state,
+    expected_sender,
+    expected_message_state,
     expected_resulting_state,
-    storage_entries,
-    storage_format_version,
   );
 
   void wire__crate__api__group_e2ee__remove_members_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
+    JSAny transition,
     JSAny signer_bytes,
-    JSAny removals,
+    JSAny authorized_removals,
     JSAny aad,
-    JSAny expected_previous_state,
-    JSAny storage_entries,
-    int storage_format_version,
   ) => wasmModule.wire__crate__api__group_e2ee__remove_members_with_storage(
     port_,
-    group_id,
+    context,
+    transition,
     signer_bytes,
-    removals,
+    authorized_removals,
     aad,
-    expected_previous_state,
-    storage_entries,
-    storage_format_version,
   );
 
   void wire__crate__api__group_e2ee__self_update_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
+    JSAny transition,
     JSAny signer_bytes,
-    JSAny aad,
-    JSAny expected_previous_state,
     JSAny expected_self_authority,
-    JSAny storage_entries,
-    int storage_format_version,
+    JSAny aad,
   ) => wasmModule.wire__crate__api__group_e2ee__self_update_with_storage(
     port_,
-    group_id,
+    context,
+    transition,
     signer_bytes,
-    aad,
-    expected_previous_state,
     expected_self_authority,
-    storage_entries,
-    storage_format_version,
+    aad,
   );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
@@ -2218,24 +3144,20 @@ class RustLibWire implements BaseWire {
 
   void wire__crate__api__group_e2ee__swap_members_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
+    JSAny transition,
     JSAny signer_bytes,
-    JSAny removals,
-    JSAny additions,
+    JSAny authorized_key_packages,
+    JSAny authorized_removals,
     JSAny aad,
-    JSAny expected_previous_state,
-    JSAny storage_entries,
-    int storage_format_version,
   ) => wasmModule.wire__crate__api__group_e2ee__swap_members_with_storage(
     port_,
-    group_id,
+    context,
+    transition,
     signer_bytes,
-    removals,
-    additions,
+    authorized_key_packages,
+    authorized_removals,
     aad,
-    expected_previous_state,
-    storage_entries,
-    storage_format_version,
   );
 
   void
@@ -2394,13 +3316,11 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external void wire__crate__api__group_e2ee__add_members_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
+    JSAny transition,
     JSAny signer_bytes,
-    JSAny additions,
+    JSAny authorized_key_packages,
     JSAny aad,
-    JSAny expected_previous_state,
-    JSAny storage_entries,
-    int storage_format_version,
   );
 
   external void wire__crate__api__group_e2ee__create_group_with_storage(
@@ -2408,6 +3328,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny config,
     JSAny signer_bytes,
     JSAny explicit_group_id,
+    JSAny incarnation_id,
     JSAny expected_owner_authority,
     JSAny? credential_bytes,
     JSAny storage_entries,
@@ -2427,12 +3348,10 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external void wire__crate__api__storage__create_message_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
     JSAny signer_bytes,
     JSAny message,
     JSAny aad,
-    JSAny storage_entries,
-    int storage_format_version,
   );
 
   external void wire__crate__api__storage__delete_group_with_storage(
@@ -2440,6 +3359,18 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny group_id,
     JSAny storage_entries,
     int storage_format_version,
+  );
+
+  external void
+  wire__crate__api__group_e2ee__discard_pending_commit_with_storage(
+    NativePortType port_,
+    JSAny context,
+    JSAny expected_pending_binding,
+  );
+
+  external void wire__crate__api__group_e2ee__get_pending_commit_with_storage(
+    NativePortType port_,
+    JSAny context,
   );
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
@@ -2452,12 +3383,22 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
   wire__crate__api__group_e2ee__join_group_from_welcome_with_storage(
     NativePortType port_,
     JSAny config,
+    JSAny incarnation_id,
     JSAny welcome_bytes,
+    JSAny expected_welcome_sha256,
     JSAny? ratchet_tree_bytes,
     JSAny signer_bytes,
     JSAny expected_resulting_state,
+    JSAny expected_local_leaf,
+    JSAny expected_target_key_package_sha256,
     JSAny storage_entries,
     int storage_format_version,
+  );
+
+  external void wire__crate__api__group_e2ee__merge_pending_commit_with_storage(
+    NativePortType port_,
+    JSAny context,
+    JSAny acceptance,
   );
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
@@ -2491,35 +3432,32 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external void wire__crate__api__group_e2ee__process_message_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
+    int expected_kind,
     JSAny message_bytes,
+    JSAny expected_message_sha256,
     JSAny expected_aad,
-    JSAny expected_previous_state,
+    JSAny expected_sender,
+    JSAny expected_message_state,
     JSAny expected_resulting_state,
-    JSAny storage_entries,
-    int storage_format_version,
   );
 
   external void wire__crate__api__group_e2ee__remove_members_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
+    JSAny transition,
     JSAny signer_bytes,
-    JSAny removals,
+    JSAny authorized_removals,
     JSAny aad,
-    JSAny expected_previous_state,
-    JSAny storage_entries,
-    int storage_format_version,
   );
 
   external void wire__crate__api__group_e2ee__self_update_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
+    JSAny transition,
     JSAny signer_bytes,
-    JSAny aad,
-    JSAny expected_previous_state,
     JSAny expected_self_authority,
-    JSAny storage_entries,
-    int storage_format_version,
+    JSAny aad,
   );
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
@@ -2534,14 +3472,12 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external void wire__crate__api__group_e2ee__swap_members_with_storage(
     NativePortType port_,
-    JSAny group_id,
+    JSAny context,
+    JSAny transition,
     JSAny signer_bytes,
-    JSAny removals,
-    JSAny additions,
+    JSAny authorized_key_packages,
+    JSAny authorized_removals,
     JSAny aad,
-    JSAny expected_previous_state,
-    JSAny storage_entries,
-    int storage_format_version,
   );
 
   external void

@@ -4,11 +4,28 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
+import 'group_e2ee.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 import 'types.dart';
+part 'storage.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `batch_from_provider`, `batch_from_updates`, `provider_from_entries`, `validate_storage_entries`, `zeroize_entry_values`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`
+
+/// Advances only the local sender state. A local pending Commit pauses this
+/// author's outgoing application generation, not other members' sending.
+Future<CreateMessageWithStorageOutcome> createMessageWithStorage({
+  required MlsGroupOperationContext context,
+  required List<int> signerBytes,
+  required List<int> message,
+  required List<int> aad,
+}) => RustLib.instance.api.crateApiStorageCreateMessageWithStorage(
+  context: context,
+  signerBytes: signerBytes,
+  message: message,
+  aad: aad,
+);
 
 /// Return the only storage format version accepted by this build.
 int mlsStorageFormatVersion() =>
@@ -32,23 +49,6 @@ Future<CreateKeyPackageWithStorageResult> createKeyPackageWithStorage({
   credentialIdentity: credentialIdentity,
   signerPublicKey: signerPublicKey,
   credentialBytes: credentialBytes,
-  storageEntries: storageEntries,
-  storageFormatVersion: storageFormatVersion,
-);
-
-/// Create an application message and return its sender-state changes.
-Future<CreateMessageWithStorageResult> createMessageWithStorage({
-  required List<int> groupId,
-  required List<int> signerBytes,
-  required List<int> message,
-  required List<int> aad,
-  required List<MlsStorageEntry> storageEntries,
-  required int storageFormatVersion,
-}) => RustLib.instance.api.crateApiStorageCreateMessageWithStorage(
-  groupId: groupId,
-  signerBytes: signerBytes,
-  message: message,
-  aad: aad,
   storageEntries: storageEntries,
   storageFormatVersion: storageFormatVersion,
 );
@@ -86,17 +86,37 @@ class CreateKeyPackageWithStorageResult {
           storageBatch == other.storageBatch;
 }
 
+@freezed
+sealed class CreateMessageWithStorageOutcome
+    with _$CreateMessageWithStorageOutcome {
+  const CreateMessageWithStorageOutcome._();
+
+  const factory CreateMessageWithStorageOutcome.success(
+    CreateMessageWithStorageResult field0,
+  ) = CreateMessageWithStorageOutcome_Success;
+  const factory CreateMessageWithStorageOutcome.failure(MlsErrorCode field0) =
+      CreateMessageWithStorageOutcome_Failure;
+}
+
 class CreateMessageWithStorageResult {
   final Uint8List ciphertext;
+  final Uint8List resultingGroupStateSha256;
+  final int effectiveRetention;
   final MlsStorageBatch storageBatch;
 
   const CreateMessageWithStorageResult({
     required this.ciphertext,
+    required this.resultingGroupStateSha256,
+    required this.effectiveRetention,
     required this.storageBatch,
   });
 
   @override
-  int get hashCode => ciphertext.hashCode ^ storageBatch.hashCode;
+  int get hashCode =>
+      ciphertext.hashCode ^
+      resultingGroupStateSha256.hashCode ^
+      effectiveRetention.hashCode ^
+      storageBatch.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -104,6 +124,8 @@ class CreateMessageWithStorageResult {
       other is CreateMessageWithStorageResult &&
           runtimeType == other.runtimeType &&
           ciphertext == other.ciphertext &&
+          resultingGroupStateSha256 == other.resultingGroupStateSha256 &&
+          effectiveRetention == other.effectiveRetention &&
           storageBatch == other.storageBatch;
 }
 

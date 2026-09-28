@@ -40,6 +40,8 @@ pub(crate) fn is_global_key(key: &[u8]) -> bool {
 pub enum SnapshotStorageError {
     #[error("Serialization error: {0}")]
     Serialization(String),
+    #[error("Missing persisted group state")]
+    MissingGroupState,
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -88,7 +90,70 @@ impl Drop for SnapshotStorageProvider {
 }
 
 impl SnapshotStorageProvider {
+    /// Inspect only reserved key names; do not duplicate secret-bearing values.
+    pub(crate) fn opaque_keys_with_prefix(&self, prefix: &[u8]) -> Vec<Vec<u8>> {
+        self.current
+            .lock()
+            .keys()
+            .filter(|key| key.starts_with(prefix))
+            .cloned()
+            .collect()
+    }
+
+    /// Package-owned opaque rows share the same operation-scoped snapshot and
+    /// complete mutation diff as OpenMLS rows. Callers never mutate these maps.
+    pub(crate) fn read_opaque(&self, key: &[u8]) -> Option<zeroize::Zeroizing<Vec<u8>>> {
+        self.current
+            .lock()
+            .get(key)
+            .cloned()
+            .map(zeroize::Zeroizing::new)
+    }
+
+    pub(crate) fn write_opaque(&self, key: Vec<u8>, value: Vec<u8>) {
+        if let Some(mut previous) = self.current.lock().insert(key, value) {
+            previous.zeroize();
+        }
+    }
+
+    pub(crate) fn delete_opaque(&self, key: &[u8]) {
+        if let Some(mut previous) = self.current.lock().remove(key) {
+            previous.zeroize();
+        }
+    }
+
     /// Create a snapshot from DB entries.
+    pub(crate) fn snapshot_entries(
+        &self,
+        group_id: &[u8],
+    ) -> Vec<crate::api::storage::MlsStorageEntry> {
+        self.current
+            .lock()
+            .iter()
+            .map(|(key, value)| crate::api::storage::MlsStorageEntry {
+                key: key.clone(),
+                value: value.clone(),
+                group_id: if is_global_key(key) {
+                    None
+                } else {
+                    Some(group_id.to_vec())
+                },
+            })
+            .collect()
+    }
+
+    pub(crate) fn pending_state_sha256(
+        &self,
+        group_id: &openmls::prelude::GroupId,
+    ) -> Result<Vec<u8>, SnapshotStorageError> {
+        use sha2::{Digest, Sha256};
+        let key = build_key_serde::<CURRENT_VERSION>(GROUP_STATE_LABEL, group_id)?;
+        let rows = self.current.lock();
+        rows.get(&key)
+            .map(|value| Sha256::digest(value).to_vec())
+            .ok_or(SnapshotStorageError::MissingGroupState)
+    }
+
     pub fn from_entries(entries: Vec<(Vec<u8>, Vec<u8>)>) -> Self {
         let initial: HashMap<Vec<u8>, Vec<u8>> = entries.into_iter().collect();
         let current = Mutex::new(initial.clone());

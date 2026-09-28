@@ -1,4 +1,4 @@
-//! Android transport for native receive v1.
+//! Android transport for native receive v2.
 //!
 //! The app-owned Java/Kotlin class is a mechanical byte-array shim. All MLS,
 //! validation, framing, and error semantics remain in the Rust core.
@@ -8,13 +8,13 @@ use jni::objects::{JByteArray, JClass};
 use jni::sys::{jbyteArray, jint};
 use zeroize::Zeroize;
 
-use crate::native_receive_v1::{
-    NATIVE_RECEIVE_CONTRACT_VERSION, NATIVE_RECEIVE_REQUEST_MAX_BYTES, NativeReceiveErrorCodeV1,
-    encode_native_receive_failure_v1, execute_native_receive_v1,
+use crate::native_receive_v2::{
+    NATIVE_RECEIVE_CONTRACT_VERSION, NATIVE_RECEIVE_REQUEST_MAX_BYTES, NativeReceiveErrorCodeV2,
+    encode_native_receive_failure_v2, execute_native_receive_v2,
 };
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeExecuteReceiveV1(
+pub extern "system" fn Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeExecuteReceiveV2(
     env: JNIEnv,
     _class: JClass,
     request: JByteArray,
@@ -25,14 +25,14 @@ pub extern "system" fn Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeExecu
     if request_len as usize > NATIVE_RECEIVE_REQUEST_MAX_BYTES {
         return response_to_java(
             &env,
-            encode_native_receive_failure_v1(None, NativeReceiveErrorCodeV1::LimitExceeded),
+            encode_native_receive_failure_v2(None, NativeReceiveErrorCodeV2::LimitExceeded),
         );
     }
     let mut request_bytes = match env.convert_byte_array(&request) {
         Ok(bytes) => bytes,
         Err(_) => return std::ptr::null_mut(),
     };
-    let response = execute_native_receive_v1(&request_bytes);
+    let response = execute_native_receive_v2(&request_bytes);
     request_bytes.zeroize();
     response_to_java(&env, response)
 }

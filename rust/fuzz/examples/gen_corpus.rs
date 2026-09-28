@@ -69,12 +69,12 @@ fn main() {
     // corpus/mls_message/.
     write_seed(&base.join("mls_message"), "empty", b"");
 
-    // --- native_receive_v1 target ---
-    write_seed(&base.join("native_receive_v1"), "empty", b"");
+    // --- native_receive_v2 target ---
+    write_seed(&base.join("native_receive_v2"), "empty", b"");
     write_seed(
-        &base.join("native_receive_v1"),
+        &base.join("native_receive_v2"),
         "valid_header_empty_payload",
-        b"KMLS\x00\x01\x01\x00\x00\x00\x00\x00",
+        b"KMLS\x00\x02\x01\x00\x00\x00\x00\x00",
     );
 
     // --- account_envelope_v1 target ---

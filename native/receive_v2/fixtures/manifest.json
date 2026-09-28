@@ -1,0 +1,135 @@
+{
+  "contract_version": 2,
+  "generated_date": "2026-09-28",
+  "profile_id": 2,
+  "storage_format_version": 1,
+  "synthetic_secrets_only": true,
+  "vectors": [
+    {
+      "expected_error_code": null,
+      "id": "welcome_success",
+      "operation": 3,
+      "request_file": "welcome_success.request.bin",
+      "request_sha256": "edf029157836007f434c52526dc3e1fc5551aeb20ef26fa41f1946683e215d34",
+      "response_file": "welcome_success.response.bin",
+      "response_sha256": "b8ff93bf980b4dce8ea12eba9458dd0945b40e22fac3d4789a02c73967f4eecd"
+    },
+    {
+      "expected_error_code": 35,
+      "id": "welcome_wrong_key_package",
+      "operation": 3,
+      "request_file": "welcome_wrong_key_package.request.bin",
+      "request_sha256": "68d7ad3e326c5a94f7d39d5019e0f134e85d60e5ed8f586efa63ab640cba2ca5",
+      "response_file": "welcome_wrong_key_package.response.bin",
+      "response_sha256": "74db0f27977a353cdcec109d9f70b8befe100dec5d2832ca9c8aa20e5065d2e8"
+    },
+    {
+      "expected_error_code": null,
+      "id": "application_success",
+      "operation": 1,
+      "request_file": "application_success.request.bin",
+      "request_sha256": "bebc91974f16bad5c19c4e2c8df4ea88764263d4488815a6fdc5693e4d0ae6db",
+      "response_file": "application_success.response.bin",
+      "response_sha256": "117303e884831ce61f942b216475d82cee2551774c9d681d826fbeea8b1aee9d"
+    },
+    {
+      "expected_error_code": 26,
+      "id": "application_wrong_aad",
+      "operation": 1,
+      "request_file": "application_wrong_aad.request.bin",
+      "request_sha256": "6067e13e09bd96e0130c75acc0b1683eafdaa03d55670ac92050a3b536de50b5",
+      "response_file": "application_wrong_aad.response.bin",
+      "response_sha256": "9951ddec09e6d02c7149c70de747f327a7f4fabba19b5ae672cf873c28292fbd"
+    },
+    {
+      "expected_error_code": 28,
+      "id": "application_wrong_sender",
+      "operation": 1,
+      "request_file": "application_wrong_sender.request.bin",
+      "request_sha256": "716959d673281c7a3bb9dcd7943f3a939343b4c3f9013a40ad454ff1dee500a0",
+      "response_file": "application_wrong_sender.response.bin",
+      "response_sha256": "59de77345c2816df396ade7b7ce63d39fa4a5a97307b968364398aac122a85b7"
+    },
+    {
+      "expected_error_code": 46,
+      "id": "application_wrong_roster",
+      "operation": 1,
+      "request_file": "application_wrong_roster.request.bin",
+      "request_sha256": "9d36d01f694a52c6024bf257fb4f8502f7ef29da201c6047dd4faa8dba5f294b",
+      "response_file": "application_wrong_roster.response.bin",
+      "response_sha256": "dd5fba16db5c996aaf9e13fabb27ff6017c631a527867d9d1e30a7ca04ab4ed6"
+    },
+    {
+      "expected_error_code": 13,
+      "id": "application_wrong_base",
+      "operation": 1,
+      "request_file": "application_wrong_base.request.bin",
+      "request_sha256": "a1029fe5aa90737089dd003a35cfa8d438335ac96ca9ba599082d78324e46dbd",
+      "response_file": "application_wrong_base.response.bin",
+      "response_sha256": "51aaa4323c438f34414d80f79a86e53a6dad47df3db08ad6506e24b7a886207f"
+    },
+    {
+      "expected_error_code": 58,
+      "id": "application_wrong_hash",
+      "operation": 1,
+      "request_file": "application_wrong_hash.request.bin",
+      "request_sha256": "72a8e9168bffb18fbedf79d9ba0cbbb591a646bddaa400472825577082f068a7",
+      "response_file": "application_wrong_hash.response.bin",
+      "response_sha256": "824b1f405bbfe7143cc8442467c82f893fade689e7a1eee7e372dfbfe57f6e6c"
+    },
+    {
+      "expected_error_code": 27,
+      "id": "application_wrong_kind",
+      "operation": 2,
+      "request_file": "application_wrong_kind.request.bin",
+      "request_sha256": "9f45795db18a7cc1005edd0eb279dd06a23e9ddd226a5ce39daa1e7f3a723b0f",
+      "response_file": "application_wrong_kind.response.bin",
+      "response_sha256": "716f4a7b0ced542a46cef562fcf279e7185cfdff9206888b75536b1d36700f03"
+    },
+    {
+      "expected_error_code": 20,
+      "id": "application_wrong_retention",
+      "operation": 1,
+      "request_file": "application_wrong_retention.request.bin",
+      "request_sha256": "b90c22082c4909390f245fab387b67c6673050dc6398f5c56d95e9b3bc05baba",
+      "response_file": "application_wrong_retention.response.bin",
+      "response_sha256": "2ddbd3d85e9251e44d0442812dd218175f1e021dbd1460279718db5f56982de0"
+    },
+    {
+      "expected_error_code": 6,
+      "id": "application_empty_aad",
+      "operation": 1,
+      "request_file": "application_empty_aad.request.bin",
+      "request_sha256": "c3c5d39c0086663edeaf658908482249f62a405d3c23e0eb5b6d6d473326b5ec",
+      "response_file": "application_empty_aad.response.bin",
+      "response_sha256": "a9d500aea8bd41dbd0935390c0f45f0f3842fa3e61a92524489ac836c9982792"
+    },
+    {
+      "expected_error_code": 2,
+      "id": "v1_frame_rejected",
+      "operation": 1,
+      "request_file": "v1_frame_rejected.request.bin",
+      "request_sha256": "f2d9d8280e93f1be93296687e18f9ad65754f657d4c86fd4f92ea4ea8859ed50",
+      "response_file": "v1_frame_rejected.response.bin",
+      "response_sha256": "d2de60f115319b1269c150189b225142ab099f54ee3101709b3a82ef24471975"
+    },
+    {
+      "expected_error_code": null,
+      "id": "commit_success",
+      "operation": 2,
+      "request_file": "commit_success.request.bin",
+      "request_sha256": "c566396857d058e47be0c861c9d6ea4bebc3cf5f36b6f85563e8a5919c8d64ba",
+      "response_file": "commit_success.response.bin",
+      "response_sha256": "30a58c33be0a997304bf4b5a0bf935ce8ee39888357092668b622f8a84be82d7"
+    },
+    {
+      "expected_error_code": null,
+      "id": "application_historical",
+      "operation": 1,
+      "request_file": "application_historical.request.bin",
+      "request_sha256": "002ac67c52159b773b9d8c74bd7b8d6425a0ff62d6ff60bb909ce114ac26526e",
+      "response_file": "application_historical.response.bin",
+      "response_sha256": "77331c754c53b48e569153222bf3843540d6fe953956a38c86538c723a79d93a"
+    }
+  ]
+}
