@@ -57,6 +57,10 @@ Flutter host tests resolve the library from Flutter’s generated `NativeAssetsM
 
 ## Caller-owned transaction boundary
 
+Version `4.0.0` uses native receive contract/profile 2. This is a breaking
+API and lifecycle change. Existing zero-retention groups are not migrated
+automatically; initialize fresh groups under the coordinated consumer migration.
+
 Each operation follows the same rule:
 
 1. Read the installation-global entries and the entries for the target group in one consistent snapshot.
@@ -74,6 +78,9 @@ The public operations are:
 - `removeMembersWithStorage()`
 - `swapMembersWithStorage()`
 - `selfUpdateWithStorage()`
+- `getPendingCommitWithStorage()`
+- `mergePendingCommitWithStorage()`
+- `discardPendingCommitWithStorage()`
 - `joinGroupFromWelcomeWithStorage()`
 - `createMessageWithStorage()`
 - `processMessageWithStorage()`
@@ -94,12 +101,21 @@ requires exact authorized KeyPackages, including Basic Credential identity and
 signature public key, plus the canonical previous roster. It authenticates the
 supplied AAD in the resulting Commit. A mismatch returns no mutation batch.
 
-`processMessageWithStorage()` requires caller-supplied expected AAD and
-canonical previous/resulting rosters for application and handshake messages.
-It returns both `previousEpoch` and `resultingEpoch`; a processed Commit
-normally advances the latter.
+`MlsGroupOperationContext` carries the current group/incarnation, canonical
+current roster, current local snapshot digest, and expected persisted retention.
+Lifecycle operations return concrete typed Success/Failure outcomes. A failure
+contains no plaintext or usable mutation batch; the package never applies state.
 
-An MLS Welcome has no equivalent application AAD field. Bind it to authenticated bootstrap metadata in the application protocol before calling `joinGroupFromWelcomeWithStorage()`.
+`processMessageWithStorage()` additionally requires a closed message kind,
+exact wire hash, expected AAD, exact sender leaf and expected message roster.
+`messageEpoch` is separate from the live `previousEpoch`/`resultingEpoch`.
+An application can use retained historical sender authority without rolling
+back the current roster; a Commit must advance from the current epoch.
+
+An MLS Welcome has no equivalent application AAD field. Bind it to authenticated
+bootstrap metadata before joining. Join requires the exact Welcome hash, local
+leaf authority and retained KeyPackage hash, and returns the derived consumed
+KeyPackage hash with the complete batch.
 
 For variable-roster groups, `MlsRosterSummaryV1` binds the exact MLS group ID,
 epoch, active leaf indexes, Basic Credential identities, and signature public
@@ -116,19 +132,45 @@ only the caller's own leaf and deliberately preserves its Basic identity and
 signature key. MLS does not allow one member to author an Update for another
 member's leaf.
 
-### Deferred Commit candidates
+### Persisted pending Commits
 
-Member-management and self-update results are candidate state: they contain
-the Commit hash, previous/resulting roster summaries, the complete unapplied
-storage batch, and `baseGroupStateSha256`. Persist those exact bytes before
-submission and apply the retained batch only after the application server
-canonically accepts that Commit. Do not regenerate a Commit for an exact retry.
+Member-management and self-update return `PendingCommitWithStorageResult`.
+Apply its complete batch immediately to persist an **unmerged** pending Commit
+and its exact retry bytes. The live epoch/roster is unchanged;
+`proposedResultingRoster` is the actual preview for server canonicalization.
+Never hold this batch as a stale merged-state replacement.
 
-Immediately before promotion, recompute `mlsGroupStateDigest()` from the current
-group snapshot and require it to equal the candidate's base digest. This catches
-same-epoch sender/receiver-ratchet changes that an epoch-only check misses. A
-rejected or stale candidate is discarded; candidate storage, server acceptance,
-mailbox fencing, and promotion transactions remain caller responsibilities.
+Use `getPendingCommitWithStorage()` for exact retries, not regeneration.
+After authenticated canonical acceptance, `mergePendingCommitWithStorage()`
+matches the saved command/context, author, wire/AAD hashes, preparation
+provenance and proposed result, then merges into the latest live ratchets.
+The preparation digest is provenance; the merge-time context digest is the
+current local compare-and-apply guard. They are deliberately different.
+
+Only the local author pauses outgoing application generation while its Commit
+is pending. Other members can send; the author can continue receiving.
+`discardPendingCommitWithStorage()` clears pending state only after the caller
+establishes definitive authenticated rejection. It preserves live receive state.
+Unknown outcomes/timeouts are not permission to discard. Caller-owned journals
+handle settlement retries after local completion; missing pending state is not
+successful settlement.
+
+### Bounded local retention and native receive
+
+Create/Welcome join choose 2 retained past epochs by default, or 4 explicitly.
+Capacity is installation-local, persisted and checked on every operation; it is
+not server consensus or a live resize option. Package-owned bounded metadata
+and retry rows share storage format 1 and participate in group-state digest 1.
+Missing or incompatible metadata fails closed. Sender-ratchet limits remain
+5 out-of-order / 1000 forward; retained epochs do not make delivery lossless.
+
+Native receive v2 uses the same Rust core and complete batches as Dart.
+Android uses `nativeExecuteReceiveV2`; Apple uses
+`openmls_receive_v2_execute/free/version`. V1 frames are rejected and V1
+entrypoints are absent from production builds. Shared synthetic binary vectors
+and mechanical platform harnesses are under `native/receive_v2/`.
+The caller still owns cross-process serialization and one atomic storage batch,
+deduplication, plaintext handoff and settlement transaction.
 
 ### Ordering and rejection
 

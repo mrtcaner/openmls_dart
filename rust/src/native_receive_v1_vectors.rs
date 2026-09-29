@@ -10,16 +10,16 @@ use minicbor::Decoder;
 use sha2::{Digest, Sha256};
 use zeroize::Zeroize;
 
-use crate::api::config::MlsGroupConfig;
 use crate::api::group_e2ee::{
     MlsAuthorizedKeyPackageV1, MlsAuthorizedOwnerV1, MlsExpectedRosterStateV1, MlsRosterLeafV1,
-    MlsRosterSummaryV1, add_members_with_storage, create_group_with_storage,
-    join_group_from_welcome_with_storage, mls_group_state_digest, process_message_with_storage,
+    MlsRosterSummaryV1, legacy_add_members_with_storage, legacy_create_group_with_storage,
+    legacy_join_group_from_welcome_with_storage, legacy_process_message_with_storage,
+    mls_group_state_digest,
 };
 use crate::api::keys::{MlsSignatureKeyPair, serialize_signer};
 use crate::api::storage::{
     MLS_STORAGE_FORMAT_VERSION, MlsStorageBatch, MlsStorageEntry, create_key_package_with_storage,
-    create_message_with_storage, zeroize_entry_values,
+    legacy_create_message_with_storage, zeroize_entry_values,
 };
 use crate::api::types::MlsCiphersuite;
 use crate::native_receive_v1::{
@@ -169,7 +169,7 @@ struct GeneratedVector {
 }
 
 fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence), String> {
-    let config = MlsGroupConfig::default_config(ciphersuite());
+    let config = crate::api::group_e2ee::legacy_default_config(ciphersuite());
     let group_id = vec![0x51; 16];
     let alice_identity = identity(1);
     let bob_identity = identity(2);
@@ -178,7 +178,7 @@ fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence
     let (bob_signer, bob_public) = signer()?;
     let (charlie_signer, charlie_public) = signer()?;
 
-    let created = create_group_with_storage(
+    let created = legacy_create_group_with_storage(
         config.clone(),
         alice_signer.clone(),
         group_id.clone(),
@@ -206,7 +206,7 @@ fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence
     let mut bob_global_entries = Vec::new();
     apply_batch(&mut bob_global_entries, &bob_key_package.storage_batch);
 
-    let add_bob = add_members_with_storage(
+    let add_bob = legacy_add_members_with_storage(
         group_id.clone(),
         alice_signer.clone(),
         vec![MlsAuthorizedKeyPackageV1 {
@@ -285,7 +285,7 @@ fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence
         NativeReceiveErrorCodeV1::LocalLeafMismatch,
     ));
 
-    let joined = join_group_from_welcome_with_storage(
+    let joined = legacy_join_group_from_welcome_with_storage(
         config,
         welcome_bytes,
         None,
@@ -298,7 +298,7 @@ fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence
     apply_batch(&mut bob_entries, &joined.storage_batch);
 
     let application_aad = b"fixture-application-aad".to_vec();
-    let application = create_message_with_storage(
+    let application = legacy_create_message_with_storage(
         group_id.clone(),
         alice_signer.clone(),
         b"fixture plaintext".to_vec(),
@@ -397,7 +397,7 @@ fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence
         NativeReceiveErrorCodeV1::MessageKindMismatch,
     ));
 
-    let processed_application = process_message_with_storage(
+    let processed_application = legacy_process_message_with_storage(
         group_id.clone(),
         application.ciphertext,
         application_aad,
@@ -418,7 +418,7 @@ fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence
         MLS_STORAGE_FORMAT_VERSION,
     )?;
     let commit_aad = b"fixture-commit-aad".to_vec();
-    let commit = add_members_with_storage(
+    let commit = legacy_add_members_with_storage(
         group_id.clone(),
         alice_signer,
         vec![MlsAuthorizedKeyPackageV1 {
@@ -456,12 +456,12 @@ fn build_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence
 fn build_limit_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEvidence), String> {
     const ROSTER_LEAVES: usize = 256;
 
-    let config = MlsGroupConfig::default_config(ciphersuite());
+    let config = crate::api::group_e2ee::legacy_default_config(ciphersuite());
     let group_id = vec![0x52; 16];
     let owner_identity = limit_identity(0);
     let target_identity = limit_identity(1);
     let (owner_signer, owner_public) = signer()?;
-    let created = create_group_with_storage(
+    let created = legacy_create_group_with_storage(
         config.clone(),
         owner_signer.clone(),
         group_id.clone(),
@@ -508,7 +508,7 @@ fn build_limit_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEv
         });
     }
 
-    let added = add_members_with_storage(
+    let added = legacy_add_members_with_storage(
         group_id.clone(),
         owner_signer.clone(),
         additions,
@@ -551,7 +551,7 @@ fn build_limit_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEv
         .map_err(|error| format!("encode 256-leaf Welcome request: {error:?}"))?;
     let welcome_response = execute_native_receive_v1(&welcome_frame);
     validate_response_shape(&welcome_response, NativeReceiveOperationV1::Welcome, None)?;
-    let joined = join_group_from_welcome_with_storage(
+    let joined = legacy_join_group_from_welcome_with_storage(
         config,
         welcome_bytes.clone(),
         None,
@@ -568,7 +568,7 @@ fn build_limit_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEv
     );
     apply_batch(&mut target_entries, &joined.storage_batch);
 
-    let application = create_message_with_storage(
+    let application = legacy_create_message_with_storage(
         group_id.clone(),
         owner_signer,
         vec![0x50; 29 * 1024],
@@ -604,7 +604,7 @@ fn build_limit_vectors() -> Result<(Vec<GeneratedVector>, NativeReceiveV1LimitEv
         NativeReceiveOperationV1::Application,
         None,
     )?;
-    let processed = process_message_with_storage(
+    let processed = legacy_process_message_with_storage(
         group_id,
         application.ciphertext.clone(),
         vec![0x42; 2048],

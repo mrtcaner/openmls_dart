@@ -25,8 +25,96 @@ use super::types::{MlsProposalType, ProcessedMessageType};
 use crate::snapshot_storage::is_global_key;
 
 const ROSTER_DOMAIN_V1: &[u8] = b"openmls_dart/roster-summary/v1\0";
+
+#[cfg(test)]
+mod pending_retention_proof;
+pub(crate) mod runtime;
 const GROUP_STATE_DOMAIN_V1: &[u8] = b"openmls_dart/group-state/v1\0";
 type RequestedAddition = (Vec<u8>, Vec<u8>);
+
+/// Stable mechanism outcomes shared by the foreground and native receive core.
+/// A failure never carries a usable mutation batch or plaintext.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(u16)]
+pub enum MlsErrorCode {
+    InvalidFrame = 1,
+    UnsupportedContractVersion = 2,
+    UnsupportedProfile = 3,
+    UnsupportedOperation = 4,
+    NoncanonicalEncoding = 5,
+    LimitExceeded = 6,
+    StorageFormatMismatch = 10,
+    InvalidStorageSnapshot = 11,
+    GroupStateUnavailable = 12,
+    BaseStateMismatch = 13,
+    ConfigurationMismatch = 20,
+    GroupMismatch = 21,
+    PreviousEpochMismatch = 22,
+    PreviousRosterMismatch = 23,
+    ResultingEpochMismatch = 24,
+    ResultingRosterMismatch = 25,
+    AadMismatch = 26,
+    MessageKindMismatch = 27,
+    SenderMismatch = 28,
+    LocalLeafMismatch = 29,
+    InvalidSigner = 30,
+    UnsupportedCredential = 31,
+    MlsDecodeRejected = 32,
+    WelcomeRejected = 33,
+    MlsProtocolRejected = 34,
+    ExpectedKeyPackageMismatch = 35,
+    PendingCommitExists = 40,
+    PendingCommitMissing = 41,
+    PendingBindingMismatch = 42,
+    AcceptanceBindingMismatch = 43,
+    MessageEpochMismatch = 45,
+    MessageRosterMismatch = 46,
+    InactiveGroup = 47,
+    FutureMessageEpoch = 48,
+    RequiredCommitEpochMismatch = 49,
+    PastEpochUnavailable = 50,
+    GenerationTooOld = 51,
+    Replay = 52,
+    ForwardDistanceExceeded = 53,
+    UnsupportedLocalMetadataVersion = 55,
+    LocalMetadataMissing = 56,
+    UnsupportedRetention = 57,
+    WireHashMismatch = 58,
+    InternalFailure = 255,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct MlsTransitionContext {
+    pub command_id: Vec<u8>,
+    pub context_sha256: Vec<u8>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct MlsPendingCommitBinding {
+    pub group_id: Vec<u8>,
+    pub incarnation_id: Vec<u8>,
+    pub transition: MlsTransitionContext,
+    pub author: MlsRosterLeafV1,
+    pub previous_state: MlsExpectedRosterStateV1,
+    pub commit_sha256: Vec<u8>,
+    pub aad_sha256: Vec<u8>,
+    pub welcome_sha256: Option<Vec<u8>>,
+    pub group_info_sha256: Option<Vec<u8>>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct MlsCommitAcceptance {
+    pub binding: MlsPendingCommitBinding,
+    pub resulting_state: MlsExpectedRosterStateV1,
+    pub preparation_base_group_state_sha256: Vec<u8>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum MlsReceiveKind {
+    Application,
+    Commit,
+    Proposal,
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct MlsRosterLeafV1 {
@@ -73,19 +161,21 @@ pub struct MlsAuthorizedSelfV1 {
     pub expected_signature_public_key: Vec<u8>,
 }
 
-pub struct CreateGroupWithStorageResult {
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) struct LegacyCreateGroupWithStorageResult {
     pub group_id: Vec<u8>,
     pub resulting_roster: MlsRosterSummaryV1,
     pub storage_batch: MlsStorageBatch,
 }
 
-pub struct JoinGroupWithStorageResult {
+pub(crate) struct JoinedGroupState {
     pub group_id: Vec<u8>,
     pub resulting_roster: MlsRosterSummaryV1,
     pub storage_batch: MlsStorageBatch,
 }
 
-pub struct PreparedCommitWithStorageResult {
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) struct LegacyPreparedCommitWithStorageResult {
     pub commit: Vec<u8>,
     pub welcome: Option<Vec<u8>>,
     pub group_info: Option<Vec<u8>>,
@@ -96,7 +186,8 @@ pub struct PreparedCommitWithStorageResult {
     pub storage_batch: MlsStorageBatch,
 }
 
-pub struct ProcessMessageWithStorageResult {
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) struct LegacyProcessMessageWithStorageResult {
     pub message_type: ProcessedMessageType,
     pub sender_index: Option<u32>,
     pub previous_epoch: u64,
@@ -139,8 +230,8 @@ pub(crate) struct StrictReceiveError {
     pub detail: String,
 }
 
-pub(crate) struct StrictJoinGroupWithStorageResult {
-    pub joined: JoinGroupWithStorageResult,
+pub(crate) struct StrictJoinedGroupState {
+    pub joined: JoinedGroupState,
     pub local_leaf: MlsRosterLeafV1,
     pub consumed_key_package_sha256: Vec<u8>,
 }
@@ -153,6 +244,475 @@ fn strict_receive_error(
         kind,
         detail: detail.into(),
     }
+}
+
+/// Current local state authority. Snapshot rows are copied for one call only.
+/// The caller owns writer/lifecycle fencing and atomic compare-and-apply.
+pub struct MlsGroupOperationContext {
+    pub group_id: Vec<u8>,
+    pub incarnation_id: Vec<u8>,
+    pub expected_current_state: MlsExpectedRosterStateV1,
+    pub expected_base_group_state_sha256: Vec<u8>,
+    pub expected_retention: u32,
+    pub storage_entries: Vec<MlsStorageEntry>,
+    pub storage_format_version: u32,
+}
+// FRB emits by-value serializers for transparent input DTOs. Transfer this
+// DTO immediately and infallibly into the zeroizing internal Context; never
+// add fallible validation before that transfer.
+impl From<MlsGroupOperationContext> for runtime::Context {
+    fn from(value: MlsGroupOperationContext) -> Self {
+        Self {
+            group_id: value.group_id,
+            incarnation_id: value.incarnation_id,
+            expected_current: value.expected_current_state,
+            expected_base_sha256: value.expected_base_group_state_sha256,
+            expected_retention: value.expected_retention,
+            entries: value.storage_entries,
+            storage_format: value.storage_format_version,
+        }
+    }
+}
+pub struct CreateGroupWithStorageResult {
+    pub group_id: Vec<u8>,
+    pub resulting_roster: MlsRosterSummaryV1,
+    pub resulting_group_state_sha256: Vec<u8>,
+    pub effective_retention: u32,
+    pub storage_batch: MlsStorageBatch,
+}
+pub struct JoinGroupWithStorageResult {
+    pub group_id: Vec<u8>,
+    pub local_leaf: MlsRosterLeafV1,
+    pub consumed_key_package_sha256: Vec<u8>,
+    pub resulting_roster: MlsRosterSummaryV1,
+    pub resulting_group_state_sha256: Vec<u8>,
+    pub effective_retention: u32,
+    pub storage_batch: MlsStorageBatch,
+}
+/// Persist this unmerged pending batch immediately. It is not a stale merged
+/// candidate to apply later. Only exact acceptance permits merge.
+pub struct PendingCommitWithStorageResult {
+    pub pending_binding: MlsPendingCommitBinding,
+    pub previous_roster: MlsRosterSummaryV1,
+    pub proposed_resulting_roster: MlsRosterSummaryV1,
+    pub commit: Vec<u8>,
+    pub welcome: Option<Vec<u8>>,
+    pub group_info: Option<Vec<u8>>,
+    pub preparation_base_group_state_sha256: Vec<u8>,
+    pub resulting_group_state_sha256: Vec<u8>,
+    pub effective_retention: u32,
+    pub storage_batch: MlsStorageBatch,
+}
+pub struct PendingCommitInfo {
+    pub pending_binding: MlsPendingCommitBinding,
+    pub proposed_resulting_roster: MlsRosterSummaryV1,
+    pub commit: Vec<u8>,
+    pub welcome: Option<Vec<u8>>,
+    pub group_info: Option<Vec<u8>>,
+    pub preparation_base_group_state_sha256: Vec<u8>,
+}
+pub struct MergePendingCommitWithStorageResult {
+    pub previous_roster: MlsRosterSummaryV1,
+    pub resulting_roster: MlsRosterSummaryV1,
+    pub resulting_group_state_sha256: Vec<u8>,
+    pub effective_retention: u32,
+    pub storage_batch: MlsStorageBatch,
+}
+pub struct DiscardPendingCommitWithStorageResult {
+    pub previous_roster: MlsRosterSummaryV1,
+    pub resulting_roster: MlsRosterSummaryV1,
+    pub resulting_group_state_sha256: Vec<u8>,
+    pub effective_retention: u32,
+    pub storage_batch: MlsStorageBatch,
+}
+pub struct ProcessMessageWithStorageResult {
+    pub message_type: ProcessedMessageType,
+    pub message_epoch: u64,
+    pub authenticated_sender: MlsRosterLeafV1,
+    pub previous_epoch: u64,
+    pub resulting_epoch: u64,
+    pub application_message: Option<Vec<u8>>,
+    pub proposal_type: Option<MlsProposalType>,
+    pub previous_roster: MlsRosterSummaryV1,
+    pub resulting_roster: MlsRosterSummaryV1,
+    pub resulting_group_state_sha256: Vec<u8>,
+    pub effective_retention: u32,
+    pub storage_batch: MlsStorageBatch,
+}
+
+/// Success still requires caller-owned atomic apply. Failure has no batch or plaintext.
+// Transient by-value FRB boundary result; never retained in a collection.
+#[allow(clippy::large_enum_variant)]
+pub enum CreateGroupWithStorageOutcome {
+    Success(CreateGroupWithStorageResult),
+    Failure(MlsErrorCode),
+}
+
+/// Success still requires caller-owned atomic apply. Failure has no batch or plaintext.
+// Transient by-value FRB boundary result; never retained in a collection.
+#[allow(clippy::large_enum_variant)]
+pub enum JoinGroupFromWelcomeWithStorageOutcome {
+    Success(JoinGroupWithStorageResult),
+    Failure(MlsErrorCode),
+}
+
+/// Success still requires caller-owned atomic apply. Failure has no batch or plaintext.
+// Transient by-value FRB boundary result; never retained in a collection.
+#[allow(clippy::large_enum_variant)]
+pub enum AddMembersWithStorageOutcome {
+    Success(PendingCommitWithStorageResult),
+    Failure(MlsErrorCode),
+}
+
+/// Success still requires caller-owned atomic apply. Failure has no batch or plaintext.
+// Transient by-value FRB boundary result; never retained in a collection.
+#[allow(clippy::large_enum_variant)]
+pub enum RemoveMembersWithStorageOutcome {
+    Success(PendingCommitWithStorageResult),
+    Failure(MlsErrorCode),
+}
+
+/// Success still requires caller-owned atomic apply. Failure has no batch or plaintext.
+// Transient by-value FRB boundary result; never retained in a collection.
+#[allow(clippy::large_enum_variant)]
+pub enum SwapMembersWithStorageOutcome {
+    Success(PendingCommitWithStorageResult),
+    Failure(MlsErrorCode),
+}
+
+/// Success still requires caller-owned atomic apply. Failure has no batch or plaintext.
+// Transient by-value FRB boundary result; never retained in a collection.
+#[allow(clippy::large_enum_variant)]
+pub enum SelfUpdateWithStorageOutcome {
+    Success(PendingCommitWithStorageResult),
+    Failure(MlsErrorCode),
+}
+
+/// Success still requires caller-owned atomic apply. Failure has no batch or plaintext.
+// Transient by-value FRB boundary result; never retained in a collection.
+#[allow(clippy::large_enum_variant)]
+pub enum GetPendingCommitWithStorageOutcome {
+    Success(Option<PendingCommitInfo>),
+    Failure(MlsErrorCode),
+}
+
+/// Success still requires caller-owned atomic apply. Failure has no batch or plaintext.
+// Transient by-value FRB boundary result; never retained in a collection.
+#[allow(clippy::large_enum_variant)]
+pub enum MergePendingCommitWithStorageOutcome {
+    Success(MergePendingCommitWithStorageResult),
+    Failure(MlsErrorCode),
+}
+
+/// Success still requires caller-owned atomic apply. Failure has no batch or plaintext.
+// Transient by-value FRB boundary result; never retained in a collection.
+#[allow(clippy::large_enum_variant)]
+pub enum DiscardPendingCommitWithStorageOutcome {
+    Success(DiscardPendingCommitWithStorageResult),
+    Failure(MlsErrorCode),
+}
+
+/// Success still requires caller-owned atomic apply. Failure has no batch or plaintext.
+// Transient by-value FRB boundary result; never retained in a collection.
+#[allow(clippy::large_enum_variant)]
+pub enum ProcessMessageWithStorageOutcome {
+    Success(ProcessMessageWithStorageResult),
+    Failure(MlsErrorCode),
+}
+
+/// Panic containment for per-call shared operations; no result is applied here.
+pub(crate) fn lifecycle_guard<T>(
+    operation: impl FnOnce() -> Result<T, MlsErrorCode>,
+) -> Result<T, MlsErrorCode> {
+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(operation))
+        .map_err(|_| MlsErrorCode::InternalFailure)?
+}
+fn pending_result(p: runtime::Prepared) -> PendingCommitWithStorageResult {
+    PendingCommitWithStorageResult {
+        pending_binding: p.binding,
+        previous_roster: p.mutation.previous,
+        proposed_resulting_roster: p.proposed,
+        commit: p.commit,
+        welcome: p.welcome,
+        group_info: p.group_info,
+        preparation_base_group_state_sha256: p.preparation_base,
+        resulting_group_state_sha256: p.mutation.resulting_digest,
+        effective_retention: p.mutation.retention,
+        storage_batch: p.mutation.batch,
+    }
+}
+/// Create caller-owned initialization state. Product send-readiness is granted
+/// by the caller only after authenticated canonical initialization acceptance.
+#[allow(clippy::too_many_arguments)]
+pub fn create_group_with_storage(
+    config: MlsGroupConfig,
+    signer_bytes: Vec<u8>,
+    explicit_group_id: Vec<u8>,
+    incarnation_id: Vec<u8>,
+    expected_owner_authority: MlsAuthorizedOwnerV1,
+    credential_bytes: Option<Vec<u8>>,
+    storage_entries: Vec<MlsStorageEntry>,
+    storage_format_version: u32,
+) -> CreateGroupWithStorageOutcome {
+    match lifecycle_guard(|| {
+        runtime::create(
+            config,
+            signer_bytes,
+            explicit_group_id,
+            incarnation_id,
+            expected_owner_authority,
+            credential_bytes,
+            storage_entries,
+            storage_format_version,
+        )
+    }) {
+        Ok(m) => CreateGroupWithStorageOutcome::Success(CreateGroupWithStorageResult {
+            group_id: m.resulting.group_id.clone(),
+            resulting_roster: m.resulting,
+            resulting_group_state_sha256: m.resulting_digest,
+            effective_retention: m.retention,
+            storage_batch: m.batch,
+        }),
+        Err(e) => CreateGroupWithStorageOutcome::Failure(e),
+    }
+}
+/// Join only exact canonical Welcome/local-leaf/KeyPackage authority. Welcome has no AAD.
+#[allow(clippy::too_many_arguments)]
+pub fn join_group_from_welcome_with_storage(
+    config: MlsGroupConfig,
+    incarnation_id: Vec<u8>,
+    welcome_bytes: Vec<u8>,
+    expected_welcome_sha256: Vec<u8>,
+    ratchet_tree_bytes: Option<Vec<u8>>,
+    signer_bytes: Vec<u8>,
+    expected_resulting_state: MlsExpectedRosterStateV1,
+    expected_local_leaf: MlsRosterLeafV1,
+    expected_target_key_package_sha256: Vec<u8>,
+    storage_entries: Vec<MlsStorageEntry>,
+    storage_format_version: u32,
+) -> JoinGroupFromWelcomeWithStorageOutcome {
+    match lifecycle_guard(|| {
+        runtime::join(runtime::JoinInput {
+            config,
+            incarnation_id,
+            welcome: welcome_bytes,
+            welcome_sha256: expected_welcome_sha256,
+            tree: ratchet_tree_bytes,
+            signer: signer_bytes,
+            resulting: expected_resulting_state,
+            local_leaf: expected_local_leaf,
+            target_key_package_sha256: expected_target_key_package_sha256,
+            entries: storage_entries,
+            storage_format: storage_format_version,
+        })
+    }) {
+        Ok(j) => JoinGroupFromWelcomeWithStorageOutcome::Success(JoinGroupWithStorageResult {
+            group_id: j.mutation.resulting.group_id.clone(),
+            local_leaf: j.local_leaf,
+            consumed_key_package_sha256: j.consumed_key_package_sha256,
+            resulting_roster: j.mutation.resulting,
+            resulting_group_state_sha256: j.mutation.resulting_digest,
+            effective_retention: j.mutation.retention,
+            storage_batch: j.mutation.batch,
+        }),
+        Err(e) => JoinGroupFromWelcomeWithStorageOutcome::Failure(e),
+    }
+}
+pub fn add_members_with_storage(
+    context: MlsGroupOperationContext,
+    transition: MlsTransitionContext,
+    signer_bytes: Vec<u8>,
+    authorized_key_packages: Vec<MlsAuthorizedKeyPackageV1>,
+    aad: Vec<u8>,
+) -> AddMembersWithStorageOutcome {
+    match lifecycle_guard(|| {
+        runtime::prepare(
+            context.into(),
+            signer_bytes,
+            transition,
+            authorized_key_packages,
+            vec![],
+            aad,
+            None,
+        )
+    }) {
+        Ok(p) => AddMembersWithStorageOutcome::Success(pending_result(p)),
+        Err(e) => AddMembersWithStorageOutcome::Failure(e),
+    }
+}
+pub fn remove_members_with_storage(
+    context: MlsGroupOperationContext,
+    transition: MlsTransitionContext,
+    signer_bytes: Vec<u8>,
+    authorized_removals: Vec<MlsAuthorizedRemovalV1>,
+    aad: Vec<u8>,
+) -> RemoveMembersWithStorageOutcome {
+    match lifecycle_guard(|| {
+        runtime::prepare(
+            context.into(),
+            signer_bytes,
+            transition,
+            vec![],
+            authorized_removals,
+            aad,
+            None,
+        )
+    }) {
+        Ok(p) => RemoveMembersWithStorageOutcome::Success(pending_result(p)),
+        Err(e) => RemoveMembersWithStorageOutcome::Failure(e),
+    }
+}
+pub fn swap_members_with_storage(
+    context: MlsGroupOperationContext,
+    transition: MlsTransitionContext,
+    signer_bytes: Vec<u8>,
+    authorized_key_packages: Vec<MlsAuthorizedKeyPackageV1>,
+    authorized_removals: Vec<MlsAuthorizedRemovalV1>,
+    aad: Vec<u8>,
+) -> SwapMembersWithStorageOutcome {
+    match lifecycle_guard(|| {
+        runtime::prepare(
+            context.into(),
+            signer_bytes,
+            transition,
+            authorized_key_packages,
+            authorized_removals,
+            aad,
+            None,
+        )
+    }) {
+        Ok(p) => SwapMembersWithStorageOutcome::Success(pending_result(p)),
+        Err(e) => SwapMembersWithStorageOutcome::Failure(e),
+    }
+}
+pub fn self_update_with_storage(
+    context: MlsGroupOperationContext,
+    transition: MlsTransitionContext,
+    signer_bytes: Vec<u8>,
+    expected_self_authority: MlsAuthorizedSelfV1,
+    aad: Vec<u8>,
+) -> SelfUpdateWithStorageOutcome {
+    match lifecycle_guard(|| {
+        runtime::prepare(
+            context.into(),
+            signer_bytes,
+            transition,
+            vec![],
+            vec![],
+            aad,
+            Some(expected_self_authority),
+        )
+    }) {
+        Ok(p) => SelfUpdateWithStorageOutcome::Success(pending_result(p)),
+        Err(e) => SelfUpdateWithStorageOutcome::Failure(e),
+    }
+}
+/// Read exact persisted retry material; never generates another Commit or batch.
+pub fn get_pending_commit_with_storage(
+    context: MlsGroupOperationContext,
+) -> GetPendingCommitWithStorageOutcome {
+    match lifecycle_guard(|| runtime::inspect_pending(context.into())) {
+        Ok(p) => GetPendingCommitWithStorageOutcome::Success(p.map(|p| PendingCommitInfo {
+            pending_binding: p.binding,
+            proposed_resulting_roster: p.proposed,
+            commit: p.commit,
+            welcome: p.welcome,
+            group_info: p.group_info,
+            preparation_base_group_state_sha256: p.preparation_base,
+        })),
+        Err(e) => GetPendingCommitWithStorageOutcome::Failure(e),
+    }
+}
+/// Merge exact authenticated acceptance into the latest live ratchets. The
+/// preparation digest is provenance, not the current local compare/apply digest.
+pub fn merge_pending_commit_with_storage(
+    context: MlsGroupOperationContext,
+    acceptance: MlsCommitAcceptance,
+) -> MergePendingCommitWithStorageOutcome {
+    match lifecycle_guard(|| runtime::merge(context.into(), acceptance)) {
+        Ok(m) => {
+            MergePendingCommitWithStorageOutcome::Success(MergePendingCommitWithStorageResult {
+                previous_roster: m.previous,
+                resulting_roster: m.resulting,
+                resulting_group_state_sha256: m.resulting_digest,
+                effective_retention: m.retention,
+                storage_batch: m.batch,
+            })
+        }
+        Err(e) => MergePendingCommitWithStorageOutcome::Failure(e),
+    }
+}
+/// Caller must establish authenticated definitive rejection, not timeout or
+/// unknown status. Completed settlement retries belong to the caller's journal.
+pub fn discard_pending_commit_with_storage(
+    context: MlsGroupOperationContext,
+    expected_pending_binding: MlsPendingCommitBinding,
+) -> DiscardPendingCommitWithStorageOutcome {
+    match lifecycle_guard(|| runtime::discard(context.into(), expected_pending_binding)) {
+        Ok(m) => {
+            DiscardPendingCommitWithStorageOutcome::Success(DiscardPendingCommitWithStorageResult {
+                previous_roster: m.previous,
+                resulting_roster: m.resulting,
+                resulting_group_state_sha256: m.resulting_digest,
+                effective_retention: m.retention,
+                storage_batch: m.batch,
+            })
+        }
+        Err(e) => DiscardPendingCommitWithStorageOutcome::Failure(e),
+    }
+}
+/// Message epoch/sender authority may be retained historical state for an
+/// application. Current and resulting authority always describe the live group.
+#[allow(clippy::too_many_arguments)]
+pub fn process_message_with_storage(
+    context: MlsGroupOperationContext,
+    expected_kind: MlsReceiveKind,
+    message_bytes: Vec<u8>,
+    expected_message_sha256: Vec<u8>,
+    expected_aad: Vec<u8>,
+    expected_sender: MlsRosterLeafV1,
+    expected_message_state: MlsExpectedRosterStateV1,
+    expected_resulting_state: MlsExpectedRosterStateV1,
+) -> ProcessMessageWithStorageOutcome {
+    match lifecycle_guard(|| {
+        runtime::receive(runtime::ReceiveInput {
+            context: context.into(),
+            kind: expected_kind,
+            wire: message_bytes,
+            wire_sha256: expected_message_sha256,
+            aad: expected_aad,
+            sender: expected_sender,
+            message_state: expected_message_state,
+            resulting_state: expected_resulting_state,
+        })
+    }) {
+        Ok(r) => ProcessMessageWithStorageOutcome::Success(ProcessMessageWithStorageResult {
+            message_type: match r.kind {
+                MlsReceiveKind::Application => ProcessedMessageType::Application,
+                MlsReceiveKind::Commit => ProcessedMessageType::StagedCommit,
+                MlsReceiveKind::Proposal => ProcessedMessageType::Proposal,
+            },
+            message_epoch: r.message_epoch,
+            authenticated_sender: r.sender,
+            previous_epoch: r.mutation.previous.epoch,
+            resulting_epoch: r.mutation.resulting.epoch,
+            application_message: r.plaintext,
+            proposal_type: r.proposal_type,
+            previous_roster: r.mutation.previous,
+            resulting_roster: r.mutation.resulting,
+            resulting_group_state_sha256: r.mutation.resulting_digest,
+            effective_retention: r.mutation.retention,
+            storage_batch: r.mutation.batch,
+        }),
+        Err(e) => ProcessMessageWithStorageOutcome::Failure(e),
+    }
+}
+
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) fn legacy_default_config(ciphersuite: super::types::MlsCiphersuite) -> MlsGroupConfig {
+    let mut config = MlsGroupConfig::default_config(ciphersuite);
+    config.max_past_epochs = 0;
+    config
 }
 
 /// Compute the canonical version-1 roster digest from caller-supplied fields.
@@ -184,7 +744,8 @@ pub fn mls_group_state_digest(
 
 /// Create an owner-only group with an explicit server-issued group ID.
 #[allow(clippy::too_many_arguments)]
-pub fn create_group_with_storage(
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) fn legacy_create_group_with_storage(
     config: MlsGroupConfig,
     signer_bytes: Vec<u8>,
     explicit_group_id: Vec<u8>,
@@ -192,7 +753,7 @@ pub fn create_group_with_storage(
     credential_bytes: Option<Vec<u8>>,
     mut storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<CreateGroupWithStorageResult, String> {
+) -> Result<LegacyCreateGroupWithStorageResult, String> {
     if explicit_group_id.is_empty() {
         zeroize_entry_values(&mut storage_entries);
         return Err("Explicit MLS group ID must not be empty".to_string());
@@ -230,7 +791,7 @@ pub fn create_group_with_storage(
         return Err("Created owner leaf does not match expected owner authority".to_string());
     }
     let storage_batch = batch_from_provider(provider, Some(explicit_group_id.clone()), Vec::new())?;
-    Ok(CreateGroupWithStorageResult {
+    Ok(LegacyCreateGroupWithStorageResult {
         group_id: explicit_group_id,
         resulting_roster,
         storage_batch,
@@ -238,7 +799,8 @@ pub fn create_group_with_storage(
 }
 
 /// Add exact authorized members and return deferred candidate state.
-pub fn add_members_with_storage(
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) fn legacy_add_members_with_storage(
     group_id: Vec<u8>,
     signer_bytes: Vec<u8>,
     additions: Vec<MlsAuthorizedKeyPackageV1>,
@@ -246,7 +808,7 @@ pub fn add_members_with_storage(
     expected_previous_state: MlsExpectedRosterStateV1,
     mut storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<PreparedCommitWithStorageResult, String> {
+) -> Result<LegacyPreparedCommitWithStorageResult, String> {
     if additions.is_empty() {
         zeroize_entry_values(&mut storage_entries);
         return Err("Add-members transition must contain an addition".to_string());
@@ -264,7 +826,8 @@ pub fn add_members_with_storage(
 }
 
 /// Remove exact authorized members and return deferred candidate state.
-pub fn remove_members_with_storage(
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) fn legacy_remove_members_with_storage(
     group_id: Vec<u8>,
     signer_bytes: Vec<u8>,
     removals: Vec<MlsAuthorizedRemovalV1>,
@@ -272,7 +835,7 @@ pub fn remove_members_with_storage(
     expected_previous_state: MlsExpectedRosterStateV1,
     mut storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<PreparedCommitWithStorageResult, String> {
+) -> Result<LegacyPreparedCommitWithStorageResult, String> {
     if removals.is_empty() {
         zeroize_entry_values(&mut storage_entries);
         return Err("Remove-members transition must contain a removal".to_string());
@@ -291,7 +854,8 @@ pub fn remove_members_with_storage(
 
 /// Atomically replace members using one combined remove/add Commit.
 #[allow(clippy::too_many_arguments)]
-pub fn swap_members_with_storage(
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) fn legacy_swap_members_with_storage(
     group_id: Vec<u8>,
     signer_bytes: Vec<u8>,
     removals: Vec<MlsAuthorizedRemovalV1>,
@@ -300,7 +864,7 @@ pub fn swap_members_with_storage(
     expected_previous_state: MlsExpectedRosterStateV1,
     mut storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<PreparedCommitWithStorageResult, String> {
+) -> Result<LegacyPreparedCommitWithStorageResult, String> {
     if removals.is_empty() || additions.is_empty() {
         zeroize_entry_values(&mut storage_entries);
         return Err("Swap-members transition requires removals and additions".to_string());
@@ -318,6 +882,7 @@ pub fn swap_members_with_storage(
 }
 
 #[allow(clippy::too_many_arguments)]
+#[cfg(any(test, feature = "native-receive-fixtures"))]
 fn prepare_membership_commit_with_storage(
     group_id: Vec<u8>,
     signer_bytes: Vec<u8>,
@@ -327,7 +892,7 @@ fn prepare_membership_commit_with_storage(
     expected_previous_state: MlsExpectedRosterStateV1,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<PreparedCommitWithStorageResult, String> {
+) -> Result<LegacyPreparedCommitWithStorageResult, String> {
     let (provider, base_group_state_sha256) =
         provider_with_base_digest(&group_id, storage_entries, storage_format_version)?;
     let signer = signer_from_bytes(signer_bytes)?;
@@ -374,7 +939,8 @@ fn prepare_membership_commit_with_storage(
 }
 
 /// Prepare a local self-update without changing installation identity or key.
-pub fn self_update_with_storage(
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) fn legacy_self_update_with_storage(
     group_id: Vec<u8>,
     signer_bytes: Vec<u8>,
     aad: Vec<u8>,
@@ -382,7 +948,7 @@ pub fn self_update_with_storage(
     expected_self_authority: MlsAuthorizedSelfV1,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<PreparedCommitWithStorageResult, String> {
+) -> Result<LegacyPreparedCommitWithStorageResult, String> {
     let (provider, base_group_state_sha256) =
         provider_with_base_digest(&group_id, storage_entries, storage_format_version)?;
     let signer = signer_from_bytes(signer_bytes)?;
@@ -424,7 +990,8 @@ pub fn self_update_with_storage(
 }
 
 /// Join a Welcome only when its installed state matches canonical authority.
-pub fn join_group_from_welcome_with_storage(
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) fn legacy_join_group_from_welcome_with_storage(
     config: MlsGroupConfig,
     welcome_bytes: Vec<u8>,
     ratchet_tree_bytes: Option<Vec<u8>>,
@@ -432,7 +999,7 @@ pub fn join_group_from_welcome_with_storage(
     expected_resulting_state: MlsExpectedRosterStateV1,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<JoinGroupWithStorageResult, String> {
+) -> Result<JoinedGroupState, String> {
     join_group_from_welcome_with_storage_typed(
         config,
         welcome_bytes,
@@ -457,7 +1024,7 @@ pub(crate) fn join_group_from_welcome_with_storage_typed(
     expected_target_key_package_sha256: Option<&[u8]>,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<StrictJoinGroupWithStorageResult, StrictReceiveError> {
+) -> Result<StrictJoinedGroupState, StrictReceiveError> {
     if storage_format_version != super::storage::MLS_STORAGE_FORMAT_VERSION {
         return Err(strict_receive_error(
             StrictReceiveErrorKind::StorageFormatMismatch,
@@ -574,8 +1141,8 @@ pub(crate) fn join_group_from_welcome_with_storage_typed(
     let group_id = resulting_roster.group_id.clone();
     let storage_batch = batch_from_provider(provider, Some(group_id.clone()), Vec::new())
         .map_err(|detail| strict_receive_error(StrictReceiveErrorKind::InternalFailure, detail))?;
-    Ok(StrictJoinGroupWithStorageResult {
-        joined: JoinGroupWithStorageResult {
+    Ok(StrictJoinedGroupState {
+        joined: JoinedGroupState {
             group_id,
             resulting_roster,
             storage_batch,
@@ -586,7 +1153,8 @@ pub(crate) fn join_group_from_welcome_with_storage_typed(
 }
 
 /// Process a message only when both base and resulting roster authority match.
-pub fn process_message_with_storage(
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) fn legacy_process_message_with_storage(
     group_id: Vec<u8>,
     message_bytes: Vec<u8>,
     expected_aad: Vec<u8>,
@@ -594,7 +1162,7 @@ pub fn process_message_with_storage(
     expected_resulting_state: MlsExpectedRosterStateV1,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<ProcessMessageWithStorageResult, String> {
+) -> Result<LegacyProcessMessageWithStorageResult, String> {
     process_message_with_storage_typed(
         group_id,
         message_bytes,
@@ -609,6 +1177,7 @@ pub fn process_message_with_storage(
 }
 
 #[allow(clippy::too_many_arguments)]
+#[cfg(any(test, feature = "native-receive-fixtures"))]
 pub(crate) fn process_message_with_storage_typed(
     group_id: Vec<u8>,
     message_bytes: Vec<u8>,
@@ -618,7 +1187,7 @@ pub(crate) fn process_message_with_storage_typed(
     expected_config: Option<&MlsGroupConfig>,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<ProcessMessageWithStorageResult, StrictReceiveError> {
+) -> Result<LegacyProcessMessageWithStorageResult, StrictReceiveError> {
     if storage_format_version != super::storage::MLS_STORAGE_FORMAT_VERSION {
         return Err(strict_receive_error(
             StrictReceiveErrorKind::StorageFormatMismatch,
@@ -734,7 +1303,7 @@ pub(crate) fn process_message_with_storage_typed(
     let resulting_epoch = resulting_roster.epoch;
     let storage_batch = batch_from_provider(provider, Some(group_id), Vec::new())
         .map_err(|detail| strict_receive_error(StrictReceiveErrorKind::InternalFailure, detail))?;
-    Ok(ProcessMessageWithStorageResult {
+    Ok(LegacyProcessMessageWithStorageResult {
         message_type,
         sender_index,
         previous_epoch,
@@ -1157,6 +1726,7 @@ fn validate_self_authority(
     Ok(())
 }
 
+#[cfg(any(test, feature = "native-receive-fixtures"))]
 fn prepared_result(
     bundle: CommitMessageBundle,
     previous_roster: MlsRosterSummaryV1,
@@ -1164,7 +1734,7 @@ fn prepared_result(
     base_group_state_sha256: Vec<u8>,
     provider: crate::snapshot_storage::SnapshotOpenMlsProvider,
     group_id: Vec<u8>,
-) -> Result<PreparedCommitWithStorageResult, String> {
+) -> Result<LegacyPreparedCommitWithStorageResult, String> {
     let (commit, welcome, group_info) = bundle.into_messages();
     let commit = commit
         .tls_serialize_detached()
@@ -1179,7 +1749,7 @@ fn prepared_result(
         .map_err(|e| format!("Failed to serialize GroupInfo: {e}"))?;
     let commit_sha256 = Sha256::digest(&commit).to_vec();
     let storage_batch = batch_from_provider(provider, Some(group_id), Vec::new())?;
-    Ok(PreparedCommitWithStorageResult {
+    Ok(LegacyPreparedCommitWithStorageResult {
         commit,
         welcome,
         group_info,

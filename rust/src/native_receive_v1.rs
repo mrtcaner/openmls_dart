@@ -14,9 +14,10 @@ use zeroize::Zeroize;
 
 use crate::api::config::MlsGroupConfig;
 use crate::api::group_e2ee::{
-    MlsExpectedRosterStateV1, MlsRosterLeafV1, MlsRosterSummaryV1, ProcessMessageWithStorageResult,
-    StrictJoinGroupWithStorageResult, StrictReceiveErrorKind, group_state_digest_from_entries,
-    join_group_from_welcome_with_storage_typed, process_message_with_storage_typed,
+    LegacyProcessMessageWithStorageResult, MlsExpectedRosterStateV1, MlsRosterLeafV1,
+    MlsRosterSummaryV1, StrictJoinedGroupState, StrictReceiveErrorKind,
+    group_state_digest_from_entries, join_group_from_welcome_with_storage_typed,
+    process_message_with_storage_typed,
 };
 use crate::api::storage::{MlsStorageBatch, MlsStorageEntry, zeroize_entry_values};
 use crate::api::types::{MlsCiphersuite, MlsWireFormatPolicy, ProcessedMessageType};
@@ -778,7 +779,7 @@ fn mls_batch_into_native(value: MlsStorageBatch) -> NativeStorageBatchV1 {
     }
 }
 
-fn authenticated_sender(result: &ProcessMessageWithStorageResult) -> Option<MlsRosterLeafV1> {
+fn authenticated_sender(result: &LegacyProcessMessageWithStorageResult) -> Option<MlsRosterLeafV1> {
     let sender_index = result.sender_index?;
     result
         .previous_roster
@@ -821,14 +822,14 @@ fn apply_storage_batch(entries: &mut Vec<MlsStorageEntry>, batch: &MlsStorageBat
     *entries = by_key.into_values().collect();
 }
 
-fn zeroize_process_result(result: &mut ProcessMessageWithStorageResult) {
+fn zeroize_process_result(result: &mut LegacyProcessMessageWithStorageResult) {
     if let Some(plaintext) = &mut result.application_message {
         plaintext.zeroize();
     }
     zeroize_entry_values(&mut result.storage_batch.upserts);
 }
 
-fn zeroize_join_result(result: &mut StrictJoinGroupWithStorageResult) {
+fn zeroize_join_result(result: &mut StrictJoinedGroupState) {
     zeroize_entry_values(&mut result.joined.storage_batch.upserts);
 }
 
@@ -1753,12 +1754,13 @@ mod tests {
     use sha2::{Digest, Sha256};
 
     use crate::api::group_e2ee::{
-        MlsAuthorizedKeyPackageV1, MlsAuthorizedOwnerV1, add_members_with_storage,
-        create_group_with_storage,
+        MlsAuthorizedKeyPackageV1, MlsAuthorizedOwnerV1, legacy_add_members_with_storage,
+        legacy_create_group_with_storage,
     };
     use crate::api::keys::{MlsSignatureKeyPair, serialize_signer};
     use crate::api::storage::{
-        MLS_STORAGE_FORMAT_VERSION, create_key_package_with_storage, create_message_with_storage,
+        MLS_STORAGE_FORMAT_VERSION, create_key_package_with_storage,
+        legacy_create_message_with_storage,
     };
 
     fn frame(operation: NativeReceiveOperationV1, payload: Vec<u8>) -> Vec<u8> {
@@ -1828,7 +1830,7 @@ mod tests {
         );
 
         let application_aad = b"native-application-aad".to_vec();
-        let application = create_message_with_storage(
+        let application = legacy_create_message_with_storage(
             fixture.group_id.clone(),
             fixture.alice_signer.clone(),
             b"native hello".to_vec(),
@@ -1892,7 +1894,7 @@ mod tests {
         )
         .unwrap();
         let commit_aad = b"native-commit-aad".to_vec();
-        let commit = add_members_with_storage(
+        let commit = legacy_add_members_with_storage(
             fixture.group_id.clone(),
             fixture.alice_signer,
             vec![MlsAuthorizedKeyPackageV1 {
@@ -2167,7 +2169,7 @@ mod tests {
             };
             apply_native_batch(&mut initial.bob_entries, storage_batch);
             let aad = b"mismatch-vector-aad".to_vec();
-            let application = create_message_with_storage(
+            let application = legacy_create_message_with_storage(
                 initial.group_id.clone(),
                 initial.alice_signer,
                 b"mismatch vector".to_vec(),
@@ -2224,7 +2226,7 @@ mod tests {
             let (alice_signer, alice_public) = signer();
             let (bob_signer, bob_public) = signer();
 
-            let created = create_group_with_storage(
+            let created = legacy_create_group_with_storage(
                 profile_config_v1(),
                 alice_signer.clone(),
                 group_id.clone(),
@@ -2255,7 +2257,7 @@ mod tests {
             let mut bob_entries = Vec::new();
             apply_storage_batch(&mut bob_entries, &bob_key_package.storage_batch);
 
-            let add_bob = add_members_with_storage(
+            let add_bob = legacy_add_members_with_storage(
                 group_id.clone(),
                 alice_signer.clone(),
                 vec![MlsAuthorizedKeyPackageV1 {

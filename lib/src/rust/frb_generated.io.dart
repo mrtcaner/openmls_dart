@@ -137,6 +137,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_account_envelope_successor_authorization_v_1(dynamic raw);
 
   @protected
+  AddMembersWithStorageOutcome dco_decode_add_members_with_storage_outcome(
+    dynamic raw,
+  );
+
+  @protected
   bool dco_decode_bool(dynamic raw);
 
   @protected
@@ -158,10 +163,32 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_box_autoadd_context_invitation_preview_input_v_1(dynamic raw);
 
   @protected
+  CreateGroupWithStorageResult
+  dco_decode_box_autoadd_create_group_with_storage_result(dynamic raw);
+
+  @protected
+  CreateMessageWithStorageResult
+  dco_decode_box_autoadd_create_message_with_storage_result(dynamic raw);
+
+  @protected
+  DiscardPendingCommitWithStorageResult
+  dco_decode_box_autoadd_discard_pending_commit_with_storage_result(
+    dynamic raw,
+  );
+
+  @protected
   ExpectedContextInvitationAuthorityInputV1
   dco_decode_box_autoadd_expected_context_invitation_authority_input_v_1(
     dynamic raw,
   );
+
+  @protected
+  JoinGroupWithStorageResult
+  dco_decode_box_autoadd_join_group_with_storage_result(dynamic raw);
+
+  @protected
+  MergePendingCommitWithStorageResult
+  dco_decode_box_autoadd_merge_pending_commit_with_storage_result(dynamic raw);
 
   @protected
   MlsAuthorizedOwnerV1 dco_decode_box_autoadd_mls_authorized_owner_v_1(
@@ -174,6 +201,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  MlsCommitAcceptance dco_decode_box_autoadd_mls_commit_acceptance(dynamic raw);
+
+  @protected
   MlsExpectedRosterStateV1 dco_decode_box_autoadd_mls_expected_roster_state_v_1(
     dynamic raw,
   );
@@ -182,10 +212,36 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsGroupConfig dco_decode_box_autoadd_mls_group_config(dynamic raw);
 
   @protected
+  MlsGroupOperationContext dco_decode_box_autoadd_mls_group_operation_context(
+    dynamic raw,
+  );
+
+  @protected
+  MlsPendingCommitBinding dco_decode_box_autoadd_mls_pending_commit_binding(
+    dynamic raw,
+  );
+
+  @protected
   MlsProposalType dco_decode_box_autoadd_mls_proposal_type(dynamic raw);
 
   @protected
-  int dco_decode_box_autoadd_u_32(dynamic raw);
+  MlsRosterLeafV1 dco_decode_box_autoadd_mls_roster_leaf_v_1(dynamic raw);
+
+  @protected
+  MlsTransitionContext dco_decode_box_autoadd_mls_transition_context(
+    dynamic raw,
+  );
+
+  @protected
+  PendingCommitInfo dco_decode_box_autoadd_pending_commit_info(dynamic raw);
+
+  @protected
+  PendingCommitWithStorageResult
+  dco_decode_box_autoadd_pending_commit_with_storage_result(dynamic raw);
+
+  @protected
+  ProcessMessageWithStorageResult
+  dco_decode_box_autoadd_process_message_with_storage_result(dynamic raw);
 
   @protected
   ContextInvitationAuthorityInputV1
@@ -200,6 +256,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_context_invitation_preview_output_v_1(dynamic raw);
 
   @protected
+  CreateGroupWithStorageOutcome dco_decode_create_group_with_storage_outcome(
+    dynamic raw,
+  );
+
+  @protected
   CreateGroupWithStorageResult dco_decode_create_group_with_storage_result(
     dynamic raw,
   );
@@ -209,9 +270,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_create_key_package_with_storage_result(dynamic raw);
 
   @protected
+  CreateMessageWithStorageOutcome
+  dco_decode_create_message_with_storage_outcome(dynamic raw);
+
+  @protected
   CreateMessageWithStorageResult dco_decode_create_message_with_storage_result(
     dynamic raw,
   );
+
+  @protected
+  DiscardPendingCommitWithStorageOutcome
+  dco_decode_discard_pending_commit_with_storage_outcome(dynamic raw);
+
+  @protected
+  DiscardPendingCommitWithStorageResult
+  dco_decode_discard_pending_commit_with_storage_result(dynamic raw);
 
   @protected
   ExpectedContextInvitationAuthorityInputV1
@@ -222,7 +295,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_generate_account_envelope_key_bundle_output_v_1(dynamic raw);
 
   @protected
+  GetPendingCommitWithStorageOutcome
+  dco_decode_get_pending_commit_with_storage_outcome(dynamic raw);
+
+  @protected
   int dco_decode_i_32(dynamic raw);
+
+  @protected
+  JoinGroupFromWelcomeWithStorageOutcome
+  dco_decode_join_group_from_welcome_with_storage_outcome(dynamic raw);
 
   @protected
   JoinGroupWithStorageResult dco_decode_join_group_with_storage_result(
@@ -260,6 +341,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  MergePendingCommitWithStorageOutcome
+  dco_decode_merge_pending_commit_with_storage_outcome(dynamic raw);
+
+  @protected
+  MergePendingCommitWithStorageResult
+  dco_decode_merge_pending_commit_with_storage_result(dynamic raw);
+
+  @protected
   MlsAuthorizedKeyPackageV1 dco_decode_mls_authorized_key_package_v_1(
     dynamic raw,
   );
@@ -277,6 +366,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsCiphersuite dco_decode_mls_ciphersuite(dynamic raw);
 
   @protected
+  MlsCommitAcceptance dco_decode_mls_commit_acceptance(dynamic raw);
+
+  @protected
+  MlsErrorCode dco_decode_mls_error_code(dynamic raw);
+
+  @protected
   MlsExpectedRosterStateV1 dco_decode_mls_expected_roster_state_v_1(
     dynamic raw,
   );
@@ -285,7 +380,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsGroupConfig dco_decode_mls_group_config(dynamic raw);
 
   @protected
+  MlsGroupOperationContext dco_decode_mls_group_operation_context(dynamic raw);
+
+  @protected
+  MlsPendingCommitBinding dco_decode_mls_pending_commit_binding(dynamic raw);
+
+  @protected
   MlsProposalType dco_decode_mls_proposal_type(dynamic raw);
+
+  @protected
+  MlsReceiveKind dco_decode_mls_receive_kind(dynamic raw);
 
   @protected
   MlsRosterLeafV1 dco_decode_mls_roster_leaf_v_1(dynamic raw);
@@ -298,6 +402,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   MlsStorageEntry dco_decode_mls_storage_entry(dynamic raw);
+
+  @protected
+  MlsTransitionContext dco_decode_mls_transition_context(dynamic raw);
 
   @protected
   MlsWireFormatPolicy dco_decode_mls_wire_format_policy(dynamic raw);
@@ -313,14 +420,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsProposalType? dco_decode_opt_box_autoadd_mls_proposal_type(dynamic raw);
 
   @protected
-  int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
+  PendingCommitInfo? dco_decode_opt_box_autoadd_pending_commit_info(
+    dynamic raw,
+  );
 
   @protected
   Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw);
 
   @protected
-  PreparedCommitWithStorageResult
-  dco_decode_prepared_commit_with_storage_result(dynamic raw);
+  PendingCommitInfo dco_decode_pending_commit_info(dynamic raw);
+
+  @protected
+  PendingCommitWithStorageResult dco_decode_pending_commit_with_storage_result(
+    dynamic raw,
+  );
+
+  @protected
+  ProcessMessageWithStorageOutcome
+  dco_decode_process_message_with_storage_outcome(dynamic raw);
 
   @protected
   ProcessMessageWithStorageResult
@@ -328,6 +445,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ProcessedMessageType dco_decode_processed_message_type(dynamic raw);
+
+  @protected
+  RemoveMembersWithStorageOutcome
+  dco_decode_remove_members_with_storage_outcome(dynamic raw);
+
+  @protected
+  SelfUpdateWithStorageOutcome dco_decode_self_update_with_storage_outcome(
+    dynamic raw,
+  );
+
+  @protected
+  SwapMembersWithStorageOutcome dco_decode_swap_members_with_storage_outcome(
+    dynamic raw,
+  );
 
   @protected
   int dco_decode_u_16(dynamic raw);
@@ -463,6 +594,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  AddMembersWithStorageOutcome sse_decode_add_members_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
@@ -490,8 +626,38 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  CreateGroupWithStorageResult
+  sse_decode_box_autoadd_create_group_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  CreateMessageWithStorageResult
+  sse_decode_box_autoadd_create_message_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  DiscardPendingCommitWithStorageResult
+  sse_decode_box_autoadd_discard_pending_commit_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ExpectedContextInvitationAuthorityInputV1
   sse_decode_box_autoadd_expected_context_invitation_authority_input_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  JoinGroupWithStorageResult
+  sse_decode_box_autoadd_join_group_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MergePendingCommitWithStorageResult
+  sse_decode_box_autoadd_merge_pending_commit_with_storage_result(
     SseDeserializer deserializer,
   );
 
@@ -506,6 +672,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  MlsCommitAcceptance sse_decode_box_autoadd_mls_commit_acceptance(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsExpectedRosterStateV1 sse_decode_box_autoadd_mls_expected_roster_state_v_1(
     SseDeserializer deserializer,
   );
@@ -516,12 +687,46 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  MlsGroupOperationContext sse_decode_box_autoadd_mls_group_operation_context(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsPendingCommitBinding sse_decode_box_autoadd_mls_pending_commit_binding(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsProposalType sse_decode_box_autoadd_mls_proposal_type(
     SseDeserializer deserializer,
   );
 
   @protected
-  int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
+  MlsRosterLeafV1 sse_decode_box_autoadd_mls_roster_leaf_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsTransitionContext sse_decode_box_autoadd_mls_transition_context(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PendingCommitInfo sse_decode_box_autoadd_pending_commit_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PendingCommitWithStorageResult
+  sse_decode_box_autoadd_pending_commit_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ProcessMessageWithStorageResult
+  sse_decode_box_autoadd_process_message_with_storage_result(
+    SseDeserializer deserializer,
+  );
 
   @protected
   ContextInvitationAuthorityInputV1
@@ -540,6 +745,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  CreateGroupWithStorageOutcome sse_decode_create_group_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   CreateGroupWithStorageResult sse_decode_create_group_with_storage_result(
     SseDeserializer deserializer,
   );
@@ -551,7 +761,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  CreateMessageWithStorageOutcome
+  sse_decode_create_message_with_storage_outcome(SseDeserializer deserializer);
+
+  @protected
   CreateMessageWithStorageResult sse_decode_create_message_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  DiscardPendingCommitWithStorageOutcome
+  sse_decode_discard_pending_commit_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  DiscardPendingCommitWithStorageResult
+  sse_decode_discard_pending_commit_with_storage_result(
     SseDeserializer deserializer,
   );
 
@@ -568,7 +794,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  GetPendingCommitWithStorageOutcome
+  sse_decode_get_pending_commit_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   int sse_decode_i_32(SseDeserializer deserializer);
+
+  @protected
+  JoinGroupFromWelcomeWithStorageOutcome
+  sse_decode_join_group_from_welcome_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
 
   @protected
   JoinGroupWithStorageResult sse_decode_join_group_with_storage_result(
@@ -614,6 +852,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  MergePendingCommitWithStorageOutcome
+  sse_decode_merge_pending_commit_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MergePendingCommitWithStorageResult
+  sse_decode_merge_pending_commit_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsAuthorizedKeyPackageV1 sse_decode_mls_authorized_key_package_v_1(
     SseDeserializer deserializer,
   );
@@ -637,6 +887,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsCiphersuite sse_decode_mls_ciphersuite(SseDeserializer deserializer);
 
   @protected
+  MlsCommitAcceptance sse_decode_mls_commit_acceptance(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsErrorCode sse_decode_mls_error_code(SseDeserializer deserializer);
+
+  @protected
   MlsExpectedRosterStateV1 sse_decode_mls_expected_roster_state_v_1(
     SseDeserializer deserializer,
   );
@@ -645,7 +903,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsGroupConfig sse_decode_mls_group_config(SseDeserializer deserializer);
 
   @protected
+  MlsGroupOperationContext sse_decode_mls_group_operation_context(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsPendingCommitBinding sse_decode_mls_pending_commit_binding(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsProposalType sse_decode_mls_proposal_type(SseDeserializer deserializer);
+
+  @protected
+  MlsReceiveKind sse_decode_mls_receive_kind(SseDeserializer deserializer);
 
   @protected
   MlsRosterLeafV1 sse_decode_mls_roster_leaf_v_1(SseDeserializer deserializer);
@@ -660,6 +931,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   MlsStorageEntry sse_decode_mls_storage_entry(SseDeserializer deserializer);
+
+  @protected
+  MlsTransitionContext sse_decode_mls_transition_context(
+    SseDeserializer deserializer,
+  );
 
   @protected
   MlsWireFormatPolicy sse_decode_mls_wire_format_policy(
@@ -681,14 +957,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
+  PendingCommitInfo? sse_decode_opt_box_autoadd_pending_commit_info(
+    SseDeserializer deserializer,
+  );
 
   @protected
   Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
-  PreparedCommitWithStorageResult
-  sse_decode_prepared_commit_with_storage_result(SseDeserializer deserializer);
+  PendingCommitInfo sse_decode_pending_commit_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PendingCommitWithStorageResult sse_decode_pending_commit_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ProcessMessageWithStorageOutcome
+  sse_decode_process_message_with_storage_outcome(SseDeserializer deserializer);
 
   @protected
   ProcessMessageWithStorageResult
@@ -696,6 +984,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ProcessedMessageType sse_decode_processed_message_type(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  RemoveMembersWithStorageOutcome
+  sse_decode_remove_members_with_storage_outcome(SseDeserializer deserializer);
+
+  @protected
+  SelfUpdateWithStorageOutcome sse_decode_self_update_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  SwapMembersWithStorageOutcome sse_decode_swap_members_with_storage_outcome(
     SseDeserializer deserializer,
   );
 
@@ -779,6 +1081,43 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  ffi.Pointer<wire_cst_create_group_with_storage_result>
+  cst_encode_box_autoadd_create_group_with_storage_result(
+    CreateGroupWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_create_group_with_storage_result();
+    cst_api_fill_to_wire_create_group_with_storage_result(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_create_message_with_storage_result>
+  cst_encode_box_autoadd_create_message_with_storage_result(
+    CreateMessageWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_create_message_with_storage_result();
+    cst_api_fill_to_wire_create_message_with_storage_result(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_discard_pending_commit_with_storage_result>
+  cst_encode_box_autoadd_discard_pending_commit_with_storage_result(
+    DiscardPendingCommitWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire
+        .cst_new_box_autoadd_discard_pending_commit_with_storage_result();
+    cst_api_fill_to_wire_discard_pending_commit_with_storage_result(
+      raw,
+      ptr.ref,
+    );
+    return ptr;
+  }
+
+  @protected
   ffi.Pointer<wire_cst_expected_context_invitation_authority_input_v_1>
   cst_encode_box_autoadd_expected_context_invitation_authority_input_v_1(
     ExpectedContextInvitationAuthorityInputV1 raw,
@@ -790,6 +1129,29 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       raw,
       ptr.ref,
     );
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_join_group_with_storage_result>
+  cst_encode_box_autoadd_join_group_with_storage_result(
+    JoinGroupWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_join_group_with_storage_result();
+    cst_api_fill_to_wire_join_group_with_storage_result(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_merge_pending_commit_with_storage_result>
+  cst_encode_box_autoadd_merge_pending_commit_with_storage_result(
+    MergePendingCommitWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire
+        .cst_new_box_autoadd_merge_pending_commit_with_storage_result();
+    cst_api_fill_to_wire_merge_pending_commit_with_storage_result(raw, ptr.ref);
     return ptr;
   }
 
@@ -808,6 +1170,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     // Codec=Cst (C-struct based), see doc to use other codecs
     final ptr = wire.cst_new_box_autoadd_mls_authorized_self_v_1();
     cst_api_fill_to_wire_mls_authorized_self_v_1(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_mls_commit_acceptance>
+  cst_encode_box_autoadd_mls_commit_acceptance(MlsCommitAcceptance raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_mls_commit_acceptance();
+    cst_api_fill_to_wire_mls_commit_acceptance(raw, ptr.ref);
     return ptr;
   }
 
@@ -832,6 +1203,28 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  ffi.Pointer<wire_cst_mls_group_operation_context>
+  cst_encode_box_autoadd_mls_group_operation_context(
+    MlsGroupOperationContext raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_mls_group_operation_context();
+    cst_api_fill_to_wire_mls_group_operation_context(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_mls_pending_commit_binding>
+  cst_encode_box_autoadd_mls_pending_commit_binding(
+    MlsPendingCommitBinding raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_mls_pending_commit_binding();
+    cst_api_fill_to_wire_mls_pending_commit_binding(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
   ffi.Pointer<ffi.Int32> cst_encode_box_autoadd_mls_proposal_type(
     MlsProposalType raw,
   ) {
@@ -842,9 +1235,52 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  ffi.Pointer<ffi.Uint32> cst_encode_box_autoadd_u_32(int raw) {
+  ffi.Pointer<wire_cst_mls_roster_leaf_v_1>
+  cst_encode_box_autoadd_mls_roster_leaf_v_1(MlsRosterLeafV1 raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
-    return wire.cst_new_box_autoadd_u_32(cst_encode_u_32(raw));
+    final ptr = wire.cst_new_box_autoadd_mls_roster_leaf_v_1();
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_mls_transition_context>
+  cst_encode_box_autoadd_mls_transition_context(MlsTransitionContext raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_mls_transition_context();
+    cst_api_fill_to_wire_mls_transition_context(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_pending_commit_info>
+  cst_encode_box_autoadd_pending_commit_info(PendingCommitInfo raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_pending_commit_info();
+    cst_api_fill_to_wire_pending_commit_info(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_pending_commit_with_storage_result>
+  cst_encode_box_autoadd_pending_commit_with_storage_result(
+    PendingCommitWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_pending_commit_with_storage_result();
+    cst_api_fill_to_wire_pending_commit_with_storage_result(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_process_message_with_storage_result>
+  cst_encode_box_autoadd_process_message_with_storage_result(
+    ProcessMessageWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_process_message_with_storage_result();
+    cst_api_fill_to_wire_process_message_with_storage_result(raw, ptr.ref);
+    return ptr;
   }
 
   @protected
@@ -979,9 +1415,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  ffi.Pointer<ffi.Uint32> cst_encode_opt_box_autoadd_u_32(int? raw) {
+  ffi.Pointer<wire_cst_pending_commit_info>
+  cst_encode_opt_box_autoadd_pending_commit_info(PendingCommitInfo? raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw == null ? ffi.nullptr : cst_encode_box_autoadd_u_32(raw);
+    return raw == null
+        ? ffi.nullptr
+        : cst_encode_box_autoadd_pending_commit_info(raw);
   }
 
   @protected
@@ -1079,6 +1518,28 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_add_members_with_storage_outcome(
+    AddMembersWithStorageOutcome apiObj,
+    wire_cst_add_members_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is AddMembersWithStorageOutcome_Success) {
+      var pre_field0 =
+          cst_encode_box_autoadd_pending_commit_with_storage_result(
+            apiObj.field0,
+          );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is AddMembersWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
   void
   cst_api_fill_to_wire_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
     AccountEnvelopePrivateBundleAuthorityInputV1 apiObj,
@@ -1114,6 +1575,37 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_box_autoadd_create_group_with_storage_result(
+    CreateGroupWithStorageResult apiObj,
+    ffi.Pointer<wire_cst_create_group_with_storage_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_create_group_with_storage_result(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_create_message_with_storage_result(
+    CreateMessageWithStorageResult apiObj,
+    ffi.Pointer<wire_cst_create_message_with_storage_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_create_message_with_storage_result(
+      apiObj,
+      wireObj.ref,
+    );
+  }
+
+  @protected
+  void
+  cst_api_fill_to_wire_box_autoadd_discard_pending_commit_with_storage_result(
+    DiscardPendingCommitWithStorageResult apiObj,
+    ffi.Pointer<wire_cst_discard_pending_commit_with_storage_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_discard_pending_commit_with_storage_result(
+      apiObj,
+      wireObj.ref,
+    );
+  }
+
+  @protected
   void
   cst_api_fill_to_wire_box_autoadd_expected_context_invitation_authority_input_v_1(
     ExpectedContextInvitationAuthorityInputV1 apiObj,
@@ -1121,6 +1613,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     wireObj,
   ) {
     cst_api_fill_to_wire_expected_context_invitation_authority_input_v_1(
+      apiObj,
+      wireObj.ref,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_join_group_with_storage_result(
+    JoinGroupWithStorageResult apiObj,
+    ffi.Pointer<wire_cst_join_group_with_storage_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_join_group_with_storage_result(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void
+  cst_api_fill_to_wire_box_autoadd_merge_pending_commit_with_storage_result(
+    MergePendingCommitWithStorageResult apiObj,
+    ffi.Pointer<wire_cst_merge_pending_commit_with_storage_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_merge_pending_commit_with_storage_result(
       apiObj,
       wireObj.ref,
     );
@@ -1143,6 +1655,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_box_autoadd_mls_commit_acceptance(
+    MlsCommitAcceptance apiObj,
+    ffi.Pointer<wire_cst_mls_commit_acceptance> wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_commit_acceptance(apiObj, wireObj.ref);
+  }
+
+  @protected
   void cst_api_fill_to_wire_box_autoadd_mls_expected_roster_state_v_1(
     MlsExpectedRosterStateV1 apiObj,
     ffi.Pointer<wire_cst_mls_expected_roster_state_v_1> wireObj,
@@ -1156,6 +1676,68 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     ffi.Pointer<wire_cst_mls_group_config> wireObj,
   ) {
     cst_api_fill_to_wire_mls_group_config(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_mls_group_operation_context(
+    MlsGroupOperationContext apiObj,
+    ffi.Pointer<wire_cst_mls_group_operation_context> wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_group_operation_context(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_mls_pending_commit_binding(
+    MlsPendingCommitBinding apiObj,
+    ffi.Pointer<wire_cst_mls_pending_commit_binding> wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_pending_commit_binding(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_mls_roster_leaf_v_1(
+    MlsRosterLeafV1 apiObj,
+    ffi.Pointer<wire_cst_mls_roster_leaf_v_1> wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_mls_transition_context(
+    MlsTransitionContext apiObj,
+    ffi.Pointer<wire_cst_mls_transition_context> wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_transition_context(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_pending_commit_info(
+    PendingCommitInfo apiObj,
+    ffi.Pointer<wire_cst_pending_commit_info> wireObj,
+  ) {
+    cst_api_fill_to_wire_pending_commit_info(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_pending_commit_with_storage_result(
+    PendingCommitWithStorageResult apiObj,
+    ffi.Pointer<wire_cst_pending_commit_with_storage_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_pending_commit_with_storage_result(
+      apiObj,
+      wireObj.ref,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_process_message_with_storage_result(
+    ProcessMessageWithStorageResult apiObj,
+    ffi.Pointer<wire_cst_process_message_with_storage_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_process_message_with_storage_result(
+      apiObj,
+      wireObj.ref,
+    );
   }
 
   @protected
@@ -1205,6 +1787,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_create_group_with_storage_outcome(
+    CreateGroupWithStorageOutcome apiObj,
+    wire_cst_create_group_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is CreateGroupWithStorageOutcome_Success) {
+      var pre_field0 = cst_encode_box_autoadd_create_group_with_storage_result(
+        apiObj.field0,
+      );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is CreateGroupWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
   void cst_api_fill_to_wire_create_group_with_storage_result(
     CreateGroupWithStorageResult apiObj,
     wire_cst_create_group_with_storage_result wireObj,
@@ -1214,6 +1817,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       apiObj.resultingRoster,
       wireObj.resulting_roster,
     );
+    wireObj.resulting_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.resultingGroupStateSha256,
+    );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
     cst_api_fill_to_wire_mls_storage_batch(
       apiObj.storageBatch,
       wireObj.storage_batch,
@@ -1235,11 +1842,82 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_create_message_with_storage_outcome(
+    CreateMessageWithStorageOutcome apiObj,
+    wire_cst_create_message_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is CreateMessageWithStorageOutcome_Success) {
+      var pre_field0 =
+          cst_encode_box_autoadd_create_message_with_storage_result(
+            apiObj.field0,
+          );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is CreateMessageWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
   void cst_api_fill_to_wire_create_message_with_storage_result(
     CreateMessageWithStorageResult apiObj,
     wire_cst_create_message_with_storage_result wireObj,
   ) {
     wireObj.ciphertext = cst_encode_list_prim_u_8_strict(apiObj.ciphertext);
+    wireObj.resulting_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.resultingGroupStateSha256,
+    );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
+    cst_api_fill_to_wire_mls_storage_batch(
+      apiObj.storageBatch,
+      wireObj.storage_batch,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_discard_pending_commit_with_storage_outcome(
+    DiscardPendingCommitWithStorageOutcome apiObj,
+    wire_cst_discard_pending_commit_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is DiscardPendingCommitWithStorageOutcome_Success) {
+      var pre_field0 =
+          cst_encode_box_autoadd_discard_pending_commit_with_storage_result(
+            apiObj.field0,
+          );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is DiscardPendingCommitWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
+  void cst_api_fill_to_wire_discard_pending_commit_with_storage_result(
+    DiscardPendingCommitWithStorageResult apiObj,
+    wire_cst_discard_pending_commit_with_storage_result wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.previousRoster,
+      wireObj.previous_roster,
+    );
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.resultingRoster,
+      wireObj.resulting_roster,
+    );
+    wireObj.resulting_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.resultingGroupStateSha256,
+    );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
     cst_api_fill_to_wire_mls_storage_batch(
       apiObj.storageBatch,
       wireObj.storage_batch,
@@ -1274,15 +1952,113 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_get_pending_commit_with_storage_outcome(
+    GetPendingCommitWithStorageOutcome apiObj,
+    wire_cst_get_pending_commit_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is GetPendingCommitWithStorageOutcome_Success) {
+      var pre_field0 = cst_encode_opt_box_autoadd_pending_commit_info(
+        apiObj.field0,
+      );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is GetPendingCommitWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
+  void cst_api_fill_to_wire_join_group_from_welcome_with_storage_outcome(
+    JoinGroupFromWelcomeWithStorageOutcome apiObj,
+    wire_cst_join_group_from_welcome_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is JoinGroupFromWelcomeWithStorageOutcome_Success) {
+      var pre_field0 = cst_encode_box_autoadd_join_group_with_storage_result(
+        apiObj.field0,
+      );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is JoinGroupFromWelcomeWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
   void cst_api_fill_to_wire_join_group_with_storage_result(
     JoinGroupWithStorageResult apiObj,
     wire_cst_join_group_with_storage_result wireObj,
   ) {
     wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(
+      apiObj.localLeaf,
+      wireObj.local_leaf,
+    );
+    wireObj.consumed_key_package_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.consumedKeyPackageSha256,
+    );
     cst_api_fill_to_wire_mls_roster_summary_v_1(
       apiObj.resultingRoster,
       wireObj.resulting_roster,
     );
+    wireObj.resulting_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.resultingGroupStateSha256,
+    );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
+    cst_api_fill_to_wire_mls_storage_batch(
+      apiObj.storageBatch,
+      wireObj.storage_batch,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_merge_pending_commit_with_storage_outcome(
+    MergePendingCommitWithStorageOutcome apiObj,
+    wire_cst_merge_pending_commit_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is MergePendingCommitWithStorageOutcome_Success) {
+      var pre_field0 =
+          cst_encode_box_autoadd_merge_pending_commit_with_storage_result(
+            apiObj.field0,
+          );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is MergePendingCommitWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
+  void cst_api_fill_to_wire_merge_pending_commit_with_storage_result(
+    MergePendingCommitWithStorageResult apiObj,
+    wire_cst_merge_pending_commit_with_storage_result wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.previousRoster,
+      wireObj.previous_roster,
+    );
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.resultingRoster,
+      wireObj.resulting_roster,
+    );
+    wireObj.resulting_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.resultingGroupStateSha256,
+    );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
     cst_api_fill_to_wire_mls_storage_batch(
       apiObj.storageBatch,
       wireObj.storage_batch,
@@ -1347,6 +2123,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_mls_commit_acceptance(
+    MlsCommitAcceptance apiObj,
+    wire_cst_mls_commit_acceptance wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_pending_commit_binding(
+      apiObj.binding,
+      wireObj.binding,
+    );
+    cst_api_fill_to_wire_mls_expected_roster_state_v_1(
+      apiObj.resultingState,
+      wireObj.resulting_state,
+    );
+    wireObj.preparation_base_group_state_sha256 =
+        cst_encode_list_prim_u_8_strict(apiObj.preparationBaseGroupStateSha256);
+  }
+
+  @protected
   void cst_api_fill_to_wire_mls_expected_roster_state_v_1(
     MlsExpectedRosterStateV1 apiObj,
     wire_cst_mls_expected_roster_state_v_1 wireObj,
@@ -1380,6 +2173,61 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     );
     wireObj.number_of_resumption_psks = cst_encode_u_32(
       apiObj.numberOfResumptionPsks,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_mls_group_operation_context(
+    MlsGroupOperationContext apiObj,
+    wire_cst_mls_group_operation_context wireObj,
+  ) {
+    wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
+    wireObj.incarnation_id = cst_encode_list_prim_u_8_strict(
+      apiObj.incarnationId,
+    );
+    cst_api_fill_to_wire_mls_expected_roster_state_v_1(
+      apiObj.expectedCurrentState,
+      wireObj.expected_current_state,
+    );
+    wireObj.expected_base_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.expectedBaseGroupStateSha256,
+    );
+    wireObj.expected_retention = cst_encode_u_32(apiObj.expectedRetention);
+    wireObj.storage_entries = cst_encode_list_mls_storage_entry(
+      apiObj.storageEntries,
+    );
+    wireObj.storage_format_version = cst_encode_u_32(
+      apiObj.storageFormatVersion,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_mls_pending_commit_binding(
+    MlsPendingCommitBinding apiObj,
+    wire_cst_mls_pending_commit_binding wireObj,
+  ) {
+    wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
+    wireObj.incarnation_id = cst_encode_list_prim_u_8_strict(
+      apiObj.incarnationId,
+    );
+    cst_api_fill_to_wire_mls_transition_context(
+      apiObj.transition,
+      wireObj.transition,
+    );
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(apiObj.author, wireObj.author);
+    cst_api_fill_to_wire_mls_expected_roster_state_v_1(
+      apiObj.previousState,
+      wireObj.previous_state,
+    );
+    wireObj.commit_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.commitSha256,
+    );
+    wireObj.aad_sha256 = cst_encode_list_prim_u_8_strict(apiObj.aadSha256);
+    wireObj.welcome_sha256 = cst_encode_opt_list_prim_u_8_strict(
+      apiObj.welcomeSha256,
+    );
+    wireObj.group_info_sha256 = cst_encode_opt_list_prim_u_8_strict(
+      apiObj.groupInfoSha256,
     );
   }
 
@@ -1436,31 +2284,88 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  void cst_api_fill_to_wire_prepared_commit_with_storage_result(
-    PreparedCommitWithStorageResult apiObj,
-    wire_cst_prepared_commit_with_storage_result wireObj,
+  void cst_api_fill_to_wire_mls_transition_context(
+    MlsTransitionContext apiObj,
+    wire_cst_mls_transition_context wireObj,
   ) {
+    wireObj.command_id = cst_encode_list_prim_u_8_strict(apiObj.commandId);
+    wireObj.context_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.contextSha256,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_pending_commit_info(
+    PendingCommitInfo apiObj,
+    wire_cst_pending_commit_info wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_pending_commit_binding(
+      apiObj.pendingBinding,
+      wireObj.pending_binding,
+    );
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.proposedResultingRoster,
+      wireObj.proposed_resulting_roster,
+    );
     wireObj.commit = cst_encode_list_prim_u_8_strict(apiObj.commit);
     wireObj.welcome = cst_encode_opt_list_prim_u_8_strict(apiObj.welcome);
     wireObj.group_info = cst_encode_opt_list_prim_u_8_strict(apiObj.groupInfo);
-    wireObj.commit_sha256 = cst_encode_list_prim_u_8_strict(
-      apiObj.commitSha256,
+    wireObj.preparation_base_group_state_sha256 =
+        cst_encode_list_prim_u_8_strict(apiObj.preparationBaseGroupStateSha256);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_pending_commit_with_storage_result(
+    PendingCommitWithStorageResult apiObj,
+    wire_cst_pending_commit_with_storage_result wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_pending_commit_binding(
+      apiObj.pendingBinding,
+      wireObj.pending_binding,
     );
     cst_api_fill_to_wire_mls_roster_summary_v_1(
       apiObj.previousRoster,
       wireObj.previous_roster,
     );
     cst_api_fill_to_wire_mls_roster_summary_v_1(
-      apiObj.resultingRoster,
-      wireObj.resulting_roster,
+      apiObj.proposedResultingRoster,
+      wireObj.proposed_resulting_roster,
     );
-    wireObj.base_group_state_sha256 = cst_encode_list_prim_u_8_strict(
-      apiObj.baseGroupStateSha256,
+    wireObj.commit = cst_encode_list_prim_u_8_strict(apiObj.commit);
+    wireObj.welcome = cst_encode_opt_list_prim_u_8_strict(apiObj.welcome);
+    wireObj.group_info = cst_encode_opt_list_prim_u_8_strict(apiObj.groupInfo);
+    wireObj.preparation_base_group_state_sha256 =
+        cst_encode_list_prim_u_8_strict(apiObj.preparationBaseGroupStateSha256);
+    wireObj.resulting_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.resultingGroupStateSha256,
     );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
     cst_api_fill_to_wire_mls_storage_batch(
       apiObj.storageBatch,
       wireObj.storage_batch,
     );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_process_message_with_storage_outcome(
+    ProcessMessageWithStorageOutcome apiObj,
+    wire_cst_process_message_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is ProcessMessageWithStorageOutcome_Success) {
+      var pre_field0 =
+          cst_encode_box_autoadd_process_message_with_storage_result(
+            apiObj.field0,
+          );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is ProcessMessageWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
   }
 
   @protected
@@ -1471,14 +2376,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     wireObj.message_type = cst_encode_processed_message_type(
       apiObj.messageType,
     );
-    wireObj.sender_index = cst_encode_opt_box_autoadd_u_32(apiObj.senderIndex);
+    wireObj.message_epoch = cst_encode_u_64(apiObj.messageEpoch);
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(
+      apiObj.authenticatedSender,
+      wireObj.authenticated_sender,
+    );
     wireObj.previous_epoch = cst_encode_u_64(apiObj.previousEpoch);
     wireObj.resulting_epoch = cst_encode_u_64(apiObj.resultingEpoch);
     wireObj.application_message = cst_encode_opt_list_prim_u_8_strict(
       apiObj.applicationMessage,
     );
-    wireObj.has_staged_commit = cst_encode_bool(apiObj.hasStagedCommit);
-    wireObj.has_proposal = cst_encode_bool(apiObj.hasProposal);
     wireObj.proposal_type = cst_encode_opt_box_autoadd_mls_proposal_type(
       apiObj.proposalType,
     );
@@ -1490,10 +2397,80 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       apiObj.resultingRoster,
       wireObj.resulting_roster,
     );
+    wireObj.resulting_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.resultingGroupStateSha256,
+    );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
     cst_api_fill_to_wire_mls_storage_batch(
       apiObj.storageBatch,
       wireObj.storage_batch,
     );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_remove_members_with_storage_outcome(
+    RemoveMembersWithStorageOutcome apiObj,
+    wire_cst_remove_members_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is RemoveMembersWithStorageOutcome_Success) {
+      var pre_field0 =
+          cst_encode_box_autoadd_pending_commit_with_storage_result(
+            apiObj.field0,
+          );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is RemoveMembersWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
+  void cst_api_fill_to_wire_self_update_with_storage_outcome(
+    SelfUpdateWithStorageOutcome apiObj,
+    wire_cst_self_update_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is SelfUpdateWithStorageOutcome_Success) {
+      var pre_field0 =
+          cst_encode_box_autoadd_pending_commit_with_storage_result(
+            apiObj.field0,
+          );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is SelfUpdateWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
+  void cst_api_fill_to_wire_swap_members_with_storage_outcome(
+    SwapMembersWithStorageOutcome apiObj,
+    wire_cst_swap_members_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is SwapMembersWithStorageOutcome_Success) {
+      var pre_field0 =
+          cst_encode_box_autoadd_pending_commit_with_storage_result(
+            apiObj.field0,
+          );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is SwapMembersWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
   }
 
   @protected
@@ -1602,7 +2579,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int cst_encode_mls_ciphersuite(MlsCiphersuite raw);
 
   @protected
+  int cst_encode_mls_error_code(MlsErrorCode raw);
+
+  @protected
   int cst_encode_mls_proposal_type(MlsProposalType raw);
+
+  @protected
+  int cst_encode_mls_receive_kind(MlsReceiveKind raw);
 
   @protected
   int cst_encode_mls_wire_format_policy(MlsWireFormatPolicy raw);
@@ -1748,6 +2731,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_add_members_with_storage_outcome(
+    AddMembersWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
@@ -1776,8 +2765,38 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_create_group_with_storage_result(
+    CreateGroupWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_create_message_with_storage_result(
+    CreateMessageWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_discard_pending_commit_with_storage_result(
+    DiscardPendingCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_expected_context_invitation_authority_input_v_1(
     ExpectedContextInvitationAuthorityInputV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_join_group_with_storage_result(
+    JoinGroupWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_merge_pending_commit_with_storage_result(
+    MergePendingCommitWithStorageResult self,
     SseSerializer serializer,
   );
 
@@ -1794,6 +2813,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_mls_commit_acceptance(
+    MlsCommitAcceptance self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_mls_expected_roster_state_v_1(
     MlsExpectedRosterStateV1 self,
     SseSerializer serializer,
@@ -1806,13 +2831,52 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_mls_group_operation_context(
+    MlsGroupOperationContext self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_mls_pending_commit_binding(
+    MlsPendingCommitBinding self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_mls_proposal_type(
     MlsProposalType self,
     SseSerializer serializer,
   );
 
   @protected
-  void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
+  void sse_encode_box_autoadd_mls_roster_leaf_v_1(
+    MlsRosterLeafV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_mls_transition_context(
+    MlsTransitionContext self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_pending_commit_info(
+    PendingCommitInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_pending_commit_with_storage_result(
+    PendingCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_process_message_with_storage_result(
+    ProcessMessageWithStorageResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_context_invitation_authority_input_v_1(
@@ -1833,6 +2897,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_create_group_with_storage_outcome(
+    CreateGroupWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_create_group_with_storage_result(
     CreateGroupWithStorageResult self,
     SseSerializer serializer,
@@ -1845,8 +2915,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_create_message_with_storage_outcome(
+    CreateMessageWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_create_message_with_storage_result(
     CreateMessageWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_discard_pending_commit_with_storage_outcome(
+    DiscardPendingCommitWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_discard_pending_commit_with_storage_result(
+    DiscardPendingCommitWithStorageResult self,
     SseSerializer serializer,
   );
 
@@ -1863,7 +2951,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_get_pending_commit_with_storage_outcome(
+    GetPendingCommitWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_join_group_from_welcome_with_storage_outcome(
+    JoinGroupFromWelcomeWithStorageOutcome self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_join_group_with_storage_result(
@@ -1920,6 +3020,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_merge_pending_commit_with_storage_outcome(
+    MergePendingCommitWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_merge_pending_commit_with_storage_result(
+    MergePendingCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_mls_authorized_key_package_v_1(
     MlsAuthorizedKeyPackageV1 self,
     SseSerializer serializer,
@@ -1950,6 +3062,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_mls_commit_acceptance(
+    MlsCommitAcceptance self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_error_code(MlsErrorCode self, SseSerializer serializer);
+
+  @protected
   void sse_encode_mls_expected_roster_state_v_1(
     MlsExpectedRosterStateV1 self,
     SseSerializer serializer,
@@ -1962,8 +3083,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_mls_group_operation_context(
+    MlsGroupOperationContext self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_pending_commit_binding(
+    MlsPendingCommitBinding self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_mls_proposal_type(
     MlsProposalType self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_receive_kind(
+    MlsReceiveKind self,
     SseSerializer serializer,
   );
 
@@ -1992,6 +3131,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_mls_transition_context(
+    MlsTransitionContext self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_mls_wire_format_policy(
     MlsWireFormatPolicy self,
     SseSerializer serializer,
@@ -2013,7 +3158,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
+  void sse_encode_opt_box_autoadd_pending_commit_info(
+    PendingCommitInfo? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_list_prim_u_8_strict(
@@ -2022,8 +3170,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_prepared_commit_with_storage_result(
-    PreparedCommitWithStorageResult self,
+  void sse_encode_pending_commit_info(
+    PendingCommitInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_pending_commit_with_storage_result(
+    PendingCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_process_message_with_storage_outcome(
+    ProcessMessageWithStorageOutcome self,
     SseSerializer serializer,
   );
 
@@ -2036,6 +3196,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_processed_message_type(
     ProcessedMessageType self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_remove_members_with_storage_outcome(
+    RemoveMembersWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_self_update_with_storage_outcome(
+    SelfUpdateWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_swap_members_with_storage_outcome(
+    SwapMembersWithStorageOutcome self,
     SseSerializer serializer,
   );
 
@@ -2632,23 +3810,20 @@ class RustLibWire implements BaseWire {
 
   void wire__crate__api__group_e2ee__add_members_with_storage(
     int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
+    ffi.Pointer<wire_cst_mls_transition_context> transition,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_mls_authorized_key_package_v_1> additions,
+    ffi.Pointer<wire_cst_list_mls_authorized_key_package_v_1>
+    authorized_key_packages,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> aad,
-    ffi.Pointer<wire_cst_mls_expected_roster_state_v_1> expected_previous_state,
-    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
-    int storage_format_version,
   ) {
     return _wire__crate__api__group_e2ee__add_members_with_storage(
       port_,
-      group_id,
+      context,
+      transition,
       signer_bytes,
-      additions,
+      authorized_key_packages,
       aad,
-      expected_previous_state,
-      storage_entries,
-      storage_format_version,
     );
   }
 
@@ -2657,13 +3832,11 @@ class RustLibWire implements BaseWire {
         ffi.NativeFunction<
           ffi.Void Function(
             ffi.Int64,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
+            ffi.Pointer<wire_cst_mls_transition_context>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_mls_authorized_key_package_v_1>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
-            ffi.Pointer<wire_cst_list_mls_storage_entry>,
-            ffi.Uint32,
           )
         >
       >(
@@ -2674,13 +3847,11 @@ class RustLibWire implements BaseWire {
           .asFunction<
             void Function(
               int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
+              ffi.Pointer<wire_cst_mls_transition_context>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_mls_authorized_key_package_v_1>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
-              ffi.Pointer<wire_cst_list_mls_storage_entry>,
-              int,
             )
           >();
 
@@ -2689,6 +3860,7 @@ class RustLibWire implements BaseWire {
     ffi.Pointer<wire_cst_mls_group_config> config,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> explicit_group_id,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> incarnation_id,
     ffi.Pointer<wire_cst_mls_authorized_owner_v_1> expected_owner_authority,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> credential_bytes,
     ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
@@ -2699,6 +3871,7 @@ class RustLibWire implements BaseWire {
       config,
       signer_bytes,
       explicit_group_id,
+      incarnation_id,
       expected_owner_authority,
       credential_bytes,
       storage_entries,
@@ -2712,6 +3885,7 @@ class RustLibWire implements BaseWire {
           ffi.Void Function(
             ffi.Int64,
             ffi.Pointer<wire_cst_mls_group_config>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_mls_authorized_owner_v_1>,
@@ -2729,6 +3903,7 @@ class RustLibWire implements BaseWire {
             void Function(
               int,
               ffi.Pointer<wire_cst_mls_group_config>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_mls_authorized_owner_v_1>,
@@ -2794,21 +3969,17 @@ class RustLibWire implements BaseWire {
 
   void wire__crate__api__storage__create_message_with_storage(
     int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> message,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> aad,
-    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
-    int storage_format_version,
   ) {
     return _wire__crate__api__storage__create_message_with_storage(
       port_,
-      group_id,
+      context,
       signer_bytes,
       message,
       aad,
-      storage_entries,
-      storage_format_version,
     );
   }
 
@@ -2817,12 +3988,10 @@ class RustLibWire implements BaseWire {
         ffi.NativeFunction<
           ffi.Void Function(
             ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_mls_storage_entry>,
-            ffi.Uint32,
           )
         >
       >(
@@ -2833,12 +4002,10 @@ class RustLibWire implements BaseWire {
           .asFunction<
             void Function(
               int,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_mls_storage_entry>,
-              int,
             )
           >();
 
@@ -2875,6 +4042,70 @@ class RustLibWire implements BaseWire {
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_mls_storage_entry>,
               int,
+            )
+          >();
+
+  void wire__crate__api__group_e2ee__discard_pending_commit_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
+    ffi.Pointer<wire_cst_mls_pending_commit_binding> expected_pending_binding,
+  ) {
+    return _wire__crate__api__group_e2ee__discard_pending_commit_with_storage(
+      port_,
+      context,
+      expected_pending_binding,
+    );
+  }
+
+  late final _wire__crate__api__group_e2ee__discard_pending_commit_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
+            ffi.Pointer<wire_cst_mls_pending_commit_binding>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__group_e2ee__discard_pending_commit_with_storage',
+      );
+  late final _wire__crate__api__group_e2ee__discard_pending_commit_with_storage =
+      _wire__crate__api__group_e2ee__discard_pending_commit_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
+              ffi.Pointer<wire_cst_mls_pending_commit_binding>,
+            )
+          >();
+
+  void wire__crate__api__group_e2ee__get_pending_commit_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
+  ) {
+    return _wire__crate__api__group_e2ee__get_pending_commit_with_storage(
+      port_,
+      context,
+    );
+  }
+
+  late final _wire__crate__api__group_e2ee__get_pending_commit_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__group_e2ee__get_pending_commit_with_storage',
+      );
+  late final _wire__crate__api__group_e2ee__get_pending_commit_with_storage =
+      _wire__crate__api__group_e2ee__get_pending_commit_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
             )
           >();
 
@@ -2915,21 +4146,30 @@ class RustLibWire implements BaseWire {
   void wire__crate__api__group_e2ee__join_group_from_welcome_with_storage(
     int port_,
     ffi.Pointer<wire_cst_mls_group_config> config,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> incarnation_id,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> welcome_bytes,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> expected_welcome_sha256,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> ratchet_tree_bytes,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
     ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>
     expected_resulting_state,
+    ffi.Pointer<wire_cst_mls_roster_leaf_v_1> expected_local_leaf,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose>
+    expected_target_key_package_sha256,
     ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
     int storage_format_version,
   ) {
     return _wire__crate__api__group_e2ee__join_group_from_welcome_with_storage(
       port_,
       config,
+      incarnation_id,
       welcome_bytes,
+      expected_welcome_sha256,
       ratchet_tree_bytes,
       signer_bytes,
       expected_resulting_state,
+      expected_local_leaf,
+      expected_target_key_package_sha256,
       storage_entries,
       storage_format_version,
     );
@@ -2942,9 +4182,13 @@ class RustLibWire implements BaseWire {
             ffi.Int64,
             ffi.Pointer<wire_cst_mls_group_config>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_prim_u_8_strict>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
+            ffi.Pointer<wire_cst_mls_roster_leaf_v_1>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_mls_storage_entry>,
             ffi.Uint32,
           )
@@ -2959,11 +4203,49 @@ class RustLibWire implements BaseWire {
               int,
               ffi.Pointer<wire_cst_mls_group_config>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_prim_u_8_strict>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
+              ffi.Pointer<wire_cst_mls_roster_leaf_v_1>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_mls_storage_entry>,
               int,
+            )
+          >();
+
+  void wire__crate__api__group_e2ee__merge_pending_commit_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
+    ffi.Pointer<wire_cst_mls_commit_acceptance> acceptance,
+  ) {
+    return _wire__crate__api__group_e2ee__merge_pending_commit_with_storage(
+      port_,
+      context,
+      acceptance,
+    );
+  }
+
+  late final _wire__crate__api__group_e2ee__merge_pending_commit_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
+            ffi.Pointer<wire_cst_mls_commit_acceptance>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__group_e2ee__merge_pending_commit_with_storage',
+      );
+  late final _wire__crate__api__group_e2ee__merge_pending_commit_with_storage =
+      _wire__crate__api__group_e2ee__merge_pending_commit_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
+              ffi.Pointer<wire_cst_mls_commit_acceptance>,
             )
           >();
 
@@ -3130,24 +4412,26 @@ class RustLibWire implements BaseWire {
 
   void wire__crate__api__group_e2ee__process_message_with_storage(
     int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
+    int expected_kind,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> message_bytes,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> expected_message_sha256,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> expected_aad,
-    ffi.Pointer<wire_cst_mls_expected_roster_state_v_1> expected_previous_state,
+    ffi.Pointer<wire_cst_mls_roster_leaf_v_1> expected_sender,
+    ffi.Pointer<wire_cst_mls_expected_roster_state_v_1> expected_message_state,
     ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>
     expected_resulting_state,
-    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
-    int storage_format_version,
   ) {
     return _wire__crate__api__group_e2ee__process_message_with_storage(
       port_,
-      group_id,
+      context,
+      expected_kind,
       message_bytes,
+      expected_message_sha256,
       expected_aad,
-      expected_previous_state,
+      expected_sender,
+      expected_message_state,
       expected_resulting_state,
-      storage_entries,
-      storage_format_version,
     );
   }
 
@@ -3156,13 +4440,14 @@ class RustLibWire implements BaseWire {
         ffi.NativeFunction<
           ffi.Void Function(
             ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
+            ffi.Int32,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_mls_roster_leaf_v_1>,
             ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
             ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
-            ffi.Pointer<wire_cst_list_mls_storage_entry>,
-            ffi.Uint32,
           )
         >
       >(
@@ -3173,35 +4458,32 @@ class RustLibWire implements BaseWire {
           .asFunction<
             void Function(
               int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
-              ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
-              ffi.Pointer<wire_cst_list_mls_storage_entry>,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
               int,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_mls_roster_leaf_v_1>,
+              ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
+              ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
             )
           >();
 
   void wire__crate__api__group_e2ee__remove_members_with_storage(
     int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
+    ffi.Pointer<wire_cst_mls_transition_context> transition,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_mls_authorized_removal_v_1> removals,
+    ffi.Pointer<wire_cst_list_mls_authorized_removal_v_1> authorized_removals,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> aad,
-    ffi.Pointer<wire_cst_mls_expected_roster_state_v_1> expected_previous_state,
-    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
-    int storage_format_version,
   ) {
     return _wire__crate__api__group_e2ee__remove_members_with_storage(
       port_,
-      group_id,
+      context,
+      transition,
       signer_bytes,
-      removals,
+      authorized_removals,
       aad,
-      expected_previous_state,
-      storage_entries,
-      storage_format_version,
     );
   }
 
@@ -3210,13 +4492,11 @@ class RustLibWire implements BaseWire {
         ffi.NativeFunction<
           ffi.Void Function(
             ffi.Int64,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
+            ffi.Pointer<wire_cst_mls_transition_context>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             ffi.Pointer<wire_cst_list_mls_authorized_removal_v_1>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
-            ffi.Pointer<wire_cst_list_mls_storage_entry>,
-            ffi.Uint32,
           )
         >
       >(
@@ -3227,35 +4507,29 @@ class RustLibWire implements BaseWire {
           .asFunction<
             void Function(
               int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
+              ffi.Pointer<wire_cst_mls_transition_context>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_mls_authorized_removal_v_1>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
-              ffi.Pointer<wire_cst_list_mls_storage_entry>,
-              int,
             )
           >();
 
   void wire__crate__api__group_e2ee__self_update_with_storage(
     int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
+    ffi.Pointer<wire_cst_mls_transition_context> transition,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> aad,
-    ffi.Pointer<wire_cst_mls_expected_roster_state_v_1> expected_previous_state,
     ffi.Pointer<wire_cst_mls_authorized_self_v_1> expected_self_authority,
-    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
-    int storage_format_version,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> aad,
   ) {
     return _wire__crate__api__group_e2ee__self_update_with_storage(
       port_,
-      group_id,
+      context,
+      transition,
       signer_bytes,
-      aad,
-      expected_previous_state,
       expected_self_authority,
-      storage_entries,
-      storage_format_version,
+      aad,
     );
   }
 
@@ -3264,13 +4538,11 @@ class RustLibWire implements BaseWire {
         ffi.NativeFunction<
           ffi.Void Function(
             ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
+            ffi.Pointer<wire_cst_mls_transition_context>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
             ffi.Pointer<wire_cst_mls_authorized_self_v_1>,
-            ffi.Pointer<wire_cst_list_mls_storage_entry>,
-            ffi.Uint32,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
           )
         >
       >(
@@ -3281,13 +4553,11 @@ class RustLibWire implements BaseWire {
           .asFunction<
             void Function(
               int,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
+              ffi.Pointer<wire_cst_mls_transition_context>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
               ffi.Pointer<wire_cst_mls_authorized_self_v_1>,
-              ffi.Pointer<wire_cst_list_mls_storage_entry>,
-              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             )
           >();
 
@@ -3337,25 +4607,22 @@ class RustLibWire implements BaseWire {
 
   void wire__crate__api__group_e2ee__swap_members_with_storage(
     int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
+    ffi.Pointer<wire_cst_mls_transition_context> transition,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_mls_authorized_removal_v_1> removals,
-    ffi.Pointer<wire_cst_list_mls_authorized_key_package_v_1> additions,
+    ffi.Pointer<wire_cst_list_mls_authorized_key_package_v_1>
+    authorized_key_packages,
+    ffi.Pointer<wire_cst_list_mls_authorized_removal_v_1> authorized_removals,
     ffi.Pointer<wire_cst_list_prim_u_8_loose> aad,
-    ffi.Pointer<wire_cst_mls_expected_roster_state_v_1> expected_previous_state,
-    ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries,
-    int storage_format_version,
   ) {
     return _wire__crate__api__group_e2ee__swap_members_with_storage(
       port_,
-      group_id,
+      context,
+      transition,
       signer_bytes,
-      removals,
-      additions,
+      authorized_key_packages,
+      authorized_removals,
       aad,
-      expected_previous_state,
-      storage_entries,
-      storage_format_version,
     );
   }
 
@@ -3364,14 +4631,12 @@ class RustLibWire implements BaseWire {
         ffi.NativeFunction<
           ffi.Void Function(
             ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
+            ffi.Pointer<wire_cst_mls_transition_context>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_mls_authorized_removal_v_1>,
             ffi.Pointer<wire_cst_list_mls_authorized_key_package_v_1>,
+            ffi.Pointer<wire_cst_list_mls_authorized_removal_v_1>,
             ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
-            ffi.Pointer<wire_cst_list_mls_storage_entry>,
-            ffi.Uint32,
           )
         >
       >(
@@ -3382,14 +4647,12 @@ class RustLibWire implements BaseWire {
           .asFunction<
             void Function(
               int,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
+              ffi.Pointer<wire_cst_mls_transition_context>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_mls_authorized_removal_v_1>,
               ffi.Pointer<wire_cst_list_mls_authorized_key_package_v_1>,
+              ffi.Pointer<wire_cst_list_mls_authorized_removal_v_1>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>,
-              ffi.Pointer<wire_cst_list_mls_storage_entry>,
-              int,
             )
           >();
 
@@ -3575,6 +4838,63 @@ class RustLibWire implements BaseWire {
             Function()
           >();
 
+  ffi.Pointer<wire_cst_create_group_with_storage_result>
+  cst_new_box_autoadd_create_group_with_storage_result() {
+    return _cst_new_box_autoadd_create_group_with_storage_result();
+  }
+
+  late final _cst_new_box_autoadd_create_group_with_storage_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_create_group_with_storage_result> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_create_group_with_storage_result');
+  late final _cst_new_box_autoadd_create_group_with_storage_result =
+      _cst_new_box_autoadd_create_group_with_storage_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_create_group_with_storage_result> Function()
+          >();
+
+  ffi.Pointer<wire_cst_create_message_with_storage_result>
+  cst_new_box_autoadd_create_message_with_storage_result() {
+    return _cst_new_box_autoadd_create_message_with_storage_result();
+  }
+
+  late final _cst_new_box_autoadd_create_message_with_storage_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_create_message_with_storage_result> Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_create_message_with_storage_result',
+      );
+  late final _cst_new_box_autoadd_create_message_with_storage_result =
+      _cst_new_box_autoadd_create_message_with_storage_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_create_message_with_storage_result> Function()
+          >();
+
+  ffi.Pointer<wire_cst_discard_pending_commit_with_storage_result>
+  cst_new_box_autoadd_discard_pending_commit_with_storage_result() {
+    return _cst_new_box_autoadd_discard_pending_commit_with_storage_result();
+  }
+
+  late final _cst_new_box_autoadd_discard_pending_commit_with_storage_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_discard_pending_commit_with_storage_result>
+          Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_discard_pending_commit_with_storage_result',
+      );
+  late final _cst_new_box_autoadd_discard_pending_commit_with_storage_result =
+      _cst_new_box_autoadd_discard_pending_commit_with_storage_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_discard_pending_commit_with_storage_result>
+            Function()
+          >();
+
   ffi.Pointer<wire_cst_expected_context_invitation_authority_input_v_1>
   cst_new_box_autoadd_expected_context_invitation_authority_input_v_1() {
     return _cst_new_box_autoadd_expected_context_invitation_authority_input_v_1();
@@ -3595,6 +4915,44 @@ class RustLibWire implements BaseWire {
             ffi.Pointer<
               wire_cst_expected_context_invitation_authority_input_v_1
             >
+            Function()
+          >();
+
+  ffi.Pointer<wire_cst_join_group_with_storage_result>
+  cst_new_box_autoadd_join_group_with_storage_result() {
+    return _cst_new_box_autoadd_join_group_with_storage_result();
+  }
+
+  late final _cst_new_box_autoadd_join_group_with_storage_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_join_group_with_storage_result> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_join_group_with_storage_result');
+  late final _cst_new_box_autoadd_join_group_with_storage_result =
+      _cst_new_box_autoadd_join_group_with_storage_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_join_group_with_storage_result> Function()
+          >();
+
+  ffi.Pointer<wire_cst_merge_pending_commit_with_storage_result>
+  cst_new_box_autoadd_merge_pending_commit_with_storage_result() {
+    return _cst_new_box_autoadd_merge_pending_commit_with_storage_result();
+  }
+
+  late final _cst_new_box_autoadd_merge_pending_commit_with_storage_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_merge_pending_commit_with_storage_result>
+          Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_merge_pending_commit_with_storage_result',
+      );
+  late final _cst_new_box_autoadd_merge_pending_commit_with_storage_result =
+      _cst_new_box_autoadd_merge_pending_commit_with_storage_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_merge_pending_commit_with_storage_result>
             Function()
           >();
 
@@ -3632,6 +4990,21 @@ class RustLibWire implements BaseWire {
             ffi.Pointer<wire_cst_mls_authorized_self_v_1> Function()
           >();
 
+  ffi.Pointer<wire_cst_mls_commit_acceptance>
+  cst_new_box_autoadd_mls_commit_acceptance() {
+    return _cst_new_box_autoadd_mls_commit_acceptance();
+  }
+
+  late final _cst_new_box_autoadd_mls_commit_acceptancePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_mls_commit_acceptance> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_mls_commit_acceptance');
+  late final _cst_new_box_autoadd_mls_commit_acceptance =
+      _cst_new_box_autoadd_mls_commit_acceptancePtr
+          .asFunction<ffi.Pointer<wire_cst_mls_commit_acceptance> Function()>();
+
   ffi.Pointer<wire_cst_mls_expected_roster_state_v_1>
   cst_new_box_autoadd_mls_expected_roster_state_v_1() {
     return _cst_new_box_autoadd_mls_expected_roster_state_v_1();
@@ -3662,6 +5035,40 @@ class RustLibWire implements BaseWire {
       _cst_new_box_autoadd_mls_group_configPtr
           .asFunction<ffi.Pointer<wire_cst_mls_group_config> Function()>();
 
+  ffi.Pointer<wire_cst_mls_group_operation_context>
+  cst_new_box_autoadd_mls_group_operation_context() {
+    return _cst_new_box_autoadd_mls_group_operation_context();
+  }
+
+  late final _cst_new_box_autoadd_mls_group_operation_contextPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_mls_group_operation_context> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_mls_group_operation_context');
+  late final _cst_new_box_autoadd_mls_group_operation_context =
+      _cst_new_box_autoadd_mls_group_operation_contextPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_mls_group_operation_context> Function()
+          >();
+
+  ffi.Pointer<wire_cst_mls_pending_commit_binding>
+  cst_new_box_autoadd_mls_pending_commit_binding() {
+    return _cst_new_box_autoadd_mls_pending_commit_binding();
+  }
+
+  late final _cst_new_box_autoadd_mls_pending_commit_bindingPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_mls_pending_commit_binding> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_mls_pending_commit_binding');
+  late final _cst_new_box_autoadd_mls_pending_commit_binding =
+      _cst_new_box_autoadd_mls_pending_commit_bindingPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_mls_pending_commit_binding> Function()
+          >();
+
   ffi.Pointer<ffi.Int32> cst_new_box_autoadd_mls_proposal_type(int value) {
     return _cst_new_box_autoadd_mls_proposal_type(value);
   }
@@ -3674,16 +5081,86 @@ class RustLibWire implements BaseWire {
       _cst_new_box_autoadd_mls_proposal_typePtr
           .asFunction<ffi.Pointer<ffi.Int32> Function(int)>();
 
-  ffi.Pointer<ffi.Uint32> cst_new_box_autoadd_u_32(int value) {
-    return _cst_new_box_autoadd_u_32(value);
+  ffi.Pointer<wire_cst_mls_roster_leaf_v_1>
+  cst_new_box_autoadd_mls_roster_leaf_v_1() {
+    return _cst_new_box_autoadd_mls_roster_leaf_v_1();
   }
 
-  late final _cst_new_box_autoadd_u_32Ptr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Uint32> Function(ffi.Uint32)>>(
-        'frbgen_openmls_cst_new_box_autoadd_u_32',
+  late final _cst_new_box_autoadd_mls_roster_leaf_v_1Ptr =
+      _lookup<
+        ffi.NativeFunction<ffi.Pointer<wire_cst_mls_roster_leaf_v_1> Function()>
+      >('frbgen_openmls_cst_new_box_autoadd_mls_roster_leaf_v_1');
+  late final _cst_new_box_autoadd_mls_roster_leaf_v_1 =
+      _cst_new_box_autoadd_mls_roster_leaf_v_1Ptr
+          .asFunction<ffi.Pointer<wire_cst_mls_roster_leaf_v_1> Function()>();
+
+  ffi.Pointer<wire_cst_mls_transition_context>
+  cst_new_box_autoadd_mls_transition_context() {
+    return _cst_new_box_autoadd_mls_transition_context();
+  }
+
+  late final _cst_new_box_autoadd_mls_transition_contextPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_mls_transition_context> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_mls_transition_context');
+  late final _cst_new_box_autoadd_mls_transition_context =
+      _cst_new_box_autoadd_mls_transition_contextPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_mls_transition_context> Function()
+          >();
+
+  ffi.Pointer<wire_cst_pending_commit_info>
+  cst_new_box_autoadd_pending_commit_info() {
+    return _cst_new_box_autoadd_pending_commit_info();
+  }
+
+  late final _cst_new_box_autoadd_pending_commit_infoPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Pointer<wire_cst_pending_commit_info> Function()>
+      >('frbgen_openmls_cst_new_box_autoadd_pending_commit_info');
+  late final _cst_new_box_autoadd_pending_commit_info =
+      _cst_new_box_autoadd_pending_commit_infoPtr
+          .asFunction<ffi.Pointer<wire_cst_pending_commit_info> Function()>();
+
+  ffi.Pointer<wire_cst_pending_commit_with_storage_result>
+  cst_new_box_autoadd_pending_commit_with_storage_result() {
+    return _cst_new_box_autoadd_pending_commit_with_storage_result();
+  }
+
+  late final _cst_new_box_autoadd_pending_commit_with_storage_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_pending_commit_with_storage_result> Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_pending_commit_with_storage_result',
       );
-  late final _cst_new_box_autoadd_u_32 = _cst_new_box_autoadd_u_32Ptr
-      .asFunction<ffi.Pointer<ffi.Uint32> Function(int)>();
+  late final _cst_new_box_autoadd_pending_commit_with_storage_result =
+      _cst_new_box_autoadd_pending_commit_with_storage_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_pending_commit_with_storage_result> Function()
+          >();
+
+  ffi.Pointer<wire_cst_process_message_with_storage_result>
+  cst_new_box_autoadd_process_message_with_storage_result() {
+    return _cst_new_box_autoadd_process_message_with_storage_result();
+  }
+
+  late final _cst_new_box_autoadd_process_message_with_storage_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_process_message_with_storage_result> Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_process_message_with_storage_result',
+      );
+  late final _cst_new_box_autoadd_process_message_with_storage_result =
+      _cst_new_box_autoadd_process_message_with_storage_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_process_message_with_storage_result> Function()
+          >();
 
   ffi.Pointer<wire_cst_list_String> cst_new_list_String(int len) {
     return _cst_new_list_String(len);
@@ -3835,44 +5312,44 @@ class RustLibWire implements BaseWire {
   late final _cst_new_list_prim_u_8_strict = _cst_new_list_prim_u_8_strictPtr
       .asFunction<ffi.Pointer<wire_cst_list_prim_u_8_strict> Function(int)>();
 
-  OpenMlsReceiveV1Buffer openmls_receive_v1_execute(
+  OpenMlsReceiveV2Buffer openmls_receive_v2_execute(
     ffi.Pointer<ffi.Uint8> request_data,
     int request_len,
   ) {
-    return _openmls_receive_v1_execute(request_data, request_len);
+    return _openmls_receive_v2_execute(request_data, request_len);
   }
 
-  late final _openmls_receive_v1_executePtr =
+  late final _openmls_receive_v2_executePtr =
       _lookup<
         ffi.NativeFunction<
-          OpenMlsReceiveV1Buffer Function(ffi.Pointer<ffi.Uint8>, ffi.UintPtr)
+          OpenMlsReceiveV2Buffer Function(ffi.Pointer<ffi.Uint8>, ffi.UintPtr)
         >
-      >('openmls_receive_v1_execute');
-  late final _openmls_receive_v1_execute = _openmls_receive_v1_executePtr
+      >('openmls_receive_v2_execute');
+  late final _openmls_receive_v2_execute = _openmls_receive_v2_executePtr
       .asFunction<
-        OpenMlsReceiveV1Buffer Function(ffi.Pointer<ffi.Uint8>, int)
+        OpenMlsReceiveV2Buffer Function(ffi.Pointer<ffi.Uint8>, int)
       >();
 
-  void openmls_receive_v1_free(OpenMlsReceiveV1Buffer buffer) {
-    return _openmls_receive_v1_free(buffer);
+  void openmls_receive_v2_free(OpenMlsReceiveV2Buffer buffer) {
+    return _openmls_receive_v2_free(buffer);
   }
 
-  late final _openmls_receive_v1_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(OpenMlsReceiveV1Buffer)>>(
-        'openmls_receive_v1_free',
+  late final _openmls_receive_v2_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(OpenMlsReceiveV2Buffer)>>(
+        'openmls_receive_v2_free',
       );
-  late final _openmls_receive_v1_free = _openmls_receive_v1_freePtr
-      .asFunction<void Function(OpenMlsReceiveV1Buffer)>();
+  late final _openmls_receive_v2_free = _openmls_receive_v2_freePtr
+      .asFunction<void Function(OpenMlsReceiveV2Buffer)>();
 
-  int openmls_receive_v1_version() {
-    return _openmls_receive_v1_version();
+  int openmls_receive_v2_version() {
+    return _openmls_receive_v2_version();
   }
 
-  late final _openmls_receive_v1_versionPtr =
+  late final _openmls_receive_v2_versionPtr =
       _lookup<ffi.NativeFunction<ffi.Uint16 Function()>>(
-        'openmls_receive_v1_version',
+        'openmls_receive_v2_version',
       );
-  late final _openmls_receive_v1_version = _openmls_receive_v1_versionPtr
+  late final _openmls_receive_v2_version = _openmls_receive_v2_versionPtr
       .asFunction<int Function()>();
 
   int dummy_method_to_enforce_bundling() {
@@ -3985,23 +5462,6 @@ final class wire_cst_list_list_prim_u_8_strict extends ffi.Struct {
   external int len;
 }
 
-final class wire_cst_mls_authorized_key_package_v_1 extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> key_package_bytes;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
-  expected_credential_identity;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
-  expected_signature_public_key;
-}
-
-final class wire_cst_list_mls_authorized_key_package_v_1 extends ffi.Struct {
-  external ffi.Pointer<wire_cst_mls_authorized_key_package_v_1> ptr;
-
-  @ffi.Int32()
-  external int len;
-}
-
 final class wire_cst_mls_expected_roster_state_v_1 extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
 
@@ -4021,6 +5481,48 @@ final class wire_cst_mls_storage_entry extends ffi.Struct {
 
 final class wire_cst_list_mls_storage_entry extends ffi.Struct {
   external ffi.Pointer<wire_cst_mls_storage_entry> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_cst_mls_group_operation_context extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> incarnation_id;
+
+  external wire_cst_mls_expected_roster_state_v_1 expected_current_state;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  expected_base_group_state_sha256;
+
+  @ffi.Uint32()
+  external int expected_retention;
+
+  external ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries;
+
+  @ffi.Uint32()
+  external int storage_format_version;
+}
+
+final class wire_cst_mls_transition_context extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> command_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> context_sha256;
+}
+
+final class wire_cst_mls_authorized_key_package_v_1 extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> key_package_bytes;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  expected_credential_identity;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  expected_signature_public_key;
+}
+
+final class wire_cst_list_mls_authorized_key_package_v_1 extends ffi.Struct {
+  external ffi.Pointer<wire_cst_mls_authorized_key_package_v_1> ptr;
 
   @ffi.Int32()
   external int len;
@@ -4069,6 +5571,35 @@ final class wire_cst_mls_roster_leaf_v_1 extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> signature_public_key;
 }
 
+final class wire_cst_mls_pending_commit_binding extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> incarnation_id;
+
+  external wire_cst_mls_transition_context transition;
+
+  external wire_cst_mls_roster_leaf_v_1 author;
+
+  external wire_cst_mls_expected_roster_state_v_1 previous_state;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit_sha256;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> aad_sha256;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> welcome_sha256;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info_sha256;
+}
+
+final class wire_cst_mls_commit_acceptance extends ffi.Struct {
+  external wire_cst_mls_pending_commit_binding binding;
+
+  external wire_cst_mls_expected_roster_state_v_1 resulting_state;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  preparation_base_group_state_sha256;
+}
+
 final class wire_cst_list_mls_roster_leaf_v_1 extends ffi.Struct {
   external ffi.Pointer<wire_cst_mls_roster_leaf_v_1> ptr;
 
@@ -4105,6 +5636,175 @@ final class wire_cst_mls_authorized_self_v_1 extends ffi.Struct {
   expected_signature_public_key;
 }
 
+final class wire_cst_mls_roster_summary_v_1 extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+
+  @ffi.Uint64()
+  external int epoch;
+
+  external ffi.Pointer<wire_cst_list_mls_roster_leaf_v_1> leaves;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> digest_sha256;
+}
+
+final class wire_cst_mls_storage_batch extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_mls_storage_entry> upserts;
+
+  external ffi.Pointer<wire_cst_list_list_prim_u_8_strict> deletes;
+
+  external ffi.Pointer<wire_cst_list_list_prim_u_8_strict> deleted_group_ids;
+
+  @ffi.Uint32()
+  external int storage_format_version;
+}
+
+final class wire_cst_create_group_with_storage_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+
+  external wire_cst_mls_roster_summary_v_1 resulting_roster;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  resulting_group_state_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
+final class wire_cst_create_message_with_storage_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> ciphertext;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  resulting_group_state_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
+final class wire_cst_discard_pending_commit_with_storage_result
+    extends ffi.Struct {
+  external wire_cst_mls_roster_summary_v_1 previous_roster;
+
+  external wire_cst_mls_roster_summary_v_1 resulting_roster;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  resulting_group_state_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
+final class wire_cst_join_group_with_storage_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+
+  external wire_cst_mls_roster_leaf_v_1 local_leaf;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  consumed_key_package_sha256;
+
+  external wire_cst_mls_roster_summary_v_1 resulting_roster;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  resulting_group_state_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
+final class wire_cst_merge_pending_commit_with_storage_result
+    extends ffi.Struct {
+  external wire_cst_mls_roster_summary_v_1 previous_roster;
+
+  external wire_cst_mls_roster_summary_v_1 resulting_roster;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  resulting_group_state_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
+final class wire_cst_pending_commit_info extends ffi.Struct {
+  external wire_cst_mls_pending_commit_binding pending_binding;
+
+  external wire_cst_mls_roster_summary_v_1 proposed_resulting_roster;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> welcome;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  preparation_base_group_state_sha256;
+}
+
+final class wire_cst_pending_commit_with_storage_result extends ffi.Struct {
+  external wire_cst_mls_pending_commit_binding pending_binding;
+
+  external wire_cst_mls_roster_summary_v_1 previous_roster;
+
+  external wire_cst_mls_roster_summary_v_1 proposed_resulting_roster;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> welcome;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  preparation_base_group_state_sha256;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  resulting_group_state_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
+final class wire_cst_process_message_with_storage_result extends ffi.Struct {
+  @ffi.Int32()
+  external int message_type;
+
+  @ffi.Uint64()
+  external int message_epoch;
+
+  external wire_cst_mls_roster_leaf_v_1 authenticated_sender;
+
+  @ffi.Uint64()
+  external int previous_epoch;
+
+  @ffi.Uint64()
+  external int resulting_epoch;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> application_message;
+
+  external ffi.Pointer<ffi.Int32> proposal_type;
+
+  external wire_cst_mls_roster_summary_v_1 previous_roster;
+
+  external wire_cst_mls_roster_summary_v_1 resulting_roster;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  resulting_group_state_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
 final class wire_cst_list_mls_ciphersuite extends ffi.Struct {
   external ffi.Pointer<ffi.Int32> ptr;
 
@@ -4112,7 +5812,7 @@ final class wire_cst_list_mls_ciphersuite extends ffi.Struct {
   external int len;
 }
 
-final class OpenMlsReceiveV1Buffer extends ffi.Struct {
+final class OpenMlsReceiveV2Buffer extends ffi.Struct {
   external ffi.Pointer<ffi.Uint8> data;
 
   @ffi.UintPtr()
@@ -4166,40 +5866,54 @@ final class wire_cst_account_envelope_successor_authorization_v_1
   retired_previous_private_bundle_candidate;
 }
 
+final class wire_cst_AddMembersWithStorageOutcome_Success extends ffi.Struct {
+  external ffi.Pointer<wire_cst_pending_commit_with_storage_result> field0;
+}
+
+final class wire_cst_AddMembersWithStorageOutcome_Failure extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class AddMembersWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_AddMembersWithStorageOutcome_Success Success;
+
+  external wire_cst_AddMembersWithStorageOutcome_Failure Failure;
+}
+
+final class wire_cst_add_members_with_storage_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external AddMembersWithStorageOutcomeKind kind;
+}
+
 final class wire_cst_context_invitation_preview_output_v_1 extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> title;
 
   external ffi.Pointer<wire_cst_list_String> tags;
 }
 
-final class wire_cst_mls_roster_summary_v_1 extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
-
-  @ffi.Uint64()
-  external int epoch;
-
-  external ffi.Pointer<wire_cst_list_mls_roster_leaf_v_1> leaves;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> digest_sha256;
+final class wire_cst_CreateGroupWithStorageOutcome_Success extends ffi.Struct {
+  external ffi.Pointer<wire_cst_create_group_with_storage_result> field0;
 }
 
-final class wire_cst_mls_storage_batch extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_mls_storage_entry> upserts;
-
-  external ffi.Pointer<wire_cst_list_list_prim_u_8_strict> deletes;
-
-  external ffi.Pointer<wire_cst_list_list_prim_u_8_strict> deleted_group_ids;
-
-  @ffi.Uint32()
-  external int storage_format_version;
+final class wire_cst_CreateGroupWithStorageOutcome_Failure extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
 }
 
-final class wire_cst_create_group_with_storage_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+final class CreateGroupWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_CreateGroupWithStorageOutcome_Success Success;
 
-  external wire_cst_mls_roster_summary_v_1 resulting_roster;
+  external wire_cst_CreateGroupWithStorageOutcome_Failure Failure;
+}
 
-  external wire_cst_mls_storage_batch storage_batch;
+final class wire_cst_create_group_with_storage_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external CreateGroupWithStorageOutcomeKind kind;
 }
 
 final class wire_cst_create_key_package_with_storage_result extends ffi.Struct {
@@ -4208,10 +5922,54 @@ final class wire_cst_create_key_package_with_storage_result extends ffi.Struct {
   external wire_cst_mls_storage_batch storage_batch;
 }
 
-final class wire_cst_create_message_with_storage_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> ciphertext;
+final class wire_cst_CreateMessageWithStorageOutcome_Success
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_create_message_with_storage_result> field0;
+}
 
-  external wire_cst_mls_storage_batch storage_batch;
+final class wire_cst_CreateMessageWithStorageOutcome_Failure
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class CreateMessageWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_CreateMessageWithStorageOutcome_Success Success;
+
+  external wire_cst_CreateMessageWithStorageOutcome_Failure Failure;
+}
+
+final class wire_cst_create_message_with_storage_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external CreateMessageWithStorageOutcomeKind kind;
+}
+
+final class wire_cst_DiscardPendingCommitWithStorageOutcome_Success
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_discard_pending_commit_with_storage_result>
+  field0;
+}
+
+final class wire_cst_DiscardPendingCommitWithStorageOutcome_Failure
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class DiscardPendingCommitWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_DiscardPendingCommitWithStorageOutcome_Success Success;
+
+  external wire_cst_DiscardPendingCommitWithStorageOutcome_Failure Failure;
+}
+
+final class wire_cst_discard_pending_commit_with_storage_outcome
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external DiscardPendingCommitWithStorageOutcomeKind kind;
 }
 
 final class wire_cst_generate_account_envelope_key_bundle_output_v_1
@@ -4219,59 +5977,172 @@ final class wire_cst_generate_account_envelope_key_bundle_output_v_1
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> private_bundle;
 }
 
-final class wire_cst_join_group_with_storage_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
-
-  external wire_cst_mls_roster_summary_v_1 resulting_roster;
-
-  external wire_cst_mls_storage_batch storage_batch;
+final class wire_cst_GetPendingCommitWithStorageOutcome_Success
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_pending_commit_info> field0;
 }
 
-final class wire_cst_prepared_commit_with_storage_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> welcome;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit_sha256;
-
-  external wire_cst_mls_roster_summary_v_1 previous_roster;
-
-  external wire_cst_mls_roster_summary_v_1 resulting_roster;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> base_group_state_sha256;
-
-  external wire_cst_mls_storage_batch storage_batch;
-}
-
-final class wire_cst_process_message_with_storage_result extends ffi.Struct {
+final class wire_cst_GetPendingCommitWithStorageOutcome_Failure
+    extends ffi.Struct {
   @ffi.Int32()
-  external int message_type;
+  external int field0;
+}
 
-  external ffi.Pointer<ffi.Uint32> sender_index;
+final class GetPendingCommitWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_GetPendingCommitWithStorageOutcome_Success Success;
 
-  @ffi.Uint64()
-  external int previous_epoch;
+  external wire_cst_GetPendingCommitWithStorageOutcome_Failure Failure;
+}
 
-  @ffi.Uint64()
-  external int resulting_epoch;
+final class wire_cst_get_pending_commit_with_storage_outcome
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
 
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> application_message;
+  external GetPendingCommitWithStorageOutcomeKind kind;
+}
 
-  @ffi.Bool()
-  external bool has_staged_commit;
+final class wire_cst_JoinGroupFromWelcomeWithStorageOutcome_Success
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_join_group_with_storage_result> field0;
+}
 
-  @ffi.Bool()
-  external bool has_proposal;
+final class wire_cst_JoinGroupFromWelcomeWithStorageOutcome_Failure
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
 
-  external ffi.Pointer<ffi.Int32> proposal_type;
+final class JoinGroupFromWelcomeWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_JoinGroupFromWelcomeWithStorageOutcome_Success Success;
 
-  external wire_cst_mls_roster_summary_v_1 previous_roster;
+  external wire_cst_JoinGroupFromWelcomeWithStorageOutcome_Failure Failure;
+}
 
-  external wire_cst_mls_roster_summary_v_1 resulting_roster;
+final class wire_cst_join_group_from_welcome_with_storage_outcome
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
 
-  external wire_cst_mls_storage_batch storage_batch;
+  external JoinGroupFromWelcomeWithStorageOutcomeKind kind;
+}
+
+final class wire_cst_MergePendingCommitWithStorageOutcome_Success
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_merge_pending_commit_with_storage_result>
+  field0;
+}
+
+final class wire_cst_MergePendingCommitWithStorageOutcome_Failure
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class MergePendingCommitWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_MergePendingCommitWithStorageOutcome_Success Success;
+
+  external wire_cst_MergePendingCommitWithStorageOutcome_Failure Failure;
+}
+
+final class wire_cst_merge_pending_commit_with_storage_outcome
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external MergePendingCommitWithStorageOutcomeKind kind;
+}
+
+final class wire_cst_ProcessMessageWithStorageOutcome_Success
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_process_message_with_storage_result> field0;
+}
+
+final class wire_cst_ProcessMessageWithStorageOutcome_Failure
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class ProcessMessageWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_ProcessMessageWithStorageOutcome_Success Success;
+
+  external wire_cst_ProcessMessageWithStorageOutcome_Failure Failure;
+}
+
+final class wire_cst_process_message_with_storage_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external ProcessMessageWithStorageOutcomeKind kind;
+}
+
+final class wire_cst_RemoveMembersWithStorageOutcome_Success
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_pending_commit_with_storage_result> field0;
+}
+
+final class wire_cst_RemoveMembersWithStorageOutcome_Failure
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class RemoveMembersWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_RemoveMembersWithStorageOutcome_Success Success;
+
+  external wire_cst_RemoveMembersWithStorageOutcome_Failure Failure;
+}
+
+final class wire_cst_remove_members_with_storage_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external RemoveMembersWithStorageOutcomeKind kind;
+}
+
+final class wire_cst_SelfUpdateWithStorageOutcome_Success extends ffi.Struct {
+  external ffi.Pointer<wire_cst_pending_commit_with_storage_result> field0;
+}
+
+final class wire_cst_SelfUpdateWithStorageOutcome_Failure extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class SelfUpdateWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_SelfUpdateWithStorageOutcome_Success Success;
+
+  external wire_cst_SelfUpdateWithStorageOutcome_Failure Failure;
+}
+
+final class wire_cst_self_update_with_storage_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external SelfUpdateWithStorageOutcomeKind kind;
+}
+
+final class wire_cst_SwapMembersWithStorageOutcome_Success extends ffi.Struct {
+  external ffi.Pointer<wire_cst_pending_commit_with_storage_result> field0;
+}
+
+final class wire_cst_SwapMembersWithStorageOutcome_Failure extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class SwapMembersWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_SwapMembersWithStorageOutcome_Success Success;
+
+  external wire_cst_SwapMembersWithStorageOutcome_Failure Failure;
+}
+
+final class wire_cst_swap_members_with_storage_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external SwapMembersWithStorageOutcomeKind kind;
 }
 
 final class wire_cst_verify_account_envelope_continuity_output_v_1
@@ -4287,9 +6158,9 @@ final class wire_cst_verify_account_envelope_continuity_output_v_1
 
 const int MLS_STORAGE_FORMAT_VERSION = 1;
 
-const int NATIVE_RECEIVE_CONTRACT_VERSION = 1;
+const int NATIVE_RECEIVE_CONTRACT_VERSION = 2;
 
-const int NATIVE_RECEIVE_PROFILE_V1 = 1;
+const int NATIVE_RECEIVE_PROFILE_V2 = 2;
 
 const int NATIVE_RECEIVE_REQUEST_MAX_BYTES = 12582912;
 

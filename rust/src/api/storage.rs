@@ -46,9 +46,40 @@ pub struct CreateKeyPackageWithStorageResult {
     pub storage_batch: MlsStorageBatch,
 }
 
-pub struct CreateMessageWithStorageResult {
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) struct LegacyCreateMessageWithStorageResult {
     pub ciphertext: Vec<u8>,
     pub storage_batch: MlsStorageBatch,
+}
+
+pub struct CreateMessageWithStorageResult {
+    pub ciphertext: Vec<u8>,
+    pub resulting_group_state_sha256: Vec<u8>,
+    pub effective_retention: u32,
+    pub storage_batch: MlsStorageBatch,
+}
+pub enum CreateMessageWithStorageOutcome {
+    Success(CreateMessageWithStorageResult),
+    Failure(super::group_e2ee::MlsErrorCode),
+}
+/// Advances only the local sender state. A local pending Commit pauses this
+/// author's outgoing application generation, not other members' sending.
+pub fn create_message_with_storage(
+    context: super::group_e2ee::MlsGroupOperationContext,
+    signer_bytes: Vec<u8>,
+    message: Vec<u8>,
+    aad: Vec<u8>,
+) -> CreateMessageWithStorageOutcome {
+    use super::group_e2ee::{lifecycle_guard, runtime};
+    match lifecycle_guard(|| runtime::send(context.into(), signer_bytes, message, aad)) {
+        Ok(s) => CreateMessageWithStorageOutcome::Success(CreateMessageWithStorageResult {
+            ciphertext: s.ciphertext,
+            resulting_group_state_sha256: s.mutation.resulting_digest,
+            effective_retention: s.mutation.retention,
+            storage_batch: s.mutation.batch,
+        }),
+        Err(e) => CreateMessageWithStorageOutcome::Failure(e),
+    }
 }
 
 /// Return the only storage format version accepted by this build.
@@ -100,14 +131,15 @@ pub fn create_key_package_with_storage(
 }
 
 /// Create an application message and return its sender-state changes.
-pub fn create_message_with_storage(
+#[cfg(any(test, feature = "native-receive-fixtures"))]
+pub(crate) fn legacy_create_message_with_storage(
     group_id: Vec<u8>,
     signer_bytes: Vec<u8>,
     message: Vec<u8>,
     aad: Vec<u8>,
     storage_entries: Vec<MlsStorageEntry>,
     storage_format_version: u32,
-) -> Result<CreateMessageWithStorageResult, String> {
+) -> Result<LegacyCreateMessageWithStorageResult, String> {
     let provider = provider_from_entries(storage_entries, storage_format_version, Some(&group_id))?;
     let signer = signer_from_bytes(signer_bytes)?;
     let mut group = load_group(&group_id, &provider)?;
@@ -121,7 +153,7 @@ pub fn create_message_with_storage(
         .map_err(|e| format!("Failed to serialize message: {e}"))?;
     let storage_batch = batch_from_provider(provider, Some(group_id), Vec::new())?;
 
-    Ok(CreateMessageWithStorageResult {
+    Ok(LegacyCreateMessageWithStorageResult {
         ciphertext,
         storage_batch,
     })

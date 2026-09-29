@@ -41,7 +41,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueNom,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1674661336;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1683218154;
 
 // Section: executor
 
@@ -565,13 +565,11 @@ fn wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme_impl(
 }
 fn wire__crate__api__group_e2ee__add_members_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
-    group_id: impl CstDecode<Vec<u8>>,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
+    transition: impl CstDecode<crate::api::group_e2ee::MlsTransitionContext>,
     signer_bytes: impl CstDecode<Vec<u8>>,
-    additions: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>>,
+    authorized_key_packages: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>>,
     aad: impl CstDecode<Vec<u8>>,
-    expected_previous_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
-    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
-    storage_format_version: impl CstDecode<u32>,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -580,24 +578,21 @@ fn wire__crate__api__group_e2ee__add_members_with_storage_impl(
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
-            let api_group_id = group_id.cst_decode();
+            let api_context = context.cst_decode();
+            let api_transition = transition.cst_decode();
             let api_signer_bytes = signer_bytes.cst_decode();
-            let api_additions = additions.cst_decode();
+            let api_authorized_key_packages = authorized_key_packages.cst_decode();
             let api_aad = aad.cst_decode();
-            let api_expected_previous_state = expected_previous_state.cst_decode();
-            let api_storage_entries = storage_entries.cst_decode();
-            let api_storage_format_version = storage_format_version.cst_decode();
             move |context| {
-                transform_result_dco::<_, _, String>((move || {
-                    let output_ok = crate::api::group_e2ee::add_members_with_storage(
-                        api_group_id,
-                        api_signer_bytes,
-                        api_additions,
-                        api_aad,
-                        api_expected_previous_state,
-                        api_storage_entries,
-                        api_storage_format_version,
-                    )?;
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::group_e2ee::add_members_with_storage(
+                            api_context,
+                            api_transition,
+                            api_signer_bytes,
+                            api_authorized_key_packages,
+                            api_aad,
+                        ))?;
                     Ok(output_ok)
                 })())
             }
@@ -609,6 +604,7 @@ fn wire__crate__api__group_e2ee__create_group_with_storage_impl(
     config: impl CstDecode<crate::api::config::MlsGroupConfig>,
     signer_bytes: impl CstDecode<Vec<u8>>,
     explicit_group_id: impl CstDecode<Vec<u8>>,
+    incarnation_id: impl CstDecode<Vec<u8>>,
     expected_owner_authority: impl CstDecode<crate::api::group_e2ee::MlsAuthorizedOwnerV1>,
     credential_bytes: impl CstDecode<Option<Vec<u8>>>,
     storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
@@ -624,21 +620,24 @@ fn wire__crate__api__group_e2ee__create_group_with_storage_impl(
             let api_config = config.cst_decode();
             let api_signer_bytes = signer_bytes.cst_decode();
             let api_explicit_group_id = explicit_group_id.cst_decode();
+            let api_incarnation_id = incarnation_id.cst_decode();
             let api_expected_owner_authority = expected_owner_authority.cst_decode();
             let api_credential_bytes = credential_bytes.cst_decode();
             let api_storage_entries = storage_entries.cst_decode();
             let api_storage_format_version = storage_format_version.cst_decode();
             move |context| {
-                transform_result_dco::<_, _, String>((move || {
-                    let output_ok = crate::api::group_e2ee::create_group_with_storage(
-                        api_config,
-                        api_signer_bytes,
-                        api_explicit_group_id,
-                        api_expected_owner_authority,
-                        api_credential_bytes,
-                        api_storage_entries,
-                        api_storage_format_version,
-                    )?;
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::group_e2ee::create_group_with_storage(
+                            api_config,
+                            api_signer_bytes,
+                            api_explicit_group_id,
+                            api_incarnation_id,
+                            api_expected_owner_authority,
+                            api_credential_bytes,
+                            api_storage_entries,
+                            api_storage_format_version,
+                        ))?;
                     Ok(output_ok)
                 })())
             }
@@ -688,12 +687,10 @@ fn wire__crate__api__storage__create_key_package_with_storage_impl(
 }
 fn wire__crate__api__storage__create_message_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
-    group_id: impl CstDecode<Vec<u8>>,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
     signer_bytes: impl CstDecode<Vec<u8>>,
     message: impl CstDecode<Vec<u8>>,
     aad: impl CstDecode<Vec<u8>>,
-    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
-    storage_format_version: impl CstDecode<u32>,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -702,22 +699,19 @@ fn wire__crate__api__storage__create_message_with_storage_impl(
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
-            let api_group_id = group_id.cst_decode();
+            let api_context = context.cst_decode();
             let api_signer_bytes = signer_bytes.cst_decode();
             let api_message = message.cst_decode();
             let api_aad = aad.cst_decode();
-            let api_storage_entries = storage_entries.cst_decode();
-            let api_storage_format_version = storage_format_version.cst_decode();
             move |context| {
-                transform_result_dco::<_, _, String>((move || {
-                    let output_ok = crate::api::storage::create_message_with_storage(
-                        api_group_id,
-                        api_signer_bytes,
-                        api_message,
-                        api_aad,
-                        api_storage_entries,
-                        api_storage_format_version,
-                    )?;
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::storage::create_message_with_storage(
+                            api_context,
+                            api_signer_bytes,
+                            api_message,
+                            api_aad,
+                        ))?;
                     Ok(output_ok)
                 })())
             }
@@ -746,6 +740,57 @@ fn wire__crate__api__storage__delete_group_with_storage_impl(
                         api_group_id,
                         api_storage_entries,
                         api_storage_format_version,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__group_e2ee__discard_pending_commit_with_storage_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
+    expected_pending_binding: impl CstDecode<crate::api::group_e2ee::MlsPendingCommitBinding>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "discard_pending_commit_with_storage",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_context = context.cst_decode();
+            let api_expected_pending_binding = expected_pending_binding.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::group_e2ee::discard_pending_commit_with_storage(
+                            api_context,
+                            api_expected_pending_binding,
+                        ),
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__group_e2ee__get_pending_commit_with_storage_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "get_pending_commit_with_storage",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_context = context.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::group_e2ee::get_pending_commit_with_storage(api_context),
                     )?;
                     Ok(output_ok)
                 })())
@@ -790,10 +835,14 @@ fn wire__crate__api__init__is_openmls_initialized_impl(
 fn wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     config: impl CstDecode<crate::api::config::MlsGroupConfig>,
+    incarnation_id: impl CstDecode<Vec<u8>>,
     welcome_bytes: impl CstDecode<Vec<u8>>,
+    expected_welcome_sha256: impl CstDecode<Vec<u8>>,
     ratchet_tree_bytes: impl CstDecode<Option<Vec<u8>>>,
     signer_bytes: impl CstDecode<Vec<u8>>,
     expected_resulting_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
+    expected_local_leaf: impl CstDecode<crate::api::group_e2ee::MlsRosterLeafV1>,
+    expected_target_key_package_sha256: impl CstDecode<Vec<u8>>,
     storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
     storage_format_version: impl CstDecode<u32>,
 ) {
@@ -805,22 +854,61 @@ fn wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_impl(
         },
         move || {
             let api_config = config.cst_decode();
+            let api_incarnation_id = incarnation_id.cst_decode();
             let api_welcome_bytes = welcome_bytes.cst_decode();
+            let api_expected_welcome_sha256 = expected_welcome_sha256.cst_decode();
             let api_ratchet_tree_bytes = ratchet_tree_bytes.cst_decode();
             let api_signer_bytes = signer_bytes.cst_decode();
             let api_expected_resulting_state = expected_resulting_state.cst_decode();
+            let api_expected_local_leaf = expected_local_leaf.cst_decode();
+            let api_expected_target_key_package_sha256 =
+                expected_target_key_package_sha256.cst_decode();
             let api_storage_entries = storage_entries.cst_decode();
             let api_storage_format_version = storage_format_version.cst_decode();
             move |context| {
-                transform_result_dco::<_, _, String>((move || {
-                    let output_ok = crate::api::group_e2ee::join_group_from_welcome_with_storage(
-                        api_config,
-                        api_welcome_bytes,
-                        api_ratchet_tree_bytes,
-                        api_signer_bytes,
-                        api_expected_resulting_state,
-                        api_storage_entries,
-                        api_storage_format_version,
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::group_e2ee::join_group_from_welcome_with_storage(
+                            api_config,
+                            api_incarnation_id,
+                            api_welcome_bytes,
+                            api_expected_welcome_sha256,
+                            api_ratchet_tree_bytes,
+                            api_signer_bytes,
+                            api_expected_resulting_state,
+                            api_expected_local_leaf,
+                            api_expected_target_key_package_sha256,
+                            api_storage_entries,
+                            api_storage_format_version,
+                        ),
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__group_e2ee__merge_pending_commit_with_storage_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
+    acceptance: impl CstDecode<crate::api::group_e2ee::MlsCommitAcceptance>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "merge_pending_commit_with_storage",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_context = context.cst_decode();
+            let api_acceptance = acceptance.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::group_e2ee::merge_pending_commit_with_storage(
+                            api_context,
+                            api_acceptance,
+                        ),
                     )?;
                     Ok(output_ok)
                 })())
@@ -974,13 +1062,14 @@ fn wire__crate__api__storage__mls_storage_format_version_impl(
 }
 fn wire__crate__api__group_e2ee__process_message_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
-    group_id: impl CstDecode<Vec<u8>>,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
+    expected_kind: impl CstDecode<crate::api::group_e2ee::MlsReceiveKind>,
     message_bytes: impl CstDecode<Vec<u8>>,
+    expected_message_sha256: impl CstDecode<Vec<u8>>,
     expected_aad: impl CstDecode<Vec<u8>>,
-    expected_previous_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
+    expected_sender: impl CstDecode<crate::api::group_e2ee::MlsRosterLeafV1>,
+    expected_message_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
     expected_resulting_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
-    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
-    storage_format_version: impl CstDecode<u32>,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -989,24 +1078,27 @@ fn wire__crate__api__group_e2ee__process_message_with_storage_impl(
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
-            let api_group_id = group_id.cst_decode();
+            let api_context = context.cst_decode();
+            let api_expected_kind = expected_kind.cst_decode();
             let api_message_bytes = message_bytes.cst_decode();
+            let api_expected_message_sha256 = expected_message_sha256.cst_decode();
             let api_expected_aad = expected_aad.cst_decode();
-            let api_expected_previous_state = expected_previous_state.cst_decode();
+            let api_expected_sender = expected_sender.cst_decode();
+            let api_expected_message_state = expected_message_state.cst_decode();
             let api_expected_resulting_state = expected_resulting_state.cst_decode();
-            let api_storage_entries = storage_entries.cst_decode();
-            let api_storage_format_version = storage_format_version.cst_decode();
             move |context| {
-                transform_result_dco::<_, _, String>((move || {
-                    let output_ok = crate::api::group_e2ee::process_message_with_storage(
-                        api_group_id,
-                        api_message_bytes,
-                        api_expected_aad,
-                        api_expected_previous_state,
-                        api_expected_resulting_state,
-                        api_storage_entries,
-                        api_storage_format_version,
-                    )?;
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::group_e2ee::process_message_with_storage(
+                            api_context,
+                            api_expected_kind,
+                            api_message_bytes,
+                            api_expected_message_sha256,
+                            api_expected_aad,
+                            api_expected_sender,
+                            api_expected_message_state,
+                            api_expected_resulting_state,
+                        ))?;
                     Ok(output_ok)
                 })())
             }
@@ -1015,13 +1107,11 @@ fn wire__crate__api__group_e2ee__process_message_with_storage_impl(
 }
 fn wire__crate__api__group_e2ee__remove_members_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
-    group_id: impl CstDecode<Vec<u8>>,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
+    transition: impl CstDecode<crate::api::group_e2ee::MlsTransitionContext>,
     signer_bytes: impl CstDecode<Vec<u8>>,
-    removals: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1>>,
+    authorized_removals: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1>>,
     aad: impl CstDecode<Vec<u8>>,
-    expected_previous_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
-    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
-    storage_format_version: impl CstDecode<u32>,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -1030,24 +1120,21 @@ fn wire__crate__api__group_e2ee__remove_members_with_storage_impl(
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
-            let api_group_id = group_id.cst_decode();
+            let api_context = context.cst_decode();
+            let api_transition = transition.cst_decode();
             let api_signer_bytes = signer_bytes.cst_decode();
-            let api_removals = removals.cst_decode();
+            let api_authorized_removals = authorized_removals.cst_decode();
             let api_aad = aad.cst_decode();
-            let api_expected_previous_state = expected_previous_state.cst_decode();
-            let api_storage_entries = storage_entries.cst_decode();
-            let api_storage_format_version = storage_format_version.cst_decode();
             move |context| {
-                transform_result_dco::<_, _, String>((move || {
-                    let output_ok = crate::api::group_e2ee::remove_members_with_storage(
-                        api_group_id,
-                        api_signer_bytes,
-                        api_removals,
-                        api_aad,
-                        api_expected_previous_state,
-                        api_storage_entries,
-                        api_storage_format_version,
-                    )?;
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::group_e2ee::remove_members_with_storage(
+                            api_context,
+                            api_transition,
+                            api_signer_bytes,
+                            api_authorized_removals,
+                            api_aad,
+                        ))?;
                     Ok(output_ok)
                 })())
             }
@@ -1056,13 +1143,11 @@ fn wire__crate__api__group_e2ee__remove_members_with_storage_impl(
 }
 fn wire__crate__api__group_e2ee__self_update_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
-    group_id: impl CstDecode<Vec<u8>>,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
+    transition: impl CstDecode<crate::api::group_e2ee::MlsTransitionContext>,
     signer_bytes: impl CstDecode<Vec<u8>>,
-    aad: impl CstDecode<Vec<u8>>,
-    expected_previous_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
     expected_self_authority: impl CstDecode<crate::api::group_e2ee::MlsAuthorizedSelfV1>,
-    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
-    storage_format_version: impl CstDecode<u32>,
+    aad: impl CstDecode<Vec<u8>>,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -1071,24 +1156,21 @@ fn wire__crate__api__group_e2ee__self_update_with_storage_impl(
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
-            let api_group_id = group_id.cst_decode();
+            let api_context = context.cst_decode();
+            let api_transition = transition.cst_decode();
             let api_signer_bytes = signer_bytes.cst_decode();
-            let api_aad = aad.cst_decode();
-            let api_expected_previous_state = expected_previous_state.cst_decode();
             let api_expected_self_authority = expected_self_authority.cst_decode();
-            let api_storage_entries = storage_entries.cst_decode();
-            let api_storage_format_version = storage_format_version.cst_decode();
+            let api_aad = aad.cst_decode();
             move |context| {
-                transform_result_dco::<_, _, String>((move || {
-                    let output_ok = crate::api::group_e2ee::self_update_with_storage(
-                        api_group_id,
-                        api_signer_bytes,
-                        api_aad,
-                        api_expected_previous_state,
-                        api_expected_self_authority,
-                        api_storage_entries,
-                        api_storage_format_version,
-                    )?;
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::group_e2ee::self_update_with_storage(
+                            api_context,
+                            api_transition,
+                            api_signer_bytes,
+                            api_expected_self_authority,
+                            api_aad,
+                        ))?;
                     Ok(output_ok)
                 })())
             }
@@ -1139,14 +1221,12 @@ fn wire__crate__api__types__supported_ciphersuites_impl(
 }
 fn wire__crate__api__group_e2ee__swap_members_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
-    group_id: impl CstDecode<Vec<u8>>,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
+    transition: impl CstDecode<crate::api::group_e2ee::MlsTransitionContext>,
     signer_bytes: impl CstDecode<Vec<u8>>,
-    removals: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1>>,
-    additions: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>>,
+    authorized_key_packages: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>>,
+    authorized_removals: impl CstDecode<Vec<crate::api::group_e2ee::MlsAuthorizedRemovalV1>>,
     aad: impl CstDecode<Vec<u8>>,
-    expected_previous_state: impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>,
-    storage_entries: impl CstDecode<Vec<crate::api::storage::MlsStorageEntry>>,
-    storage_format_version: impl CstDecode<u32>,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -1155,26 +1235,23 @@ fn wire__crate__api__group_e2ee__swap_members_with_storage_impl(
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
-            let api_group_id = group_id.cst_decode();
+            let api_context = context.cst_decode();
+            let api_transition = transition.cst_decode();
             let api_signer_bytes = signer_bytes.cst_decode();
-            let api_removals = removals.cst_decode();
-            let api_additions = additions.cst_decode();
+            let api_authorized_key_packages = authorized_key_packages.cst_decode();
+            let api_authorized_removals = authorized_removals.cst_decode();
             let api_aad = aad.cst_decode();
-            let api_expected_previous_state = expected_previous_state.cst_decode();
-            let api_storage_entries = storage_entries.cst_decode();
-            let api_storage_format_version = storage_format_version.cst_decode();
             move |context| {
-                transform_result_dco::<_, _, String>((move || {
-                    let output_ok = crate::api::group_e2ee::swap_members_with_storage(
-                        api_group_id,
-                        api_signer_bytes,
-                        api_removals,
-                        api_additions,
-                        api_aad,
-                        api_expected_previous_state,
-                        api_storage_entries,
-                        api_storage_format_version,
-                    )?;
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::group_e2ee::swap_members_with_storage(
+                            api_context,
+                            api_transition,
+                            api_signer_bytes,
+                            api_authorized_key_packages,
+                            api_authorized_removals,
+                            api_aad,
+                        ))?;
                     Ok(output_ok)
                 })())
             }
@@ -1294,6 +1371,58 @@ impl CstDecode<crate::api::types::MlsCiphersuite> for i32 {
         }
     }
 }
+impl CstDecode<crate::api::group_e2ee::MlsErrorCode> for i32 {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(self) -> crate::api::group_e2ee::MlsErrorCode {
+        match self {
+            0 => crate::api::group_e2ee::MlsErrorCode::InvalidFrame,
+            1 => crate::api::group_e2ee::MlsErrorCode::UnsupportedContractVersion,
+            2 => crate::api::group_e2ee::MlsErrorCode::UnsupportedProfile,
+            3 => crate::api::group_e2ee::MlsErrorCode::UnsupportedOperation,
+            4 => crate::api::group_e2ee::MlsErrorCode::NoncanonicalEncoding,
+            5 => crate::api::group_e2ee::MlsErrorCode::LimitExceeded,
+            6 => crate::api::group_e2ee::MlsErrorCode::StorageFormatMismatch,
+            7 => crate::api::group_e2ee::MlsErrorCode::InvalidStorageSnapshot,
+            8 => crate::api::group_e2ee::MlsErrorCode::GroupStateUnavailable,
+            9 => crate::api::group_e2ee::MlsErrorCode::BaseStateMismatch,
+            10 => crate::api::group_e2ee::MlsErrorCode::ConfigurationMismatch,
+            11 => crate::api::group_e2ee::MlsErrorCode::GroupMismatch,
+            12 => crate::api::group_e2ee::MlsErrorCode::PreviousEpochMismatch,
+            13 => crate::api::group_e2ee::MlsErrorCode::PreviousRosterMismatch,
+            14 => crate::api::group_e2ee::MlsErrorCode::ResultingEpochMismatch,
+            15 => crate::api::group_e2ee::MlsErrorCode::ResultingRosterMismatch,
+            16 => crate::api::group_e2ee::MlsErrorCode::AadMismatch,
+            17 => crate::api::group_e2ee::MlsErrorCode::MessageKindMismatch,
+            18 => crate::api::group_e2ee::MlsErrorCode::SenderMismatch,
+            19 => crate::api::group_e2ee::MlsErrorCode::LocalLeafMismatch,
+            20 => crate::api::group_e2ee::MlsErrorCode::InvalidSigner,
+            21 => crate::api::group_e2ee::MlsErrorCode::UnsupportedCredential,
+            22 => crate::api::group_e2ee::MlsErrorCode::MlsDecodeRejected,
+            23 => crate::api::group_e2ee::MlsErrorCode::WelcomeRejected,
+            24 => crate::api::group_e2ee::MlsErrorCode::MlsProtocolRejected,
+            25 => crate::api::group_e2ee::MlsErrorCode::ExpectedKeyPackageMismatch,
+            26 => crate::api::group_e2ee::MlsErrorCode::PendingCommitExists,
+            27 => crate::api::group_e2ee::MlsErrorCode::PendingCommitMissing,
+            28 => crate::api::group_e2ee::MlsErrorCode::PendingBindingMismatch,
+            29 => crate::api::group_e2ee::MlsErrorCode::AcceptanceBindingMismatch,
+            30 => crate::api::group_e2ee::MlsErrorCode::MessageEpochMismatch,
+            31 => crate::api::group_e2ee::MlsErrorCode::MessageRosterMismatch,
+            32 => crate::api::group_e2ee::MlsErrorCode::InactiveGroup,
+            33 => crate::api::group_e2ee::MlsErrorCode::FutureMessageEpoch,
+            34 => crate::api::group_e2ee::MlsErrorCode::RequiredCommitEpochMismatch,
+            35 => crate::api::group_e2ee::MlsErrorCode::PastEpochUnavailable,
+            36 => crate::api::group_e2ee::MlsErrorCode::GenerationTooOld,
+            37 => crate::api::group_e2ee::MlsErrorCode::Replay,
+            38 => crate::api::group_e2ee::MlsErrorCode::ForwardDistanceExceeded,
+            39 => crate::api::group_e2ee::MlsErrorCode::UnsupportedLocalMetadataVersion,
+            40 => crate::api::group_e2ee::MlsErrorCode::LocalMetadataMissing,
+            41 => crate::api::group_e2ee::MlsErrorCode::UnsupportedRetention,
+            42 => crate::api::group_e2ee::MlsErrorCode::WireHashMismatch,
+            43 => crate::api::group_e2ee::MlsErrorCode::InternalFailure,
+            _ => unreachable!("Invalid variant for MlsErrorCode: {}", self),
+        }
+    }
+}
 impl CstDecode<crate::api::types::MlsProposalType> for i32 {
     // Codec=Cst (C-struct based), see doc to use other codecs
     fn cst_decode(self) -> crate::api::types::MlsProposalType {
@@ -1307,6 +1436,17 @@ impl CstDecode<crate::api::types::MlsProposalType> for i32 {
             6 => crate::api::types::MlsProposalType::GroupContextExtensions,
             7 => crate::api::types::MlsProposalType::Custom,
             _ => unreachable!("Invalid variant for MlsProposalType: {}", self),
+        }
+    }
+}
+impl CstDecode<crate::api::group_e2ee::MlsReceiveKind> for i32 {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(self) -> crate::api::group_e2ee::MlsReceiveKind {
+        match self {
+            0 => crate::api::group_e2ee::MlsReceiveKind::Application,
+            1 => crate::api::group_e2ee::MlsReceiveKind::Commit,
+            2 => crate::api::group_e2ee::MlsReceiveKind::Proposal,
+            _ => unreachable!("Invalid variant for MlsReceiveKind: {}", self),
         }
     }
 }
@@ -1604,6 +1744,30 @@ impl SseDecode for crate::api::account_envelope::bridge::AccountEnvelopeSuccesso
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::AddMembersWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::PendingCommitWithStorageResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::group_e2ee::AddMembersWithStorageOutcome::Success(var_field0);
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::AddMembersWithStorageOutcome::Failure(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1668,16 +1832,44 @@ impl SseDecode for crate::api::account_envelope::bridge::ContextInvitationPrevie
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::CreateGroupWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::CreateGroupWithStorageResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::group_e2ee::CreateGroupWithStorageOutcome::Success(var_field0);
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::CreateGroupWithStorageOutcome::Failure(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for crate::api::group_e2ee::CreateGroupWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
         let mut var_resultingRoster =
             <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
         let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
         return crate::api::group_e2ee::CreateGroupWithStorageResult {
             group_id: var_groupId,
             resulting_roster: var_resultingRoster,
+            resulting_group_state_sha256: var_resultingGroupStateSha256,
+            effective_retention: var_effectiveRetention,
             storage_batch: var_storageBatch,
         };
     }
@@ -1695,13 +1887,87 @@ impl SseDecode for crate::api::storage::CreateKeyPackageWithStorageResult {
     }
 }
 
+impl SseDecode for crate::api::storage::CreateMessageWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::storage::CreateMessageWithStorageResult>::sse_decode(deserializer);
+                return crate::api::storage::CreateMessageWithStorageOutcome::Success(var_field0);
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::storage::CreateMessageWithStorageOutcome::Failure(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for crate::api::storage::CreateMessageWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_ciphertext = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_resultingGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
         let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
         return crate::api::storage::CreateMessageWithStorageResult {
             ciphertext: var_ciphertext,
+            resulting_group_state_sha256: var_resultingGroupStateSha256,
+            effective_retention: var_effectiveRetention,
+            storage_batch: var_storageBatch,
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::DiscardPendingCommitWithStorageResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::DiscardPendingCommitWithStorageResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_previousRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
+        let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
+        return crate::api::group_e2ee::DiscardPendingCommitWithStorageResult {
+            previous_roster: var_previousRoster,
+            resulting_roster: var_resultingRoster,
+            resulting_group_state_sha256: var_resultingGroupStateSha256,
+            effective_retention: var_effectiveRetention,
             storage_batch: var_storageBatch,
         };
     }
@@ -1734,6 +2000,32 @@ impl SseDecode for crate::api::account_envelope::bridge::GenerateAccountEnvelope
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::GetPendingCommitWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <Option<crate::api::group_e2ee::PendingCommitInfo>>::sse_decode(deserializer);
+                return crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1741,16 +2033,50 @@ impl SseDecode for i32 {
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::JoinGroupWithStorageResult>::sse_decode(deserializer);
+                return crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for crate::api::group_e2ee::JoinGroupWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_localLeaf = <crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(deserializer);
+        let mut var_consumedKeyPackageSha256 = <Vec<u8>>::sse_decode(deserializer);
         let mut var_resultingRoster =
             <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
         let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
         return crate::api::group_e2ee::JoinGroupWithStorageResult {
             group_id: var_groupId,
+            local_leaf: var_localLeaf,
+            consumed_key_package_sha256: var_consumedKeyPackageSha256,
             resulting_roster: var_resultingRoster,
+            resulting_group_state_sha256: var_resultingGroupStateSha256,
+            effective_retention: var_effectiveRetention,
             storage_batch: var_storageBatch,
         };
     }
@@ -1860,6 +2186,54 @@ impl SseDecode for Vec<u8> {
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::MergePendingCommitWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MergePendingCommitWithStorageResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::group_e2ee::MergePendingCommitWithStorageOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::MergePendingCommitWithStorageOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::MergePendingCommitWithStorageResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_previousRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
+        let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MergePendingCommitWithStorageResult {
+            previous_roster: var_previousRoster,
+            resulting_roster: var_resultingRoster,
+            resulting_group_state_sha256: var_resultingGroupStateSha256,
+            effective_retention: var_effectiveRetention,
+            storage_batch: var_storageBatch,
+        };
+    }
+}
+
 impl SseDecode for crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1927,6 +2301,76 @@ impl SseDecode for crate::api::types::MlsCiphersuite {
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::MlsCommitAcceptance {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_binding =
+            <crate::api::group_e2ee::MlsPendingCommitBinding>::sse_decode(deserializer);
+        let mut var_resultingState =
+            <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_decode(deserializer);
+        let mut var_preparationBaseGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsCommitAcceptance {
+            binding: var_binding,
+            resulting_state: var_resultingState,
+            preparation_base_group_state_sha256: var_preparationBaseGroupStateSha256,
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::MlsErrorCode {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::group_e2ee::MlsErrorCode::InvalidFrame,
+            1 => crate::api::group_e2ee::MlsErrorCode::UnsupportedContractVersion,
+            2 => crate::api::group_e2ee::MlsErrorCode::UnsupportedProfile,
+            3 => crate::api::group_e2ee::MlsErrorCode::UnsupportedOperation,
+            4 => crate::api::group_e2ee::MlsErrorCode::NoncanonicalEncoding,
+            5 => crate::api::group_e2ee::MlsErrorCode::LimitExceeded,
+            6 => crate::api::group_e2ee::MlsErrorCode::StorageFormatMismatch,
+            7 => crate::api::group_e2ee::MlsErrorCode::InvalidStorageSnapshot,
+            8 => crate::api::group_e2ee::MlsErrorCode::GroupStateUnavailable,
+            9 => crate::api::group_e2ee::MlsErrorCode::BaseStateMismatch,
+            10 => crate::api::group_e2ee::MlsErrorCode::ConfigurationMismatch,
+            11 => crate::api::group_e2ee::MlsErrorCode::GroupMismatch,
+            12 => crate::api::group_e2ee::MlsErrorCode::PreviousEpochMismatch,
+            13 => crate::api::group_e2ee::MlsErrorCode::PreviousRosterMismatch,
+            14 => crate::api::group_e2ee::MlsErrorCode::ResultingEpochMismatch,
+            15 => crate::api::group_e2ee::MlsErrorCode::ResultingRosterMismatch,
+            16 => crate::api::group_e2ee::MlsErrorCode::AadMismatch,
+            17 => crate::api::group_e2ee::MlsErrorCode::MessageKindMismatch,
+            18 => crate::api::group_e2ee::MlsErrorCode::SenderMismatch,
+            19 => crate::api::group_e2ee::MlsErrorCode::LocalLeafMismatch,
+            20 => crate::api::group_e2ee::MlsErrorCode::InvalidSigner,
+            21 => crate::api::group_e2ee::MlsErrorCode::UnsupportedCredential,
+            22 => crate::api::group_e2ee::MlsErrorCode::MlsDecodeRejected,
+            23 => crate::api::group_e2ee::MlsErrorCode::WelcomeRejected,
+            24 => crate::api::group_e2ee::MlsErrorCode::MlsProtocolRejected,
+            25 => crate::api::group_e2ee::MlsErrorCode::ExpectedKeyPackageMismatch,
+            26 => crate::api::group_e2ee::MlsErrorCode::PendingCommitExists,
+            27 => crate::api::group_e2ee::MlsErrorCode::PendingCommitMissing,
+            28 => crate::api::group_e2ee::MlsErrorCode::PendingBindingMismatch,
+            29 => crate::api::group_e2ee::MlsErrorCode::AcceptanceBindingMismatch,
+            30 => crate::api::group_e2ee::MlsErrorCode::MessageEpochMismatch,
+            31 => crate::api::group_e2ee::MlsErrorCode::MessageRosterMismatch,
+            32 => crate::api::group_e2ee::MlsErrorCode::InactiveGroup,
+            33 => crate::api::group_e2ee::MlsErrorCode::FutureMessageEpoch,
+            34 => crate::api::group_e2ee::MlsErrorCode::RequiredCommitEpochMismatch,
+            35 => crate::api::group_e2ee::MlsErrorCode::PastEpochUnavailable,
+            36 => crate::api::group_e2ee::MlsErrorCode::GenerationTooOld,
+            37 => crate::api::group_e2ee::MlsErrorCode::Replay,
+            38 => crate::api::group_e2ee::MlsErrorCode::ForwardDistanceExceeded,
+            39 => crate::api::group_e2ee::MlsErrorCode::UnsupportedLocalMetadataVersion,
+            40 => crate::api::group_e2ee::MlsErrorCode::LocalMetadataMissing,
+            41 => crate::api::group_e2ee::MlsErrorCode::UnsupportedRetention,
+            42 => crate::api::group_e2ee::MlsErrorCode::WireHashMismatch,
+            43 => crate::api::group_e2ee::MlsErrorCode::InternalFailure,
+            _ => unreachable!("Invalid variant for MlsErrorCode: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for crate::api::group_e2ee::MlsExpectedRosterStateV1 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1966,6 +2410,58 @@ impl SseDecode for crate::api::config::MlsGroupConfig {
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::MlsGroupOperationContext {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_incarnationId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_expectedCurrentState =
+            <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_decode(deserializer);
+        let mut var_expectedBaseGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_expectedRetention = <u32>::sse_decode(deserializer);
+        let mut var_storageEntries =
+            <Vec<crate::api::storage::MlsStorageEntry>>::sse_decode(deserializer);
+        let mut var_storageFormatVersion = <u32>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsGroupOperationContext {
+            group_id: var_groupId,
+            incarnation_id: var_incarnationId,
+            expected_current_state: var_expectedCurrentState,
+            expected_base_group_state_sha256: var_expectedBaseGroupStateSha256,
+            expected_retention: var_expectedRetention,
+            storage_entries: var_storageEntries,
+            storage_format_version: var_storageFormatVersion,
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::MlsPendingCommitBinding {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_incarnationId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_transition =
+            <crate::api::group_e2ee::MlsTransitionContext>::sse_decode(deserializer);
+        let mut var_author = <crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(deserializer);
+        let mut var_previousState =
+            <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_decode(deserializer);
+        let mut var_commitSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_aadSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_welcomeSha256 = <Option<Vec<u8>>>::sse_decode(deserializer);
+        let mut var_groupInfoSha256 = <Option<Vec<u8>>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsPendingCommitBinding {
+            group_id: var_groupId,
+            incarnation_id: var_incarnationId,
+            transition: var_transition,
+            author: var_author,
+            previous_state: var_previousState,
+            commit_sha256: var_commitSha256,
+            aad_sha256: var_aadSha256,
+            welcome_sha256: var_welcomeSha256,
+            group_info_sha256: var_groupInfoSha256,
+        };
+    }
+}
+
 impl SseDecode for crate::api::types::MlsProposalType {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1980,6 +2476,19 @@ impl SseDecode for crate::api::types::MlsProposalType {
             6 => crate::api::types::MlsProposalType::GroupContextExtensions,
             7 => crate::api::types::MlsProposalType::Custom,
             _ => unreachable!("Invalid variant for MlsProposalType: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::MlsReceiveKind {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::group_e2ee::MlsReceiveKind::Application,
+            1 => crate::api::group_e2ee::MlsReceiveKind::Commit,
+            2 => crate::api::group_e2ee::MlsReceiveKind::Proposal,
+            _ => unreachable!("Invalid variant for MlsReceiveKind: {}", inner),
         };
     }
 }
@@ -2045,6 +2554,18 @@ impl SseDecode for crate::api::storage::MlsStorageEntry {
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::MlsTransitionContext {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_commandId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_contextSha256 = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::MlsTransitionContext {
+            command_id: var_commandId,
+            context_sha256: var_contextSha256,
+        };
+    }
+}
+
 impl SseDecode for crate::api::types::MlsWireFormatPolicy {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2096,11 +2617,13 @@ impl SseDecode for Option<crate::api::types::MlsProposalType> {
     }
 }
 
-impl SseDecode for Option<u32> {
+impl SseDecode for Option<crate::api::group_e2ee::PendingCommitInfo> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
-            return Some(<u32>::sse_decode(deserializer));
+            return Some(<crate::api::group_e2ee::PendingCommitInfo>::sse_decode(
+                deserializer,
+            ));
         } else {
             return None;
         }
@@ -2118,29 +2641,84 @@ impl SseDecode for Option<Vec<u8>> {
     }
 }
 
-impl SseDecode for crate::api::group_e2ee::PreparedCommitWithStorageResult {
+impl SseDecode for crate::api::group_e2ee::PendingCommitInfo {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_pendingBinding =
+            <crate::api::group_e2ee::MlsPendingCommitBinding>::sse_decode(deserializer);
+        let mut var_proposedResultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
         let mut var_commit = <Vec<u8>>::sse_decode(deserializer);
         let mut var_welcome = <Option<Vec<u8>>>::sse_decode(deserializer);
         let mut var_groupInfo = <Option<Vec<u8>>>::sse_decode(deserializer);
-        let mut var_commitSha256 = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_previousRoster =
-            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
-        let mut var_resultingRoster =
-            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
-        let mut var_baseGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
-        return crate::api::group_e2ee::PreparedCommitWithStorageResult {
+        let mut var_preparationBaseGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::group_e2ee::PendingCommitInfo {
+            pending_binding: var_pendingBinding,
+            proposed_resulting_roster: var_proposedResultingRoster,
             commit: var_commit,
             welcome: var_welcome,
             group_info: var_groupInfo,
-            commit_sha256: var_commitSha256,
+            preparation_base_group_state_sha256: var_preparationBaseGroupStateSha256,
+        };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::PendingCommitWithStorageResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_pendingBinding =
+            <crate::api::group_e2ee::MlsPendingCommitBinding>::sse_decode(deserializer);
+        let mut var_previousRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_proposedResultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_commit = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_welcome = <Option<Vec<u8>>>::sse_decode(deserializer);
+        let mut var_groupInfo = <Option<Vec<u8>>>::sse_decode(deserializer);
+        let mut var_preparationBaseGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_resultingGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
+        let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
+        return crate::api::group_e2ee::PendingCommitWithStorageResult {
+            pending_binding: var_pendingBinding,
             previous_roster: var_previousRoster,
-            resulting_roster: var_resultingRoster,
-            base_group_state_sha256: var_baseGroupStateSha256,
+            proposed_resulting_roster: var_proposedResultingRoster,
+            commit: var_commit,
+            welcome: var_welcome,
+            group_info: var_groupInfo,
+            preparation_base_group_state_sha256: var_preparationBaseGroupStateSha256,
+            resulting_group_state_sha256: var_resultingGroupStateSha256,
+            effective_retention: var_effectiveRetention,
             storage_batch: var_storageBatch,
         };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::ProcessMessageWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::ProcessMessageWithStorageResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::group_e2ee::ProcessMessageWithStorageOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::ProcessMessageWithStorageOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -2149,30 +2727,33 @@ impl SseDecode for crate::api::group_e2ee::ProcessMessageWithStorageResult {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_messageType =
             <crate::api::types::ProcessedMessageType>::sse_decode(deserializer);
-        let mut var_senderIndex = <Option<u32>>::sse_decode(deserializer);
+        let mut var_messageEpoch = <u64>::sse_decode(deserializer);
+        let mut var_authenticatedSender =
+            <crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(deserializer);
         let mut var_previousEpoch = <u64>::sse_decode(deserializer);
         let mut var_resultingEpoch = <u64>::sse_decode(deserializer);
         let mut var_applicationMessage = <Option<Vec<u8>>>::sse_decode(deserializer);
-        let mut var_hasStagedCommit = <bool>::sse_decode(deserializer);
-        let mut var_hasProposal = <bool>::sse_decode(deserializer);
         let mut var_proposalType =
             <Option<crate::api::types::MlsProposalType>>::sse_decode(deserializer);
         let mut var_previousRoster =
             <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
         let mut var_resultingRoster =
             <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
         let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
         return crate::api::group_e2ee::ProcessMessageWithStorageResult {
             message_type: var_messageType,
-            sender_index: var_senderIndex,
+            message_epoch: var_messageEpoch,
+            authenticated_sender: var_authenticatedSender,
             previous_epoch: var_previousEpoch,
             resulting_epoch: var_resultingEpoch,
             application_message: var_applicationMessage,
-            has_staged_commit: var_hasStagedCommit,
-            has_proposal: var_hasProposal,
             proposal_type: var_proposalType,
             previous_roster: var_previousRoster,
             resulting_roster: var_resultingRoster,
+            resulting_group_state_sha256: var_resultingGroupStateSha256,
+            effective_retention: var_effectiveRetention,
             storage_batch: var_storageBatch,
         };
     }
@@ -2188,6 +2769,82 @@ impl SseDecode for crate::api::types::ProcessedMessageType {
             2 => crate::api::types::ProcessedMessageType::StagedCommit,
             _ => unreachable!("Invalid variant for ProcessedMessageType: {}", inner),
         };
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::RemoveMembersWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::PendingCommitWithStorageResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::group_e2ee::RemoveMembersWithStorageOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::RemoveMembersWithStorageOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::SelfUpdateWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::PendingCommitWithStorageResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::group_e2ee::SelfUpdateWithStorageOutcome::Success(var_field0);
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::SelfUpdateWithStorageOutcome::Failure(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::SwapMembersWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::PendingCommitWithStorageResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::group_e2ee::SwapMembersWithStorageOutcome::Success(var_field0);
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::SwapMembersWithStorageOutcome::Failure(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -2635,6 +3292,33 @@ impl
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::AddMembersWithStorageOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::AddMembersWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::AddMembersWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::AddMembersWithStorageOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::AddMembersWithStorageOutcome>
+    for crate::api::group_e2ee::AddMembersWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::AddMembersWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart
     for crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1
 {
@@ -2725,11 +3409,42 @@ impl
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::CreateGroupWithStorageOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::CreateGroupWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::CreateGroupWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::CreateGroupWithStorageOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::CreateGroupWithStorageOutcome>
+    for crate::api::group_e2ee::CreateGroupWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::CreateGroupWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::CreateGroupWithStorageResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.group_id.into_into_dart().into_dart(),
             self.resulting_roster.into_into_dart().into_dart(),
+            self.resulting_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
             self.storage_batch.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -2768,10 +3483,41 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::storage::CreateKeyPackageWith
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::storage::CreateMessageWithStorageOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::storage::CreateMessageWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::storage::CreateMessageWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::storage::CreateMessageWithStorageOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::storage::CreateMessageWithStorageOutcome>
+    for crate::api::storage::CreateMessageWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::storage::CreateMessageWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::storage::CreateMessageWithStorageResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.ciphertext.into_into_dart().into_dart(),
+            self.resulting_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
             self.storage_batch.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -2785,6 +3531,66 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::storage::CreateMessageWithSto
     for crate::api::storage::CreateMessageWithStorageResult
 {
     fn into_into_dart(self) -> crate::api::storage::CreateMessageWithStorageResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome,
+    > for crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::group_e2ee::DiscardPendingCommitWithStorageResult
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.previous_roster.into_into_dart().into_dart(),
+            self.resulting_roster.into_into_dart().into_dart(),
+            self.resulting_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
+            self.storage_batch.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::DiscardPendingCommitWithStorageResult
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::DiscardPendingCommitWithStorageResult>
+    for crate::api::group_e2ee::DiscardPendingCommitWithStorageResult
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::DiscardPendingCommitWithStorageResult {
         self
     }
 }
@@ -2842,11 +3648,77 @@ impl
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::GetPendingCommitWithStorageOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::GetPendingCommitWithStorageOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::GetPendingCommitWithStorageOutcome>
+    for crate::api::group_e2ee::GetPendingCommitWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::GetPendingCommitWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome,
+    > for crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::JoinGroupWithStorageResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.group_id.into_into_dart().into_dart(),
+            self.local_leaf.into_into_dart().into_dart(),
+            self.consumed_key_package_sha256
+                .into_into_dart()
+                .into_dart(),
             self.resulting_roster.into_into_dart().into_dart(),
+            self.resulting_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
             self.storage_batch.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -2860,6 +3732,61 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::JoinGroupWithStor
     for crate::api::group_e2ee::JoinGroupWithStorageResult
 {
     fn into_into_dart(self) -> crate::api::group_e2ee::JoinGroupWithStorageResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::group_e2ee::MergePendingCommitWithStorageOutcome
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::MergePendingCommitWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::MergePendingCommitWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MergePendingCommitWithStorageOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MergePendingCommitWithStorageOutcome>
+    for crate::api::group_e2ee::MergePendingCommitWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MergePendingCommitWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MergePendingCommitWithStorageResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.previous_roster.into_into_dart().into_dart(),
+            self.resulting_roster.into_into_dart().into_dart(),
+            self.resulting_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
+            self.storage_batch.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MergePendingCommitWithStorageResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MergePendingCommitWithStorageResult>
+    for crate::api::group_e2ee::MergePendingCommitWithStorageResult
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MergePendingCommitWithStorageResult {
         self
     }
 }
@@ -2989,6 +3916,93 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsCiphersuite>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsCommitAcceptance {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.binding.into_into_dart().into_dart(),
+            self.resulting_state.into_into_dart().into_dart(),
+            self.preparation_base_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsCommitAcceptance
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsCommitAcceptance>
+    for crate::api::group_e2ee::MlsCommitAcceptance
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsCommitAcceptance {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsErrorCode {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::InvalidFrame => 0.into_dart(),
+            Self::UnsupportedContractVersion => 1.into_dart(),
+            Self::UnsupportedProfile => 2.into_dart(),
+            Self::UnsupportedOperation => 3.into_dart(),
+            Self::NoncanonicalEncoding => 4.into_dart(),
+            Self::LimitExceeded => 5.into_dart(),
+            Self::StorageFormatMismatch => 6.into_dart(),
+            Self::InvalidStorageSnapshot => 7.into_dart(),
+            Self::GroupStateUnavailable => 8.into_dart(),
+            Self::BaseStateMismatch => 9.into_dart(),
+            Self::ConfigurationMismatch => 10.into_dart(),
+            Self::GroupMismatch => 11.into_dart(),
+            Self::PreviousEpochMismatch => 12.into_dart(),
+            Self::PreviousRosterMismatch => 13.into_dart(),
+            Self::ResultingEpochMismatch => 14.into_dart(),
+            Self::ResultingRosterMismatch => 15.into_dart(),
+            Self::AadMismatch => 16.into_dart(),
+            Self::MessageKindMismatch => 17.into_dart(),
+            Self::SenderMismatch => 18.into_dart(),
+            Self::LocalLeafMismatch => 19.into_dart(),
+            Self::InvalidSigner => 20.into_dart(),
+            Self::UnsupportedCredential => 21.into_dart(),
+            Self::MlsDecodeRejected => 22.into_dart(),
+            Self::WelcomeRejected => 23.into_dart(),
+            Self::MlsProtocolRejected => 24.into_dart(),
+            Self::ExpectedKeyPackageMismatch => 25.into_dart(),
+            Self::PendingCommitExists => 26.into_dart(),
+            Self::PendingCommitMissing => 27.into_dart(),
+            Self::PendingBindingMismatch => 28.into_dart(),
+            Self::AcceptanceBindingMismatch => 29.into_dart(),
+            Self::MessageEpochMismatch => 30.into_dart(),
+            Self::MessageRosterMismatch => 31.into_dart(),
+            Self::InactiveGroup => 32.into_dart(),
+            Self::FutureMessageEpoch => 33.into_dart(),
+            Self::RequiredCommitEpochMismatch => 34.into_dart(),
+            Self::PastEpochUnavailable => 35.into_dart(),
+            Self::GenerationTooOld => 36.into_dart(),
+            Self::Replay => 37.into_dart(),
+            Self::ForwardDistanceExceeded => 38.into_dart(),
+            Self::UnsupportedLocalMetadataVersion => 39.into_dart(),
+            Self::LocalMetadataMissing => 40.into_dart(),
+            Self::UnsupportedRetention => 41.into_dart(),
+            Self::WireHashMismatch => 42.into_dart(),
+            Self::InternalFailure => 43.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsErrorCode
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsErrorCode>
+    for crate::api::group_e2ee::MlsErrorCode
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsErrorCode {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsExpectedRosterStateV1 {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -3042,6 +4056,62 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::config::MlsGroupConfig>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsGroupOperationContext {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.group_id.into_into_dart().into_dart(),
+            self.incarnation_id.into_into_dart().into_dart(),
+            self.expected_current_state.into_into_dart().into_dart(),
+            self.expected_base_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.expected_retention.into_into_dart().into_dart(),
+            self.storage_entries.into_into_dart().into_dart(),
+            self.storage_format_version.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsGroupOperationContext
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsGroupOperationContext>
+    for crate::api::group_e2ee::MlsGroupOperationContext
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsGroupOperationContext {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsPendingCommitBinding {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.group_id.into_into_dart().into_dart(),
+            self.incarnation_id.into_into_dart().into_dart(),
+            self.transition.into_into_dart().into_dart(),
+            self.author.into_into_dart().into_dart(),
+            self.previous_state.into_into_dart().into_dart(),
+            self.commit_sha256.into_into_dart().into_dart(),
+            self.aad_sha256.into_into_dart().into_dart(),
+            self.welcome_sha256.into_into_dart().into_dart(),
+            self.group_info_sha256.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsPendingCommitBinding
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsPendingCommitBinding>
+    for crate::api::group_e2ee::MlsPendingCommitBinding
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsPendingCommitBinding {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::types::MlsProposalType {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -3065,6 +4135,28 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsProposalType>
     for crate::api::types::MlsProposalType
 {
     fn into_into_dart(self) -> crate::api::types::MlsProposalType {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsReceiveKind {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Application => 0.into_dart(),
+            Self::Commit => 1.into_dart(),
+            Self::Proposal => 2.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsReceiveKind
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsReceiveKind>
+    for crate::api::group_e2ee::MlsReceiveKind
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsReceiveKind {
         self
     }
 }
@@ -3159,6 +4251,27 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::storage::MlsStorageEntry>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsTransitionContext {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.command_id.into_into_dart().into_dart(),
+            self.context_sha256.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::MlsTransitionContext
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsTransitionContext>
+    for crate::api::group_e2ee::MlsTransitionContext
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::MlsTransitionContext {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::types::MlsWireFormatPolicy {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -3180,29 +4293,89 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsWireFormatPolicy>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::PreparedCommitWithStorageResult {
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::PendingCommitInfo {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
+            self.pending_binding.into_into_dart().into_dart(),
+            self.proposed_resulting_roster.into_into_dart().into_dart(),
             self.commit.into_into_dart().into_dart(),
             self.welcome.into_into_dart().into_dart(),
             self.group_info.into_into_dart().into_dart(),
-            self.commit_sha256.into_into_dart().into_dart(),
+            self.preparation_base_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::PendingCommitInfo
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::PendingCommitInfo>
+    for crate::api::group_e2ee::PendingCommitInfo
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::PendingCommitInfo {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::PendingCommitWithStorageResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.pending_binding.into_into_dart().into_dart(),
             self.previous_roster.into_into_dart().into_dart(),
-            self.resulting_roster.into_into_dart().into_dart(),
-            self.base_group_state_sha256.into_into_dart().into_dart(),
+            self.proposed_resulting_roster.into_into_dart().into_dart(),
+            self.commit.into_into_dart().into_dart(),
+            self.welcome.into_into_dart().into_dart(),
+            self.group_info.into_into_dart().into_dart(),
+            self.preparation_base_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.resulting_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
             self.storage_batch.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
 }
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::group_e2ee::PreparedCommitWithStorageResult
+    for crate::api::group_e2ee::PendingCommitWithStorageResult
 {
 }
-impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::PreparedCommitWithStorageResult>
-    for crate::api::group_e2ee::PreparedCommitWithStorageResult
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::PendingCommitWithStorageResult>
+    for crate::api::group_e2ee::PendingCommitWithStorageResult
 {
-    fn into_into_dart(self) -> crate::api::group_e2ee::PreparedCommitWithStorageResult {
+    fn into_into_dart(self) -> crate::api::group_e2ee::PendingCommitWithStorageResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::ProcessMessageWithStorageOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::ProcessMessageWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::ProcessMessageWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::ProcessMessageWithStorageOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::ProcessMessageWithStorageOutcome>
+    for crate::api::group_e2ee::ProcessMessageWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::ProcessMessageWithStorageOutcome {
         self
     }
 }
@@ -3211,15 +4384,18 @@ impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::ProcessMessageWit
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.message_type.into_into_dart().into_dart(),
-            self.sender_index.into_into_dart().into_dart(),
+            self.message_epoch.into_into_dart().into_dart(),
+            self.authenticated_sender.into_into_dart().into_dart(),
             self.previous_epoch.into_into_dart().into_dart(),
             self.resulting_epoch.into_into_dart().into_dart(),
             self.application_message.into_into_dart().into_dart(),
-            self.has_staged_commit.into_into_dart().into_dart(),
-            self.has_proposal.into_into_dart().into_dart(),
             self.proposal_type.into_into_dart().into_dart(),
             self.previous_roster.into_into_dart().into_dart(),
             self.resulting_roster.into_into_dart().into_dart(),
+            self.resulting_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
             self.storage_batch.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -3255,6 +4431,87 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::ProcessedMessageType>
     for crate::api::types::ProcessedMessageType
 {
     fn into_into_dart(self) -> crate::api::types::ProcessedMessageType {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::RemoveMembersWithStorageOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::RemoveMembersWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::RemoveMembersWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::RemoveMembersWithStorageOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::RemoveMembersWithStorageOutcome>
+    for crate::api::group_e2ee::RemoveMembersWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::RemoveMembersWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::SelfUpdateWithStorageOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::SelfUpdateWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::SelfUpdateWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::SelfUpdateWithStorageOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::SelfUpdateWithStorageOutcome>
+    for crate::api::group_e2ee::SelfUpdateWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::SelfUpdateWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::SwapMembersWithStorageOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::SwapMembersWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::SwapMembersWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::SwapMembersWithStorageOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::SwapMembersWithStorageOutcome>
+    for crate::api::group_e2ee::SwapMembersWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::SwapMembersWithStorageOutcome {
         self
     }
 }
@@ -3496,6 +4753,27 @@ impl SseEncode for crate::api::account_envelope::bridge::AccountEnvelopeSuccesso
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::AddMembersWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::AddMembersWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::group_e2ee::PendingCommitWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::group_e2ee::AddMembersWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseEncode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -3539,11 +4817,34 @@ impl SseEncode for crate::api::account_envelope::bridge::ContextInvitationPrevie
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::CreateGroupWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::CreateGroupWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::group_e2ee::CreateGroupWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::group_e2ee::CreateGroupWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseEncode for crate::api::group_e2ee::CreateGroupWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<u8>>::sse_encode(self.group_id, serializer);
         <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
+        <Vec<u8>>::sse_encode(self.resulting_group_state_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
         <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
     }
 }
@@ -3556,10 +4857,65 @@ impl SseEncode for crate::api::storage::CreateKeyPackageWithStorageResult {
     }
 }
 
+impl SseEncode for crate::api::storage::CreateMessageWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::storage::CreateMessageWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::storage::CreateMessageWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::storage::CreateMessageWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseEncode for crate::api::storage::CreateMessageWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<u8>>::sse_encode(self.ciphertext, serializer);
+        <Vec<u8>>::sse_encode(self.resulting_group_state_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
+        <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::group_e2ee::DiscardPendingCommitWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::DiscardPendingCommitWithStorageResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.previous_roster, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
+        <Vec<u8>>::sse_encode(self.resulting_group_state_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
         <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
     }
 }
@@ -3583,6 +4939,25 @@ impl SseEncode for crate::api::account_envelope::bridge::GenerateAccountEnvelope
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::GetPendingCommitWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <Option<crate::api::group_e2ee::PendingCommitInfo>>::sse_encode(field0, serializer);
+            }
+            crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseEncode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -3590,11 +4965,36 @@ impl SseEncode for i32 {
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::group_e2ee::JoinGroupWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseEncode for crate::api::group_e2ee::JoinGroupWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<u8>>::sse_encode(self.group_id, serializer);
+        <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(self.local_leaf, serializer);
+        <Vec<u8>>::sse_encode(self.consumed_key_package_sha256, serializer);
         <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
+        <Vec<u8>>::sse_encode(self.resulting_group_state_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
         <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
     }
 }
@@ -3679,6 +5079,38 @@ impl SseEncode for Vec<u8> {
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::MergePendingCommitWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::MergePendingCommitWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::group_e2ee::MergePendingCommitWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::group_e2ee::MergePendingCommitWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MergePendingCommitWithStorageResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.previous_roster, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
+        <Vec<u8>>::sse_encode(self.resulting_group_state_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
+        <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
+    }
+}
+
 impl SseEncode for crate::api::group_e2ee::MlsAuthorizedKeyPackageV1 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -3724,6 +5156,76 @@ crate::api::types::MlsCiphersuite::Mls128DhkemP256Aes128gcmSha256P256 => { 2 }
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::MlsCommitAcceptance {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::group_e2ee::MlsPendingCommitBinding>::sse_encode(self.binding, serializer);
+        <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_encode(
+            self.resulting_state,
+            serializer,
+        );
+        <Vec<u8>>::sse_encode(self.preparation_base_group_state_sha256, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MlsErrorCode {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::group_e2ee::MlsErrorCode::InvalidFrame => 0,
+                crate::api::group_e2ee::MlsErrorCode::UnsupportedContractVersion => 1,
+                crate::api::group_e2ee::MlsErrorCode::UnsupportedProfile => 2,
+                crate::api::group_e2ee::MlsErrorCode::UnsupportedOperation => 3,
+                crate::api::group_e2ee::MlsErrorCode::NoncanonicalEncoding => 4,
+                crate::api::group_e2ee::MlsErrorCode::LimitExceeded => 5,
+                crate::api::group_e2ee::MlsErrorCode::StorageFormatMismatch => 6,
+                crate::api::group_e2ee::MlsErrorCode::InvalidStorageSnapshot => 7,
+                crate::api::group_e2ee::MlsErrorCode::GroupStateUnavailable => 8,
+                crate::api::group_e2ee::MlsErrorCode::BaseStateMismatch => 9,
+                crate::api::group_e2ee::MlsErrorCode::ConfigurationMismatch => 10,
+                crate::api::group_e2ee::MlsErrorCode::GroupMismatch => 11,
+                crate::api::group_e2ee::MlsErrorCode::PreviousEpochMismatch => 12,
+                crate::api::group_e2ee::MlsErrorCode::PreviousRosterMismatch => 13,
+                crate::api::group_e2ee::MlsErrorCode::ResultingEpochMismatch => 14,
+                crate::api::group_e2ee::MlsErrorCode::ResultingRosterMismatch => 15,
+                crate::api::group_e2ee::MlsErrorCode::AadMismatch => 16,
+                crate::api::group_e2ee::MlsErrorCode::MessageKindMismatch => 17,
+                crate::api::group_e2ee::MlsErrorCode::SenderMismatch => 18,
+                crate::api::group_e2ee::MlsErrorCode::LocalLeafMismatch => 19,
+                crate::api::group_e2ee::MlsErrorCode::InvalidSigner => 20,
+                crate::api::group_e2ee::MlsErrorCode::UnsupportedCredential => 21,
+                crate::api::group_e2ee::MlsErrorCode::MlsDecodeRejected => 22,
+                crate::api::group_e2ee::MlsErrorCode::WelcomeRejected => 23,
+                crate::api::group_e2ee::MlsErrorCode::MlsProtocolRejected => 24,
+                crate::api::group_e2ee::MlsErrorCode::ExpectedKeyPackageMismatch => 25,
+                crate::api::group_e2ee::MlsErrorCode::PendingCommitExists => 26,
+                crate::api::group_e2ee::MlsErrorCode::PendingCommitMissing => 27,
+                crate::api::group_e2ee::MlsErrorCode::PendingBindingMismatch => 28,
+                crate::api::group_e2ee::MlsErrorCode::AcceptanceBindingMismatch => 29,
+                crate::api::group_e2ee::MlsErrorCode::MessageEpochMismatch => 30,
+                crate::api::group_e2ee::MlsErrorCode::MessageRosterMismatch => 31,
+                crate::api::group_e2ee::MlsErrorCode::InactiveGroup => 32,
+                crate::api::group_e2ee::MlsErrorCode::FutureMessageEpoch => 33,
+                crate::api::group_e2ee::MlsErrorCode::RequiredCommitEpochMismatch => 34,
+                crate::api::group_e2ee::MlsErrorCode::PastEpochUnavailable => 35,
+                crate::api::group_e2ee::MlsErrorCode::GenerationTooOld => 36,
+                crate::api::group_e2ee::MlsErrorCode::Replay => 37,
+                crate::api::group_e2ee::MlsErrorCode::ForwardDistanceExceeded => 38,
+                crate::api::group_e2ee::MlsErrorCode::UnsupportedLocalMetadataVersion => 39,
+                crate::api::group_e2ee::MlsErrorCode::LocalMetadataMissing => 40,
+                crate::api::group_e2ee::MlsErrorCode::UnsupportedRetention => 41,
+                crate::api::group_e2ee::MlsErrorCode::WireHashMismatch => 42,
+                crate::api::group_e2ee::MlsErrorCode::InternalFailure => 43,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
 impl SseEncode for crate::api::group_e2ee::MlsExpectedRosterStateV1 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -3747,6 +5249,40 @@ impl SseEncode for crate::api::config::MlsGroupConfig {
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::MlsGroupOperationContext {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.group_id, serializer);
+        <Vec<u8>>::sse_encode(self.incarnation_id, serializer);
+        <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_encode(
+            self.expected_current_state,
+            serializer,
+        );
+        <Vec<u8>>::sse_encode(self.expected_base_group_state_sha256, serializer);
+        <u32>::sse_encode(self.expected_retention, serializer);
+        <Vec<crate::api::storage::MlsStorageEntry>>::sse_encode(self.storage_entries, serializer);
+        <u32>::sse_encode(self.storage_format_version, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MlsPendingCommitBinding {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.group_id, serializer);
+        <Vec<u8>>::sse_encode(self.incarnation_id, serializer);
+        <crate::api::group_e2ee::MlsTransitionContext>::sse_encode(self.transition, serializer);
+        <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(self.author, serializer);
+        <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_encode(
+            self.previous_state,
+            serializer,
+        );
+        <Vec<u8>>::sse_encode(self.commit_sha256, serializer);
+        <Vec<u8>>::sse_encode(self.aad_sha256, serializer);
+        <Option<Vec<u8>>>::sse_encode(self.welcome_sha256, serializer);
+        <Option<Vec<u8>>>::sse_encode(self.group_info_sha256, serializer);
+    }
+}
+
 impl SseEncode for crate::api::types::MlsProposalType {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -3760,6 +5296,23 @@ impl SseEncode for crate::api::types::MlsProposalType {
                 crate::api::types::MlsProposalType::ExternalInit => 5,
                 crate::api::types::MlsProposalType::GroupContextExtensions => 6,
                 crate::api::types::MlsProposalType::Custom => 7,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MlsReceiveKind {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::group_e2ee::MlsReceiveKind::Application => 0,
+                crate::api::group_e2ee::MlsReceiveKind::Commit => 1,
+                crate::api::group_e2ee::MlsReceiveKind::Proposal => 2,
                 _ => {
                     unimplemented!("");
                 }
@@ -3804,6 +5357,14 @@ impl SseEncode for crate::api::storage::MlsStorageEntry {
         <Vec<u8>>::sse_encode(self.key, serializer);
         <Vec<u8>>::sse_encode(self.value, serializer);
         <Option<Vec<u8>>>::sse_encode(self.group_id, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::MlsTransitionContext {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.command_id, serializer);
+        <Vec<u8>>::sse_encode(self.context_sha256, serializer);
     }
 }
 
@@ -3855,12 +5416,12 @@ impl SseEncode for Option<crate::api::types::MlsProposalType> {
     }
 }
 
-impl SseEncode for Option<u32> {
+impl SseEncode for Option<crate::api::group_e2ee::PendingCommitInfo> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
-            <u32>::sse_encode(value, serializer);
+            <crate::api::group_e2ee::PendingCommitInfo>::sse_encode(value, serializer);
         }
     }
 }
@@ -3875,17 +5436,64 @@ impl SseEncode for Option<Vec<u8>> {
     }
 }
 
-impl SseEncode for crate::api::group_e2ee::PreparedCommitWithStorageResult {
+impl SseEncode for crate::api::group_e2ee::PendingCommitInfo {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::group_e2ee::MlsPendingCommitBinding>::sse_encode(
+            self.pending_binding,
+            serializer,
+        );
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(
+            self.proposed_resulting_roster,
+            serializer,
+        );
         <Vec<u8>>::sse_encode(self.commit, serializer);
         <Option<Vec<u8>>>::sse_encode(self.welcome, serializer);
         <Option<Vec<u8>>>::sse_encode(self.group_info, serializer);
-        <Vec<u8>>::sse_encode(self.commit_sha256, serializer);
+        <Vec<u8>>::sse_encode(self.preparation_base_group_state_sha256, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::PendingCommitWithStorageResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::group_e2ee::MlsPendingCommitBinding>::sse_encode(
+            self.pending_binding,
+            serializer,
+        );
         <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.previous_roster, serializer);
-        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
-        <Vec<u8>>::sse_encode(self.base_group_state_sha256, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(
+            self.proposed_resulting_roster,
+            serializer,
+        );
+        <Vec<u8>>::sse_encode(self.commit, serializer);
+        <Option<Vec<u8>>>::sse_encode(self.welcome, serializer);
+        <Option<Vec<u8>>>::sse_encode(self.group_info, serializer);
+        <Vec<u8>>::sse_encode(self.preparation_base_group_state_sha256, serializer);
+        <Vec<u8>>::sse_encode(self.resulting_group_state_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
         <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::ProcessMessageWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::ProcessMessageWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::group_e2ee::ProcessMessageWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::group_e2ee::ProcessMessageWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -3893,15 +5501,19 @@ impl SseEncode for crate::api::group_e2ee::ProcessMessageWithStorageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <crate::api::types::ProcessedMessageType>::sse_encode(self.message_type, serializer);
-        <Option<u32>>::sse_encode(self.sender_index, serializer);
+        <u64>::sse_encode(self.message_epoch, serializer);
+        <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(
+            self.authenticated_sender,
+            serializer,
+        );
         <u64>::sse_encode(self.previous_epoch, serializer);
         <u64>::sse_encode(self.resulting_epoch, serializer);
         <Option<Vec<u8>>>::sse_encode(self.application_message, serializer);
-        <bool>::sse_encode(self.has_staged_commit, serializer);
-        <bool>::sse_encode(self.has_proposal, serializer);
         <Option<crate::api::types::MlsProposalType>>::sse_encode(self.proposal_type, serializer);
         <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.previous_roster, serializer);
         <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
+        <Vec<u8>>::sse_encode(self.resulting_group_state_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
         <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
     }
 }
@@ -3920,6 +5532,69 @@ impl SseEncode for crate::api::types::ProcessedMessageType {
             },
             serializer,
         );
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::RemoveMembersWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::RemoveMembersWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::group_e2ee::PendingCommitWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::group_e2ee::RemoveMembersWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::SelfUpdateWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::SelfUpdateWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::group_e2ee::PendingCommitWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::group_e2ee::SelfUpdateWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::SwapMembersWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::SwapMembersWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::group_e2ee::PendingCommitWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::group_e2ee::SwapMembersWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -4167,6 +5842,28 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::AddMembersWithStorageOutcome>
+        for wire_cst_add_members_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::AddMembersWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::AddMembersWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::AddMembersWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
     impl
         CstDecode<
             crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1,
@@ -4213,6 +5910,38 @@ mod io {
             CstDecode::<crate::api::account_envelope::bridge::ContextInvitationPreviewInputV1>::cst_decode(*wrap).into()
         }
     }
+    impl CstDecode<crate::api::group_e2ee::CreateGroupWithStorageResult>
+        for *mut wire_cst_create_group_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::CreateGroupWithStorageResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::CreateGroupWithStorageResult>::cst_decode(*wrap)
+                .into()
+        }
+    }
+    impl CstDecode<crate::api::storage::CreateMessageWithStorageResult>
+        for *mut wire_cst_create_message_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::storage::CreateMessageWithStorageResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::storage::CreateMessageWithStorageResult>::cst_decode(*wrap)
+                .into()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::DiscardPendingCommitWithStorageResult>
+        for *mut wire_cst_discard_pending_commit_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::DiscardPendingCommitWithStorageResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::DiscardPendingCommitWithStorageResult>::cst_decode(
+                *wrap,
+            )
+            .into()
+        }
+    }
     impl CstDecode<crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1>
         for *mut wire_cst_expected_context_invitation_authority_input_v_1
     {
@@ -4225,6 +5954,28 @@ mod io {
             CstDecode::<
                 crate::api::account_envelope::bridge::ExpectedContextInvitationAuthorityInputV1,
             >::cst_decode(*wrap)
+            .into()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::JoinGroupWithStorageResult>
+        for *mut wire_cst_join_group_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::JoinGroupWithStorageResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::JoinGroupWithStorageResult>::cst_decode(*wrap)
+                .into()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MergePendingCommitWithStorageResult>
+        for *mut wire_cst_merge_pending_commit_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MergePendingCommitWithStorageResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::MergePendingCommitWithStorageResult>::cst_decode(
+                *wrap,
+            )
             .into()
         }
     }
@@ -4246,6 +5997,15 @@ mod io {
             CstDecode::<crate::api::group_e2ee::MlsAuthorizedSelfV1>::cst_decode(*wrap).into()
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MlsCommitAcceptance>
+        for *mut wire_cst_mls_commit_acceptance
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsCommitAcceptance {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::MlsCommitAcceptance>::cst_decode(*wrap).into()
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>
         for *mut wire_cst_mls_expected_roster_state_v_1
     {
@@ -4262,6 +6022,24 @@ mod io {
             CstDecode::<crate::api::config::MlsGroupConfig>::cst_decode(*wrap).into()
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>
+        for *mut wire_cst_mls_group_operation_context
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsGroupOperationContext {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::MlsGroupOperationContext>::cst_decode(*wrap).into()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsPendingCommitBinding>
+        for *mut wire_cst_mls_pending_commit_binding
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsPendingCommitBinding {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::MlsPendingCommitBinding>::cst_decode(*wrap).into()
+        }
+    }
     impl CstDecode<crate::api::types::MlsProposalType> for *mut i32 {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> crate::api::types::MlsProposalType {
@@ -4269,10 +6047,47 @@ mod io {
             CstDecode::<crate::api::types::MlsProposalType>::cst_decode(*wrap).into()
         }
     }
-    impl CstDecode<u32> for *mut u32 {
+    impl CstDecode<crate::api::group_e2ee::MlsRosterLeafV1> for *mut wire_cst_mls_roster_leaf_v_1 {
         // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> u32 {
-            unsafe { *flutter_rust_bridge::for_generated::box_from_leak_ptr(self) }
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsRosterLeafV1 {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::MlsRosterLeafV1>::cst_decode(*wrap).into()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsTransitionContext>
+        for *mut wire_cst_mls_transition_context
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsTransitionContext {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::MlsTransitionContext>::cst_decode(*wrap).into()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::PendingCommitInfo> for *mut wire_cst_pending_commit_info {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::PendingCommitInfo {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::PendingCommitInfo>::cst_decode(*wrap).into()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::PendingCommitWithStorageResult>
+        for *mut wire_cst_pending_commit_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::PendingCommitWithStorageResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::PendingCommitWithStorageResult>::cst_decode(*wrap)
+                .into()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::ProcessMessageWithStorageResult>
+        for *mut wire_cst_process_message_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::ProcessMessageWithStorageResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::ProcessMessageWithStorageResult>::cst_decode(*wrap)
+                .into()
         }
     }
     impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1>
@@ -4323,6 +6138,28 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::CreateGroupWithStorageOutcome>
+        for wire_cst_create_group_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::CreateGroupWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::CreateGroupWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::CreateGroupWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::CreateGroupWithStorageResult>
         for wire_cst_create_group_with_storage_result
     {
@@ -4331,6 +6168,8 @@ mod io {
             crate::api::group_e2ee::CreateGroupWithStorageResult {
                 group_id: self.group_id.cst_decode(),
                 resulting_roster: self.resulting_roster.cst_decode(),
+                resulting_group_state_sha256: self.resulting_group_state_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
                 storage_batch: self.storage_batch.cst_decode(),
             }
         }
@@ -4346,6 +6185,28 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::storage::CreateMessageWithStorageOutcome>
+        for wire_cst_create_message_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::storage::CreateMessageWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::storage::CreateMessageWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::storage::CreateMessageWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
     impl CstDecode<crate::api::storage::CreateMessageWithStorageResult>
         for wire_cst_create_message_with_storage_result
     {
@@ -4353,6 +6214,44 @@ mod io {
         fn cst_decode(self) -> crate::api::storage::CreateMessageWithStorageResult {
             crate::api::storage::CreateMessageWithStorageResult {
                 ciphertext: self.ciphertext.cst_decode(),
+                resulting_group_state_sha256: self.resulting_group_state_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
+                storage_batch: self.storage_batch.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome>
+        for wire_cst_discard_pending_commit_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::DiscardPendingCommitWithStorageResult>
+        for wire_cst_discard_pending_commit_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::DiscardPendingCommitWithStorageResult {
+            crate::api::group_e2ee::DiscardPendingCommitWithStorageResult {
+                previous_roster: self.previous_roster.cst_decode(),
+                resulting_roster: self.resulting_roster.cst_decode(),
+                resulting_group_state_sha256: self.resulting_group_state_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
                 storage_batch: self.storage_batch.cst_decode(),
             }
         }
@@ -4385,6 +6284,50 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::GetPendingCommitWithStorageOutcome>
+        for wire_cst_get_pending_commit_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::GetPendingCommitWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome>
+        for wire_cst_join_group_from_welcome_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::JoinGroupWithStorageResult>
         for wire_cst_join_group_with_storage_result
     {
@@ -4392,7 +6335,11 @@ mod io {
         fn cst_decode(self) -> crate::api::group_e2ee::JoinGroupWithStorageResult {
             crate::api::group_e2ee::JoinGroupWithStorageResult {
                 group_id: self.group_id.cst_decode(),
+                local_leaf: self.local_leaf.cst_decode(),
+                consumed_key_package_sha256: self.consumed_key_package_sha256.cst_decode(),
                 resulting_roster: self.resulting_roster.cst_decode(),
+                resulting_group_state_sha256: self.resulting_group_state_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
                 storage_batch: self.storage_batch.cst_decode(),
             }
         }
@@ -4491,6 +6438,42 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MergePendingCommitWithStorageOutcome>
+        for wire_cst_merge_pending_commit_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MergePendingCommitWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::MergePendingCommitWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::MergePendingCommitWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MergePendingCommitWithStorageResult>
+        for wire_cst_merge_pending_commit_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MergePendingCommitWithStorageResult {
+            crate::api::group_e2ee::MergePendingCommitWithStorageResult {
+                previous_roster: self.previous_roster.cst_decode(),
+                resulting_roster: self.resulting_roster.cst_decode(),
+                resulting_group_state_sha256: self.resulting_group_state_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
+                storage_batch: self.storage_batch.cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>
         for wire_cst_mls_authorized_key_package_v_1
     {
@@ -4534,6 +6517,18 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MlsCommitAcceptance> for wire_cst_mls_commit_acceptance {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsCommitAcceptance {
+            crate::api::group_e2ee::MlsCommitAcceptance {
+                binding: self.binding.cst_decode(),
+                resulting_state: self.resulting_state.cst_decode(),
+                preparation_base_group_state_sha256: self
+                    .preparation_base_group_state_sha256
+                    .cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>
         for wire_cst_mls_expected_roster_state_v_1
     {
@@ -4560,6 +6555,42 @@ mod io {
                     .sender_ratchet_max_forward_distance
                     .cst_decode(),
                 number_of_resumption_psks: self.number_of_resumption_psks.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>
+        for wire_cst_mls_group_operation_context
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsGroupOperationContext {
+            crate::api::group_e2ee::MlsGroupOperationContext {
+                group_id: self.group_id.cst_decode(),
+                incarnation_id: self.incarnation_id.cst_decode(),
+                expected_current_state: self.expected_current_state.cst_decode(),
+                expected_base_group_state_sha256: self
+                    .expected_base_group_state_sha256
+                    .cst_decode(),
+                expected_retention: self.expected_retention.cst_decode(),
+                storage_entries: self.storage_entries.cst_decode(),
+                storage_format_version: self.storage_format_version.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsPendingCommitBinding>
+        for wire_cst_mls_pending_commit_binding
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsPendingCommitBinding {
+            crate::api::group_e2ee::MlsPendingCommitBinding {
+                group_id: self.group_id.cst_decode(),
+                incarnation_id: self.incarnation_id.cst_decode(),
+                transition: self.transition.cst_decode(),
+                author: self.author.cst_decode(),
+                previous_state: self.previous_state.cst_decode(),
+                commit_sha256: self.commit_sha256.cst_decode(),
+                aad_sha256: self.aad_sha256.cst_decode(),
+                welcome_sha256: self.welcome_sha256.cst_decode(),
+                group_info_sha256: self.group_info_sha256.cst_decode(),
             }
         }
     }
@@ -4605,20 +6636,70 @@ mod io {
             }
         }
     }
-    impl CstDecode<crate::api::group_e2ee::PreparedCommitWithStorageResult>
-        for wire_cst_prepared_commit_with_storage_result
-    {
+    impl CstDecode<crate::api::group_e2ee::MlsTransitionContext> for wire_cst_mls_transition_context {
         // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::group_e2ee::PreparedCommitWithStorageResult {
-            crate::api::group_e2ee::PreparedCommitWithStorageResult {
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsTransitionContext {
+            crate::api::group_e2ee::MlsTransitionContext {
+                command_id: self.command_id.cst_decode(),
+                context_sha256: self.context_sha256.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::PendingCommitInfo> for wire_cst_pending_commit_info {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::PendingCommitInfo {
+            crate::api::group_e2ee::PendingCommitInfo {
+                pending_binding: self.pending_binding.cst_decode(),
+                proposed_resulting_roster: self.proposed_resulting_roster.cst_decode(),
                 commit: self.commit.cst_decode(),
                 welcome: self.welcome.cst_decode(),
                 group_info: self.group_info.cst_decode(),
-                commit_sha256: self.commit_sha256.cst_decode(),
+                preparation_base_group_state_sha256: self
+                    .preparation_base_group_state_sha256
+                    .cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::PendingCommitWithStorageResult>
+        for wire_cst_pending_commit_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::PendingCommitWithStorageResult {
+            crate::api::group_e2ee::PendingCommitWithStorageResult {
+                pending_binding: self.pending_binding.cst_decode(),
                 previous_roster: self.previous_roster.cst_decode(),
-                resulting_roster: self.resulting_roster.cst_decode(),
-                base_group_state_sha256: self.base_group_state_sha256.cst_decode(),
+                proposed_resulting_roster: self.proposed_resulting_roster.cst_decode(),
+                commit: self.commit.cst_decode(),
+                welcome: self.welcome.cst_decode(),
+                group_info: self.group_info.cst_decode(),
+                preparation_base_group_state_sha256: self
+                    .preparation_base_group_state_sha256
+                    .cst_decode(),
+                resulting_group_state_sha256: self.resulting_group_state_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
                 storage_batch: self.storage_batch.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::ProcessMessageWithStorageOutcome>
+        for wire_cst_process_message_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::ProcessMessageWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::ProcessMessageWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::ProcessMessageWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
             }
         }
     }
@@ -4629,16 +6710,83 @@ mod io {
         fn cst_decode(self) -> crate::api::group_e2ee::ProcessMessageWithStorageResult {
             crate::api::group_e2ee::ProcessMessageWithStorageResult {
                 message_type: self.message_type.cst_decode(),
-                sender_index: self.sender_index.cst_decode(),
+                message_epoch: self.message_epoch.cst_decode(),
+                authenticated_sender: self.authenticated_sender.cst_decode(),
                 previous_epoch: self.previous_epoch.cst_decode(),
                 resulting_epoch: self.resulting_epoch.cst_decode(),
                 application_message: self.application_message.cst_decode(),
-                has_staged_commit: self.has_staged_commit.cst_decode(),
-                has_proposal: self.has_proposal.cst_decode(),
                 proposal_type: self.proposal_type.cst_decode(),
                 previous_roster: self.previous_roster.cst_decode(),
                 resulting_roster: self.resulting_roster.cst_decode(),
+                resulting_group_state_sha256: self.resulting_group_state_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
                 storage_batch: self.storage_batch.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::RemoveMembersWithStorageOutcome>
+        for wire_cst_remove_members_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::RemoveMembersWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::RemoveMembersWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::RemoveMembersWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::SelfUpdateWithStorageOutcome>
+        for wire_cst_self_update_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::SelfUpdateWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::SelfUpdateWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::SelfUpdateWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::SwapMembersWithStorageOutcome>
+        for wire_cst_swap_members_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::SwapMembersWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::SwapMembersWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::SwapMembersWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
             }
         }
     }
@@ -4728,6 +6876,19 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
+    impl NewWithNullPtr for wire_cst_add_members_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: AddMembersWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_add_members_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
     impl NewWithNullPtr for wire_cst_context_invitation_authority_input_v_1 {
         fn new_with_null_ptr() -> Self {
             Self {
@@ -4776,11 +6937,26 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
+    impl NewWithNullPtr for wire_cst_create_group_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: CreateGroupWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_create_group_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
     impl NewWithNullPtr for wire_cst_create_group_with_storage_result {
         fn new_with_null_ptr() -> Self {
             Self {
                 group_id: core::ptr::null_mut(),
                 resulting_roster: Default::default(),
+                resulting_group_state_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
                 storage_batch: Default::default(),
             }
         }
@@ -4803,15 +6979,59 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
+    impl NewWithNullPtr for wire_cst_create_message_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: CreateMessageWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_create_message_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
     impl NewWithNullPtr for wire_cst_create_message_with_storage_result {
         fn new_with_null_ptr() -> Self {
             Self {
                 ciphertext: core::ptr::null_mut(),
+                resulting_group_state_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
                 storage_batch: Default::default(),
             }
         }
     }
     impl Default for wire_cst_create_message_with_storage_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_discard_pending_commit_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: DiscardPendingCommitWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_discard_pending_commit_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_discard_pending_commit_with_storage_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                previous_roster: Default::default(),
+                resulting_roster: Default::default(),
+                resulting_group_state_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
+                storage_batch: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_discard_pending_commit_with_storage_result {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -4842,16 +7062,75 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
+    impl NewWithNullPtr for wire_cst_get_pending_commit_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: GetPendingCommitWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_get_pending_commit_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_join_group_from_welcome_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: JoinGroupFromWelcomeWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_join_group_from_welcome_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
     impl NewWithNullPtr for wire_cst_join_group_with_storage_result {
         fn new_with_null_ptr() -> Self {
             Self {
                 group_id: core::ptr::null_mut(),
+                local_leaf: Default::default(),
+                consumed_key_package_sha256: core::ptr::null_mut(),
                 resulting_roster: Default::default(),
+                resulting_group_state_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
                 storage_batch: Default::default(),
             }
         }
     }
     impl Default for wire_cst_join_group_with_storage_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_merge_pending_commit_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: MergePendingCommitWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_merge_pending_commit_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_merge_pending_commit_with_storage_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                previous_roster: Default::default(),
+                resulting_roster: Default::default(),
+                resulting_group_state_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
+                storage_batch: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_merge_pending_commit_with_storage_result {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -4911,6 +7190,20 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
+    impl NewWithNullPtr for wire_cst_mls_commit_acceptance {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                binding: Default::default(),
+                resulting_state: Default::default(),
+                preparation_base_group_state_sha256: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_commit_acceptance {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
     impl NewWithNullPtr for wire_cst_mls_expected_roster_state_v_1 {
         fn new_with_null_ptr() -> Self {
             Self {
@@ -4940,6 +7233,44 @@ mod io {
         }
     }
     impl Default for wire_cst_mls_group_config {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_group_operation_context {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                group_id: core::ptr::null_mut(),
+                incarnation_id: core::ptr::null_mut(),
+                expected_current_state: Default::default(),
+                expected_base_group_state_sha256: core::ptr::null_mut(),
+                expected_retention: Default::default(),
+                storage_entries: core::ptr::null_mut(),
+                storage_format_version: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_group_operation_context {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_pending_commit_binding {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                group_id: core::ptr::null_mut(),
+                incarnation_id: core::ptr::null_mut(),
+                transition: Default::default(),
+                author: Default::default(),
+                previous_state: Default::default(),
+                commit_sha256: core::ptr::null_mut(),
+                aad_sha256: core::ptr::null_mut(),
+                welcome_sha256: core::ptr::null_mut(),
+                group_info_sha256: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_pending_commit_binding {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -5002,21 +7333,66 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
-    impl NewWithNullPtr for wire_cst_prepared_commit_with_storage_result {
+    impl NewWithNullPtr for wire_cst_mls_transition_context {
         fn new_with_null_ptr() -> Self {
             Self {
+                command_id: core::ptr::null_mut(),
+                context_sha256: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_transition_context {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_pending_commit_info {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                pending_binding: Default::default(),
+                proposed_resulting_roster: Default::default(),
                 commit: core::ptr::null_mut(),
                 welcome: core::ptr::null_mut(),
                 group_info: core::ptr::null_mut(),
-                commit_sha256: core::ptr::null_mut(),
+                preparation_base_group_state_sha256: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_pending_commit_info {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_pending_commit_with_storage_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                pending_binding: Default::default(),
                 previous_roster: Default::default(),
-                resulting_roster: Default::default(),
-                base_group_state_sha256: core::ptr::null_mut(),
+                proposed_resulting_roster: Default::default(),
+                commit: core::ptr::null_mut(),
+                welcome: core::ptr::null_mut(),
+                group_info: core::ptr::null_mut(),
+                preparation_base_group_state_sha256: core::ptr::null_mut(),
+                resulting_group_state_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
                 storage_batch: Default::default(),
             }
         }
     }
-    impl Default for wire_cst_prepared_commit_with_storage_result {
+    impl Default for wire_cst_pending_commit_with_storage_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_process_message_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: ProcessMessageWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_process_message_with_storage_outcome {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -5025,20 +7401,60 @@ mod io {
         fn new_with_null_ptr() -> Self {
             Self {
                 message_type: Default::default(),
-                sender_index: core::ptr::null_mut(),
+                message_epoch: Default::default(),
+                authenticated_sender: Default::default(),
                 previous_epoch: Default::default(),
                 resulting_epoch: Default::default(),
                 application_message: core::ptr::null_mut(),
-                has_staged_commit: Default::default(),
-                has_proposal: Default::default(),
                 proposal_type: core::ptr::null_mut(),
                 previous_roster: Default::default(),
                 resulting_roster: Default::default(),
+                resulting_group_state_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
                 storage_batch: Default::default(),
             }
         }
     }
     impl Default for wire_cst_process_message_with_storage_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_remove_members_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: RemoveMembersWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_remove_members_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_self_update_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: SelfUpdateWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_self_update_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_swap_members_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: SwapMembersWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_swap_members_with_storage_outcome {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -5234,23 +7650,19 @@ mod io {
     #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__add_members_with_storage(
         port_: i64,
-        group_id: *mut wire_cst_list_prim_u_8_loose,
+        context: *mut wire_cst_mls_group_operation_context,
+        transition: *mut wire_cst_mls_transition_context,
         signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        additions: *mut wire_cst_list_mls_authorized_key_package_v_1,
+        authorized_key_packages: *mut wire_cst_list_mls_authorized_key_package_v_1,
         aad: *mut wire_cst_list_prim_u_8_loose,
-        expected_previous_state: *mut wire_cst_mls_expected_roster_state_v_1,
-        storage_entries: *mut wire_cst_list_mls_storage_entry,
-        storage_format_version: u32,
     ) {
         wire__crate__api__group_e2ee__add_members_with_storage_impl(
             port_,
-            group_id,
+            context,
+            transition,
             signer_bytes,
-            additions,
+            authorized_key_packages,
             aad,
-            expected_previous_state,
-            storage_entries,
-            storage_format_version,
         )
     }
 
@@ -5260,6 +7672,7 @@ mod io {
         config: *mut wire_cst_mls_group_config,
         signer_bytes: *mut wire_cst_list_prim_u_8_loose,
         explicit_group_id: *mut wire_cst_list_prim_u_8_loose,
+        incarnation_id: *mut wire_cst_list_prim_u_8_loose,
         expected_owner_authority: *mut wire_cst_mls_authorized_owner_v_1,
         credential_bytes: *mut wire_cst_list_prim_u_8_strict,
         storage_entries: *mut wire_cst_list_mls_storage_entry,
@@ -5270,6 +7683,7 @@ mod io {
             config,
             signer_bytes,
             explicit_group_id,
+            incarnation_id,
             expected_owner_authority,
             credential_bytes,
             storage_entries,
@@ -5303,21 +7717,17 @@ mod io {
     #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__storage__create_message_with_storage(
         port_: i64,
-        group_id: *mut wire_cst_list_prim_u_8_loose,
+        context: *mut wire_cst_mls_group_operation_context,
         signer_bytes: *mut wire_cst_list_prim_u_8_loose,
         message: *mut wire_cst_list_prim_u_8_loose,
         aad: *mut wire_cst_list_prim_u_8_loose,
-        storage_entries: *mut wire_cst_list_mls_storage_entry,
-        storage_format_version: u32,
     ) {
         wire__crate__api__storage__create_message_with_storage_impl(
             port_,
-            group_id,
+            context,
             signer_bytes,
             message,
             aad,
-            storage_entries,
-            storage_format_version,
         )
     }
 
@@ -5337,6 +7747,27 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__discard_pending_commit_with_storage(
+        port_: i64,
+        context: *mut wire_cst_mls_group_operation_context,
+        expected_pending_binding: *mut wire_cst_mls_pending_commit_binding,
+    ) {
+        wire__crate__api__group_e2ee__discard_pending_commit_with_storage_impl(
+            port_,
+            context,
+            expected_pending_binding,
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__get_pending_commit_with_storage(
+        port_: i64,
+        context: *mut wire_cst_mls_group_operation_context,
+    ) {
+        wire__crate__api__group_e2ee__get_pending_commit_with_storage_impl(port_, context)
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__init__init_openmls(
         _library_path: *mut wire_cst_list_prim_u_8_strict,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
@@ -5353,22 +7784,41 @@ mod io {
     pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__join_group_from_welcome_with_storage(
         port_: i64,
         config: *mut wire_cst_mls_group_config,
+        incarnation_id: *mut wire_cst_list_prim_u_8_loose,
         welcome_bytes: *mut wire_cst_list_prim_u_8_loose,
+        expected_welcome_sha256: *mut wire_cst_list_prim_u_8_loose,
         ratchet_tree_bytes: *mut wire_cst_list_prim_u_8_strict,
         signer_bytes: *mut wire_cst_list_prim_u_8_loose,
         expected_resulting_state: *mut wire_cst_mls_expected_roster_state_v_1,
+        expected_local_leaf: *mut wire_cst_mls_roster_leaf_v_1,
+        expected_target_key_package_sha256: *mut wire_cst_list_prim_u_8_loose,
         storage_entries: *mut wire_cst_list_mls_storage_entry,
         storage_format_version: u32,
     ) {
         wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_impl(
             port_,
             config,
+            incarnation_id,
             welcome_bytes,
+            expected_welcome_sha256,
             ratchet_tree_bytes,
             signer_bytes,
             expected_resulting_state,
+            expected_local_leaf,
+            expected_target_key_package_sha256,
             storage_entries,
             storage_format_version,
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__merge_pending_commit_with_storage(
+        port_: i64,
+        context: *mut wire_cst_mls_group_operation_context,
+        acceptance: *mut wire_cst_mls_commit_acceptance,
+    ) {
+        wire__crate__api__group_e2ee__merge_pending_commit_with_storage_impl(
+            port_, context, acceptance,
         )
     }
 
@@ -5431,69 +7881,63 @@ mod io {
     #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__process_message_with_storage(
         port_: i64,
-        group_id: *mut wire_cst_list_prim_u_8_loose,
+        context: *mut wire_cst_mls_group_operation_context,
+        expected_kind: i32,
         message_bytes: *mut wire_cst_list_prim_u_8_loose,
+        expected_message_sha256: *mut wire_cst_list_prim_u_8_loose,
         expected_aad: *mut wire_cst_list_prim_u_8_loose,
-        expected_previous_state: *mut wire_cst_mls_expected_roster_state_v_1,
+        expected_sender: *mut wire_cst_mls_roster_leaf_v_1,
+        expected_message_state: *mut wire_cst_mls_expected_roster_state_v_1,
         expected_resulting_state: *mut wire_cst_mls_expected_roster_state_v_1,
-        storage_entries: *mut wire_cst_list_mls_storage_entry,
-        storage_format_version: u32,
     ) {
         wire__crate__api__group_e2ee__process_message_with_storage_impl(
             port_,
-            group_id,
+            context,
+            expected_kind,
             message_bytes,
+            expected_message_sha256,
             expected_aad,
-            expected_previous_state,
+            expected_sender,
+            expected_message_state,
             expected_resulting_state,
-            storage_entries,
-            storage_format_version,
         )
     }
 
     #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__remove_members_with_storage(
         port_: i64,
-        group_id: *mut wire_cst_list_prim_u_8_loose,
+        context: *mut wire_cst_mls_group_operation_context,
+        transition: *mut wire_cst_mls_transition_context,
         signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        removals: *mut wire_cst_list_mls_authorized_removal_v_1,
+        authorized_removals: *mut wire_cst_list_mls_authorized_removal_v_1,
         aad: *mut wire_cst_list_prim_u_8_loose,
-        expected_previous_state: *mut wire_cst_mls_expected_roster_state_v_1,
-        storage_entries: *mut wire_cst_list_mls_storage_entry,
-        storage_format_version: u32,
     ) {
         wire__crate__api__group_e2ee__remove_members_with_storage_impl(
             port_,
-            group_id,
+            context,
+            transition,
             signer_bytes,
-            removals,
+            authorized_removals,
             aad,
-            expected_previous_state,
-            storage_entries,
-            storage_format_version,
         )
     }
 
     #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__self_update_with_storage(
         port_: i64,
-        group_id: *mut wire_cst_list_prim_u_8_loose,
+        context: *mut wire_cst_mls_group_operation_context,
+        transition: *mut wire_cst_mls_transition_context,
         signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        aad: *mut wire_cst_list_prim_u_8_loose,
-        expected_previous_state: *mut wire_cst_mls_expected_roster_state_v_1,
         expected_self_authority: *mut wire_cst_mls_authorized_self_v_1,
-        storage_entries: *mut wire_cst_list_mls_storage_entry,
-        storage_format_version: u32,
+        aad: *mut wire_cst_list_prim_u_8_loose,
     ) {
         wire__crate__api__group_e2ee__self_update_with_storage_impl(
             port_,
-            group_id,
+            context,
+            transition,
             signer_bytes,
-            aad,
-            expected_previous_state,
             expected_self_authority,
-            storage_entries,
-            storage_format_version,
+            aad,
         )
     }
 
@@ -5515,25 +7959,21 @@ mod io {
     #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__swap_members_with_storage(
         port_: i64,
-        group_id: *mut wire_cst_list_prim_u_8_loose,
+        context: *mut wire_cst_mls_group_operation_context,
+        transition: *mut wire_cst_mls_transition_context,
         signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        removals: *mut wire_cst_list_mls_authorized_removal_v_1,
-        additions: *mut wire_cst_list_mls_authorized_key_package_v_1,
+        authorized_key_packages: *mut wire_cst_list_mls_authorized_key_package_v_1,
+        authorized_removals: *mut wire_cst_list_mls_authorized_removal_v_1,
         aad: *mut wire_cst_list_prim_u_8_loose,
-        expected_previous_state: *mut wire_cst_mls_expected_roster_state_v_1,
-        storage_entries: *mut wire_cst_list_mls_storage_entry,
-        storage_format_version: u32,
     ) {
         wire__crate__api__group_e2ee__swap_members_with_storage_impl(
             port_,
-            group_id,
+            context,
+            transition,
             signer_bytes,
-            removals,
-            additions,
+            authorized_key_packages,
+            authorized_removals,
             aad,
-            expected_previous_state,
-            storage_entries,
-            storage_format_version,
         )
     }
 
@@ -5623,10 +8063,50 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_create_group_with_storage_result(
+    ) -> *mut wire_cst_create_group_with_storage_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_create_group_with_storage_result::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_create_message_with_storage_result(
+    ) -> *mut wire_cst_create_message_with_storage_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_create_message_with_storage_result::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_discard_pending_commit_with_storage_result(
+    ) -> *mut wire_cst_discard_pending_commit_with_storage_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_discard_pending_commit_with_storage_result::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_expected_context_invitation_authority_input_v_1(
     ) -> *mut wire_cst_expected_context_invitation_authority_input_v_1 {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(
             wire_cst_expected_context_invitation_authority_input_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_join_group_with_storage_result(
+    ) -> *mut wire_cst_join_group_with_storage_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_join_group_with_storage_result::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_merge_pending_commit_with_storage_result(
+    ) -> *mut wire_cst_merge_pending_commit_with_storage_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_merge_pending_commit_with_storage_result::new_with_null_ptr(),
         )
     }
 
@@ -5647,6 +8127,14 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_commit_acceptance(
+    ) -> *mut wire_cst_mls_commit_acceptance {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_commit_acceptance::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_expected_roster_state_v_1(
     ) -> *mut wire_cst_mls_expected_roster_state_v_1 {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(
@@ -5663,13 +8151,64 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_group_operation_context(
+    ) -> *mut wire_cst_mls_group_operation_context {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_group_operation_context::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_pending_commit_binding(
+    ) -> *mut wire_cst_mls_pending_commit_binding {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_pending_commit_binding::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_proposal_type(value: i32) -> *mut i32 {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(value)
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_u_32(value: u32) -> *mut u32 {
-        flutter_rust_bridge::for_generated::new_leak_box_ptr(value)
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_roster_leaf_v_1(
+    ) -> *mut wire_cst_mls_roster_leaf_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_roster_leaf_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_transition_context(
+    ) -> *mut wire_cst_mls_transition_context {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_transition_context::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_pending_commit_info(
+    ) -> *mut wire_cst_pending_commit_info {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_pending_commit_info::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_pending_commit_with_storage_result(
+    ) -> *mut wire_cst_pending_commit_with_storage_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_pending_commit_with_storage_result::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_process_message_with_storage_result(
+    ) -> *mut wire_cst_process_message_with_storage_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_process_message_with_storage_result::new_with_null_ptr(),
+        )
     }
 
     #[unsafe(no_mangle)]
@@ -5826,6 +8365,29 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_add_members_with_storage_outcome {
+        tag: i32,
+        kind: AddMembersWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union AddMembersWithStorageOutcomeKind {
+        Success: wire_cst_AddMembersWithStorageOutcome_Success,
+        Failure: wire_cst_AddMembersWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_AddMembersWithStorageOutcome_Success {
+        field0: *mut wire_cst_pending_commit_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_AddMembersWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_context_invitation_authority_input_v_1 {
         envelope_id: *mut wire_cst_list_prim_u_8_strict,
         invite_id: *mut wire_cst_list_prim_u_8_strict,
@@ -5853,9 +8415,34 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_create_group_with_storage_outcome {
+        tag: i32,
+        kind: CreateGroupWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union CreateGroupWithStorageOutcomeKind {
+        Success: wire_cst_CreateGroupWithStorageOutcome_Success,
+        Failure: wire_cst_CreateGroupWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_CreateGroupWithStorageOutcome_Success {
+        field0: *mut wire_cst_create_group_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_CreateGroupWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_create_group_with_storage_result {
         group_id: *mut wire_cst_list_prim_u_8_strict,
         resulting_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
         storage_batch: wire_cst_mls_storage_batch,
     }
     #[repr(C)]
@@ -5866,8 +8453,65 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_create_message_with_storage_outcome {
+        tag: i32,
+        kind: CreateMessageWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union CreateMessageWithStorageOutcomeKind {
+        Success: wire_cst_CreateMessageWithStorageOutcome_Success,
+        Failure: wire_cst_CreateMessageWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_CreateMessageWithStorageOutcome_Success {
+        field0: *mut wire_cst_create_message_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_CreateMessageWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_create_message_with_storage_result {
         ciphertext: *mut wire_cst_list_prim_u_8_strict,
+        resulting_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
+        storage_batch: wire_cst_mls_storage_batch,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_discard_pending_commit_with_storage_outcome {
+        tag: i32,
+        kind: DiscardPendingCommitWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union DiscardPendingCommitWithStorageOutcomeKind {
+        Success: wire_cst_DiscardPendingCommitWithStorageOutcome_Success,
+        Failure: wire_cst_DiscardPendingCommitWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_DiscardPendingCommitWithStorageOutcome_Success {
+        field0: *mut wire_cst_discard_pending_commit_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_DiscardPendingCommitWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_discard_pending_commit_with_storage_result {
+        previous_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
         storage_batch: wire_cst_mls_storage_batch,
     }
     #[repr(C)]
@@ -5884,9 +8528,59 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_get_pending_commit_with_storage_outcome {
+        tag: i32,
+        kind: GetPendingCommitWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union GetPendingCommitWithStorageOutcomeKind {
+        Success: wire_cst_GetPendingCommitWithStorageOutcome_Success,
+        Failure: wire_cst_GetPendingCommitWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_GetPendingCommitWithStorageOutcome_Success {
+        field0: *mut wire_cst_pending_commit_info,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_GetPendingCommitWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_join_group_from_welcome_with_storage_outcome {
+        tag: i32,
+        kind: JoinGroupFromWelcomeWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union JoinGroupFromWelcomeWithStorageOutcomeKind {
+        Success: wire_cst_JoinGroupFromWelcomeWithStorageOutcome_Success,
+        Failure: wire_cst_JoinGroupFromWelcomeWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_JoinGroupFromWelcomeWithStorageOutcome_Success {
+        field0: *mut wire_cst_join_group_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_JoinGroupFromWelcomeWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_join_group_with_storage_result {
         group_id: *mut wire_cst_list_prim_u_8_strict,
+        local_leaf: wire_cst_mls_roster_leaf_v_1,
+        consumed_key_package_sha256: *mut wire_cst_list_prim_u_8_strict,
         resulting_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
         storage_batch: wire_cst_mls_storage_batch,
     }
     #[repr(C)]
@@ -5945,6 +8639,38 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_merge_pending_commit_with_storage_outcome {
+        tag: i32,
+        kind: MergePendingCommitWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union MergePendingCommitWithStorageOutcomeKind {
+        Success: wire_cst_MergePendingCommitWithStorageOutcome_Success,
+        Failure: wire_cst_MergePendingCommitWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_MergePendingCommitWithStorageOutcome_Success {
+        field0: *mut wire_cst_merge_pending_commit_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_MergePendingCommitWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_merge_pending_commit_with_storage_result {
+        previous_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
+        storage_batch: wire_cst_mls_storage_batch,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_mls_authorized_key_package_v_1 {
         key_package_bytes: *mut wire_cst_list_prim_u_8_strict,
         expected_credential_identity: *mut wire_cst_list_prim_u_8_strict,
@@ -5972,6 +8698,13 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_commit_acceptance {
+        binding: wire_cst_mls_pending_commit_binding,
+        resulting_state: wire_cst_mls_expected_roster_state_v_1,
+        preparation_base_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_mls_expected_roster_state_v_1 {
         group_id: *mut wire_cst_list_prim_u_8_strict,
         epoch: u64,
@@ -5988,6 +8721,30 @@ mod io {
         sender_ratchet_max_out_of_order: u32,
         sender_ratchet_max_forward_distance: u32,
         number_of_resumption_psks: u32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_group_operation_context {
+        group_id: *mut wire_cst_list_prim_u_8_strict,
+        incarnation_id: *mut wire_cst_list_prim_u_8_strict,
+        expected_current_state: wire_cst_mls_expected_roster_state_v_1,
+        expected_base_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        expected_retention: u32,
+        storage_entries: *mut wire_cst_list_mls_storage_entry,
+        storage_format_version: u32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_pending_commit_binding {
+        group_id: *mut wire_cst_list_prim_u_8_strict,
+        incarnation_id: *mut wire_cst_list_prim_u_8_strict,
+        transition: wire_cst_mls_transition_context,
+        author: wire_cst_mls_roster_leaf_v_1,
+        previous_state: wire_cst_mls_expected_roster_state_v_1,
+        commit_sha256: *mut wire_cst_list_prim_u_8_strict,
+        aad_sha256: *mut wire_cst_list_prim_u_8_strict,
+        welcome_sha256: *mut wire_cst_list_prim_u_8_strict,
+        group_info_sha256: *mut wire_cst_list_prim_u_8_strict,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
@@ -6021,30 +8778,141 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
-    pub struct wire_cst_prepared_commit_with_storage_result {
+    pub struct wire_cst_mls_transition_context {
+        command_id: *mut wire_cst_list_prim_u_8_strict,
+        context_sha256: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_pending_commit_info {
+        pending_binding: wire_cst_mls_pending_commit_binding,
+        proposed_resulting_roster: wire_cst_mls_roster_summary_v_1,
         commit: *mut wire_cst_list_prim_u_8_strict,
         welcome: *mut wire_cst_list_prim_u_8_strict,
         group_info: *mut wire_cst_list_prim_u_8_strict,
-        commit_sha256: *mut wire_cst_list_prim_u_8_strict,
+        preparation_base_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_pending_commit_with_storage_result {
+        pending_binding: wire_cst_mls_pending_commit_binding,
         previous_roster: wire_cst_mls_roster_summary_v_1,
-        resulting_roster: wire_cst_mls_roster_summary_v_1,
-        base_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        proposed_resulting_roster: wire_cst_mls_roster_summary_v_1,
+        commit: *mut wire_cst_list_prim_u_8_strict,
+        welcome: *mut wire_cst_list_prim_u_8_strict,
+        group_info: *mut wire_cst_list_prim_u_8_strict,
+        preparation_base_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        resulting_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
         storage_batch: wire_cst_mls_storage_batch,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_process_message_with_storage_outcome {
+        tag: i32,
+        kind: ProcessMessageWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union ProcessMessageWithStorageOutcomeKind {
+        Success: wire_cst_ProcessMessageWithStorageOutcome_Success,
+        Failure: wire_cst_ProcessMessageWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_ProcessMessageWithStorageOutcome_Success {
+        field0: *mut wire_cst_process_message_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_ProcessMessageWithStorageOutcome_Failure {
+        field0: i32,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
     pub struct wire_cst_process_message_with_storage_result {
         message_type: i32,
-        sender_index: *mut u32,
+        message_epoch: u64,
+        authenticated_sender: wire_cst_mls_roster_leaf_v_1,
         previous_epoch: u64,
         resulting_epoch: u64,
         application_message: *mut wire_cst_list_prim_u_8_strict,
-        has_staged_commit: bool,
-        has_proposal: bool,
         proposal_type: *mut i32,
         previous_roster: wire_cst_mls_roster_summary_v_1,
         resulting_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
         storage_batch: wire_cst_mls_storage_batch,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_remove_members_with_storage_outcome {
+        tag: i32,
+        kind: RemoveMembersWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union RemoveMembersWithStorageOutcomeKind {
+        Success: wire_cst_RemoveMembersWithStorageOutcome_Success,
+        Failure: wire_cst_RemoveMembersWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_RemoveMembersWithStorageOutcome_Success {
+        field0: *mut wire_cst_pending_commit_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_RemoveMembersWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_self_update_with_storage_outcome {
+        tag: i32,
+        kind: SelfUpdateWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union SelfUpdateWithStorageOutcomeKind {
+        Success: wire_cst_SelfUpdateWithStorageOutcome_Success,
+        Failure: wire_cst_SelfUpdateWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_SelfUpdateWithStorageOutcome_Success {
+        field0: *mut wire_cst_pending_commit_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_SelfUpdateWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_swap_members_with_storage_outcome {
+        tag: i32,
+        kind: SwapMembersWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union SwapMembersWithStorageOutcomeKind {
+        Success: wire_cst_SwapMembersWithStorageOutcome_Success,
+        Failure: wire_cst_SwapMembersWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_SwapMembersWithStorageOutcome_Success {
+        field0: *mut wire_cst_pending_commit_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_SwapMembersWithStorageOutcome_Failure {
+        field0: i32,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
@@ -6208,6 +9076,23 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::AddMembersWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::AddMembersWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::AddMembersWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::AddMembersWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
     impl CstDecode<crate::api::account_envelope::bridge::ContextInvitationAuthorityInputV1>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -6283,6 +9168,23 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::CreateGroupWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::CreateGroupWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::CreateGroupWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::CreateGroupWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::CreateGroupWithStorageResult>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -6293,14 +9195,16 @@ mod web {
                 .unwrap();
             assert_eq!(
                 self_.length(),
-                3,
-                "Expected 3 elements, got {}",
+                5,
+                "Expected 5 elements, got {}",
                 self_.length()
             );
             crate::api::group_e2ee::CreateGroupWithStorageResult {
                 group_id: self_.get(0).cst_decode(),
                 resulting_roster: self_.get(1).cst_decode(),
-                storage_batch: self_.get(2).cst_decode(),
+                resulting_group_state_sha256: self_.get(2).cst_decode(),
+                effective_retention: self_.get(3).cst_decode(),
+                storage_batch: self_.get(4).cst_decode(),
             }
         }
     }
@@ -6324,6 +9228,23 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::storage::CreateMessageWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::storage::CreateMessageWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::storage::CreateMessageWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::storage::CreateMessageWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
     impl CstDecode<crate::api::storage::CreateMessageWithStorageResult>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -6334,13 +9255,55 @@ mod web {
                 .unwrap();
             assert_eq!(
                 self_.length(),
-                2,
-                "Expected 2 elements, got {}",
+                4,
+                "Expected 4 elements, got {}",
                 self_.length()
             );
             crate::api::storage::CreateMessageWithStorageResult {
                 ciphertext: self_.get(0).cst_decode(),
-                storage_batch: self_.get(1).cst_decode(),
+                resulting_group_state_sha256: self_.get(1).cst_decode(),
+                effective_retention: self_.get(2).cst_decode(),
+                storage_batch: self_.get(3).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::DiscardPendingCommitWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::DiscardPendingCommitWithStorageResult>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::DiscardPendingCommitWithStorageResult {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                5,
+                "Expected 5 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::DiscardPendingCommitWithStorageResult {
+                previous_roster: self_.get(0).cst_decode(),
+                resulting_roster: self_.get(1).cst_decode(),
+                resulting_group_state_sha256: self_.get(2).cst_decode(),
+                effective_retention: self_.get(3).cst_decode(),
+                storage_batch: self_.get(4).cst_decode(),
             }
         }
     }
@@ -6390,6 +9353,40 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::GetPendingCommitWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::GetPendingCommitWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::JoinGroupFromWelcomeWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::JoinGroupWithStorageResult>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -6400,14 +9397,18 @@ mod web {
                 .unwrap();
             assert_eq!(
                 self_.length(),
-                3,
-                "Expected 3 elements, got {}",
+                7,
+                "Expected 7 elements, got {}",
                 self_.length()
             );
             crate::api::group_e2ee::JoinGroupWithStorageResult {
                 group_id: self_.get(0).cst_decode(),
-                resulting_roster: self_.get(1).cst_decode(),
-                storage_batch: self_.get(2).cst_decode(),
+                local_leaf: self_.get(1).cst_decode(),
+                consumed_key_package_sha256: self_.get(2).cst_decode(),
+                resulting_roster: self_.get(3).cst_decode(),
+                resulting_group_state_sha256: self_.get(4).cst_decode(),
+                effective_retention: self_.get(5).cst_decode(),
+                storage_batch: self_.get(6).cst_decode(),
             }
         }
     }
@@ -6497,6 +9498,46 @@ mod web {
             self.into_vec()
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MergePendingCommitWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MergePendingCommitWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::MergePendingCommitWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::MergePendingCommitWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MergePendingCommitWithStorageResult>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MergePendingCommitWithStorageResult {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                5,
+                "Expected 5 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MergePendingCommitWithStorageResult {
+                previous_roster: self_.get(0).cst_decode(),
+                resulting_roster: self_.get(1).cst_decode(),
+                resulting_group_state_sha256: self_.get(2).cst_decode(),
+                effective_retention: self_.get(3).cst_decode(),
+                storage_batch: self_.get(4).cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::MlsAuthorizedKeyPackageV1>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -6580,6 +9621,27 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MlsCommitAcceptance>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsCommitAcceptance {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                3,
+                "Expected 3 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsCommitAcceptance {
+                binding: self_.get(0).cst_decode(),
+                resulting_state: self_.get(1).cst_decode(),
+                preparation_base_group_state_sha256: self_.get(2).cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::MlsExpectedRosterStateV1>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -6624,6 +9686,58 @@ mod web {
                 sender_ratchet_max_out_of_order: self_.get(5).cst_decode(),
                 sender_ratchet_max_forward_distance: self_.get(6).cst_decode(),
                 number_of_resumption_psks: self_.get(7).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsGroupOperationContext {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                7,
+                "Expected 7 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsGroupOperationContext {
+                group_id: self_.get(0).cst_decode(),
+                incarnation_id: self_.get(1).cst_decode(),
+                expected_current_state: self_.get(2).cst_decode(),
+                expected_base_group_state_sha256: self_.get(3).cst_decode(),
+                expected_retention: self_.get(4).cst_decode(),
+                storage_entries: self_.get(5).cst_decode(),
+                storage_format_version: self_.get(6).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsPendingCommitBinding>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsPendingCommitBinding {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                9,
+                "Expected 9 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsPendingCommitBinding {
+                group_id: self_.get(0).cst_decode(),
+                incarnation_id: self_.get(1).cst_decode(),
+                transition: self_.get(2).cst_decode(),
+                author: self_.get(3).cst_decode(),
+                previous_state: self_.get(4).cst_decode(),
+                commit_sha256: self_.get(5).cst_decode(),
+                aad_sha256: self_.get(6).cst_decode(),
+                welcome_sha256: self_.get(7).cst_decode(),
+                group_info_sha256: self_.get(8).cst_decode(),
             }
         }
     }
@@ -6713,6 +9827,26 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MlsTransitionContext>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsTransitionContext {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                2,
+                "Expected 2 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::MlsTransitionContext {
+                command_id: self_.get(0).cst_decode(),
+                context_sha256: self_.get(1).cst_decode(),
+            }
+        }
+    }
     impl CstDecode<Option<String>> for Option<String> {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> Option<String> {
@@ -6725,29 +9859,72 @@ mod web {
             self.map(CstDecode::cst_decode)
         }
     }
-    impl CstDecode<crate::api::group_e2ee::PreparedCommitWithStorageResult>
+    impl CstDecode<crate::api::group_e2ee::PendingCommitInfo>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
         // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::group_e2ee::PreparedCommitWithStorageResult {
+        fn cst_decode(self) -> crate::api::group_e2ee::PendingCommitInfo {
             let self_ = self
                 .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
                 .unwrap();
             assert_eq!(
                 self_.length(),
-                8,
-                "Expected 8 elements, got {}",
+                6,
+                "Expected 6 elements, got {}",
                 self_.length()
             );
-            crate::api::group_e2ee::PreparedCommitWithStorageResult {
-                commit: self_.get(0).cst_decode(),
-                welcome: self_.get(1).cst_decode(),
-                group_info: self_.get(2).cst_decode(),
-                commit_sha256: self_.get(3).cst_decode(),
-                previous_roster: self_.get(4).cst_decode(),
-                resulting_roster: self_.get(5).cst_decode(),
-                base_group_state_sha256: self_.get(6).cst_decode(),
-                storage_batch: self_.get(7).cst_decode(),
+            crate::api::group_e2ee::PendingCommitInfo {
+                pending_binding: self_.get(0).cst_decode(),
+                proposed_resulting_roster: self_.get(1).cst_decode(),
+                commit: self_.get(2).cst_decode(),
+                welcome: self_.get(3).cst_decode(),
+                group_info: self_.get(4).cst_decode(),
+                preparation_base_group_state_sha256: self_.get(5).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::PendingCommitWithStorageResult>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::PendingCommitWithStorageResult {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                10,
+                "Expected 10 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::PendingCommitWithStorageResult {
+                pending_binding: self_.get(0).cst_decode(),
+                previous_roster: self_.get(1).cst_decode(),
+                proposed_resulting_roster: self_.get(2).cst_decode(),
+                commit: self_.get(3).cst_decode(),
+                welcome: self_.get(4).cst_decode(),
+                group_info: self_.get(5).cst_decode(),
+                preparation_base_group_state_sha256: self_.get(6).cst_decode(),
+                resulting_group_state_sha256: self_.get(7).cst_decode(),
+                effective_retention: self_.get(8).cst_decode(),
+                storage_batch: self_.get(9).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::ProcessMessageWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::ProcessMessageWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::ProcessMessageWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::ProcessMessageWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
             }
         }
     }
@@ -6761,22 +9938,74 @@ mod web {
                 .unwrap();
             assert_eq!(
                 self_.length(),
-                11,
-                "Expected 11 elements, got {}",
+                12,
+                "Expected 12 elements, got {}",
                 self_.length()
             );
             crate::api::group_e2ee::ProcessMessageWithStorageResult {
                 message_type: self_.get(0).cst_decode(),
-                sender_index: self_.get(1).cst_decode(),
-                previous_epoch: self_.get(2).cst_decode(),
-                resulting_epoch: self_.get(3).cst_decode(),
-                application_message: self_.get(4).cst_decode(),
-                has_staged_commit: self_.get(5).cst_decode(),
-                has_proposal: self_.get(6).cst_decode(),
-                proposal_type: self_.get(7).cst_decode(),
-                previous_roster: self_.get(8).cst_decode(),
-                resulting_roster: self_.get(9).cst_decode(),
-                storage_batch: self_.get(10).cst_decode(),
+                message_epoch: self_.get(1).cst_decode(),
+                authenticated_sender: self_.get(2).cst_decode(),
+                previous_epoch: self_.get(3).cst_decode(),
+                resulting_epoch: self_.get(4).cst_decode(),
+                application_message: self_.get(5).cst_decode(),
+                proposal_type: self_.get(6).cst_decode(),
+                previous_roster: self_.get(7).cst_decode(),
+                resulting_roster: self_.get(8).cst_decode(),
+                resulting_group_state_sha256: self_.get(9).cst_decode(),
+                effective_retention: self_.get(10).cst_decode(),
+                storage_batch: self_.get(11).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::RemoveMembersWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::RemoveMembersWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::RemoveMembersWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::RemoveMembersWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::SelfUpdateWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::SelfUpdateWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::SelfUpdateWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::SelfUpdateWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::SwapMembersWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::SwapMembersWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::SwapMembersWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::SwapMembersWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
             }
         }
     }
@@ -6987,11 +10216,27 @@ mod web {
             (self.unchecked_into_f64() as i32).cst_decode()
         }
     }
+    impl CstDecode<crate::api::group_e2ee::MlsErrorCode>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsErrorCode {
+            (self.unchecked_into_f64() as i32).cst_decode()
+        }
+    }
     impl CstDecode<crate::api::types::MlsProposalType>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> crate::api::types::MlsProposalType {
+            (self.unchecked_into_f64() as i32).cst_decode()
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::MlsReceiveKind>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::MlsReceiveKind {
             (self.unchecked_into_f64() as i32).cst_decode()
         }
     }
@@ -7218,23 +10463,19 @@ mod web {
     #[wasm_bindgen]
     pub fn wire__crate__api__group_e2ee__add_members_with_storage(
         port_: flutter_rust_bridge::for_generated::MessagePort,
-        group_id: Box<[u8]>,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        transition: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         signer_bytes: Box<[u8]>,
-        additions: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        authorized_key_packages: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         aad: Box<[u8]>,
-        expected_previous_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_format_version: u32,
     ) {
         wire__crate__api__group_e2ee__add_members_with_storage_impl(
             port_,
-            group_id,
+            context,
+            transition,
             signer_bytes,
-            additions,
+            authorized_key_packages,
             aad,
-            expected_previous_state,
-            storage_entries,
-            storage_format_version,
         )
     }
 
@@ -7244,6 +10485,7 @@ mod web {
         config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         signer_bytes: Box<[u8]>,
         explicit_group_id: Box<[u8]>,
+        incarnation_id: Box<[u8]>,
         expected_owner_authority: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         credential_bytes: Option<Box<[u8]>>,
         storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
@@ -7254,6 +10496,7 @@ mod web {
             config,
             signer_bytes,
             explicit_group_id,
+            incarnation_id,
             expected_owner_authority,
             credential_bytes,
             storage_entries,
@@ -7287,21 +10530,17 @@ mod web {
     #[wasm_bindgen]
     pub fn wire__crate__api__storage__create_message_with_storage(
         port_: flutter_rust_bridge::for_generated::MessagePort,
-        group_id: Box<[u8]>,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         signer_bytes: Box<[u8]>,
         message: Box<[u8]>,
         aad: Box<[u8]>,
-        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_format_version: u32,
     ) {
         wire__crate__api__storage__create_message_with_storage_impl(
             port_,
-            group_id,
+            context,
             signer_bytes,
             message,
             aad,
-            storage_entries,
-            storage_format_version,
         )
     }
 
@@ -7321,6 +10560,27 @@ mod web {
     }
 
     #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__discard_pending_commit_with_storage(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_pending_binding: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+    ) {
+        wire__crate__api__group_e2ee__discard_pending_commit_with_storage_impl(
+            port_,
+            context,
+            expected_pending_binding,
+        )
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__get_pending_commit_with_storage(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+    ) {
+        wire__crate__api__group_e2ee__get_pending_commit_with_storage_impl(port_, context)
+    }
+
+    #[wasm_bindgen]
     pub fn wire__crate__api__init__init_openmls(
         _library_path: String,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
@@ -7337,22 +10597,41 @@ mod web {
     pub fn wire__crate__api__group_e2ee__join_group_from_welcome_with_storage(
         port_: flutter_rust_bridge::for_generated::MessagePort,
         config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        incarnation_id: Box<[u8]>,
         welcome_bytes: Box<[u8]>,
+        expected_welcome_sha256: Box<[u8]>,
         ratchet_tree_bytes: Option<Box<[u8]>>,
         signer_bytes: Box<[u8]>,
         expected_resulting_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_local_leaf: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_target_key_package_sha256: Box<[u8]>,
         storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         storage_format_version: u32,
     ) {
         wire__crate__api__group_e2ee__join_group_from_welcome_with_storage_impl(
             port_,
             config,
+            incarnation_id,
             welcome_bytes,
+            expected_welcome_sha256,
             ratchet_tree_bytes,
             signer_bytes,
             expected_resulting_state,
+            expected_local_leaf,
+            expected_target_key_package_sha256,
             storage_entries,
             storage_format_version,
+        )
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__merge_pending_commit_with_storage(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        acceptance: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+    ) {
+        wire__crate__api__group_e2ee__merge_pending_commit_with_storage_impl(
+            port_, context, acceptance,
         )
     }
 
@@ -7415,69 +10694,63 @@ mod web {
     #[wasm_bindgen]
     pub fn wire__crate__api__group_e2ee__process_message_with_storage(
         port_: flutter_rust_bridge::for_generated::MessagePort,
-        group_id: Box<[u8]>,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_kind: i32,
         message_bytes: Box<[u8]>,
+        expected_message_sha256: Box<[u8]>,
         expected_aad: Box<[u8]>,
-        expected_previous_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_sender: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_message_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         expected_resulting_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_format_version: u32,
     ) {
         wire__crate__api__group_e2ee__process_message_with_storage_impl(
             port_,
-            group_id,
+            context,
+            expected_kind,
             message_bytes,
+            expected_message_sha256,
             expected_aad,
-            expected_previous_state,
+            expected_sender,
+            expected_message_state,
             expected_resulting_state,
-            storage_entries,
-            storage_format_version,
         )
     }
 
     #[wasm_bindgen]
     pub fn wire__crate__api__group_e2ee__remove_members_with_storage(
         port_: flutter_rust_bridge::for_generated::MessagePort,
-        group_id: Box<[u8]>,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        transition: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         signer_bytes: Box<[u8]>,
-        removals: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        authorized_removals: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         aad: Box<[u8]>,
-        expected_previous_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_format_version: u32,
     ) {
         wire__crate__api__group_e2ee__remove_members_with_storage_impl(
             port_,
-            group_id,
+            context,
+            transition,
             signer_bytes,
-            removals,
+            authorized_removals,
             aad,
-            expected_previous_state,
-            storage_entries,
-            storage_format_version,
         )
     }
 
     #[wasm_bindgen]
     pub fn wire__crate__api__group_e2ee__self_update_with_storage(
         port_: flutter_rust_bridge::for_generated::MessagePort,
-        group_id: Box<[u8]>,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        transition: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         signer_bytes: Box<[u8]>,
-        aad: Box<[u8]>,
-        expected_previous_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         expected_self_authority: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_format_version: u32,
+        aad: Box<[u8]>,
     ) {
         wire__crate__api__group_e2ee__self_update_with_storage_impl(
             port_,
-            group_id,
+            context,
+            transition,
             signer_bytes,
-            aad,
-            expected_previous_state,
             expected_self_authority,
-            storage_entries,
-            storage_format_version,
+            aad,
         )
     }
 
@@ -7499,25 +10772,21 @@ mod web {
     #[wasm_bindgen]
     pub fn wire__crate__api__group_e2ee__swap_members_with_storage(
         port_: flutter_rust_bridge::for_generated::MessagePort,
-        group_id: Box<[u8]>,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        transition: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         signer_bytes: Box<[u8]>,
-        removals: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        additions: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        authorized_key_packages: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        authorized_removals: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         aad: Box<[u8]>,
-        expected_previous_state: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_entries: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        storage_format_version: u32,
     ) {
         wire__crate__api__group_e2ee__swap_members_with_storage_impl(
             port_,
-            group_id,
+            context,
+            transition,
             signer_bytes,
-            removals,
-            additions,
+            authorized_key_packages,
+            authorized_removals,
             aad,
-            expected_previous_state,
-            storage_entries,
-            storage_format_version,
         )
     }
 

@@ -182,9 +182,9 @@ jobs:
         run: make rust-test
         shell: bash
 
-      - name: Apple native receive v1 vector harness
+      - name: Apple native receive v2 vector harness
         if: matrix.name == 'macOS ARM64'
-        run: native/receive_v1/apple/run_macos_harness.sh
+        run: make native-receive-v2-apple
         shell: bash
 
       # Lint hand-written Rust with clippy (warnings = errors). Runs once, on

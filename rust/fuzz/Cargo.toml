@@ -43,8 +43,8 @@ doc = false
 bench = false
 
 [[bin]]
-name = "native_receive_v1"
-path = "fuzz_targets/native_receive_v1.rs"
+name = "native_receive_v2"
+path = "fuzz_targets/native_receive_v2.rs"
 test = false
 doc = false
 bench = false

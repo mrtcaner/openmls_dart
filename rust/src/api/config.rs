@@ -30,7 +30,7 @@ impl MlsGroupConfig {
             ciphersuite,
             wire_format_policy: MlsWireFormatPolicy::Ciphertext,
             use_ratchet_tree_extension: true,
-            max_past_epochs: 0,
+            max_past_epochs: 2,
             padding_size: 0,
             sender_ratchet_max_out_of_order: 5,
             sender_ratchet_max_forward_distance: 1000,

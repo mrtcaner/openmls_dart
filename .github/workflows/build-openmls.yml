@@ -159,13 +159,13 @@ jobs:
           cd rust
           cargo build --release --target ${{ matrix.rust_target }}
 
-      - name: Verify Apple native receive v1 exports
+      - name: Verify Apple native receive v2 exports
         run: |
           LIB="rust/target/${{ matrix.rust_target }}/release/libopenmls_frb.dylib"
-          ACTUAL="$(nm -gU "$LIB" | awk '{print $NF}' | sed 's/^_//' | grep '^openmls_receive_v1_' | LC_ALL=C sort)"
-          EXPECTED="$(printf '%s\n' openmls_receive_v1_execute openmls_receive_v1_free openmls_receive_v1_version | LC_ALL=C sort)"
+          ACTUAL="$(nm -gU "$LIB" | awk '{print $NF}' | sed 's/^_//' | grep '^openmls_receive_v' | LC_ALL=C sort)"
+          EXPECTED="$(printf '%s\n' openmls_receive_v2_execute openmls_receive_v2_free openmls_receive_v2_version | LC_ALL=C sort)"
           if [ "$ACTUAL" != "$EXPECTED" ]; then
-            echo "::error::Unexpected Apple native receive v1 export set"
+            echo "::error::Unexpected Apple native receive v2 export set"
             printf 'Expected:\n%s\nActual:\n%s\n' "$EXPECTED" "$ACTUAL"
             exit 1
           fi
@@ -216,13 +216,13 @@ jobs:
           cd rust
           cargo build --release --target ${{ matrix.rust_target }}
 
-      - name: Verify Apple native receive v1 exports
+      - name: Verify Apple native receive v2 exports
         run: |
           LIB="rust/target/${{ matrix.rust_target }}/release/libopenmls_frb.dylib"
-          ACTUAL="$(nm -gU "$LIB" | awk '{print $NF}' | sed 's/^_//' | grep '^openmls_receive_v1_' | LC_ALL=C sort)"
-          EXPECTED="$(printf '%s\n' openmls_receive_v1_execute openmls_receive_v1_free openmls_receive_v1_version | LC_ALL=C sort)"
+          ACTUAL="$(nm -gU "$LIB" | awk '{print $NF}' | sed 's/^_//' | grep '^openmls_receive_v' | LC_ALL=C sort)"
+          EXPECTED="$(printf '%s\n' openmls_receive_v2_execute openmls_receive_v2_free openmls_receive_v2_version | LC_ALL=C sort)"
           if [ "$ACTUAL" != "$EXPECTED" ]; then
-            echo "::error::Unexpected Apple native receive v1 export set"
+            echo "::error::Unexpected Apple native receive v2 export set"
             printf 'Expected:\n%s\nActual:\n%s\n' "$EXPECTED" "$ACTUAL"
             exit 1
           fi
@@ -276,14 +276,14 @@ jobs:
           cd rust
           cargo ndk -t ${{ matrix.rust_target }} --platform 24 build --release
 
-      - name: Verify Android native receive v1 exports
+      - name: Verify Android native receive v2 exports
         run: |
           LIB="rust/target/${{ matrix.rust_target }}/release/libopenmls_frb.so"
           PREFIX='Java_app_kurtuba_openmls_OpenMlsNativeReceive_'
           ACTUAL="$(nm -D --defined-only "$LIB" | awk '{print $NF}' | grep "^${PREFIX}" | LC_ALL=C sort)"
-          EXPECTED="$(printf '%s\n' "${PREFIX}nativeContractVersion" "${PREFIX}nativeExecuteReceiveV1" "${PREFIX}nativeZeroize" | LC_ALL=C sort)"
+          EXPECTED="$(printf '%s\n' "${PREFIX}nativeContractVersion" "${PREFIX}nativeExecuteReceiveV2" "${PREFIX}nativeZeroize" | LC_ALL=C sort)"
           if [ "$ACTUAL" != "$EXPECTED" ]; then
-            echo "::error::Unexpected Android native receive v1 export set"
+            echo "::error::Unexpected Android native receive v2 export set"
             printf 'Expected:\n%s\nActual:\n%s\n' "$EXPECTED" "$ACTUAL"
             exit 1
           fi
