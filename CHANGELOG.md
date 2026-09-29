@@ -1,10 +1,12 @@
 ## [Unreleased]
 
+## [4.0.0] - 2026-09-29
+
 ### For Users
 
 #### Changed (Breaking)
 
-- **Pending Commit lifecycle (4.0 development)** — preparation now persists
+- **Pending Commit lifecycle** — preparation now persists
   unmerged pending state immediately; explicit exact-acceptance merge and
   definitive-rejection discard preserve live receive ratchets. Action required:
   replace deferred full-state candidate promotion with the new lifecycle.
@@ -18,7 +20,7 @@
   format and roster/group-digest algorithms remain version 1.
 - **Native receive v2** — Android/Apple wrappers share the lifecycle core;
   v1 entrypoints are retired. Action required: migrate native frames and shim
-  entrypoints together. This is not yet a published release.
+  entrypoints together.
 
 ### For Contributors
 
@@ -26,7 +28,10 @@
 
 - **Generated Dart outcomes and v2 vectors** — pinned Freezed tooling supports
   the bridge's sealed results; shared synthetic vectors cover current and
-  historical receive plus fail-closed authority mismatches.
+  historical receive plus fail-closed authority mismatches and 256-leaf
+  Welcome/application/Commit/history boundary fixtures at retention 4 with
+  maximum supported application plaintext and AAD. The underlying OpenMLS
+  0.8.1 cryptographic dependencies are unchanged.
 
 ## [3.2.1] - 2026-09-14
 
@@ -527,7 +532,8 @@ and [`#7`](https://github.com/mrtcaner/openmls_dart/issues/7).
 - X.509 `x509()` documents that application layer must validate certificate chains
 - SECURITY.md: sensitive API table, known limitations, web deployment recommendations, vulnerability reporting via GitHub Security Advisories
 
-[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/a08e4fb714384c15ca1efc09fbb0a0491e7e25ed...HEAD
+[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/openmls_frb-4.0.0...HEAD
+[4.0.0]: https://github.com/mrtcaner/openmls_dart/compare/openmls_frb-3.2.1...openmls_frb-4.0.0
 [3.2.1]: https://github.com/mrtcaner/openmls_dart/compare/45cc7ceb7857790deda97af9d4013593965a6fc0...a08e4fb714384c15ca1efc09fbb0a0491e7e25ed
 [3.2.0]: https://github.com/mrtcaner/openmls_dart/compare/v3.1.0...f460b9be9a7ade1235d52bd08e58349729113b17
 [3.1.0]: https://github.com/mrtcaner/openmls_dart/compare/v3.0.0...v3.1.0

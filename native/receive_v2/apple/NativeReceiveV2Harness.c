@@ -20,7 +20,11 @@ static const char *vector_ids[] = {
     "application_empty_aad",
     "v1_frame_rejected",
     "commit_success",
-    "application_historical"
+    "application_historical",
+    "welcome_256_leaves",
+    "application_256_leaves",
+    "commit_256_leaves",
+    "historical_256_leaves"
 };
 
 static long long elapsed_microseconds(struct timespec start, struct timespec end) {

@@ -57,9 +57,9 @@ Flutter host tests resolve the library from Flutter’s generated `NativeAssetsM
 
 ## Caller-owned transaction boundary
 
-The current development line is `4.0.0-dev.1` (native receive contract/profile 2).
-It is a breaking, local-only development cut, not a published release. Existing
-zero-retention groups are not migrated automatically.
+Version `4.0.0` uses native receive contract/profile 2. This is a breaking
+API and lifecycle change. Existing zero-retention groups are not migrated
+automatically; initialize fresh groups under the coordinated consumer migration.
 
 Each operation follows the same rule:
 

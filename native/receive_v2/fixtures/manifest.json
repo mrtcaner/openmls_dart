@@ -1,6 +1,14 @@
 {
   "contract_version": 2,
-  "generated_date": "2026-09-28",
+  "generated_date": "2026-09-29",
+  "limits_256": {
+    "aad_bytes": 16384,
+    "application_plaintext_bytes": 262144,
+    "historical_distance": 4,
+    "rejects_257_leaves": true,
+    "retention": 4,
+    "roster_leaves": 256
+  },
   "profile_id": 2,
   "storage_format_version": 1,
   "synthetic_secrets_only": true,
@@ -130,6 +138,42 @@
       "request_sha256": "002ac67c52159b773b9d8c74bd7b8d6425a0ff62d6ff60bb909ce114ac26526e",
       "response_file": "application_historical.response.bin",
       "response_sha256": "77331c754c53b48e569153222bf3843540d6fe953956a38c86538c723a79d93a"
+    },
+    {
+      "expected_error_code": null,
+      "id": "welcome_256_leaves",
+      "operation": 3,
+      "request_file": "welcome_256_leaves.request.bin",
+      "request_sha256": "732ed06ec933a338e2032710f34ed5abd50e067f2f9021bb8f690b6add99c187",
+      "response_file": "welcome_256_leaves.response.bin",
+      "response_sha256": "a13e09ae73cf040733a03d98e7111e8bd4fce49cc1c99f49d755a2bc690ab721"
+    },
+    {
+      "expected_error_code": null,
+      "id": "application_256_leaves",
+      "operation": 1,
+      "request_file": "application_256_leaves.request.bin",
+      "request_sha256": "3f3c4c98e608f7b2a40c0931d77f91c9bd53fe25d819d1621b354705f3cc317f",
+      "response_file": "application_256_leaves.response.bin",
+      "response_sha256": "9cb4aed6b6da592a346e05800d052ff98b6f96d6977b010b913f768b33165ffe"
+    },
+    {
+      "expected_error_code": null,
+      "id": "commit_256_leaves",
+      "operation": 2,
+      "request_file": "commit_256_leaves.request.bin",
+      "request_sha256": "fcf10ea283381cc24e891339638f804dac49e421ba27bbdfc824d040b46546ef",
+      "response_file": "commit_256_leaves.response.bin",
+      "response_sha256": "d434c4b48623b259634dd06bd2d1fcaf1aac58830311e356f814097b4d0230c3"
+    },
+    {
+      "expected_error_code": null,
+      "id": "historical_256_leaves",
+      "operation": 1,
+      "request_file": "historical_256_leaves.request.bin",
+      "request_sha256": "7cbc368f20b524bc695f69611e2b8696226e66eac984b9b1423ee9f35803cdee",
+      "response_file": "historical_256_leaves.response.bin",
+      "response_sha256": "5f93634d1163879bdf7adf723798cba43bc04eac542ef679f8bbb55367e70717"
     }
   ]
 }

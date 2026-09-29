@@ -1104,7 +1104,8 @@ mod tests {
         use std::{fs, path::PathBuf};
         let output =
             PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../native/receive_v2/fixtures");
-        let generating = std::env::var_os("MLS_EXPORT_NATIVE_V2").is_some();
+        let only_limits = std::env::var_os("MLS_EXPORT_NATIVE_V2_LIMITS").is_some();
+        let generating = std::env::var_os("MLS_EXPORT_NATIVE_V2").is_some() || only_limits;
         let hash = |bytes: &[u8]| -> String {
             Sha256::digest(bytes)
                 .iter()
@@ -1189,7 +1190,19 @@ mod tests {
                 incarnation_id: input.context.incarnation_id.clone(),
             }
         }
-        let mut records = vec![];
+        let mut records = if only_limits {
+            let existing: serde_json::Value =
+                serde_json::from_slice(&fs::read(output.join("manifest.json")).unwrap()).unwrap();
+            existing["vectors"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|r| !r["id"].as_str().unwrap().ends_with("_256_leaves"))
+                .cloned()
+                .collect::<Vec<_>>()
+        } else {
+            vec![]
+        };
         fs::create_dir_all(&output).unwrap();
         let mut write = |id: &str, mut bytes: Vec<u8>, error: Option<Error>| {
             let result = Zeroizing::new(execute_native_receive_v2(&bytes));
@@ -1224,212 +1237,425 @@ mod tests {
                 "expected_error_code":error.map(|e|e as u16)}));
             bytes.zeroize();
         };
-        let mut a = peer(1, 2);
-        let initialized = create(
-            profile(2).unwrap(),
-            a.signer.to_vec(),
-            GID.to_vec(),
-            vec![8; 16],
-            MlsAuthorizedOwnerV1 {
-                expected_credential_identity: a.id.clone(),
-                expected_signature_public_key: a.public.clone(),
-            },
-            None,
-            vec![],
-            1,
-        )
-        .unwrap();
-        mutate(&mut a, &initialized);
-        let mut b = peer(2, 4);
-        let kp = create_key_package_with_storage(
-            profile(4).unwrap().ciphersuite,
-            b.signer.to_vec(),
-            b.id.clone(),
-            b.public.clone(),
-            None,
-            vec![],
-            1,
-        )
-        .unwrap();
-        apply(&mut b, &kp.storage_batch);
-        let kp_hash = Sha256::digest(&kp.key_package_bytes).to_vec();
-        let add = prepare(
-            context(&a),
-            a.signer.to_vec(),
-            transition(1),
-            vec![MlsAuthorizedKeyPackageV1 {
-                key_package_bytes: kp.key_package_bytes,
-                expected_credential_identity: b.id.clone(),
-                expected_signature_public_key: b.public.clone(),
-            }],
-            vec![],
-            AAD.to_vec(),
-            None,
-        )
-        .unwrap();
-        mutate(&mut a, &add.mutation);
-        let merged = merge(context(&a), acceptance(&add)).unwrap();
-        mutate(&mut a, &merged);
-        let welcome = add.welcome.unwrap();
-        let mut welcome_request = NativeReceiveRequestV2::Welcome {
-            profile_id: 2,
-            welcome_bytes: welcome.clone(),
-            expected_welcome_sha256: Sha256::digest(&welcome).to_vec(),
-            ratchet_tree_bytes: None,
-            signer_bytes: b.signer.to_vec(),
-            expected_local_leaf: leaf(&a.roster.leaves[1]),
-            expected_resulting_state: roster(&expected(&a.roster)),
-            expected_target_key_package_sha256: kp_hash.clone(),
-            storage: rows(&b.rows.0),
-            retention: 4,
-            incarnation_id: vec![8; 16],
-        };
-        write(
-            "welcome_success",
-            encode_native_receive_request_v2(&welcome_request).unwrap(),
-            None,
-        );
-        if let NativeReceiveRequestV2::Welcome {
-            expected_target_key_package_sha256,
-            ..
-        } = &mut welcome_request
-        {
-            expected_target_key_package_sha256[0] ^= 1;
-        }
-        write(
-            "welcome_wrong_key_package",
-            encode_native_receive_request_v2(&welcome_request).unwrap(),
-            Some(Error::ExpectedKeyPackageMismatch),
-        );
-        let joined = join(JoinInput {
-            config: profile(4).unwrap(),
-            incarnation_id: vec![8; 16],
-            signer: b.signer.to_vec(),
-            welcome_sha256: Sha256::digest(&welcome).to_vec(),
-            welcome,
-            tree: None,
-            resulting: expected(&a.roster),
-            local_leaf: a.roster.leaves[1].clone(),
-            target_key_package_sha256: kp_hash,
-            entries: b.rows.0.clone(),
-            storage_format: 1,
-        })
-        .unwrap();
-        mutate(&mut b, &joined.mutation);
-        let current = expected(&a.roster);
-        let author = a.roster.leaves[0].clone();
-        let app = send(
-            context(&a),
-            a.signer.to_vec(),
-            b"shared v2 fixture".to_vec(),
-            AAD.to_vec(),
-        )
-        .unwrap();
-        mutate(&mut a, &app.mutation);
-        let base_request = request(incoming(
-            &b,
-            app.ciphertext.clone(),
-            MlsReceiveKind::Application,
-            author.clone(),
-            current.clone(),
-            current.clone(),
-        ));
-        let base_frame = Zeroizing::new(encode_native_receive_request_v2(&base_request).unwrap());
-        write("application_success", base_frame.to_vec(), None);
-        for (id, error) in [
-            ("application_wrong_aad", Error::AadMismatch),
-            ("application_wrong_sender", Error::SenderMismatch),
-            ("application_wrong_roster", Error::MessageRosterMismatch),
-            ("application_wrong_base", Error::BaseStateMismatch),
-            ("application_wrong_hash", Error::WireHashMismatch),
-            ("application_wrong_kind", Error::MessageKindMismatch),
-            ("application_wrong_retention", Error::ConfigurationMismatch),
-        ] {
-            let mut changed = decode_native_receive_request_v2(&base_frame).unwrap();
-            if let NativeReceiveRequestV2::Process {
-                expected_aad,
-                expected_sender,
-                expected_message_state,
-                expected_base_group_state_sha256,
-                expected_message_sha256,
-                operation,
-                expected_retention,
+        if !only_limits {
+            let mut a = peer(1, 2);
+            let initialized = create(
+                profile(2).unwrap(),
+                a.signer.to_vec(),
+                GID.to_vec(),
+                vec![8; 16],
+                MlsAuthorizedOwnerV1 {
+                    expected_credential_identity: a.id.clone(),
+                    expected_signature_public_key: a.public.clone(),
+                },
+                None,
+                vec![],
+                1,
+            )
+            .unwrap();
+            mutate(&mut a, &initialized);
+            let mut b = peer(2, 4);
+            let kp = create_key_package_with_storage(
+                profile(4).unwrap().ciphersuite,
+                b.signer.to_vec(),
+                b.id.clone(),
+                b.public.clone(),
+                None,
+                vec![],
+                1,
+            )
+            .unwrap();
+            apply(&mut b, &kp.storage_batch);
+            let kp_hash = Sha256::digest(&kp.key_package_bytes).to_vec();
+            let add = prepare(
+                context(&a),
+                a.signer.to_vec(),
+                transition(1),
+                vec![MlsAuthorizedKeyPackageV1 {
+                    key_package_bytes: kp.key_package_bytes,
+                    expected_credential_identity: b.id.clone(),
+                    expected_signature_public_key: b.public.clone(),
+                }],
+                vec![],
+                AAD.to_vec(),
+                None,
+            )
+            .unwrap();
+            mutate(&mut a, &add.mutation);
+            let merged = merge(context(&a), acceptance(&add)).unwrap();
+            mutate(&mut a, &merged);
+            let welcome = add.welcome.unwrap();
+            let mut welcome_request = NativeReceiveRequestV2::Welcome {
+                profile_id: 2,
+                welcome_bytes: welcome.clone(),
+                expected_welcome_sha256: Sha256::digest(&welcome).to_vec(),
+                ratchet_tree_bytes: None,
+                signer_bytes: b.signer.to_vec(),
+                expected_local_leaf: leaf(&a.roster.leaves[1]),
+                expected_resulting_state: roster(&expected(&a.roster)),
+                expected_target_key_package_sha256: kp_hash.clone(),
+                storage: rows(&b.rows.0),
+                retention: 4,
+                incarnation_id: vec![8; 16],
+            };
+            write(
+                "welcome_success",
+                encode_native_receive_request_v2(&welcome_request).unwrap(),
+                None,
+            );
+            if let NativeReceiveRequestV2::Welcome {
+                expected_target_key_package_sha256,
                 ..
-            } = &mut changed
+            } = &mut welcome_request
             {
-                match error {
-                    Error::AadMismatch => expected_aad.push(0),
-                    Error::SenderMismatch => expected_sender.signature_public_key[0] ^= 1,
-                    Error::MessageRosterMismatch => expected_message_state.digest_sha256[0] ^= 1,
-                    Error::BaseStateMismatch => expected_base_group_state_sha256[0] ^= 1,
-                    Error::WireHashMismatch => expected_message_sha256[0] ^= 1,
-                    Error::MessageKindMismatch => *operation = NativeReceiveOperationV2::Commit,
-                    Error::ConfigurationMismatch => *expected_retention = 2,
-                    _ => unreachable!(),
-                }
+                expected_target_key_package_sha256[0] ^= 1;
             }
             write(
-                id,
-                encode_native_receive_request_v2(&changed).unwrap(),
-                Some(error),
+                "welcome_wrong_key_package",
+                encode_native_receive_request_v2(&welcome_request).unwrap(),
+                Some(Error::ExpectedKeyPackageMismatch),
             );
-        }
-        let mut empty = decode_native_receive_request_v2(&base_frame).unwrap();
-        if let NativeReceiveRequestV2::Process { expected_aad, .. } = &mut empty {
-            expected_aad.clear();
-        }
-        write(
-            "application_empty_aad",
-            encode_native_receive_request_v2_allow_empty_aad_fixture(&empty).unwrap(),
-            Some(Error::LimitExceeded),
-        );
-        let mut old = base_frame.to_vec();
-        old[5] = 1;
-        write(
-            "v1_frame_rejected",
-            old,
-            Some(Error::UnsupportedContractVersion),
-        );
-        let p = self_prepare(&a, 2);
-        mutate(&mut a, &p.mutation);
-        let commit_request = incoming(
-            &b,
-            p.commit.clone(),
-            MlsReceiveKind::Commit,
-            author.clone(),
-            current.clone(),
-            expected(&p.proposed),
-        );
-        write(
-            "commit_success",
-            encode_native_receive_request_v2(&request(incoming(
+            let joined = join(JoinInput {
+                config: profile(4).unwrap(),
+                incarnation_id: vec![8; 16],
+                signer: b.signer.to_vec(),
+                welcome_sha256: Sha256::digest(&welcome).to_vec(),
+                welcome,
+                tree: None,
+                resulting: expected(&a.roster),
+                local_leaf: a.roster.leaves[1].clone(),
+                target_key_package_sha256: kp_hash,
+                entries: b.rows.0.clone(),
+                storage_format: 1,
+            })
+            .unwrap();
+            mutate(&mut b, &joined.mutation);
+            let current = expected(&a.roster);
+            let author = a.roster.leaves[0].clone();
+            let app = send(
+                context(&a),
+                a.signer.to_vec(),
+                b"shared v2 fixture".to_vec(),
+                AAD.to_vec(),
+            )
+            .unwrap();
+            mutate(&mut a, &app.mutation);
+            let base_request = request(incoming(
+                &b,
+                app.ciphertext.clone(),
+                MlsReceiveKind::Application,
+                author.clone(),
+                current.clone(),
+                current.clone(),
+            ));
+            let base_frame =
+                Zeroizing::new(encode_native_receive_request_v2(&base_request).unwrap());
+            write("application_success", base_frame.to_vec(), None);
+            for (id, error) in [
+                ("application_wrong_aad", Error::AadMismatch),
+                ("application_wrong_sender", Error::SenderMismatch),
+                ("application_wrong_roster", Error::MessageRosterMismatch),
+                ("application_wrong_base", Error::BaseStateMismatch),
+                ("application_wrong_hash", Error::WireHashMismatch),
+                ("application_wrong_kind", Error::MessageKindMismatch),
+                ("application_wrong_retention", Error::ConfigurationMismatch),
+            ] {
+                let mut changed = decode_native_receive_request_v2(&base_frame).unwrap();
+                if let NativeReceiveRequestV2::Process {
+                    expected_aad,
+                    expected_sender,
+                    expected_message_state,
+                    expected_base_group_state_sha256,
+                    expected_message_sha256,
+                    operation,
+                    expected_retention,
+                    ..
+                } = &mut changed
+                {
+                    match error {
+                        Error::AadMismatch => expected_aad.push(0),
+                        Error::SenderMismatch => expected_sender.signature_public_key[0] ^= 1,
+                        Error::MessageRosterMismatch => {
+                            expected_message_state.digest_sha256[0] ^= 1
+                        }
+                        Error::BaseStateMismatch => expected_base_group_state_sha256[0] ^= 1,
+                        Error::WireHashMismatch => expected_message_sha256[0] ^= 1,
+                        Error::MessageKindMismatch => *operation = NativeReceiveOperationV2::Commit,
+                        Error::ConfigurationMismatch => *expected_retention = 2,
+                        _ => unreachable!(),
+                    }
+                }
+                write(
+                    id,
+                    encode_native_receive_request_v2(&changed).unwrap(),
+                    Some(error),
+                );
+            }
+            let mut empty = decode_native_receive_request_v2(&base_frame).unwrap();
+            if let NativeReceiveRequestV2::Process { expected_aad, .. } = &mut empty {
+                expected_aad.clear();
+            }
+            write(
+                "application_empty_aad",
+                encode_native_receive_request_v2_allow_empty_aad_fixture(&empty).unwrap(),
+                Some(Error::LimitExceeded),
+            );
+            let mut old = base_frame.to_vec();
+            old[5] = 1;
+            write(
+                "v1_frame_rejected",
+                old,
+                Some(Error::UnsupportedContractVersion),
+            );
+            let p = self_prepare(&a, 2);
+            mutate(&mut a, &p.mutation);
+            let commit_request = incoming(
                 &b,
                 p.commit.clone(),
                 MlsReceiveKind::Commit,
                 author.clone(),
                 current.clone(),
                 expected(&p.proposed),
-            )))
-            .unwrap(),
+            );
+            write(
+                "commit_success",
+                encode_native_receive_request_v2(&request(incoming(
+                    &b,
+                    p.commit.clone(),
+                    MlsReceiveKind::Commit,
+                    author.clone(),
+                    current.clone(),
+                    expected(&p.proposed),
+                )))
+                .unwrap(),
+                None,
+            );
+            let received = receive(commit_request).unwrap();
+            mutate(&mut b, &received.mutation);
+            write(
+                "application_historical",
+                encode_native_receive_request_v2(&request(incoming(
+                    &b,
+                    app.ciphertext,
+                    MlsReceiveKind::Application,
+                    author,
+                    current,
+                    expected(&b.roster),
+                )))
+                .unwrap(),
+                None,
+            );
+        }
+
+        // Shipping boundary fixture, not a timing/RSS benchmark. Exercise the
+        // largest supported roster, retention and application/AAD fields.
+        let mut owner = peer(0, 4);
+        let initialized = create(
+            profile(4).unwrap(),
+            owner.signer.to_vec(),
+            GID.to_vec(),
+            vec![8; 16],
+            MlsAuthorizedOwnerV1 {
+                expected_credential_identity: owner.id.clone(),
+                expected_signature_public_key: owner.public.clone(),
+            },
             None,
-        );
-        let received = receive(commit_request).unwrap();
-        mutate(&mut b, &received.mutation);
+            vec![],
+            1,
+        )
+        .unwrap();
+        mutate(&mut owner, &initialized);
+        let mut additions = Vec::new();
+        let mut target = None;
+        for id in 1..=255 {
+            let mut member = peer(id, 4);
+            let kp = create_key_package_with_storage(
+                profile(4).unwrap().ciphersuite,
+                member.signer.to_vec(),
+                member.id.clone(),
+                member.public.clone(),
+                None,
+                vec![],
+                1,
+            )
+            .unwrap();
+            apply(&mut member, &kp.storage_batch);
+            let hash = Sha256::digest(&kp.key_package_bytes).to_vec();
+            additions.push(MlsAuthorizedKeyPackageV1 {
+                key_package_bytes: kp.key_package_bytes,
+                expected_credential_identity: member.id.clone(),
+                expected_signature_public_key: member.public.clone(),
+            });
+            if id == 255 {
+                target = Some((member, hash));
+            }
+        }
+        let extra = MlsAuthorizedKeyPackageV1 {
+            key_package_bytes: additions[0].key_package_bytes.clone(),
+            expected_credential_identity: additions[0].expected_credential_identity.clone(),
+            expected_signature_public_key: additions[0].expected_signature_public_key.clone(),
+        };
+        let max_aad = vec![0x41; 16 * 1024];
+        let add = prepare(
+            context(&owner),
+            owner.signer.to_vec(),
+            transition(20),
+            additions,
+            vec![],
+            max_aad.clone(),
+            None,
+        )
+        .unwrap();
+        mutate(&mut owner, &add.mutation);
+        let merged = merge(context(&owner), acceptance(&add)).unwrap();
+        mutate(&mut owner, &merged);
+        assert_eq!(owner.roster.leaves.len(), 256);
+        assert!(matches!(
+            prepare(
+                context(&owner),
+                owner.signer.to_vec(),
+                transition(21),
+                vec![extra],
+                vec![],
+                max_aad.clone(),
+                None
+            ),
+            Err(Error::LimitExceeded)
+        ));
+        let (mut target, kp_hash) = target.unwrap();
+        let local_leaf = owner
+            .roster
+            .leaves
+            .iter()
+            .find(|l| l.credential_identity == target.id)
+            .unwrap()
+            .clone();
+        let welcome = add.welcome.unwrap();
         write(
-            "application_historical",
-            encode_native_receive_request_v2(&request(incoming(
-                &b,
-                app.ciphertext,
-                MlsReceiveKind::Application,
-                author,
-                current,
-                expected(&b.roster),
-            )))
+            "welcome_256_leaves",
+            encode_native_receive_request_v2(&NativeReceiveRequestV2::Welcome {
+                profile_id: 2,
+                welcome_bytes: welcome.clone(),
+                expected_welcome_sha256: Sha256::digest(&welcome).to_vec(),
+                ratchet_tree_bytes: None,
+                signer_bytes: target.signer.to_vec(),
+                expected_local_leaf: leaf(&local_leaf),
+                expected_resulting_state: roster(&expected(&owner.roster)),
+                expected_target_key_package_sha256: kp_hash.clone(),
+                storage: rows(&target.rows.0),
+                retention: 4,
+                incarnation_id: vec![8; 16],
+            })
             .unwrap(),
             None,
         );
-        let manifest = json!({"generated_date":"2026-09-28","contract_version":2,"profile_id":2,
-            "storage_format_version":1,"synthetic_secrets_only":true,"vectors":records});
+        let joined = join(JoinInput {
+            config: profile(4).unwrap(),
+            incarnation_id: vec![8; 16],
+            signer: target.signer.to_vec(),
+            welcome_sha256: Sha256::digest(&welcome).to_vec(),
+            welcome,
+            tree: None,
+            resulting: expected(&owner.roster),
+            local_leaf,
+            target_key_package_sha256: kp_hash,
+            entries: target.rows.0.clone(),
+            storage_format: 1,
+        })
+        .unwrap();
+        mutate(&mut target, &joined.mutation);
+        let original_state = expected(&owner.roster);
+        let author = owner.roster.leaves[0].clone();
+        let app = send(
+            context(&owner),
+            owner.signer.to_vec(),
+            vec![0x50; 256 * 1024],
+            max_aad.clone(),
+        )
+        .unwrap();
+        mutate(&mut owner, &app.mutation);
+        let mut app_input = incoming(
+            &target,
+            app.ciphertext.clone(),
+            MlsReceiveKind::Application,
+            author.clone(),
+            original_state.clone(),
+            expected(&target.roster),
+        );
+        app_input.aad = max_aad.clone();
+        write(
+            "application_256_leaves",
+            encode_native_receive_request_v2(&request(app_input)).unwrap(),
+            None,
+        );
+        for n in 0..4 {
+            let before = expected(&owner.roster);
+            let p = prepare(
+                context(&owner),
+                owner.signer.to_vec(),
+                transition(30 + n),
+                vec![],
+                vec![],
+                max_aad.clone(),
+                Some(MlsAuthorizedSelfV1 {
+                    leaf_index: author.leaf_index,
+                    expected_credential_identity: author.credential_identity.clone(),
+                    expected_signature_public_key: author.signature_public_key.clone(),
+                }),
+            )
+            .unwrap();
+            mutate(&mut owner, &p.mutation);
+            let merged = merge(context(&owner), acceptance(&p)).unwrap();
+            mutate(&mut owner, &merged);
+            let mut input = incoming(
+                &target,
+                p.commit.clone(),
+                MlsReceiveKind::Commit,
+                author.clone(),
+                before.clone(),
+                expected(&owner.roster),
+            );
+            input.aad = max_aad.clone();
+            if n == 3 {
+                let mut vector_input = incoming(
+                    &target,
+                    p.commit.clone(),
+                    MlsReceiveKind::Commit,
+                    author.clone(),
+                    before,
+                    expected(&owner.roster),
+                );
+                vector_input.aad = max_aad.clone();
+                write(
+                    "commit_256_leaves",
+                    encode_native_receive_request_v2(&request(vector_input)).unwrap(),
+                    None,
+                );
+            }
+            let received = receive(input).unwrap();
+            mutate(&mut target, &received.mutation);
+        }
+        let mut historical = incoming(
+            &target,
+            app.ciphertext,
+            MlsReceiveKind::Application,
+            author,
+            original_state.clone(),
+            expected(&target.roster),
+        );
+        historical.aad = max_aad;
+        assert_eq!(target.roster.epoch - original_state.epoch, 4);
+        write(
+            "historical_256_leaves",
+            encode_native_receive_request_v2(&request(historical)).unwrap(),
+            None,
+        );
+
+        let manifest = json!({"generated_date":"2026-09-29","contract_version":2,"profile_id":2,
+            "storage_format_version":1,"synthetic_secrets_only":true,
+            "limits_256":{"roster_leaves":256,"retention":4,"historical_distance":4,
+                "application_plaintext_bytes":262144,"aad_bytes":16384,"rejects_257_leaves":true},
+            "vectors":records});
         fs::write(
             output.join("manifest.json"),
             serde_json::to_vec_pretty(&manifest).unwrap(),

@@ -22,7 +22,11 @@ public final class NativeReceiveV2Harness {
     "application_empty_aad",
     "v1_frame_rejected",
     "commit_success",
-    "application_historical"
+    "application_historical",
+    "welcome_256_leaves",
+    "application_256_leaves",
+    "commit_256_leaves",
+    "historical_256_leaves"
   };
 
   private NativeReceiveV2Harness() {}

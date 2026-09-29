@@ -254,6 +254,10 @@ regen: codegen
 native-receive-v2-vectors:
 	MLS_EXPORT_NATIVE_V2=1 $(MAKE) rust-test
 
+.PHONY: native-receive-v2-limit-vectors
+native-receive-v2-limit-vectors:
+	MLS_EXPORT_NATIVE_V2_LIMITS=1 $(MAKE) rust-test
+
 native-receive-v2-apple: build
 	sh native/receive_v2/apple/run_macos_harness.sh
 
