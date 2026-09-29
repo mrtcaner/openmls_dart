@@ -1,6 +1,26 @@
 ## [Unreleased]
 
+## [4.0.1] - 2026-09-29
+
+### For Users
+
+#### Fixed
+
+- **Complete native distribution** — replaces the unpublished 4.0.0 build,
+  whose Android SDK setup failed before compilation. The 4.0 breaking API
+  changes below apply unchanged; no runtime or cryptographic change is added.
+
+### For Contributors
+
+#### Fixed
+
+- **Android SDK setup** — explicitly request `platform-tools` instead of the
+  setup action's obsolete `tools platform-tools` default. The pinned action,
+  NDK, minSdk and Rust dependency resolution are unchanged.
+
 ## [4.0.0] - 2026-09-29
+
+Native release not published; signed tag retained for traceability.
 
 ### For Users
 
@@ -532,7 +552,8 @@ and [`#7`](https://github.com/mrtcaner/openmls_dart/issues/7).
 - X.509 `x509()` documents that application layer must validate certificate chains
 - SECURITY.md: sensitive API table, known limitations, web deployment recommendations, vulnerability reporting via GitHub Security Advisories
 
-[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/openmls_frb-4.0.0...HEAD
+[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/openmls_frb-4.0.1...HEAD
+[4.0.1]: https://github.com/mrtcaner/openmls_dart/compare/openmls_frb-4.0.0...openmls_frb-4.0.1
 [4.0.0]: https://github.com/mrtcaner/openmls_dart/compare/openmls_frb-3.2.1...openmls_frb-4.0.0
 [3.2.1]: https://github.com/mrtcaner/openmls_dart/compare/45cc7ceb7857790deda97af9d4013593965a6fc0...a08e4fb714384c15ca1efc09fbb0a0491e7e25ed
 [3.2.0]: https://github.com/mrtcaner/openmls_dart/compare/v3.1.0...f460b9be9a7ade1235d52bd08e58349729113b17

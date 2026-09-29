@@ -57,7 +57,7 @@ Flutter host tests resolve the library from Flutter’s generated `NativeAssetsM
 
 ## Caller-owned transaction boundary
 
-Version `4.0.0` uses native receive contract/profile 2. This is a breaking
+Version `4.0.1` uses native receive contract/profile 2. This is a breaking
 API and lifecycle change. Existing zero-retention groups are not migrated
 automatically; initialize fresh groups under the coordinated consumer migration.
 
