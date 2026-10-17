@@ -124,7 +124,7 @@ fn tree(bytes: &[u8]) -> Result<(), Error> {
                     if unmerged.len() % 4 != 0 {
                         return Err(Error::DecodeRejected);
                     }
-                    for b in unmerged.chunks_exact(4) {
+                    for b in unmerged.as_chunks::<4>().0 {
                         if u32::from_be_bytes([b[0], b[1], b[2], b[3]]) >= MAX_LEAVES as u32 {
                             return Err(Error::LimitExceeded);
                         }

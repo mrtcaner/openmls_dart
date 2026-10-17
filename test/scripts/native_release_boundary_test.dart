@@ -3,9 +3,18 @@ import 'dart:io';
 import 'package:test/test.dart';
 
 void main() {
-  final workflow = File(
-    '.github/workflows/build-openmls.yml',
-  ).readAsStringSync();
+  final source = File('.github/workflows/build-openmls.yml').readAsStringSync();
+  for (final lineEnding in ['\n', '\r\n']) {
+    group(lineEnding == '\n' ? 'LF checkout' : 'CRLF checkout', () {
+      verifyWorkflow(
+        source.replaceAll('\r\n', '\n').replaceAll('\n', lineEnding),
+      );
+    });
+  }
+}
+
+void verifyWorkflow(String source) {
+  final workflow = source.replaceAll('\r\n', '\n');
   String step(String name) {
     final start = workflow.indexOf('      - name: $name\n');
     expect(start, isNonNegative, reason: 'missing step $name');
