@@ -9,6 +9,7 @@ openmls_frb v3.2.0|default
 openmls v0.8.1 (https://example.invalid/openmls)|openmls_rust_crypto
 openmls_basic_credential v0.5.0|default,test-utils
 backtrace v0.3.76|default,std
+libcrux-sha3 v0.0.8|default
 ''';
 
     expect(findForbiddenOpenMlsProductionFeatures(tree), isEmpty);
@@ -32,6 +33,24 @@ openmls_basic_credential v0.5.0|default,test-utils
     expect(
       () => findForbiddenOpenMlsProductionFeatures(tree),
       throwsFormatException,
+    );
+  });
+
+  test('rejects reachable libcrux-kem even without enabled crate features', () {
+    const tree = '''
+openmls v0.8.1 (https://example.invalid/openmls)|
+libcrux-kem v0.0.7|
+''';
+
+    expect(
+      () => findForbiddenOpenMlsProductionFeatures(tree),
+      throwsA(
+        isA<FormatException>().having(
+          (error) => error.message,
+          'message',
+          contains('re-review the lockfile-only audit exceptions'),
+        ),
+      ),
     );
   });
 }
