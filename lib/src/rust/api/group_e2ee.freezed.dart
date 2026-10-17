@@ -888,6 +888,298 @@ as MlsErrorCode,
 }
 
 /// @nodoc
+mixin _$ExportGroupInfoWithStorageOutcome {
+
+ Object get field0;
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExportGroupInfoWithStorageOutcome&&const DeepCollectionEquality().equals(other.field0, field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(field0));
+
+@override
+String toString() {
+  return 'ExportGroupInfoWithStorageOutcome(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+class $ExportGroupInfoWithStorageOutcomeCopyWith<$Res>  {
+$ExportGroupInfoWithStorageOutcomeCopyWith(ExportGroupInfoWithStorageOutcome _, $Res Function(ExportGroupInfoWithStorageOutcome) __);
+}
+
+
+/// Adds pattern-matching-related methods to [ExportGroupInfoWithStorageOutcome].
+extension ExportGroupInfoWithStorageOutcomePatterns on ExportGroupInfoWithStorageOutcome {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( ExportGroupInfoWithStorageOutcome_Success value)?  success,TResult Function( ExportGroupInfoWithStorageOutcome_Failure value)?  failure,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case ExportGroupInfoWithStorageOutcome_Success() when success != null:
+return success(_that);case ExportGroupInfoWithStorageOutcome_Failure() when failure != null:
+return failure(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( ExportGroupInfoWithStorageOutcome_Success value)  success,required TResult Function( ExportGroupInfoWithStorageOutcome_Failure value)  failure,}){
+final _that = this;
+switch (_that) {
+case ExportGroupInfoWithStorageOutcome_Success():
+return success(_that);case ExportGroupInfoWithStorageOutcome_Failure():
+return failure(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( ExportGroupInfoWithStorageOutcome_Success value)?  success,TResult? Function( ExportGroupInfoWithStorageOutcome_Failure value)?  failure,}){
+final _that = this;
+switch (_that) {
+case ExportGroupInfoWithStorageOutcome_Success() when success != null:
+return success(_that);case ExportGroupInfoWithStorageOutcome_Failure() when failure != null:
+return failure(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( ExportGroupInfoWithStorageResult field0)?  success,TResult Function( MlsErrorCode field0)?  failure,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case ExportGroupInfoWithStorageOutcome_Success() when success != null:
+return success(_that.field0);case ExportGroupInfoWithStorageOutcome_Failure() when failure != null:
+return failure(_that.field0);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( ExportGroupInfoWithStorageResult field0)  success,required TResult Function( MlsErrorCode field0)  failure,}) {final _that = this;
+switch (_that) {
+case ExportGroupInfoWithStorageOutcome_Success():
+return success(_that.field0);case ExportGroupInfoWithStorageOutcome_Failure():
+return failure(_that.field0);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( ExportGroupInfoWithStorageResult field0)?  success,TResult? Function( MlsErrorCode field0)?  failure,}) {final _that = this;
+switch (_that) {
+case ExportGroupInfoWithStorageOutcome_Success() when success != null:
+return success(_that.field0);case ExportGroupInfoWithStorageOutcome_Failure() when failure != null:
+return failure(_that.field0);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class ExportGroupInfoWithStorageOutcome_Success extends ExportGroupInfoWithStorageOutcome {
+  const ExportGroupInfoWithStorageOutcome_Success(this.field0): super._();
+
+
+@override final  ExportGroupInfoWithStorageResult field0;
+
+/// Create a copy of ExportGroupInfoWithStorageOutcome
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ExportGroupInfoWithStorageOutcome_SuccessCopyWith<ExportGroupInfoWithStorageOutcome_Success> get copyWith => _$ExportGroupInfoWithStorageOutcome_SuccessCopyWithImpl<ExportGroupInfoWithStorageOutcome_Success>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExportGroupInfoWithStorageOutcome_Success&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'ExportGroupInfoWithStorageOutcome.success(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ExportGroupInfoWithStorageOutcome_SuccessCopyWith<$Res> implements $ExportGroupInfoWithStorageOutcomeCopyWith<$Res> {
+  factory $ExportGroupInfoWithStorageOutcome_SuccessCopyWith(ExportGroupInfoWithStorageOutcome_Success value, $Res Function(ExportGroupInfoWithStorageOutcome_Success) _then) = _$ExportGroupInfoWithStorageOutcome_SuccessCopyWithImpl;
+@useResult
+$Res call({
+ ExportGroupInfoWithStorageResult field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$ExportGroupInfoWithStorageOutcome_SuccessCopyWithImpl<$Res>
+    implements $ExportGroupInfoWithStorageOutcome_SuccessCopyWith<$Res> {
+  _$ExportGroupInfoWithStorageOutcome_SuccessCopyWithImpl(this._self, this._then);
+
+  final ExportGroupInfoWithStorageOutcome_Success _self;
+  final $Res Function(ExportGroupInfoWithStorageOutcome_Success) _then;
+
+/// Create a copy of ExportGroupInfoWithStorageOutcome
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(ExportGroupInfoWithStorageOutcome_Success(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as ExportGroupInfoWithStorageResult,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class ExportGroupInfoWithStorageOutcome_Failure extends ExportGroupInfoWithStorageOutcome {
+  const ExportGroupInfoWithStorageOutcome_Failure(this.field0): super._();
+
+
+@override final  MlsErrorCode field0;
+
+/// Create a copy of ExportGroupInfoWithStorageOutcome
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ExportGroupInfoWithStorageOutcome_FailureCopyWith<ExportGroupInfoWithStorageOutcome_Failure> get copyWith => _$ExportGroupInfoWithStorageOutcome_FailureCopyWithImpl<ExportGroupInfoWithStorageOutcome_Failure>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExportGroupInfoWithStorageOutcome_Failure&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'ExportGroupInfoWithStorageOutcome.failure(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ExportGroupInfoWithStorageOutcome_FailureCopyWith<$Res> implements $ExportGroupInfoWithStorageOutcomeCopyWith<$Res> {
+  factory $ExportGroupInfoWithStorageOutcome_FailureCopyWith(ExportGroupInfoWithStorageOutcome_Failure value, $Res Function(ExportGroupInfoWithStorageOutcome_Failure) _then) = _$ExportGroupInfoWithStorageOutcome_FailureCopyWithImpl;
+@useResult
+$Res call({
+ MlsErrorCode field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$ExportGroupInfoWithStorageOutcome_FailureCopyWithImpl<$Res>
+    implements $ExportGroupInfoWithStorageOutcome_FailureCopyWith<$Res> {
+  _$ExportGroupInfoWithStorageOutcome_FailureCopyWithImpl(this._self, this._then);
+
+  final ExportGroupInfoWithStorageOutcome_Failure _self;
+  final $Res Function(ExportGroupInfoWithStorageOutcome_Failure) _then;
+
+/// Create a copy of ExportGroupInfoWithStorageOutcome
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(ExportGroupInfoWithStorageOutcome_Failure(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as MlsErrorCode,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$GetPendingCommitWithStorageOutcome {
 
  Object? get field0;

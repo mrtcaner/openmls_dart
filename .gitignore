@@ -49,6 +49,7 @@ KURTUBA_*_CHANGE_REQUEST.md
 
 # Build output
 build/
+.buildlog/
 
 # Coverage
 coverage/

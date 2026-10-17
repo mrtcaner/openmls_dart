@@ -7,6 +7,7 @@ import 'api/account_envelope/bridge.dart';
 import 'api/account_envelope/types.dart';
 import 'api/config.dart';
 import 'api/credential.dart';
+import 'api/external_resync.dart';
 import 'api/group_e2ee.dart';
 import 'api/init.dart';
 import 'api/keys.dart';
@@ -91,6 +92,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String dco_decode_String(dynamic raw);
 
   @protected
+  AcceptExternalCommitOutcome dco_decode_accept_external_commit_outcome(
+    dynamic raw,
+  );
+
+  @protected
+  AcceptExternalCommitResult dco_decode_accept_external_commit_result(
+    dynamic raw,
+  );
+
+  @protected
   AccountEnvelopeActivationKindV1
   dco_decode_account_envelope_activation_kind_v_1(dynamic raw);
 
@@ -145,6 +156,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  AcceptExternalCommitResult
+  dco_decode_box_autoadd_accept_external_commit_result(dynamic raw);
+
+  @protected
   AccountEnvelopePrivateBundleAuthorityInputV1
   dco_decode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
     dynamic raw,
@@ -183,6 +198,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExportGroupInfoWithStorageResult
+  dco_decode_box_autoadd_export_group_info_with_storage_result(dynamic raw);
+
+  @protected
+  ExternalCommitCandidateInfo
+  dco_decode_box_autoadd_external_commit_candidate_info(dynamic raw);
+
+  @protected
   JoinGroupWithStorageResult
   dco_decode_box_autoadd_join_group_with_storage_result(dynamic raw);
 
@@ -207,6 +230,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsExpectedRosterStateV1 dco_decode_box_autoadd_mls_expected_roster_state_v_1(
     dynamic raw,
   );
+
+  @protected
+  MlsExternalCommitAcceptanceV1
+  dco_decode_box_autoadd_mls_external_commit_acceptance_v_1(dynamic raw);
+
+  @protected
+  MlsExternalPreparationV1 dco_decode_box_autoadd_mls_external_preparation_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  MlsExternalTargetContextV1
+  dco_decode_box_autoadd_mls_external_target_context_v_1(dynamic raw);
 
   @protected
   MlsGroupConfig dco_decode_box_autoadd_mls_group_config(dynamic raw);
@@ -238,6 +274,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   PendingCommitWithStorageResult
   dco_decode_box_autoadd_pending_commit_with_storage_result(dynamic raw);
+
+  @protected
+  PrepareExternalCommitResult
+  dco_decode_box_autoadd_prepare_external_commit_result(dynamic raw);
+
+  @protected
+  ProcessExternalCommitResult
+  dco_decode_box_autoadd_process_external_commit_result(dynamic raw);
 
   @protected
   ProcessMessageWithStorageResult
@@ -291,6 +335,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_expected_context_invitation_authority_input_v_1(dynamic raw);
 
   @protected
+  ExportGroupInfoWithStorageOutcome
+  dco_decode_export_group_info_with_storage_outcome(dynamic raw);
+
+  @protected
+  ExportGroupInfoWithStorageResult
+  dco_decode_export_group_info_with_storage_result(dynamic raw);
+
+  @protected
+  ExternalCommitCandidateInfo dco_decode_external_commit_candidate_info(
+    dynamic raw,
+  );
+
+  @protected
   GenerateAccountEnvelopeKeyBundleOutputV1
   dco_decode_generate_account_envelope_key_bundle_output_v_1(dynamic raw);
 
@@ -300,6 +357,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int dco_decode_i_32(dynamic raw);
+
+  @protected
+  InspectExternalCommitCandidateOutcome
+  dco_decode_inspect_external_commit_candidate_outcome(dynamic raw);
 
   @protected
   JoinGroupFromWelcomeWithStorageOutcome
@@ -377,6 +438,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  MlsExternalCommitAcceptanceV1 dco_decode_mls_external_commit_acceptance_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  MlsExternalCommitBindingV1 dco_decode_mls_external_commit_binding_v_1(
+    dynamic raw,
+  );
+
+  @protected
+  MlsExternalPreparationV1 dco_decode_mls_external_preparation_v_1(dynamic raw);
+
+  @protected
+  MlsExternalTargetContextV1 dco_decode_mls_external_target_context_v_1(
+    dynamic raw,
+  );
+
+  @protected
   MlsGroupConfig dco_decode_mls_group_config(dynamic raw);
 
   @protected
@@ -417,6 +496,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_opt_box_autoadd_account_envelope_reset_reason_v_1(dynamic raw);
 
   @protected
+  MlsPendingCommitBinding?
+  dco_decode_opt_box_autoadd_mls_pending_commit_binding(dynamic raw);
+
+  @protected
   MlsProposalType? dco_decode_opt_box_autoadd_mls_proposal_type(dynamic raw);
 
   @protected
@@ -432,6 +515,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PendingCommitWithStorageResult dco_decode_pending_commit_with_storage_result(
+    dynamic raw,
+  );
+
+  @protected
+  PrepareExternalCommitOutcome dco_decode_prepare_external_commit_outcome(
+    dynamic raw,
+  );
+
+  @protected
+  PrepareExternalCommitResult dco_decode_prepare_external_commit_result(
+    dynamic raw,
+  );
+
+  @protected
+  ProcessExternalCommitOutcome dco_decode_process_external_commit_outcome(
+    dynamic raw,
+  );
+
+  @protected
+  ProcessExternalCommitResult dco_decode_process_external_commit_result(
     dynamic raw,
   );
 
@@ -534,6 +637,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
+  AcceptExternalCommitOutcome sse_decode_accept_external_commit_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AcceptExternalCommitResult sse_decode_accept_external_commit_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   AccountEnvelopeActivationKindV1
   sse_decode_account_envelope_activation_kind_v_1(SseDeserializer deserializer);
 
@@ -602,6 +715,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
+  AcceptExternalCommitResult
+  sse_decode_box_autoadd_accept_external_commit_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   AccountEnvelopePrivateBundleAuthorityInputV1
   sse_decode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
     SseDeserializer deserializer,
@@ -650,6 +769,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExportGroupInfoWithStorageResult
+  sse_decode_box_autoadd_export_group_info_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExternalCommitCandidateInfo
+  sse_decode_box_autoadd_external_commit_candidate_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   JoinGroupWithStorageResult
   sse_decode_box_autoadd_join_group_with_storage_result(
     SseDeserializer deserializer,
@@ -678,6 +809,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   MlsExpectedRosterStateV1 sse_decode_box_autoadd_mls_expected_roster_state_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsExternalCommitAcceptanceV1
+  sse_decode_box_autoadd_mls_external_commit_acceptance_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsExternalPreparationV1 sse_decode_box_autoadd_mls_external_preparation_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsExternalTargetContextV1
+  sse_decode_box_autoadd_mls_external_target_context_v_1(
     SseDeserializer deserializer,
   );
 
@@ -719,6 +867,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   PendingCommitWithStorageResult
   sse_decode_box_autoadd_pending_commit_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PrepareExternalCommitResult
+  sse_decode_box_autoadd_prepare_external_commit_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ProcessExternalCommitResult
+  sse_decode_box_autoadd_process_external_commit_result(
     SseDeserializer deserializer,
   );
 
@@ -788,6 +948,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExportGroupInfoWithStorageOutcome
+  sse_decode_export_group_info_with_storage_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExportGroupInfoWithStorageResult
+  sse_decode_export_group_info_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExternalCommitCandidateInfo sse_decode_external_commit_candidate_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   GenerateAccountEnvelopeKeyBundleOutputV1
   sse_decode_generate_account_envelope_key_bundle_output_v_1(
     SseDeserializer deserializer,
@@ -801,6 +978,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int sse_decode_i_32(SseDeserializer deserializer);
+
+  @protected
+  InspectExternalCommitCandidateOutcome
+  sse_decode_inspect_external_commit_candidate_outcome(
+    SseDeserializer deserializer,
+  );
 
   @protected
   JoinGroupFromWelcomeWithStorageOutcome
@@ -900,6 +1083,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  MlsExternalCommitAcceptanceV1 sse_decode_mls_external_commit_acceptance_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsExternalCommitBindingV1 sse_decode_mls_external_commit_binding_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsExternalPreparationV1 sse_decode_mls_external_preparation_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MlsExternalTargetContextV1 sse_decode_mls_external_target_context_v_1(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsGroupConfig sse_decode_mls_group_config(SseDeserializer deserializer);
 
   @protected
@@ -952,6 +1155,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  MlsPendingCommitBinding?
+  sse_decode_opt_box_autoadd_mls_pending_commit_binding(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MlsProposalType? sse_decode_opt_box_autoadd_mls_proposal_type(
     SseDeserializer deserializer,
   );
@@ -971,6 +1180,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PendingCommitWithStorageResult sse_decode_pending_commit_with_storage_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PrepareExternalCommitOutcome sse_decode_prepare_external_commit_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PrepareExternalCommitResult sse_decode_prepare_external_commit_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ProcessExternalCommitOutcome sse_decode_process_external_commit_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ProcessExternalCommitResult sse_decode_process_external_commit_result(
     SseDeserializer deserializer,
   );
 
@@ -1029,6 +1258,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_String(String raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return cst_encode_list_prim_u_8_strict(utf8.encoder.convert(raw));
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_accept_external_commit_result>
+  cst_encode_box_autoadd_accept_external_commit_result(
+    AcceptExternalCommitResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_accept_external_commit_result();
+    cst_api_fill_to_wire_accept_external_commit_result(raw, ptr.ref);
+    return ptr;
   }
 
   @protected
@@ -1133,6 +1373,29 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  ffi.Pointer<wire_cst_export_group_info_with_storage_result>
+  cst_encode_box_autoadd_export_group_info_with_storage_result(
+    ExportGroupInfoWithStorageResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire
+        .cst_new_box_autoadd_export_group_info_with_storage_result();
+    cst_api_fill_to_wire_export_group_info_with_storage_result(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_external_commit_candidate_info>
+  cst_encode_box_autoadd_external_commit_candidate_info(
+    ExternalCommitCandidateInfo raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_external_commit_candidate_info();
+    cst_api_fill_to_wire_external_commit_candidate_info(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
   ffi.Pointer<wire_cst_join_group_with_storage_result>
   cst_encode_box_autoadd_join_group_with_storage_result(
     JoinGroupWithStorageResult raw,
@@ -1190,6 +1453,39 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     // Codec=Cst (C-struct based), see doc to use other codecs
     final ptr = wire.cst_new_box_autoadd_mls_expected_roster_state_v_1();
     cst_api_fill_to_wire_mls_expected_roster_state_v_1(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1>
+  cst_encode_box_autoadd_mls_external_commit_acceptance_v_1(
+    MlsExternalCommitAcceptanceV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_mls_external_commit_acceptance_v_1();
+    cst_api_fill_to_wire_mls_external_commit_acceptance_v_1(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_mls_external_preparation_v_1>
+  cst_encode_box_autoadd_mls_external_preparation_v_1(
+    MlsExternalPreparationV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_mls_external_preparation_v_1();
+    cst_api_fill_to_wire_mls_external_preparation_v_1(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_mls_external_target_context_v_1>
+  cst_encode_box_autoadd_mls_external_target_context_v_1(
+    MlsExternalTargetContextV1 raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_mls_external_target_context_v_1();
+    cst_api_fill_to_wire_mls_external_target_context_v_1(raw, ptr.ref);
     return ptr;
   }
 
@@ -1269,6 +1565,28 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     // Codec=Cst (C-struct based), see doc to use other codecs
     final ptr = wire.cst_new_box_autoadd_pending_commit_with_storage_result();
     cst_api_fill_to_wire_pending_commit_with_storage_result(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_prepare_external_commit_result>
+  cst_encode_box_autoadd_prepare_external_commit_result(
+    PrepareExternalCommitResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_prepare_external_commit_result();
+    cst_api_fill_to_wire_prepare_external_commit_result(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_process_external_commit_result>
+  cst_encode_box_autoadd_process_external_commit_result(
+    ProcessExternalCommitResult raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_process_external_commit_result();
+    cst_api_fill_to_wire_process_external_commit_result(raw, ptr.ref);
     return ptr;
   }
 
@@ -1405,6 +1723,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  ffi.Pointer<wire_cst_mls_pending_commit_binding>
+  cst_encode_opt_box_autoadd_mls_pending_commit_binding(
+    MlsPendingCommitBinding? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? ffi.nullptr
+        : cst_encode_box_autoadd_mls_pending_commit_binding(raw);
+  }
+
+  @protected
   ffi.Pointer<ffi.Int32> cst_encode_opt_box_autoadd_mls_proposal_type(
     MlsProposalType? raw,
   ) {
@@ -1440,6 +1769,53 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int cst_encode_usize(BigInt raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw.toSigned(64).toInt();
+  }
+
+  @protected
+  void cst_api_fill_to_wire_accept_external_commit_outcome(
+    AcceptExternalCommitOutcome apiObj,
+    wire_cst_accept_external_commit_outcome wireObj,
+  ) {
+    if (apiObj is AcceptExternalCommitOutcome_Success) {
+      var pre_field0 = cst_encode_box_autoadd_accept_external_commit_result(
+        apiObj.field0,
+      );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is AcceptExternalCommitOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
+  void cst_api_fill_to_wire_accept_external_commit_result(
+    AcceptExternalCommitResult apiObj,
+    wire_cst_accept_external_commit_result wireObj,
+  ) {
+    wireObj.candidate_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.candidateSha256,
+    );
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(
+      apiObj.localLeaf,
+      wireObj.local_leaf,
+    );
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.resultingRoster,
+      wireObj.resulting_roster,
+    );
+    wireObj.resulting_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.resultingGroupStateSha256,
+    );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
+    cst_api_fill_to_wire_mls_storage_batch(
+      apiObj.storageBatch,
+      wireObj.storage_batch,
+    );
   }
 
   @protected
@@ -1540,6 +1916,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_box_autoadd_accept_external_commit_result(
+    AcceptExternalCommitResult apiObj,
+    ffi.Pointer<wire_cst_accept_external_commit_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_accept_external_commit_result(apiObj, wireObj.ref);
+  }
+
+  @protected
   void
   cst_api_fill_to_wire_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
     AccountEnvelopePrivateBundleAuthorityInputV1 apiObj,
@@ -1619,6 +2003,25 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_box_autoadd_export_group_info_with_storage_result(
+    ExportGroupInfoWithStorageResult apiObj,
+    ffi.Pointer<wire_cst_export_group_info_with_storage_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_export_group_info_with_storage_result(
+      apiObj,
+      wireObj.ref,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_external_commit_candidate_info(
+    ExternalCommitCandidateInfo apiObj,
+    ffi.Pointer<wire_cst_external_commit_candidate_info> wireObj,
+  ) {
+    cst_api_fill_to_wire_external_commit_candidate_info(apiObj, wireObj.ref);
+  }
+
+  @protected
   void cst_api_fill_to_wire_box_autoadd_join_group_with_storage_result(
     JoinGroupWithStorageResult apiObj,
     ffi.Pointer<wire_cst_join_group_with_storage_result> wireObj,
@@ -1668,6 +2071,33 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     ffi.Pointer<wire_cst_mls_expected_roster_state_v_1> wireObj,
   ) {
     cst_api_fill_to_wire_mls_expected_roster_state_v_1(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_mls_external_commit_acceptance_v_1(
+    MlsExternalCommitAcceptanceV1 apiObj,
+    ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1> wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_external_commit_acceptance_v_1(
+      apiObj,
+      wireObj.ref,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_mls_external_preparation_v_1(
+    MlsExternalPreparationV1 apiObj,
+    ffi.Pointer<wire_cst_mls_external_preparation_v_1> wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_external_preparation_v_1(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_mls_external_target_context_v_1(
+    MlsExternalTargetContextV1 apiObj,
+    ffi.Pointer<wire_cst_mls_external_target_context_v_1> wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_external_target_context_v_1(apiObj, wireObj.ref);
   }
 
   @protected
@@ -1727,6 +2157,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       apiObj,
       wireObj.ref,
     );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_prepare_external_commit_result(
+    PrepareExternalCommitResult apiObj,
+    ffi.Pointer<wire_cst_prepare_external_commit_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_prepare_external_commit_result(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_process_external_commit_result(
+    ProcessExternalCommitResult apiObj,
+    ffi.Pointer<wire_cst_process_external_commit_result> wireObj,
+  ) {
+    cst_api_fill_to_wire_process_external_commit_result(apiObj, wireObj.ref);
   }
 
   @protected
@@ -1942,6 +2388,76 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_export_group_info_with_storage_outcome(
+    ExportGroupInfoWithStorageOutcome apiObj,
+    wire_cst_export_group_info_with_storage_outcome wireObj,
+  ) {
+    if (apiObj is ExportGroupInfoWithStorageOutcome_Success) {
+      var pre_field0 =
+          cst_encode_box_autoadd_export_group_info_with_storage_result(
+            apiObj.field0,
+          );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is ExportGroupInfoWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
+  void cst_api_fill_to_wire_export_group_info_with_storage_result(
+    ExportGroupInfoWithStorageResult apiObj,
+    wire_cst_export_group_info_with_storage_result wireObj,
+  ) {
+    wireObj.group_info = cst_encode_list_prim_u_8_strict(apiObj.groupInfo);
+    wireObj.group_info_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.groupInfoSha256,
+    );
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.currentRoster,
+      wireObj.current_roster,
+    );
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(apiObj.signer, wireObj.signer);
+    wireObj.base_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.baseGroupStateSha256,
+    );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_external_commit_candidate_info(
+    ExternalCommitCandidateInfo apiObj,
+    wire_cst_external_commit_candidate_info wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_external_commit_binding_v_1(
+      apiObj.binding,
+      wireObj.binding,
+    );
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.previousRoster,
+      wireObj.previous_roster,
+    );
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.proposedResultingRoster,
+      wireObj.proposed_resulting_roster,
+    );
+    wireObj.commit = cst_encode_list_prim_u_8_strict(apiObj.commit);
+    wireObj.group_info = cst_encode_list_prim_u_8_strict(apiObj.groupInfo);
+    wireObj.candidate_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.candidateSha256,
+    );
+    wireObj.local_lifecycle_context_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.localLifecycleContextSha256,
+    );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
+  }
+
+  @protected
   void cst_api_fill_to_wire_generate_account_envelope_key_bundle_output_v_1(
     GenerateAccountEnvelopeKeyBundleOutputV1 apiObj,
     wire_cst_generate_account_envelope_key_bundle_output_v_1 wireObj,
@@ -1965,6 +2481,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       return;
     }
     if (apiObj is GetPendingCommitWithStorageOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
+  void cst_api_fill_to_wire_inspect_external_commit_candidate_outcome(
+    InspectExternalCommitCandidateOutcome apiObj,
+    wire_cst_inspect_external_commit_candidate_outcome wireObj,
+  ) {
+    if (apiObj is InspectExternalCommitCandidateOutcome_Success) {
+      var pre_field0 = cst_encode_box_autoadd_external_commit_candidate_info(
+        apiObj.field0,
+      );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is InspectExternalCommitCandidateOutcome_Failure) {
       var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
       wireObj.tag = 1;
       wireObj.kind.Failure.field0 = pre_field0;
@@ -2148,6 +2685,114 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     wireObj.epoch = cst_encode_u_64(apiObj.epoch);
     wireObj.digest_sha256 = cst_encode_list_prim_u_8_strict(
       apiObj.digestSha256,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_mls_external_commit_acceptance_v_1(
+    MlsExternalCommitAcceptanceV1 apiObj,
+    wire_cst_mls_external_commit_acceptance_v_1 wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_external_commit_binding_v_1(
+      apiObj.binding,
+      wireObj.binding,
+    );
+    cst_api_fill_to_wire_mls_expected_roster_state_v_1(
+      apiObj.resultingState,
+      wireObj.resulting_state,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_mls_external_commit_binding_v_1(
+    MlsExternalCommitBindingV1 apiObj,
+    wire_cst_mls_external_commit_binding_v_1 wireObj,
+  ) {
+    wireObj.candidate_id = cst_encode_list_prim_u_8_strict(apiObj.candidateId);
+    wireObj.incarnation_id = cst_encode_list_prim_u_8_strict(
+      apiObj.incarnationId,
+    );
+    cst_api_fill_to_wire_mls_transition_context(
+      apiObj.transition,
+      wireObj.transition,
+    );
+    cst_api_fill_to_wire_mls_expected_roster_state_v_1(
+      apiObj.previousState,
+      wireObj.previous_state,
+    );
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(apiObj.oldLeaf, wireObj.old_leaf);
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(apiObj.author, wireObj.author);
+    wireObj.input_group_info_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.inputGroupInfoSha256,
+    );
+    wireObj.commit_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.commitSha256,
+    );
+    wireObj.aad_sha256 = cst_encode_list_prim_u_8_strict(apiObj.aadSha256);
+    wireObj.resulting_group_info_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.resultingGroupInfoSha256,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_mls_external_preparation_v_1(
+    MlsExternalPreparationV1 apiObj,
+    wire_cst_mls_external_preparation_v_1 wireObj,
+  ) {
+    wireObj.candidate_id = cst_encode_list_prim_u_8_strict(apiObj.candidateId);
+    wireObj.incarnation_id = cst_encode_list_prim_u_8_strict(
+      apiObj.incarnationId,
+    );
+    cst_api_fill_to_wire_mls_transition_context(
+      apiObj.transition,
+      wireObj.transition,
+    );
+    wireObj.local_lifecycle_context_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.localLifecycleContextSha256,
+    );
+    wireObj.input_group_info = cst_encode_list_prim_u_8_strict(
+      apiObj.inputGroupInfo,
+    );
+    wireObj.input_group_info_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.inputGroupInfoSha256,
+    );
+    cst_api_fill_to_wire_mls_expected_roster_state_v_1(
+      apiObj.expectedPreviousState,
+      wireObj.expected_previous_state,
+    );
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(
+      apiObj.expectedSnapshotSigner,
+      wireObj.expected_snapshot_signer,
+    );
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(
+      apiObj.authorizedOldLeaf,
+      wireObj.authorized_old_leaf,
+    );
+    wireObj.authorized_new_credential_identity =
+        cst_encode_list_prim_u_8_strict(apiObj.authorizedNewCredentialIdentity);
+    wireObj.authorized_new_signature_public_key =
+        cst_encode_list_prim_u_8_strict(apiObj.authorizedNewSignaturePublicKey);
+    wireObj.aad = cst_encode_list_prim_u_8_strict(apiObj.aad);
+    wireObj.retention = cst_encode_u_32(apiObj.retention);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_mls_external_target_context_v_1(
+    MlsExternalTargetContextV1 apiObj,
+    wire_cst_mls_external_target_context_v_1 wireObj,
+  ) {
+    wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
+    wireObj.incarnation_id = cst_encode_list_prim_u_8_strict(
+      apiObj.incarnationId,
+    );
+    wireObj.local_lifecycle_context_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.localLifecycleContextSha256,
+    );
+    wireObj.storage_entries = cst_encode_list_mls_storage_entry(
+      apiObj.storageEntries,
+    );
+    wireObj.storage_format_version = cst_encode_u_32(
+      apiObj.storageFormatVersion,
     );
   }
 
@@ -2340,6 +2985,93 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       apiObj.resultingGroupStateSha256,
     );
     wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
+    cst_api_fill_to_wire_mls_storage_batch(
+      apiObj.storageBatch,
+      wireObj.storage_batch,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_prepare_external_commit_outcome(
+    PrepareExternalCommitOutcome apiObj,
+    wire_cst_prepare_external_commit_outcome wireObj,
+  ) {
+    if (apiObj is PrepareExternalCommitOutcome_Success) {
+      var pre_field0 = cst_encode_box_autoadd_prepare_external_commit_result(
+        apiObj.field0,
+      );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is PrepareExternalCommitOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
+  void cst_api_fill_to_wire_prepare_external_commit_result(
+    PrepareExternalCommitResult apiObj,
+    wire_cst_prepare_external_commit_result wireObj,
+  ) {
+    wireObj.candidate_bytes = cst_encode_list_prim_u_8_strict(
+      apiObj.candidateBytes,
+    );
+    cst_api_fill_to_wire_external_commit_candidate_info(
+      apiObj.info,
+      wireObj.info,
+    );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_process_external_commit_outcome(
+    ProcessExternalCommitOutcome apiObj,
+    wire_cst_process_external_commit_outcome wireObj,
+  ) {
+    if (apiObj is ProcessExternalCommitOutcome_Success) {
+      var pre_field0 = cst_encode_box_autoadd_process_external_commit_result(
+        apiObj.field0,
+      );
+      wireObj.tag = 0;
+      wireObj.kind.Success.field0 = pre_field0;
+      return;
+    }
+    if (apiObj is ProcessExternalCommitOutcome_Failure) {
+      var pre_field0 = cst_encode_mls_error_code(apiObj.field0);
+      wireObj.tag = 1;
+      wireObj.kind.Failure.field0 = pre_field0;
+      return;
+    }
+  }
+
+  @protected
+  void cst_api_fill_to_wire_process_external_commit_result(
+    ProcessExternalCommitResult apiObj,
+    wire_cst_process_external_commit_result wireObj,
+  ) {
+    cst_api_fill_to_wire_mls_roster_leaf_v_1(
+      apiObj.authenticatedSender,
+      wireObj.authenticated_sender,
+    );
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.previousRoster,
+      wireObj.previous_roster,
+    );
+    cst_api_fill_to_wire_mls_roster_summary_v_1(
+      apiObj.resultingRoster,
+      wireObj.resulting_roster,
+    );
+    wireObj.resulting_group_state_sha256 = cst_encode_list_prim_u_8_strict(
+      apiObj.resultingGroupStateSha256,
+    );
+    wireObj.effective_retention = cst_encode_u_32(apiObj.effectiveRetention);
+    wireObj.superseded_pending =
+        cst_encode_opt_box_autoadd_mls_pending_commit_binding(
+          apiObj.supersededPending,
+        );
     cst_api_fill_to_wire_mls_storage_batch(
       apiObj.storageBatch,
       wireObj.storage_batch,
@@ -2665,6 +3397,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
+  void sse_encode_accept_external_commit_outcome(
+    AcceptExternalCommitOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_accept_external_commit_result(
+    AcceptExternalCommitResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_account_envelope_activation_kind_v_1(
     AccountEnvelopeActivationKindV1 self,
     SseSerializer serializer,
@@ -2740,6 +3484,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_accept_external_commit_result(
+    AcceptExternalCommitResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void
   sse_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
     AccountEnvelopePrivateBundleAuthorityInputV1 self,
@@ -2789,6 +3539,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_export_group_info_with_storage_result(
+    ExportGroupInfoWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_external_commit_candidate_info(
+    ExternalCommitCandidateInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_join_group_with_storage_result(
     JoinGroupWithStorageResult self,
     SseSerializer serializer,
@@ -2821,6 +3583,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_mls_expected_roster_state_v_1(
     MlsExpectedRosterStateV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_mls_external_commit_acceptance_v_1(
+    MlsExternalCommitAcceptanceV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_mls_external_preparation_v_1(
+    MlsExternalPreparationV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_mls_external_target_context_v_1(
+    MlsExternalTargetContextV1 self,
     SseSerializer serializer,
   );
 
@@ -2869,6 +3649,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_pending_commit_with_storage_result(
     PendingCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_prepare_external_commit_result(
+    PrepareExternalCommitResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_process_external_commit_result(
+    ProcessExternalCommitResult self,
     SseSerializer serializer,
   );
 
@@ -2945,6 +3737,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_export_group_info_with_storage_outcome(
+    ExportGroupInfoWithStorageOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_export_group_info_with_storage_result(
+    ExportGroupInfoWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_external_commit_candidate_info(
+    ExternalCommitCandidateInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_generate_account_envelope_key_bundle_output_v_1(
     GenerateAccountEnvelopeKeyBundleOutputV1 self,
     SseSerializer serializer,
@@ -2958,6 +3768,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_inspect_external_commit_candidate_outcome(
+    InspectExternalCommitCandidateOutcome self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_join_group_from_welcome_with_storage_outcome(
@@ -3077,6 +3893,30 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_mls_external_commit_acceptance_v_1(
+    MlsExternalCommitAcceptanceV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_external_commit_binding_v_1(
+    MlsExternalCommitBindingV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_external_preparation_v_1(
+    MlsExternalPreparationV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_mls_external_target_context_v_1(
+    MlsExternalTargetContextV1 self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_mls_group_config(
     MlsGroupConfig self,
     SseSerializer serializer,
@@ -3152,6 +3992,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_mls_pending_commit_binding(
+    MlsPendingCommitBinding? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_mls_proposal_type(
     MlsProposalType? self,
     SseSerializer serializer,
@@ -3178,6 +4024,30 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_pending_commit_with_storage_result(
     PendingCommitWithStorageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_prepare_external_commit_outcome(
+    PrepareExternalCommitOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_prepare_external_commit_result(
+    PrepareExternalCommitResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_process_external_commit_outcome(
+    ProcessExternalCommitOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_process_external_commit_result(
+    ProcessExternalCommitResult self,
     SseSerializer serializer,
   );
 
@@ -3808,6 +4678,48 @@ class RustLibWire implements BaseWire {
       _wire__crate__api__keys__MlsSignatureKeyPair_signature_schemePtr
           .asFunction<WireSyncRust2DartDco Function(int)>();
 
+  void wire__crate__api__external_resync__accept_external_commit_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_mls_external_target_context_v_1> target,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> candidate_bytes,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> expected_candidate_sha256,
+    ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1> acceptance,
+  ) {
+    return _wire__crate__api__external_resync__accept_external_commit_with_storage(
+      port_,
+      target,
+      candidate_bytes,
+      expected_candidate_sha256,
+      acceptance,
+    );
+  }
+
+  late final _wire__crate__api__external_resync__accept_external_commit_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_mls_external_target_context_v_1>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__external_resync__accept_external_commit_with_storage',
+      );
+  late final _wire__crate__api__external_resync__accept_external_commit_with_storage =
+      _wire__crate__api__external_resync__accept_external_commit_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_mls_external_target_context_v_1>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1>,
+            )
+          >();
+
   void wire__crate__api__group_e2ee__add_members_with_storage(
     int port_,
     ffi.Pointer<wire_cst_mls_group_operation_context> context,
@@ -4079,6 +4991,44 @@ class RustLibWire implements BaseWire {
             )
           >();
 
+  void wire__crate__api__group_e2ee__export_group_info_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
+    ffi.Pointer<wire_cst_mls_roster_leaf_v_1> expected_local_leaf,
+  ) {
+    return _wire__crate__api__group_e2ee__export_group_info_with_storage(
+      port_,
+      context,
+      signer_bytes,
+      expected_local_leaf,
+    );
+  }
+
+  late final _wire__crate__api__group_e2ee__export_group_info_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_mls_roster_leaf_v_1>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__group_e2ee__export_group_info_with_storage',
+      );
+  late final _wire__crate__api__group_e2ee__export_group_info_with_storage =
+      _wire__crate__api__group_e2ee__export_group_info_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_mls_roster_leaf_v_1>,
+            )
+          >();
+
   void wire__crate__api__group_e2ee__get_pending_commit_with_storage(
     int port_,
     ffi.Pointer<wire_cst_mls_group_operation_context> context,
@@ -4128,6 +5078,40 @@ class RustLibWire implements BaseWire {
           .asFunction<
             WireSyncRust2DartDco Function(
               ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            )
+          >();
+
+  void wire__crate__api__external_resync__inspect_external_commit_candidate(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> candidate_bytes,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> expected_candidate_sha256,
+  ) {
+    return _wire__crate__api__external_resync__inspect_external_commit_candidate(
+      port_,
+      candidate_bytes,
+      expected_candidate_sha256,
+    );
+  }
+
+  late final _wire__crate__api__external_resync__inspect_external_commit_candidatePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__external_resync__inspect_external_commit_candidate',
+      );
+  late final _wire__crate__api__external_resync__inspect_external_commit_candidate =
+      _wire__crate__api__external_resync__inspect_external_commit_candidatePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
             )
           >();
 
@@ -4409,6 +5393,87 @@ class RustLibWire implements BaseWire {
   late final _wire__crate__api__storage__mls_storage_format_version =
       _wire__crate__api__storage__mls_storage_format_versionPtr
           .asFunction<WireSyncRust2DartDco Function()>();
+
+  void wire__crate__api__external_resync__prepare_external_commit(
+    int port_,
+    ffi.Pointer<wire_cst_mls_external_preparation_v_1> input,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
+  ) {
+    return _wire__crate__api__external_resync__prepare_external_commit(
+      port_,
+      input,
+      signer_bytes,
+    );
+  }
+
+  late final _wire__crate__api__external_resync__prepare_external_commitPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_mls_external_preparation_v_1>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__external_resync__prepare_external_commit',
+      );
+  late final _wire__crate__api__external_resync__prepare_external_commit =
+      _wire__crate__api__external_resync__prepare_external_commitPtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_mls_external_preparation_v_1>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            )
+          >();
+
+  void wire__crate__api__external_resync__process_external_commit_with_storage(
+    int port_,
+    ffi.Pointer<wire_cst_mls_group_operation_context> context,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> commit,
+    ffi.Pointer<wire_cst_list_prim_u_8_loose> expected_aad,
+    ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1> acceptance,
+    ffi.Pointer<wire_cst_mls_pending_commit_binding>
+    expected_superseded_pending,
+  ) {
+    return _wire__crate__api__external_resync__process_external_commit_with_storage(
+      port_,
+      context,
+      commit,
+      expected_aad,
+      acceptance,
+      expected_superseded_pending,
+    );
+  }
+
+  late final _wire__crate__api__external_resync__process_external_commit_with_storagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_mls_group_operation_context>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+            ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1>,
+            ffi.Pointer<wire_cst_mls_pending_commit_binding>,
+          )
+        >
+      >(
+        'frbgen_openmls_wire__crate__api__external_resync__process_external_commit_with_storage',
+      );
+  late final _wire__crate__api__external_resync__process_external_commit_with_storage =
+      _wire__crate__api__external_resync__process_external_commit_with_storagePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_mls_group_operation_context>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
+              ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1>,
+              ffi.Pointer<wire_cst_mls_pending_commit_binding>,
+            )
+          >();
 
   void wire__crate__api__group_e2ee__process_message_with_storage(
     int port_,
@@ -4758,6 +5823,23 @@ class RustLibWire implements BaseWire {
       _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPairPtr
           .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 
+  ffi.Pointer<wire_cst_accept_external_commit_result>
+  cst_new_box_autoadd_accept_external_commit_result() {
+    return _cst_new_box_autoadd_accept_external_commit_result();
+  }
+
+  late final _cst_new_box_autoadd_accept_external_commit_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_accept_external_commit_result> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_accept_external_commit_result');
+  late final _cst_new_box_autoadd_accept_external_commit_result =
+      _cst_new_box_autoadd_accept_external_commit_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_accept_external_commit_result> Function()
+          >();
+
   ffi.Pointer<wire_cst_account_envelope_private_bundle_authority_input_v_1>
   cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1() {
     return _cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1();
@@ -4918,6 +6000,43 @@ class RustLibWire implements BaseWire {
             Function()
           >();
 
+  ffi.Pointer<wire_cst_export_group_info_with_storage_result>
+  cst_new_box_autoadd_export_group_info_with_storage_result() {
+    return _cst_new_box_autoadd_export_group_info_with_storage_result();
+  }
+
+  late final _cst_new_box_autoadd_export_group_info_with_storage_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_export_group_info_with_storage_result> Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_export_group_info_with_storage_result',
+      );
+  late final _cst_new_box_autoadd_export_group_info_with_storage_result =
+      _cst_new_box_autoadd_export_group_info_with_storage_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_export_group_info_with_storage_result>
+            Function()
+          >();
+
+  ffi.Pointer<wire_cst_external_commit_candidate_info>
+  cst_new_box_autoadd_external_commit_candidate_info() {
+    return _cst_new_box_autoadd_external_commit_candidate_info();
+  }
+
+  late final _cst_new_box_autoadd_external_commit_candidate_infoPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_external_commit_candidate_info> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_external_commit_candidate_info');
+  late final _cst_new_box_autoadd_external_commit_candidate_info =
+      _cst_new_box_autoadd_external_commit_candidate_infoPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_external_commit_candidate_info> Function()
+          >();
+
   ffi.Pointer<wire_cst_join_group_with_storage_result>
   cst_new_box_autoadd_join_group_with_storage_result() {
     return _cst_new_box_autoadd_join_group_with_storage_result();
@@ -5020,6 +6139,59 @@ class RustLibWire implements BaseWire {
       _cst_new_box_autoadd_mls_expected_roster_state_v_1Ptr
           .asFunction<
             ffi.Pointer<wire_cst_mls_expected_roster_state_v_1> Function()
+          >();
+
+  ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1>
+  cst_new_box_autoadd_mls_external_commit_acceptance_v_1() {
+    return _cst_new_box_autoadd_mls_external_commit_acceptance_v_1();
+  }
+
+  late final _cst_new_box_autoadd_mls_external_commit_acceptance_v_1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1> Function()
+        >
+      >(
+        'frbgen_openmls_cst_new_box_autoadd_mls_external_commit_acceptance_v_1',
+      );
+  late final _cst_new_box_autoadd_mls_external_commit_acceptance_v_1 =
+      _cst_new_box_autoadd_mls_external_commit_acceptance_v_1Ptr
+          .asFunction<
+            ffi.Pointer<wire_cst_mls_external_commit_acceptance_v_1> Function()
+          >();
+
+  ffi.Pointer<wire_cst_mls_external_preparation_v_1>
+  cst_new_box_autoadd_mls_external_preparation_v_1() {
+    return _cst_new_box_autoadd_mls_external_preparation_v_1();
+  }
+
+  late final _cst_new_box_autoadd_mls_external_preparation_v_1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_mls_external_preparation_v_1> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_mls_external_preparation_v_1');
+  late final _cst_new_box_autoadd_mls_external_preparation_v_1 =
+      _cst_new_box_autoadd_mls_external_preparation_v_1Ptr
+          .asFunction<
+            ffi.Pointer<wire_cst_mls_external_preparation_v_1> Function()
+          >();
+
+  ffi.Pointer<wire_cst_mls_external_target_context_v_1>
+  cst_new_box_autoadd_mls_external_target_context_v_1() {
+    return _cst_new_box_autoadd_mls_external_target_context_v_1();
+  }
+
+  late final _cst_new_box_autoadd_mls_external_target_context_v_1Ptr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_mls_external_target_context_v_1> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_mls_external_target_context_v_1');
+  late final _cst_new_box_autoadd_mls_external_target_context_v_1 =
+      _cst_new_box_autoadd_mls_external_target_context_v_1Ptr
+          .asFunction<
+            ffi.Pointer<wire_cst_mls_external_target_context_v_1> Function()
           >();
 
   ffi.Pointer<wire_cst_mls_group_config>
@@ -5141,6 +6313,40 @@ class RustLibWire implements BaseWire {
       _cst_new_box_autoadd_pending_commit_with_storage_resultPtr
           .asFunction<
             ffi.Pointer<wire_cst_pending_commit_with_storage_result> Function()
+          >();
+
+  ffi.Pointer<wire_cst_prepare_external_commit_result>
+  cst_new_box_autoadd_prepare_external_commit_result() {
+    return _cst_new_box_autoadd_prepare_external_commit_result();
+  }
+
+  late final _cst_new_box_autoadd_prepare_external_commit_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_prepare_external_commit_result> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_prepare_external_commit_result');
+  late final _cst_new_box_autoadd_prepare_external_commit_result =
+      _cst_new_box_autoadd_prepare_external_commit_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_prepare_external_commit_result> Function()
+          >();
+
+  ffi.Pointer<wire_cst_process_external_commit_result>
+  cst_new_box_autoadd_process_external_commit_result() {
+    return _cst_new_box_autoadd_process_external_commit_result();
+  }
+
+  late final _cst_new_box_autoadd_process_external_commit_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_process_external_commit_result> Function()
+        >
+      >('frbgen_openmls_cst_new_box_autoadd_process_external_commit_result');
+  late final _cst_new_box_autoadd_process_external_commit_result =
+      _cst_new_box_autoadd_process_external_commit_resultPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_process_external_commit_result> Function()
           >();
 
   ffi.Pointer<wire_cst_process_message_with_storage_result>
@@ -5462,15 +6668,6 @@ final class wire_cst_list_list_prim_u_8_strict extends ffi.Struct {
   external int len;
 }
 
-final class wire_cst_mls_expected_roster_state_v_1 extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
-
-  @ffi.Uint64()
-  external int epoch;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> digest_sha256;
-}
-
 final class wire_cst_mls_storage_entry extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> key;
 
@@ -5484,6 +6681,73 @@ final class wire_cst_list_mls_storage_entry extends ffi.Struct {
 
   @ffi.Int32()
   external int len;
+}
+
+final class wire_cst_mls_external_target_context_v_1 extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> incarnation_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  local_lifecycle_context_sha256;
+
+  external ffi.Pointer<wire_cst_list_mls_storage_entry> storage_entries;
+
+  @ffi.Uint32()
+  external int storage_format_version;
+}
+
+final class wire_cst_mls_transition_context extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> command_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> context_sha256;
+}
+
+final class wire_cst_mls_expected_roster_state_v_1 extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
+
+  @ffi.Uint64()
+  external int epoch;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> digest_sha256;
+}
+
+final class wire_cst_mls_roster_leaf_v_1 extends ffi.Struct {
+  @ffi.Uint32()
+  external int leaf_index;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> credential_identity;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> signature_public_key;
+}
+
+final class wire_cst_mls_external_commit_binding_v_1 extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> candidate_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> incarnation_id;
+
+  external wire_cst_mls_transition_context transition;
+
+  external wire_cst_mls_expected_roster_state_v_1 previous_state;
+
+  external wire_cst_mls_roster_leaf_v_1 old_leaf;
+
+  external wire_cst_mls_roster_leaf_v_1 author;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> input_group_info_sha256;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit_sha256;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> aad_sha256;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  resulting_group_info_sha256;
+}
+
+final class wire_cst_mls_external_commit_acceptance_v_1 extends ffi.Struct {
+  external wire_cst_mls_external_commit_binding_v_1 binding;
+
+  external wire_cst_mls_expected_roster_state_v_1 resulting_state;
 }
 
 final class wire_cst_mls_group_operation_context extends ffi.Struct {
@@ -5503,12 +6767,6 @@ final class wire_cst_mls_group_operation_context extends ffi.Struct {
 
   @ffi.Uint32()
   external int storage_format_version;
-}
-
-final class wire_cst_mls_transition_context extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> command_id;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> context_sha256;
 }
 
 final class wire_cst_mls_authorized_key_package_v_1 extends ffi.Struct {
@@ -5562,15 +6820,6 @@ final class wire_cst_mls_authorized_owner_v_1 extends ffi.Struct {
   expected_signature_public_key;
 }
 
-final class wire_cst_mls_roster_leaf_v_1 extends ffi.Struct {
-  @ffi.Uint32()
-  external int leaf_index;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> credential_identity;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> signature_public_key;
-}
-
 final class wire_cst_mls_pending_commit_binding extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
 
@@ -5605,6 +6854,38 @@ final class wire_cst_list_mls_roster_leaf_v_1 extends ffi.Struct {
 
   @ffi.Int32()
   external int len;
+}
+
+final class wire_cst_mls_external_preparation_v_1 extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> candidate_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> incarnation_id;
+
+  external wire_cst_mls_transition_context transition;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  local_lifecycle_context_sha256;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> input_group_info;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> input_group_info_sha256;
+
+  external wire_cst_mls_expected_roster_state_v_1 expected_previous_state;
+
+  external wire_cst_mls_roster_leaf_v_1 expected_snapshot_signer;
+
+  external wire_cst_mls_roster_leaf_v_1 authorized_old_leaf;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  authorized_new_credential_identity;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  authorized_new_signature_public_key;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> aad;
+
+  @ffi.Uint32()
+  external int retention;
 }
 
 final class wire_cst_mls_authorized_removal_v_1 extends ffi.Struct {
@@ -5658,6 +6939,22 @@ final class wire_cst_mls_storage_batch extends ffi.Struct {
   external int storage_format_version;
 }
 
+final class wire_cst_accept_external_commit_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> candidate_sha256;
+
+  external wire_cst_mls_roster_leaf_v_1 local_leaf;
+
+  external wire_cst_mls_roster_summary_v_1 resulting_roster;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  resulting_group_state_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
 final class wire_cst_create_group_with_storage_result extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
 
@@ -5697,6 +6994,41 @@ final class wire_cst_discard_pending_commit_with_storage_result
   external int effective_retention;
 
   external wire_cst_mls_storage_batch storage_batch;
+}
+
+final class wire_cst_export_group_info_with_storage_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info_sha256;
+
+  external wire_cst_mls_roster_summary_v_1 current_roster;
+
+  external wire_cst_mls_roster_leaf_v_1 signer;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> base_group_state_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
+}
+
+final class wire_cst_external_commit_candidate_info extends ffi.Struct {
+  external wire_cst_mls_external_commit_binding_v_1 binding;
+
+  external wire_cst_mls_roster_summary_v_1 previous_roster;
+
+  external wire_cst_mls_roster_summary_v_1 proposed_resulting_roster;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> candidate_sha256;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  local_lifecycle_context_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
 }
 
 final class wire_cst_join_group_with_storage_result extends ffi.Struct {
@@ -5773,6 +7105,30 @@ final class wire_cst_pending_commit_with_storage_result extends ffi.Struct {
   external wire_cst_mls_storage_batch storage_batch;
 }
 
+final class wire_cst_prepare_external_commit_result extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> candidate_bytes;
+
+  external wire_cst_external_commit_candidate_info info;
+}
+
+final class wire_cst_process_external_commit_result extends ffi.Struct {
+  external wire_cst_mls_roster_leaf_v_1 authenticated_sender;
+
+  external wire_cst_mls_roster_summary_v_1 previous_roster;
+
+  external wire_cst_mls_roster_summary_v_1 resulting_roster;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict>
+  resulting_group_state_sha256;
+
+  @ffi.Uint32()
+  external int effective_retention;
+
+  external ffi.Pointer<wire_cst_mls_pending_commit_binding> superseded_pending;
+
+  external wire_cst_mls_storage_batch storage_batch;
+}
+
 final class wire_cst_process_message_with_storage_result extends ffi.Struct {
   @ffi.Int32()
   external int message_type;
@@ -5820,6 +7176,28 @@ final class OpenMlsReceiveV2Buffer extends ffi.Struct {
 
   @ffi.UintPtr()
   external int capacity;
+}
+
+final class wire_cst_AcceptExternalCommitOutcome_Success extends ffi.Struct {
+  external ffi.Pointer<wire_cst_accept_external_commit_result> field0;
+}
+
+final class wire_cst_AcceptExternalCommitOutcome_Failure extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class AcceptExternalCommitOutcomeKind extends ffi.Union {
+  external wire_cst_AcceptExternalCommitOutcome_Success Success;
+
+  external wire_cst_AcceptExternalCommitOutcome_Failure Failure;
+}
+
+final class wire_cst_accept_external_commit_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external AcceptExternalCommitOutcomeKind kind;
 }
 
 final class wire_cst_account_envelope_error_v_1 extends ffi.Struct {
@@ -5972,6 +7350,30 @@ final class wire_cst_discard_pending_commit_with_storage_outcome
   external DiscardPendingCommitWithStorageOutcomeKind kind;
 }
 
+final class wire_cst_ExportGroupInfoWithStorageOutcome_Success
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_export_group_info_with_storage_result> field0;
+}
+
+final class wire_cst_ExportGroupInfoWithStorageOutcome_Failure
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class ExportGroupInfoWithStorageOutcomeKind extends ffi.Union {
+  external wire_cst_ExportGroupInfoWithStorageOutcome_Success Success;
+
+  external wire_cst_ExportGroupInfoWithStorageOutcome_Failure Failure;
+}
+
+final class wire_cst_export_group_info_with_storage_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external ExportGroupInfoWithStorageOutcomeKind kind;
+}
+
 final class wire_cst_generate_account_envelope_key_bundle_output_v_1
     extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> private_bundle;
@@ -6000,6 +7402,31 @@ final class wire_cst_get_pending_commit_with_storage_outcome
   external int tag;
 
   external GetPendingCommitWithStorageOutcomeKind kind;
+}
+
+final class wire_cst_InspectExternalCommitCandidateOutcome_Success
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_external_commit_candidate_info> field0;
+}
+
+final class wire_cst_InspectExternalCommitCandidateOutcome_Failure
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class InspectExternalCommitCandidateOutcomeKind extends ffi.Union {
+  external wire_cst_InspectExternalCommitCandidateOutcome_Success Success;
+
+  external wire_cst_InspectExternalCommitCandidateOutcome_Failure Failure;
+}
+
+final class wire_cst_inspect_external_commit_candidate_outcome
+    extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external InspectExternalCommitCandidateOutcomeKind kind;
 }
 
 final class wire_cst_JoinGroupFromWelcomeWithStorageOutcome_Success
@@ -6051,6 +7478,50 @@ final class wire_cst_merge_pending_commit_with_storage_outcome
   external int tag;
 
   external MergePendingCommitWithStorageOutcomeKind kind;
+}
+
+final class wire_cst_PrepareExternalCommitOutcome_Success extends ffi.Struct {
+  external ffi.Pointer<wire_cst_prepare_external_commit_result> field0;
+}
+
+final class wire_cst_PrepareExternalCommitOutcome_Failure extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class PrepareExternalCommitOutcomeKind extends ffi.Union {
+  external wire_cst_PrepareExternalCommitOutcome_Success Success;
+
+  external wire_cst_PrepareExternalCommitOutcome_Failure Failure;
+}
+
+final class wire_cst_prepare_external_commit_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external PrepareExternalCommitOutcomeKind kind;
+}
+
+final class wire_cst_ProcessExternalCommitOutcome_Success extends ffi.Struct {
+  external ffi.Pointer<wire_cst_process_external_commit_result> field0;
+}
+
+final class wire_cst_ProcessExternalCommitOutcome_Failure extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+}
+
+final class ProcessExternalCommitOutcomeKind extends ffi.Union {
+  external wire_cst_ProcessExternalCommitOutcome_Success Success;
+
+  external wire_cst_ProcessExternalCommitOutcome_Failure Failure;
+}
+
+final class wire_cst_process_external_commit_outcome extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external ProcessExternalCommitOutcomeKind kind;
 }
 
 final class wire_cst_ProcessMessageWithStorageOutcome_Success
@@ -6157,6 +7628,22 @@ final class wire_cst_verify_account_envelope_continuity_output_v_1
 }
 
 const int MLS_STORAGE_FORMAT_VERSION = 1;
+
+const int PROFILE = 2;
+
+const int MAX_MLS_BYTES = 1048576;
+
+const int MAX_AAD_BYTES = 16384;
+
+const int MAX_LEAVES = 256;
+
+const int MAX_TREE_NODES = 511;
+
+const int VERSION = 1;
+
+const int REQUEST_MAX_BYTES = 4194304;
+
+const int RESULT_MAX_BYTES = 262144;
 
 const int NATIVE_RECEIVE_CONTRACT_VERSION = 2;
 

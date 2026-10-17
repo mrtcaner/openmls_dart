@@ -13,6 +13,7 @@ mod frb_generated;
 mod utils;
 
 pub mod api;
+pub mod external_resync;
 
 #[cfg(target_os = "android")]
 #[allow(unsafe_code)]
@@ -24,6 +25,7 @@ mod native_receive_apple;
 /// cbindgen:ignore
 pub mod native_receive_v1;
 pub mod native_receive_v2;
+pub mod native_receive_v3;
 #[cfg(any(test, feature = "native-receive-fixtures"))]
 /// cbindgen:ignore
 pub mod native_receive_v1_vectors;

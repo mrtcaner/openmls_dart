@@ -172,6 +172,25 @@ and mechanical platform harnesses are under `native/receive_v2/`.
 The caller still owns cross-process serialization and one atomic storage batch,
 deduplication, plaintext handoff and settlement transaction.
 
+### External resync (4.1.0 release candidate)
+
+Current GroupInfo export, inactive external candidate preparation/inspection,
+exact-acceptance promotion and explicit external Commit receive share the same
+caller-owned storage core. Promotion rejects existing target group state; it
+never restores an old snapshot over live ratchets. The caller authenticates
+participant replacement authority and keeps candidates encrypted at rest.
+
+Native frame3 adds external receive (operation4) and read-only pending-binding
+inspection (operation5), preserving frame2 entry points and behavior. Android
+uses `nativeExecuteReceiveV3`; Apple uses `openmls_receive_v3_execute/free/version`.
+See [the native contract](native/receive_v3/README.md) and
+[public validator contract](PUBLIC_VALIDATOR_V1.md). A public-only validator
+cannot replace members' secret-dependent MLS verification. iOS extension runtime
+acceptance is separate from host ABI and release archive build evidence.
+
+The native 4.1.0 release candidate is not yet published. Dart package metadata
+remains at the previous release until the complete native distribution is verified.
+
 ### Ordering and rejection
 
 Commits are epoch transitions and must be processed in order. If a required Commit is permanently unavailable, terminate that group incarnation and bootstrap a new one; later application ciphertext cannot repair the missing epoch state.

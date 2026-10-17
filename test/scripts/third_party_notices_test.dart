@@ -21,6 +21,22 @@ CrateNotice _crate(
 );
 
 void main() {
+  test('vendored OpenMLS remains third-party notice inventory', () {
+    final root = Directory.current.path;
+    final sep = Platform.pathSeparator;
+    expect(isFirstPartyManifest(root, '$root${sep}Cargo.toml'), isTrue);
+    expect(
+      isFirstPartyManifest(
+        root,
+        '$root${sep}vendor${sep}openmls${sep}Cargo.toml',
+      ),
+      isFalse,
+    );
+    expect(
+      isFirstPartyManifest(root, '${root}_other${sep}Cargo.toml'),
+      isFalse,
+    );
+  });
   group('parseCargoTree', () {
     test('extracts name@version and drops duplicate markers', () {
       const stdout = '''

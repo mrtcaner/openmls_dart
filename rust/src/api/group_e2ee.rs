@@ -80,6 +80,13 @@ pub enum MlsErrorCode {
     LocalMetadataMissing = 56,
     UnsupportedRetention = 57,
     WireHashMismatch = 58,
+    ExternalCandidateInvalid = 60,
+    ExternalCandidateMismatch = 61,
+    ExternalTargetStateExists = 62,
+    ExternalAcceptanceMismatch = 63,
+    ExternalOwnCommit = 64,
+    ExternalDeltaMismatch = 65,
+    ExternalLifecycleMismatch = 66,
     InternalFailure = 255,
 }
 
@@ -279,6 +286,35 @@ pub struct CreateGroupWithStorageResult {
     pub resulting_group_state_sha256: Vec<u8>,
     pub effective_retention: u32,
     pub storage_batch: MlsStorageBatch,
+}
+/// Read-only signed publication of the exact current caller-owned group state.
+/// No mutation batch is produced; the caller fences the snapshot/publication.
+pub struct ExportGroupInfoWithStorageResult {
+    pub group_info: Vec<u8>,
+    pub group_info_sha256: Vec<u8>,
+    pub current_roster: MlsRosterSummaryV1,
+    pub signer: MlsRosterLeafV1,
+    pub base_group_state_sha256: Vec<u8>,
+    pub effective_retention: u32,
+}
+#[allow(clippy::large_enum_variant)]
+pub enum ExportGroupInfoWithStorageOutcome {
+    Success(ExportGroupInfoWithStorageResult),
+    Failure(MlsErrorCode),
+}
+/// Export only an active, non-pending, exactly matched current state. This does
+/// not grant publication authority or bypass caller lifecycle/transaction fencing.
+pub fn export_group_info_with_storage(
+    context: MlsGroupOperationContext,
+    signer_bytes: Vec<u8>,
+    expected_local_leaf: MlsRosterLeafV1,
+) -> ExportGroupInfoWithStorageOutcome {
+    match lifecycle_guard(|| {
+        runtime::export_group_info(context.into(), signer_bytes, expected_local_leaf)
+    }) {
+        Ok(value) => ExportGroupInfoWithStorageOutcome::Success(value),
+        Err(error) => ExportGroupInfoWithStorageOutcome::Failure(error),
+    }
 }
 pub struct JoinGroupWithStorageResult {
     pub group_id: Vec<u8>,

@@ -65,3 +65,39 @@ fn response_to_java(env: &JNIEnv, mut response: Vec<u8>) -> jbyteArray {
         .map(JByteArray::into_raw)
         .unwrap_or(std::ptr::null_mut())
 }
+
+/// Additive v3 transport; existing execute/version symbols remain v2.
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeExecuteReceiveV3(
+    env: JNIEnv,
+    _class: JClass,
+    request: JByteArray,
+) -> jbyteArray {
+    let Ok(length) = env.get_array_length(&request) else {
+        return std::ptr::null_mut();
+    };
+    if length as usize > NATIVE_RECEIVE_REQUEST_MAX_BYTES {
+        return response_to_java(
+            &env,
+            crate::native_receive_v3::encode_native_receive_failure_v3(
+                0,
+                NativeReceiveErrorCodeV2::LimitExceeded,
+            ),
+        );
+    }
+    let mut bytes = match env.convert_byte_array(&request) {
+        Ok(v) => v,
+        Err(_) => return std::ptr::null_mut(),
+    };
+    let response = crate::native_receive_v3::execute_native_receive_v3(&bytes);
+    bytes.zeroize();
+    response_to_java(&env, response)
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_kurtuba_openmls_OpenMlsNativeReceive_nativeContractVersionV3(
+    _env: JNIEnv,
+    _class: JClass,
+) -> jint {
+    jint::from(crate::native_receive_v3::NATIVE_RECEIVE_CONTRACT_VERSION)
+}

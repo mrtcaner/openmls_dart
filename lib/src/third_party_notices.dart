@@ -7,8 +7,8 @@ const String openmlsThirdPartyNoticesAssetKey =
     'packages/openmls/assets/THIRD_PARTY_NOTICES.txt';
 
 /// `openmls_frb` native release represented by the bundled notice inventory.
-const String openmlsThirdPartyNoticesNativeVersion = '4.0.1';
+const String openmlsThirdPartyNoticesNativeVersion = '4.1.0';
 
 /// SHA-256 of the UTF-8 bytes at [openmlsThirdPartyNoticesAssetKey].
 const String openmlsThirdPartyNoticesSha256 =
-    'f49bad9c047d7134cfe2d8d5f4427a70990672ac16a182e22d245dd522b45224';
+    '52e28b894ae4f2403807aaddcff5c21802cc3cfb286cdf33b5f63f15a59eda75';

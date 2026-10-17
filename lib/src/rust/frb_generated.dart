@@ -7,6 +7,7 @@ import 'api/account_envelope/bridge.dart';
 import 'api/account_envelope/types.dart';
 import 'api/config.dart';
 import 'api/credential.dart';
+import 'api/external_resync.dart';
 import 'api/group_e2ee.dart';
 import 'api/init.dart';
 import 'api/keys.dart';
@@ -73,7 +74,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => 1683218154;
+  int get rustContentHash => 903231093;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -200,6 +201,14 @@ abstract class RustLibApi extends BaseApi {
     required MlsSignatureKeyPair that,
   });
 
+  Future<AcceptExternalCommitOutcome>
+  crateApiExternalResyncAcceptExternalCommitWithStorage({
+    required MlsExternalTargetContextV1 target,
+    required List<int> candidateBytes,
+    required List<int> expectedCandidateSha256,
+    required MlsExternalCommitAcceptanceV1 acceptance,
+  });
+
   Future<AddMembersWithStorageOutcome> crateApiGroupE2EeAddMembersWithStorage({
     required MlsGroupOperationContext context,
     required MlsTransitionContext transition,
@@ -251,12 +260,25 @@ abstract class RustLibApi extends BaseApi {
     required MlsPendingCommitBinding expectedPendingBinding,
   });
 
+  Future<ExportGroupInfoWithStorageOutcome>
+  crateApiGroupE2EeExportGroupInfoWithStorage({
+    required MlsGroupOperationContext context,
+    required List<int> signerBytes,
+    required MlsRosterLeafV1 expectedLocalLeaf,
+  });
+
   Future<GetPendingCommitWithStorageOutcome>
   crateApiGroupE2EeGetPendingCommitWithStorage({
     required MlsGroupOperationContext context,
   });
 
   void crateApiInitInitOpenmls({required String libraryPath});
+
+  Future<InspectExternalCommitCandidateOutcome>
+  crateApiExternalResyncInspectExternalCommitCandidate({
+    required List<int> candidateBytes,
+    required List<int> expectedCandidateSha256,
+  });
 
   bool crateApiInitIsOpenmlsInitialized();
 
@@ -310,6 +332,21 @@ abstract class RustLibApi extends BaseApi {
   });
 
   int crateApiStorageMlsStorageFormatVersion();
+
+  Future<PrepareExternalCommitOutcome>
+  crateApiExternalResyncPrepareExternalCommit({
+    required MlsExternalPreparationV1 input,
+    required List<int> signerBytes,
+  });
+
+  Future<ProcessExternalCommitOutcome>
+  crateApiExternalResyncProcessExternalCommitWithStorage({
+    required MlsGroupOperationContext context,
+    required List<int> commit,
+    required List<int> expectedAad,
+    required MlsExternalCommitAcceptanceV1 acceptance,
+    MlsPendingCommitBinding? expectedSupersededPending,
+  });
 
   Future<ProcessMessageWithStorageOutcome>
   crateApiGroupE2EeProcessMessageWithStorage({
@@ -1228,6 +1265,63 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<AcceptExternalCommitOutcome>
+  crateApiExternalResyncAcceptExternalCommitWithStorage({
+    required MlsExternalTargetContextV1 target,
+    required List<int> candidateBytes,
+    required List<int> expectedCandidateSha256,
+    required MlsExternalCommitAcceptanceV1 acceptance,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_box_autoadd_mls_external_target_context_v_1(
+            target,
+          );
+          var arg1 = cst_encode_list_prim_u_8_loose(candidateBytes);
+          var arg2 = cst_encode_list_prim_u_8_loose(expectedCandidateSha256);
+          var arg3 = cst_encode_box_autoadd_mls_external_commit_acceptance_v_1(
+            acceptance,
+          );
+          return wire
+              .wire__crate__api__external_resync__accept_external_commit_with_storage(
+                port_,
+                arg0,
+                arg1,
+                arg2,
+                arg3,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_accept_external_commit_outcome,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiExternalResyncAcceptExternalCommitWithStorageConstMeta,
+        argValues: [
+          target,
+          candidateBytes,
+          expectedCandidateSha256,
+          acceptance,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiExternalResyncAcceptExternalCommitWithStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "accept_external_commit_with_storage",
+        argNames: [
+          "target",
+          "candidateBytes",
+          "expectedCandidateSha256",
+          "acceptance",
+        ],
+      );
+
+  @override
   Future<AddMembersWithStorageOutcome> crateApiGroupE2EeAddMembersWithStorage({
     required MlsGroupOperationContext context,
     required MlsTransitionContext transition,
@@ -1543,6 +1637,48 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<ExportGroupInfoWithStorageOutcome>
+  crateApiGroupE2EeExportGroupInfoWithStorage({
+    required MlsGroupOperationContext context,
+    required List<int> signerBytes,
+    required MlsRosterLeafV1 expectedLocalLeaf,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_box_autoadd_mls_group_operation_context(
+            context,
+          );
+          var arg1 = cst_encode_list_prim_u_8_loose(signerBytes);
+          var arg2 = cst_encode_box_autoadd_mls_roster_leaf_v_1(
+            expectedLocalLeaf,
+          );
+          return wire
+              .wire__crate__api__group_e2ee__export_group_info_with_storage(
+                port_,
+                arg0,
+                arg1,
+                arg2,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_export_group_info_with_storage_outcome,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiGroupE2EeExportGroupInfoWithStorageConstMeta,
+        argValues: [context, signerBytes, expectedLocalLeaf],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiGroupE2EeExportGroupInfoWithStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "export_group_info_with_storage",
+        argNames: ["context", "signerBytes", "expectedLocalLeaf"],
+      );
+
+  @override
   Future<GetPendingCommitWithStorageOutcome>
   crateApiGroupE2EeGetPendingCommitWithStorage({
     required MlsGroupOperationContext context,
@@ -1597,6 +1733,44 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiInitInitOpenmlsConstMeta =>
       const TaskConstMeta(debugName: "init_openmls", argNames: ["libraryPath"]);
+
+  @override
+  Future<InspectExternalCommitCandidateOutcome>
+  crateApiExternalResyncInspectExternalCommitCandidate({
+    required List<int> candidateBytes,
+    required List<int> expectedCandidateSha256,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_list_prim_u_8_loose(candidateBytes);
+          var arg1 = cst_encode_list_prim_u_8_loose(expectedCandidateSha256);
+          return wire
+              .wire__crate__api__external_resync__inspect_external_commit_candidate(
+                port_,
+                arg0,
+                arg1,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData:
+              dco_decode_inspect_external_commit_candidate_outcome,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiExternalResyncInspectExternalCommitCandidateConstMeta,
+        argValues: [candidateBytes, expectedCandidateSha256],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiExternalResyncInspectExternalCommitCandidateConstMeta =>
+      const TaskConstMeta(
+        debugName: "inspect_external_commit_candidate",
+        argNames: ["candidateBytes", "expectedCandidateSha256"],
+      );
 
   @override
   bool crateApiInitIsOpenmlsInitialized() {
@@ -1957,6 +2131,105 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "mls_storage_format_version",
         argNames: [],
+      );
+
+  @override
+  Future<PrepareExternalCommitOutcome>
+  crateApiExternalResyncPrepareExternalCommit({
+    required MlsExternalPreparationV1 input,
+    required List<int> signerBytes,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_box_autoadd_mls_external_preparation_v_1(input);
+          var arg1 = cst_encode_list_prim_u_8_loose(signerBytes);
+          return wire
+              .wire__crate__api__external_resync__prepare_external_commit(
+                port_,
+                arg0,
+                arg1,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_prepare_external_commit_outcome,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiExternalResyncPrepareExternalCommitConstMeta,
+        argValues: [input, signerBytes],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiExternalResyncPrepareExternalCommitConstMeta =>
+      const TaskConstMeta(
+        debugName: "prepare_external_commit",
+        argNames: ["input", "signerBytes"],
+      );
+
+  @override
+  Future<ProcessExternalCommitOutcome>
+  crateApiExternalResyncProcessExternalCommitWithStorage({
+    required MlsGroupOperationContext context,
+    required List<int> commit,
+    required List<int> expectedAad,
+    required MlsExternalCommitAcceptanceV1 acceptance,
+    MlsPendingCommitBinding? expectedSupersededPending,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          var arg0 = cst_encode_box_autoadd_mls_group_operation_context(
+            context,
+          );
+          var arg1 = cst_encode_list_prim_u_8_loose(commit);
+          var arg2 = cst_encode_list_prim_u_8_loose(expectedAad);
+          var arg3 = cst_encode_box_autoadd_mls_external_commit_acceptance_v_1(
+            acceptance,
+          );
+          var arg4 = cst_encode_opt_box_autoadd_mls_pending_commit_binding(
+            expectedSupersededPending,
+          );
+          return wire
+              .wire__crate__api__external_resync__process_external_commit_with_storage(
+                port_,
+                arg0,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_process_external_commit_outcome,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiExternalResyncProcessExternalCommitWithStorageConstMeta,
+        argValues: [
+          context,
+          commit,
+          expectedAad,
+          acceptance,
+          expectedSupersededPending,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiExternalResyncProcessExternalCommitWithStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "process_external_commit_with_storage",
+        argNames: [
+          "context",
+          "commit",
+          "expectedAad",
+          "acceptance",
+          "expectedSupersededPending",
+        ],
       );
 
   @override
@@ -2372,6 +2645,43 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AcceptExternalCommitOutcome dco_decode_accept_external_commit_outcome(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return AcceptExternalCommitOutcome_Success(
+          dco_decode_box_autoadd_accept_external_commit_result(raw[1]),
+        );
+      case 1:
+        return AcceptExternalCommitOutcome_Failure(
+          dco_decode_mls_error_code(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  AcceptExternalCommitResult dco_decode_accept_external_commit_result(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return AcceptExternalCommitResult(
+      candidateSha256: dco_decode_list_prim_u_8_strict(arr[0]),
+      localLeaf: dco_decode_mls_roster_leaf_v_1(arr[1]),
+      resultingRoster: dco_decode_mls_roster_summary_v_1(arr[2]),
+      resultingGroupStateSha256: dco_decode_list_prim_u_8_strict(arr[3]),
+      effectiveRetention: dco_decode_u_32(arr[4]),
+      storageBatch: dco_decode_mls_storage_batch(arr[5]),
+    );
+  }
+
+  @protected
   AccountEnvelopeActivationKindV1
   dco_decode_account_envelope_activation_kind_v_1(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -2521,6 +2831,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AcceptExternalCommitResult
+  dco_decode_box_autoadd_accept_external_commit_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_accept_external_commit_result(raw);
+  }
+
+  @protected
   AccountEnvelopePrivateBundleAuthorityInputV1
   dco_decode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
     dynamic raw,
@@ -2583,6 +2900,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExportGroupInfoWithStorageResult
+  dco_decode_box_autoadd_export_group_info_with_storage_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_export_group_info_with_storage_result(raw);
+  }
+
+  @protected
+  ExternalCommitCandidateInfo
+  dco_decode_box_autoadd_external_commit_candidate_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_external_commit_candidate_info(raw);
+  }
+
+  @protected
   JoinGroupWithStorageResult
   dco_decode_box_autoadd_join_group_with_storage_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -2626,6 +2957,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_mls_expected_roster_state_v_1(raw);
+  }
+
+  @protected
+  MlsExternalCommitAcceptanceV1
+  dco_decode_box_autoadd_mls_external_commit_acceptance_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_mls_external_commit_acceptance_v_1(raw);
+  }
+
+  @protected
+  MlsExternalPreparationV1 dco_decode_box_autoadd_mls_external_preparation_v_1(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_mls_external_preparation_v_1(raw);
+  }
+
+  @protected
+  MlsExternalTargetContextV1
+  dco_decode_box_autoadd_mls_external_target_context_v_1(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_mls_external_target_context_v_1(raw);
   }
 
   @protected
@@ -2681,6 +3034,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   dco_decode_box_autoadd_pending_commit_with_storage_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_pending_commit_with_storage_result(raw);
+  }
+
+  @protected
+  PrepareExternalCommitResult
+  dco_decode_box_autoadd_prepare_external_commit_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_prepare_external_commit_result(raw);
+  }
+
+  @protected
+  ProcessExternalCommitResult
+  dco_decode_box_autoadd_process_external_commit_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_process_external_commit_result(raw);
   }
 
   @protected
@@ -2872,6 +3239,61 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExportGroupInfoWithStorageOutcome
+  dco_decode_export_group_info_with_storage_outcome(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return ExportGroupInfoWithStorageOutcome_Success(
+          dco_decode_box_autoadd_export_group_info_with_storage_result(raw[1]),
+        );
+      case 1:
+        return ExportGroupInfoWithStorageOutcome_Failure(
+          dco_decode_mls_error_code(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  ExportGroupInfoWithStorageResult
+  dco_decode_export_group_info_with_storage_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return ExportGroupInfoWithStorageResult(
+      groupInfo: dco_decode_list_prim_u_8_strict(arr[0]),
+      groupInfoSha256: dco_decode_list_prim_u_8_strict(arr[1]),
+      currentRoster: dco_decode_mls_roster_summary_v_1(arr[2]),
+      signer: dco_decode_mls_roster_leaf_v_1(arr[3]),
+      baseGroupStateSha256: dco_decode_list_prim_u_8_strict(arr[4]),
+      effectiveRetention: dco_decode_u_32(arr[5]),
+    );
+  }
+
+  @protected
+  ExternalCommitCandidateInfo dco_decode_external_commit_candidate_info(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    return ExternalCommitCandidateInfo(
+      binding: dco_decode_mls_external_commit_binding_v_1(arr[0]),
+      previousRoster: dco_decode_mls_roster_summary_v_1(arr[1]),
+      proposedResultingRoster: dco_decode_mls_roster_summary_v_1(arr[2]),
+      commit: dco_decode_list_prim_u_8_strict(arr[3]),
+      groupInfo: dco_decode_list_prim_u_8_strict(arr[4]),
+      candidateSha256: dco_decode_list_prim_u_8_strict(arr[5]),
+      localLifecycleContextSha256: dco_decode_list_prim_u_8_strict(arr[6]),
+      effectiveRetention: dco_decode_u_32(arr[7]),
+    );
+  }
+
+  @protected
   GenerateAccountEnvelopeKeyBundleOutputV1
   dco_decode_generate_account_envelope_key_bundle_output_v_1(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -2905,6 +3327,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   int dco_decode_i_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
+  }
+
+  @protected
+  InspectExternalCommitCandidateOutcome
+  dco_decode_inspect_external_commit_candidate_outcome(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return InspectExternalCommitCandidateOutcome_Success(
+          dco_decode_box_autoadd_external_commit_candidate_info(raw[1]),
+        );
+      case 1:
+        return InspectExternalCommitCandidateOutcome_Failure(
+          dco_decode_mls_error_code(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
   }
 
   @protected
@@ -3135,6 +3575,84 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MlsExternalCommitAcceptanceV1 dco_decode_mls_external_commit_acceptance_v_1(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return MlsExternalCommitAcceptanceV1(
+      binding: dco_decode_mls_external_commit_binding_v_1(arr[0]),
+      resultingState: dco_decode_mls_expected_roster_state_v_1(arr[1]),
+    );
+  }
+
+  @protected
+  MlsExternalCommitBindingV1 dco_decode_mls_external_commit_binding_v_1(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 10)
+      throw Exception('unexpected arr length: expect 10 but see ${arr.length}');
+    return MlsExternalCommitBindingV1(
+      candidateId: dco_decode_list_prim_u_8_strict(arr[0]),
+      incarnationId: dco_decode_list_prim_u_8_strict(arr[1]),
+      transition: dco_decode_mls_transition_context(arr[2]),
+      previousState: dco_decode_mls_expected_roster_state_v_1(arr[3]),
+      oldLeaf: dco_decode_mls_roster_leaf_v_1(arr[4]),
+      author: dco_decode_mls_roster_leaf_v_1(arr[5]),
+      inputGroupInfoSha256: dco_decode_list_prim_u_8_strict(arr[6]),
+      commitSha256: dco_decode_list_prim_u_8_strict(arr[7]),
+      aadSha256: dco_decode_list_prim_u_8_strict(arr[8]),
+      resultingGroupInfoSha256: dco_decode_list_prim_u_8_strict(arr[9]),
+    );
+  }
+
+  @protected
+  MlsExternalPreparationV1 dco_decode_mls_external_preparation_v_1(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 13)
+      throw Exception('unexpected arr length: expect 13 but see ${arr.length}');
+    return MlsExternalPreparationV1(
+      candidateId: dco_decode_list_prim_u_8_strict(arr[0]),
+      incarnationId: dco_decode_list_prim_u_8_strict(arr[1]),
+      transition: dco_decode_mls_transition_context(arr[2]),
+      localLifecycleContextSha256: dco_decode_list_prim_u_8_strict(arr[3]),
+      inputGroupInfo: dco_decode_list_prim_u_8_strict(arr[4]),
+      inputGroupInfoSha256: dco_decode_list_prim_u_8_strict(arr[5]),
+      expectedPreviousState: dco_decode_mls_expected_roster_state_v_1(arr[6]),
+      expectedSnapshotSigner: dco_decode_mls_roster_leaf_v_1(arr[7]),
+      authorizedOldLeaf: dco_decode_mls_roster_leaf_v_1(arr[8]),
+      authorizedNewCredentialIdentity: dco_decode_list_prim_u_8_strict(arr[9]),
+      authorizedNewSignaturePublicKey: dco_decode_list_prim_u_8_strict(arr[10]),
+      aad: dco_decode_list_prim_u_8_strict(arr[11]),
+      retention: dco_decode_u_32(arr[12]),
+    );
+  }
+
+  @protected
+  MlsExternalTargetContextV1 dco_decode_mls_external_target_context_v_1(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    return MlsExternalTargetContextV1(
+      groupId: dco_decode_list_prim_u_8_strict(arr[0]),
+      incarnationId: dco_decode_list_prim_u_8_strict(arr[1]),
+      localLifecycleContextSha256: dco_decode_list_prim_u_8_strict(arr[2]),
+      storageEntries: dco_decode_list_mls_storage_entry(arr[3]),
+      storageFormatVersion: dco_decode_u_32(arr[4]),
+    );
+  }
+
+  @protected
   MlsGroupConfig dco_decode_mls_group_config(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -3288,6 +3806,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MlsPendingCommitBinding?
+  dco_decode_opt_box_autoadd_mls_pending_commit_binding(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null
+        ? null
+        : dco_decode_box_autoadd_mls_pending_commit_binding(raw);
+  }
+
+  @protected
   MlsProposalType? dco_decode_opt_box_autoadd_mls_proposal_type(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_mls_proposal_type(raw);
@@ -3342,6 +3869,79 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       resultingGroupStateSha256: dco_decode_list_prim_u_8_strict(arr[7]),
       effectiveRetention: dco_decode_u_32(arr[8]),
       storageBatch: dco_decode_mls_storage_batch(arr[9]),
+    );
+  }
+
+  @protected
+  PrepareExternalCommitOutcome dco_decode_prepare_external_commit_outcome(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return PrepareExternalCommitOutcome_Success(
+          dco_decode_box_autoadd_prepare_external_commit_result(raw[1]),
+        );
+      case 1:
+        return PrepareExternalCommitOutcome_Failure(
+          dco_decode_mls_error_code(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  PrepareExternalCommitResult dco_decode_prepare_external_commit_result(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return PrepareExternalCommitResult(
+      candidateBytes: dco_decode_list_prim_u_8_strict(arr[0]),
+      info: dco_decode_external_commit_candidate_info(arr[1]),
+    );
+  }
+
+  @protected
+  ProcessExternalCommitOutcome dco_decode_process_external_commit_outcome(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return ProcessExternalCommitOutcome_Success(
+          dco_decode_box_autoadd_process_external_commit_result(raw[1]),
+        );
+      case 1:
+        return ProcessExternalCommitOutcome_Failure(
+          dco_decode_mls_error_code(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  ProcessExternalCommitResult dco_decode_process_external_commit_result(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 7)
+      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    return ProcessExternalCommitResult(
+      authenticatedSender: dco_decode_mls_roster_leaf_v_1(arr[0]),
+      previousRoster: dco_decode_mls_roster_summary_v_1(arr[1]),
+      resultingRoster: dco_decode_mls_roster_summary_v_1(arr[2]),
+      resultingGroupStateSha256: dco_decode_list_prim_u_8_strict(arr[3]),
+      effectiveRetention: dco_decode_u_32(arr[4]),
+      supersededPending: dco_decode_opt_box_autoadd_mls_pending_commit_binding(
+        arr[5],
+      ),
+      storageBatch: dco_decode_mls_storage_batch(arr[6]),
     );
   }
 
@@ -3605,6 +4205,50 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AcceptExternalCommitOutcome sse_decode_accept_external_commit_outcome(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_box_autoadd_accept_external_commit_result(
+          deserializer,
+        );
+        return AcceptExternalCommitOutcome_Success(var_field0);
+      case 1:
+        var var_field0 = sse_decode_mls_error_code(deserializer);
+        return AcceptExternalCommitOutcome_Failure(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  AcceptExternalCommitResult sse_decode_accept_external_commit_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_candidateSha256 = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_localLeaf = sse_decode_mls_roster_leaf_v_1(deserializer);
+    var var_resultingRoster = sse_decode_mls_roster_summary_v_1(deserializer);
+    var var_resultingGroupStateSha256 = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_effectiveRetention = sse_decode_u_32(deserializer);
+    var var_storageBatch = sse_decode_mls_storage_batch(deserializer);
+    return AcceptExternalCommitResult(
+      candidateSha256: var_candidateSha256,
+      localLeaf: var_localLeaf,
+      resultingRoster: var_resultingRoster,
+      resultingGroupStateSha256: var_resultingGroupStateSha256,
+      effectiveRetention: var_effectiveRetention,
+      storageBatch: var_storageBatch,
+    );
+  }
+
+  @protected
   AccountEnvelopeActivationKindV1
   sse_decode_account_envelope_activation_kind_v_1(
     SseDeserializer deserializer,
@@ -3782,6 +4426,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AcceptExternalCommitResult
+  sse_decode_box_autoadd_accept_external_commit_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_accept_external_commit_result(deserializer));
+  }
+
+  @protected
   AccountEnvelopePrivateBundleAuthorityInputV1
   sse_decode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
     SseDeserializer deserializer,
@@ -3860,6 +4513,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExportGroupInfoWithStorageResult
+  sse_decode_box_autoadd_export_group_info_with_storage_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_export_group_info_with_storage_result(deserializer));
+  }
+
+  @protected
+  ExternalCommitCandidateInfo
+  sse_decode_box_autoadd_external_commit_candidate_info(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_external_commit_candidate_info(deserializer));
+  }
+
+  @protected
   JoinGroupWithStorageResult
   sse_decode_box_autoadd_join_group_with_storage_result(
     SseDeserializer deserializer,
@@ -3907,6 +4578,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_mls_expected_roster_state_v_1(deserializer));
+  }
+
+  @protected
+  MlsExternalCommitAcceptanceV1
+  sse_decode_box_autoadd_mls_external_commit_acceptance_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_mls_external_commit_acceptance_v_1(deserializer));
+  }
+
+  @protected
+  MlsExternalPreparationV1 sse_decode_box_autoadd_mls_external_preparation_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_mls_external_preparation_v_1(deserializer));
+  }
+
+  @protected
+  MlsExternalTargetContextV1
+  sse_decode_box_autoadd_mls_external_target_context_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_mls_external_target_context_v_1(deserializer));
   }
 
   @protected
@@ -3972,6 +4669,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_pending_commit_with_storage_result(deserializer));
+  }
+
+  @protected
+  PrepareExternalCommitResult
+  sse_decode_box_autoadd_prepare_external_commit_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_prepare_external_commit_result(deserializer));
+  }
+
+  @protected
+  ProcessExternalCommitResult
+  sse_decode_box_autoadd_process_external_commit_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_process_external_commit_result(deserializer));
   }
 
   @protected
@@ -4202,6 +4917,82 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExportGroupInfoWithStorageOutcome
+  sse_decode_export_group_info_with_storage_outcome(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 =
+            sse_decode_box_autoadd_export_group_info_with_storage_result(
+              deserializer,
+            );
+        return ExportGroupInfoWithStorageOutcome_Success(var_field0);
+      case 1:
+        var var_field0 = sse_decode_mls_error_code(deserializer);
+        return ExportGroupInfoWithStorageOutcome_Failure(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  ExportGroupInfoWithStorageResult
+  sse_decode_export_group_info_with_storage_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_groupInfo = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_groupInfoSha256 = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_currentRoster = sse_decode_mls_roster_summary_v_1(deserializer);
+    var var_signer = sse_decode_mls_roster_leaf_v_1(deserializer);
+    var var_baseGroupStateSha256 = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_effectiveRetention = sse_decode_u_32(deserializer);
+    return ExportGroupInfoWithStorageResult(
+      groupInfo: var_groupInfo,
+      groupInfoSha256: var_groupInfoSha256,
+      currentRoster: var_currentRoster,
+      signer: var_signer,
+      baseGroupStateSha256: var_baseGroupStateSha256,
+      effectiveRetention: var_effectiveRetention,
+    );
+  }
+
+  @protected
+  ExternalCommitCandidateInfo sse_decode_external_commit_candidate_info(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_binding = sse_decode_mls_external_commit_binding_v_1(deserializer);
+    var var_previousRoster = sse_decode_mls_roster_summary_v_1(deserializer);
+    var var_proposedResultingRoster = sse_decode_mls_roster_summary_v_1(
+      deserializer,
+    );
+    var var_commit = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_groupInfo = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_candidateSha256 = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_localLifecycleContextSha256 = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_effectiveRetention = sse_decode_u_32(deserializer);
+    return ExternalCommitCandidateInfo(
+      binding: var_binding,
+      previousRoster: var_previousRoster,
+      proposedResultingRoster: var_proposedResultingRoster,
+      commit: var_commit,
+      groupInfo: var_groupInfo,
+      candidateSha256: var_candidateSha256,
+      localLifecycleContextSha256: var_localLifecycleContextSha256,
+      effectiveRetention: var_effectiveRetention,
+    );
+  }
+
+  @protected
   GenerateAccountEnvelopeKeyBundleOutputV1
   sse_decode_generate_account_envelope_key_bundle_output_v_1(
     SseDeserializer deserializer,
@@ -4239,6 +5030,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   int sse_decode_i_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getInt32();
+  }
+
+  @protected
+  InspectExternalCommitCandidateOutcome
+  sse_decode_inspect_external_commit_candidate_outcome(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_box_autoadd_external_commit_candidate_info(
+          deserializer,
+        );
+        return InspectExternalCommitCandidateOutcome_Success(var_field0);
+      case 1:
+        var var_field0 = sse_decode_mls_error_code(deserializer);
+        return InspectExternalCommitCandidateOutcome_Failure(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
   }
 
   @protected
@@ -4567,6 +5380,124 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MlsExternalCommitAcceptanceV1 sse_decode_mls_external_commit_acceptance_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_binding = sse_decode_mls_external_commit_binding_v_1(deserializer);
+    var var_resultingState = sse_decode_mls_expected_roster_state_v_1(
+      deserializer,
+    );
+    return MlsExternalCommitAcceptanceV1(
+      binding: var_binding,
+      resultingState: var_resultingState,
+    );
+  }
+
+  @protected
+  MlsExternalCommitBindingV1 sse_decode_mls_external_commit_binding_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_candidateId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_incarnationId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_transition = sse_decode_mls_transition_context(deserializer);
+    var var_previousState = sse_decode_mls_expected_roster_state_v_1(
+      deserializer,
+    );
+    var var_oldLeaf = sse_decode_mls_roster_leaf_v_1(deserializer);
+    var var_author = sse_decode_mls_roster_leaf_v_1(deserializer);
+    var var_inputGroupInfoSha256 = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_commitSha256 = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_aadSha256 = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_resultingGroupInfoSha256 = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    return MlsExternalCommitBindingV1(
+      candidateId: var_candidateId,
+      incarnationId: var_incarnationId,
+      transition: var_transition,
+      previousState: var_previousState,
+      oldLeaf: var_oldLeaf,
+      author: var_author,
+      inputGroupInfoSha256: var_inputGroupInfoSha256,
+      commitSha256: var_commitSha256,
+      aadSha256: var_aadSha256,
+      resultingGroupInfoSha256: var_resultingGroupInfoSha256,
+    );
+  }
+
+  @protected
+  MlsExternalPreparationV1 sse_decode_mls_external_preparation_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_candidateId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_incarnationId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_transition = sse_decode_mls_transition_context(deserializer);
+    var var_localLifecycleContextSha256 = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_inputGroupInfo = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_inputGroupInfoSha256 = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_expectedPreviousState = sse_decode_mls_expected_roster_state_v_1(
+      deserializer,
+    );
+    var var_expectedSnapshotSigner = sse_decode_mls_roster_leaf_v_1(
+      deserializer,
+    );
+    var var_authorizedOldLeaf = sse_decode_mls_roster_leaf_v_1(deserializer);
+    var var_authorizedNewCredentialIdentity = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_authorizedNewSignaturePublicKey = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_aad = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_retention = sse_decode_u_32(deserializer);
+    return MlsExternalPreparationV1(
+      candidateId: var_candidateId,
+      incarnationId: var_incarnationId,
+      transition: var_transition,
+      localLifecycleContextSha256: var_localLifecycleContextSha256,
+      inputGroupInfo: var_inputGroupInfo,
+      inputGroupInfoSha256: var_inputGroupInfoSha256,
+      expectedPreviousState: var_expectedPreviousState,
+      expectedSnapshotSigner: var_expectedSnapshotSigner,
+      authorizedOldLeaf: var_authorizedOldLeaf,
+      authorizedNewCredentialIdentity: var_authorizedNewCredentialIdentity,
+      authorizedNewSignaturePublicKey: var_authorizedNewSignaturePublicKey,
+      aad: var_aad,
+      retention: var_retention,
+    );
+  }
+
+  @protected
+  MlsExternalTargetContextV1 sse_decode_mls_external_target_context_v_1(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_groupId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_incarnationId = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_localLifecycleContextSha256 = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_storageEntries = sse_decode_list_mls_storage_entry(deserializer);
+    var var_storageFormatVersion = sse_decode_u_32(deserializer);
+    return MlsExternalTargetContextV1(
+      groupId: var_groupId,
+      incarnationId: var_incarnationId,
+      localLifecycleContextSha256: var_localLifecycleContextSha256,
+      storageEntries: var_storageEntries,
+      storageFormatVersion: var_storageFormatVersion,
+    );
+  }
+
+  @protected
   MlsGroupConfig sse_decode_mls_group_config(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_ciphersuite = sse_decode_mls_ciphersuite(deserializer);
@@ -4769,6 +5700,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MlsPendingCommitBinding?
+  sse_decode_opt_box_autoadd_mls_pending_commit_binding(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_mls_pending_commit_binding(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   MlsProposalType? sse_decode_opt_box_autoadd_mls_proposal_type(
     SseDeserializer deserializer,
   ) {
@@ -4865,6 +5810,87 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       preparationBaseGroupStateSha256: var_preparationBaseGroupStateSha256,
       resultingGroupStateSha256: var_resultingGroupStateSha256,
       effectiveRetention: var_effectiveRetention,
+      storageBatch: var_storageBatch,
+    );
+  }
+
+  @protected
+  PrepareExternalCommitOutcome sse_decode_prepare_external_commit_outcome(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_box_autoadd_prepare_external_commit_result(
+          deserializer,
+        );
+        return PrepareExternalCommitOutcome_Success(var_field0);
+      case 1:
+        var var_field0 = sse_decode_mls_error_code(deserializer);
+        return PrepareExternalCommitOutcome_Failure(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  PrepareExternalCommitResult sse_decode_prepare_external_commit_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_candidateBytes = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_info = sse_decode_external_commit_candidate_info(deserializer);
+    return PrepareExternalCommitResult(
+      candidateBytes: var_candidateBytes,
+      info: var_info,
+    );
+  }
+
+  @protected
+  ProcessExternalCommitOutcome sse_decode_process_external_commit_outcome(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_box_autoadd_process_external_commit_result(
+          deserializer,
+        );
+        return ProcessExternalCommitOutcome_Success(var_field0);
+      case 1:
+        var var_field0 = sse_decode_mls_error_code(deserializer);
+        return ProcessExternalCommitOutcome_Failure(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  ProcessExternalCommitResult sse_decode_process_external_commit_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_authenticatedSender = sse_decode_mls_roster_leaf_v_1(deserializer);
+    var var_previousRoster = sse_decode_mls_roster_summary_v_1(deserializer);
+    var var_resultingRoster = sse_decode_mls_roster_summary_v_1(deserializer);
+    var var_resultingGroupStateSha256 = sse_decode_list_prim_u_8_strict(
+      deserializer,
+    );
+    var var_effectiveRetention = sse_decode_u_32(deserializer);
+    var var_supersededPending =
+        sse_decode_opt_box_autoadd_mls_pending_commit_binding(deserializer);
+    var var_storageBatch = sse_decode_mls_storage_batch(deserializer);
+    return ProcessExternalCommitResult(
+      authenticatedSender: var_authenticatedSender,
+      previousRoster: var_previousRoster,
+      resultingRoster: var_resultingRoster,
+      resultingGroupStateSha256: var_resultingGroupStateSha256,
+      effectiveRetention: var_effectiveRetention,
+      supersededPending: var_supersededPending,
       storageBatch: var_storageBatch,
     );
   }
@@ -5372,6 +6398,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_accept_external_commit_outcome(
+    AcceptExternalCommitOutcome self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case AcceptExternalCommitOutcome_Success(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_box_autoadd_accept_external_commit_result(
+          field0,
+          serializer,
+        );
+      case AcceptExternalCommitOutcome_Failure(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_mls_error_code(field0, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_accept_external_commit_result(
+    AcceptExternalCommitResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.candidateSha256, serializer);
+    sse_encode_mls_roster_leaf_v_1(self.localLeaf, serializer);
+    sse_encode_mls_roster_summary_v_1(self.resultingRoster, serializer);
+    sse_encode_list_prim_u_8_strict(self.resultingGroupStateSha256, serializer);
+    sse_encode_u_32(self.effectiveRetention, serializer);
+    sse_encode_mls_storage_batch(self.storageBatch, serializer);
+  }
+
+  @protected
   void sse_encode_account_envelope_activation_kind_v_1(
     AccountEnvelopeActivationKindV1 self,
     SseSerializer serializer,
@@ -5523,6 +6582,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_accept_external_commit_result(
+    AcceptExternalCommitResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_accept_external_commit_result(self, serializer);
+  }
+
+  @protected
   void
   sse_encode_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
     AccountEnvelopePrivateBundleAuthorityInputV1 self,
@@ -5602,6 +6670,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_export_group_info_with_storage_result(
+    ExportGroupInfoWithStorageResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_export_group_info_with_storage_result(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_external_commit_candidate_info(
+    ExternalCommitCandidateInfo self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_external_commit_candidate_info(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_join_group_with_storage_result(
     JoinGroupWithStorageResult self,
     SseSerializer serializer,
@@ -5653,6 +6739,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_mls_expected_roster_state_v_1(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_mls_external_commit_acceptance_v_1(
+    MlsExternalCommitAcceptanceV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_mls_external_commit_acceptance_v_1(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_mls_external_preparation_v_1(
+    MlsExternalPreparationV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_mls_external_preparation_v_1(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_mls_external_target_context_v_1(
+    MlsExternalTargetContextV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_mls_external_target_context_v_1(self, serializer);
   }
 
   @protected
@@ -5725,6 +6838,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_pending_commit_with_storage_result(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_prepare_external_commit_result(
+    PrepareExternalCommitResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_prepare_external_commit_result(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_process_external_commit_result(
+    ProcessExternalCommitResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_process_external_commit_result(self, serializer);
   }
 
   @protected
@@ -5898,6 +7029,58 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_export_group_info_with_storage_outcome(
+    ExportGroupInfoWithStorageOutcome self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case ExportGroupInfoWithStorageOutcome_Success(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_box_autoadd_export_group_info_with_storage_result(
+          field0,
+          serializer,
+        );
+      case ExportGroupInfoWithStorageOutcome_Failure(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_mls_error_code(field0, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_export_group_info_with_storage_result(
+    ExportGroupInfoWithStorageResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.groupInfo, serializer);
+    sse_encode_list_prim_u_8_strict(self.groupInfoSha256, serializer);
+    sse_encode_mls_roster_summary_v_1(self.currentRoster, serializer);
+    sse_encode_mls_roster_leaf_v_1(self.signer, serializer);
+    sse_encode_list_prim_u_8_strict(self.baseGroupStateSha256, serializer);
+    sse_encode_u_32(self.effectiveRetention, serializer);
+  }
+
+  @protected
+  void sse_encode_external_commit_candidate_info(
+    ExternalCommitCandidateInfo self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_mls_external_commit_binding_v_1(self.binding, serializer);
+    sse_encode_mls_roster_summary_v_1(self.previousRoster, serializer);
+    sse_encode_mls_roster_summary_v_1(self.proposedResultingRoster, serializer);
+    sse_encode_list_prim_u_8_strict(self.commit, serializer);
+    sse_encode_list_prim_u_8_strict(self.groupInfo, serializer);
+    sse_encode_list_prim_u_8_strict(self.candidateSha256, serializer);
+    sse_encode_list_prim_u_8_strict(
+      self.localLifecycleContextSha256,
+      serializer,
+    );
+    sse_encode_u_32(self.effectiveRetention, serializer);
+  }
+
+  @protected
   void sse_encode_generate_account_envelope_key_bundle_output_v_1(
     GenerateAccountEnvelopeKeyBundleOutputV1 self,
     SseSerializer serializer,
@@ -5926,6 +7109,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_i_32(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putInt32(self);
+  }
+
+  @protected
+  void sse_encode_inspect_external_commit_candidate_outcome(
+    InspectExternalCommitCandidateOutcome self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case InspectExternalCommitCandidateOutcome_Success(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_box_autoadd_external_commit_candidate_info(
+          field0,
+          serializer,
+        );
+      case InspectExternalCommitCandidateOutcome_Failure(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_mls_error_code(field0, serializer);
+    }
   }
 
   @protected
@@ -6205,6 +7407,83 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_mls_external_commit_acceptance_v_1(
+    MlsExternalCommitAcceptanceV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_mls_external_commit_binding_v_1(self.binding, serializer);
+    sse_encode_mls_expected_roster_state_v_1(self.resultingState, serializer);
+  }
+
+  @protected
+  void sse_encode_mls_external_commit_binding_v_1(
+    MlsExternalCommitBindingV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.candidateId, serializer);
+    sse_encode_list_prim_u_8_strict(self.incarnationId, serializer);
+    sse_encode_mls_transition_context(self.transition, serializer);
+    sse_encode_mls_expected_roster_state_v_1(self.previousState, serializer);
+    sse_encode_mls_roster_leaf_v_1(self.oldLeaf, serializer);
+    sse_encode_mls_roster_leaf_v_1(self.author, serializer);
+    sse_encode_list_prim_u_8_strict(self.inputGroupInfoSha256, serializer);
+    sse_encode_list_prim_u_8_strict(self.commitSha256, serializer);
+    sse_encode_list_prim_u_8_strict(self.aadSha256, serializer);
+    sse_encode_list_prim_u_8_strict(self.resultingGroupInfoSha256, serializer);
+  }
+
+  @protected
+  void sse_encode_mls_external_preparation_v_1(
+    MlsExternalPreparationV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.candidateId, serializer);
+    sse_encode_list_prim_u_8_strict(self.incarnationId, serializer);
+    sse_encode_mls_transition_context(self.transition, serializer);
+    sse_encode_list_prim_u_8_strict(
+      self.localLifecycleContextSha256,
+      serializer,
+    );
+    sse_encode_list_prim_u_8_strict(self.inputGroupInfo, serializer);
+    sse_encode_list_prim_u_8_strict(self.inputGroupInfoSha256, serializer);
+    sse_encode_mls_expected_roster_state_v_1(
+      self.expectedPreviousState,
+      serializer,
+    );
+    sse_encode_mls_roster_leaf_v_1(self.expectedSnapshotSigner, serializer);
+    sse_encode_mls_roster_leaf_v_1(self.authorizedOldLeaf, serializer);
+    sse_encode_list_prim_u_8_strict(
+      self.authorizedNewCredentialIdentity,
+      serializer,
+    );
+    sse_encode_list_prim_u_8_strict(
+      self.authorizedNewSignaturePublicKey,
+      serializer,
+    );
+    sse_encode_list_prim_u_8_strict(self.aad, serializer);
+    sse_encode_u_32(self.retention, serializer);
+  }
+
+  @protected
+  void sse_encode_mls_external_target_context_v_1(
+    MlsExternalTargetContextV1 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.groupId, serializer);
+    sse_encode_list_prim_u_8_strict(self.incarnationId, serializer);
+    sse_encode_list_prim_u_8_strict(
+      self.localLifecycleContextSha256,
+      serializer,
+    );
+    sse_encode_list_mls_storage_entry(self.storageEntries, serializer);
+    sse_encode_u_32(self.storageFormatVersion, serializer);
+  }
+
+  @protected
   void sse_encode_mls_group_config(
     MlsGroupConfig self,
     SseSerializer serializer,
@@ -6368,6 +7647,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_mls_pending_commit_binding(
+    MlsPendingCommitBinding? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_mls_pending_commit_binding(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_mls_proposal_type(
     MlsProposalType? self,
     SseSerializer serializer,
@@ -6441,6 +7733,72 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
     sse_encode_list_prim_u_8_strict(self.resultingGroupStateSha256, serializer);
     sse_encode_u_32(self.effectiveRetention, serializer);
+    sse_encode_mls_storage_batch(self.storageBatch, serializer);
+  }
+
+  @protected
+  void sse_encode_prepare_external_commit_outcome(
+    PrepareExternalCommitOutcome self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case PrepareExternalCommitOutcome_Success(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_box_autoadd_prepare_external_commit_result(
+          field0,
+          serializer,
+        );
+      case PrepareExternalCommitOutcome_Failure(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_mls_error_code(field0, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_prepare_external_commit_result(
+    PrepareExternalCommitResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.candidateBytes, serializer);
+    sse_encode_external_commit_candidate_info(self.info, serializer);
+  }
+
+  @protected
+  void sse_encode_process_external_commit_outcome(
+    ProcessExternalCommitOutcome self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case ProcessExternalCommitOutcome_Success(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_box_autoadd_process_external_commit_result(
+          field0,
+          serializer,
+        );
+      case ProcessExternalCommitOutcome_Failure(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_mls_error_code(field0, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_process_external_commit_result(
+    ProcessExternalCommitResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_mls_roster_leaf_v_1(self.authenticatedSender, serializer);
+    sse_encode_mls_roster_summary_v_1(self.previousRoster, serializer);
+    sse_encode_mls_roster_summary_v_1(self.resultingRoster, serializer);
+    sse_encode_list_prim_u_8_strict(self.resultingGroupStateSha256, serializer);
+    sse_encode_u_32(self.effectiveRetention, serializer);
+    sse_encode_opt_box_autoadd_mls_pending_commit_binding(
+      self.supersededPending,
+      serializer,
+    );
     sse_encode_mls_storage_batch(self.storageBatch, serializer);
   }
 

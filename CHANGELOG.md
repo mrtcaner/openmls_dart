@@ -1,5 +1,43 @@
 ## [Unreleased]
 
+### For Users
+
+#### Added
+
+- **Strict external resync** — export current GroupInfo, prepare and inspect an
+  opaque inactive external candidate, promote only exact authenticated acceptance,
+  and process external Commits against current caller-owned state. Existing
+  group state cannot be overwritten by candidate promotion.
+- **Native receive frame 3** — additive Android/Apple entry points support external
+  Commit receive and read-only full pending-binding inspection. Frame 2 remains
+  available unchanged. Inspection returns no mutation batch or plaintext.
+- **Public validator protocol 1** — bounded one-shot GroupInfo/successor validation
+  with shared fixtures and Linux build recipes; no private MLS state or database.
+
+#### Changed
+
+- **openmls_frb 4.1.0 candidate** — includes the generated Dart external-resync
+  bridge. Consumers must use matching generated bindings and native artifacts;
+  active storage/profile/digest formats and existing member APIs are unchanged.
+- **Pinned OpenMLS 0.8.1 source patch** — adds explicit authorized old-leaf
+  selection for external resync and a verified GroupInfo signer accessor. Crypto
+  provider versions, signature/tree checks and strict lifetime policy are unchanged.
+
+### For Contributors
+
+#### Added
+
+- **External-resync validation** — focused candidate restart/acceptance, pending
+  reconciliation, public validation, codec and native ABI tests; retained bounded
+  resource measurements are opt-in, not a routine stress campaign.
+
+#### Fixed
+
+- **Vendored dependency notices** — retain vendored OpenMLS in third-party notices
+  rather than treating it as first-party source.
+- **Build-only release review** — manual native workflow runs build and retain
+  checked archives without publishing. Only a native-version tag push publishes.
+
 ## [4.0.1] - 2026-09-29
 
 ### For Users

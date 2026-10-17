@@ -2,6 +2,7 @@
 
 pub mod config;
 pub mod credential;
+pub mod external_resync;
 pub mod group_e2ee;
 pub mod init;
 pub mod keys;

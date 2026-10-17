@@ -23,6 +23,11 @@ debug = 1
 overflow-checks = true
 debug-assertions = true
 
+# Cargo patches apply at the root manifest, not through a path dependency.
+# Fuzz exactly the reviewed OpenMLS source used by the production crate.
+[patch."https://github.com/openmls/openmls"]
+openmls = { path = "../vendor/openmls" }
+
 # One [[bin]] per fuzz target. Add your own targets here (and a matching file in
 # fuzz_targets/) as you expose byte-parsing functions to fuzz.
 
