@@ -12,6 +12,16 @@
 # supported RFC 9420 ciphersuites use the RustCrypto HPKE algorithms. Revisit
 # these exceptions when the pinned hpke-rs/OpenMLS version changes.
 ignore = [
+    # Reviewed 2026-10-17: hpke-rs 0.6.1 retains optional hpke-rs-libcrux
+    # 0.6.1 -> libcrux-kem 0.0.7 in Cargo.lock. Package and fuzz all-target,
+    # all-feature normal/build/dev graphs have no active path to libcrux-kem.
+    # Removing the entry restores it on resolution; the optional provider's
+    # 0.0.7 requirement excludes the fixed >=0.0.10 versions. These exceptions
+    # apply only to lockfile inventory, not compiled crypto. The existing
+    # production graph guard rejects libcrux-kem if enabled; cargo-deny keeps
+    # both advisories unignored. Re-review if provider/features/pins change.
+    "RUSTSEC-2026-0330", # inactive hybrid encapsulation: short-seed panic
+    "RUSTSEC-2026-0331", # inactive hybrid-key decoding: short-input panic
     "RUSTSEC-2026-0124", # lockfile-only: libcrux-chacha20poly1305
     "RUSTSEC-2026-0075", # lockfile-only: libcrux-ed25519
     "RUSTSEC-2026-0073", # lockfile-only: libcrux-poly1305
