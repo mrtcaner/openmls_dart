@@ -1,6 +1,6 @@
 # Public validator binary contract 1
 
-Status: coordinated integration contract, 2026-10-16; not released. Tracking #59.
+Status: released with native 4.1.0 on 2026-10-17. Tracking #59.
 Executable: `openmls_public_validator`, built from this package's Rust core via
 `make build-public-validator`. Linux-musl amd64/arm64 packaging is a separate
 gate. No database/network, secret inputs, JSON, retained process, or shell protocol.
@@ -112,11 +112,15 @@ Backend and UI own those policy decisions. No lifetime bypass is provided.
 
 ## Version separation
 
-Additive native4.1.0 release candidate; this public protocol1 is independent of
+Available in native4.1.0; this public protocol1 is independent of
 mobile native receive frame3, unchanged active crypto/profile2,
 storage1/metadata1/roster-digest1/state-digest1, and external candidate envelope1.
 App client capability and database schema versions are not package protocol fields.
-No production release has been published for this candidate.
+The [native 4.1.0 release](https://github.com/mrtcaner/openmls_dart/releases/tag/openmls_frb-4.1.0)
+is built from commit `8229eebfdad0801f6fc8095b0d3c39d84727ef50`. Build the
+standalone public validator from that same immutable source with
+`make build-public-validator-linux`; it is not a separate asset in the
+mobile/desktop/Web library release.
 
 ## Caller-storage current GroupInfo export
 

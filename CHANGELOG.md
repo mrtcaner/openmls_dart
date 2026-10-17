@@ -1,4 +1,4 @@
-## [Unreleased]
+## [4.1.0] - 2026-10-17
 
 ### For Users
 
@@ -16,7 +16,7 @@
 
 #### Changed
 
-- **openmls_frb 4.1.0 candidate** — includes the generated Dart external-resync
+- **openmls_frb 4.1.0** — includes the generated Dart external-resync
   bridge. Consumers must use matching generated bindings and native artifacts;
   active storage/profile/digest formats and existing member APIs are unchanged.
 - **Pinned OpenMLS 0.8.1 source patch** — adds explicit authorized old-leaf
@@ -590,7 +590,7 @@ and [`#7`](https://github.com/mrtcaner/openmls_dart/issues/7).
 - X.509 `x509()` documents that application layer must validate certificate chains
 - SECURITY.md: sensitive API table, known limitations, web deployment recommendations, vulnerability reporting via GitHub Security Advisories
 
-[Unreleased]: https://github.com/mrtcaner/openmls_dart/compare/openmls_frb-4.0.1...HEAD
+[4.1.0]: https://github.com/mrtcaner/openmls_dart/compare/openmls_frb-4.0.1...openmls_frb-4.1.0
 [4.0.1]: https://github.com/mrtcaner/openmls_dart/compare/openmls_frb-4.0.0...openmls_frb-4.0.1
 [4.0.0]: https://github.com/mrtcaner/openmls_dart/compare/openmls_frb-3.2.1...openmls_frb-4.0.0
 [3.2.1]: https://github.com/mrtcaner/openmls_dart/compare/45cc7ceb7857790deda97af9d4013593965a6fc0...a08e4fb714384c15ca1efc09fbb0a0491e7e25ed
