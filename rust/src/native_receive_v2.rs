@@ -545,7 +545,7 @@ pub(crate) fn encode_native_receive_failure_v2(
         .unwrap_or_else(|_| encode_failure_fallback(operation))
 }
 
-fn execute_request(
+pub(crate) fn execute_request(
     mut request: NativeReceiveRequestV2,
 ) -> Result<NativeReceiveSuccessV2, NativeReceiveErrorCodeV2> {
     match &mut request {
@@ -665,18 +665,20 @@ fn execute_request(
     }
 }
 
-fn native_leaf_into_mls(value: NativeLeafAuthorityV2) -> MlsRosterLeafV1 {
+pub(crate) fn native_leaf_into_mls(value: NativeLeafAuthorityV2) -> MlsRosterLeafV1 {
     MlsRosterLeafV1 {
         leaf_index: value.leaf_index,
         credential_identity: value.credential_identity,
         signature_public_key: value.signature_public_key,
     }
 }
-fn validate_retention(value: u32) -> Result<(), NativeReceiveErrorCodeV2> {
+pub(crate) fn validate_retention(value: u32) -> Result<(), NativeReceiveErrorCodeV2> {
     crate::local_group_state::validate_retention(value)
 }
 
-fn native_expected_into_mls(value: NativeExpectedRosterStateV2) -> MlsExpectedRosterStateV1 {
+pub(crate) fn native_expected_into_mls(
+    value: NativeExpectedRosterStateV2,
+) -> MlsExpectedRosterStateV1 {
     MlsExpectedRosterStateV1 {
         group_id: value.group_id,
         epoch: value.epoch,
@@ -684,7 +686,7 @@ fn native_expected_into_mls(value: NativeExpectedRosterStateV2) -> MlsExpectedRo
     }
 }
 
-fn native_storage_entry_into_mls(mut value: NativeStorageEntryV2) -> MlsStorageEntry {
+pub(crate) fn native_storage_entry_into_mls(mut value: NativeStorageEntryV2) -> MlsStorageEntry {
     MlsStorageEntry {
         key: std::mem::take(&mut value.key),
         value: std::mem::take(&mut value.value),
@@ -692,7 +694,7 @@ fn native_storage_entry_into_mls(mut value: NativeStorageEntryV2) -> MlsStorageE
     }
 }
 
-fn mls_leaf_into_native(value: MlsRosterLeafV1) -> NativeLeafAuthorityV2 {
+pub(crate) fn mls_leaf_into_native(value: MlsRosterLeafV1) -> NativeLeafAuthorityV2 {
     NativeLeafAuthorityV2 {
         leaf_index: value.leaf_index,
         credential_identity: value.credential_identity,
@@ -700,7 +702,7 @@ fn mls_leaf_into_native(value: MlsRosterLeafV1) -> NativeLeafAuthorityV2 {
     }
 }
 
-fn mls_roster_into_native(value: MlsRosterSummaryV1) -> NativeRosterSummaryV2 {
+pub(crate) fn mls_roster_into_native(value: MlsRosterSummaryV1) -> NativeRosterSummaryV2 {
     NativeRosterSummaryV2 {
         group_id: value.group_id,
         epoch: value.epoch,
@@ -709,7 +711,7 @@ fn mls_roster_into_native(value: MlsRosterSummaryV1) -> NativeRosterSummaryV2 {
     }
 }
 
-fn mls_batch_into_native(value: MlsStorageBatch) -> NativeStorageBatchV2 {
+pub(crate) fn mls_batch_into_native(value: MlsStorageBatch) -> NativeStorageBatchV2 {
     NativeStorageBatchV2 {
         storage_format_version: value.storage_format_version,
         upserts: value
@@ -850,7 +852,7 @@ fn encode_frame_with_max(
     Ok(frame)
 }
 
-fn decode_process_request(
+pub(crate) fn decode_process_request(
     decoder: &mut Decoder<'_>,
     operation: NativeReceiveOperationV2,
 ) -> Result<NativeReceiveRequestV2, NativeReceiveErrorCodeV2> {
@@ -905,7 +907,7 @@ fn decode_process_request(
     })
 }
 
-fn decode_welcome_request(
+pub(crate) fn decode_welcome_request(
     decoder: &mut Decoder<'_>,
 ) -> Result<NativeReceiveRequestV2, NativeReceiveErrorCodeV2> {
     expect_map(decoder, 11)?;
@@ -972,7 +974,7 @@ fn decode_welcome_request(
     })
 }
 
-fn validate_profile(profile_id: u16) -> Result<(), NativeReceiveErrorCodeV2> {
+pub(crate) fn validate_profile(profile_id: u16) -> Result<(), NativeReceiveErrorCodeV2> {
     if profile_id == NATIVE_RECEIVE_PROFILE_V2 {
         Ok(())
     } else {
@@ -980,7 +982,7 @@ fn validate_profile(profile_id: u16) -> Result<(), NativeReceiveErrorCodeV2> {
     }
 }
 
-fn decode_leaf(
+pub(crate) fn decode_leaf(
     decoder: &mut Decoder<'_>,
 ) -> Result<NativeLeafAuthorityV2, NativeReceiveErrorCodeV2> {
     expect_map(decoder, 3)?;
@@ -999,7 +1001,7 @@ fn decode_leaf(
     })
 }
 
-fn decode_expected_roster(
+pub(crate) fn decode_expected_roster(
     decoder: &mut Decoder<'_>,
 ) -> Result<NativeExpectedRosterStateV2, NativeReceiveErrorCodeV2> {
     expect_map(decoder, 3)?;
@@ -1018,7 +1020,7 @@ fn decode_expected_roster(
     })
 }
 
-fn decode_storage_snapshot(
+pub(crate) fn decode_storage_snapshot(
     decoder: &mut Decoder<'_>,
     expected_group_id: Option<&[u8]>,
 ) -> Result<NativeStorageSnapshotV2, NativeReceiveErrorCodeV2> {
@@ -1147,7 +1149,7 @@ fn decode_storage_entry(
     })
 }
 
-fn encode_success(
+pub(crate) fn encode_success(
     encoder: &mut Encoder<&mut Vec<u8>>,
     result: &NativeReceiveSuccessV2,
 ) -> Result<(), NativeReceiveErrorCodeV2> {
@@ -1260,7 +1262,7 @@ fn encode_pair_leaf(
     encode_leaf(encoder, leaf)
 }
 
-fn encode_leaf(
+pub(crate) fn encode_leaf(
     encoder: &mut Encoder<&mut Vec<u8>>,
     leaf: &NativeLeafAuthorityV2,
 ) -> Result<(), NativeReceiveErrorCodeV2> {
@@ -1290,7 +1292,7 @@ fn encode_pair_roster(
     encode_roster(encoder, roster)
 }
 
-fn encode_expected_roster(
+pub(crate) fn encode_expected_roster(
     encoder: &mut Encoder<&mut Vec<u8>>,
     roster: &NativeExpectedRosterStateV2,
 ) -> Result<(), NativeReceiveErrorCodeV2> {
@@ -1308,7 +1310,7 @@ fn encode_expected_roster(
     Ok(())
 }
 
-fn encode_storage_snapshot(
+pub(crate) fn encode_storage_snapshot(
     encoder: &mut Encoder<&mut Vec<u8>>,
     snapshot: &NativeStorageSnapshotV2,
     expected_group_id: Option<&[u8]>,
@@ -1478,7 +1480,7 @@ fn validate_result_bytes(value: &[u8], maximum: usize) -> Result<(), NativeRecei
     validate_result_range(value, 0, maximum)
 }
 
-fn validate_exact_result_bytes(
+pub(crate) fn validate_exact_result_bytes(
     value: &[u8],
     expected: usize,
 ) -> Result<(), NativeReceiveErrorCodeV2> {
@@ -1489,7 +1491,7 @@ fn validate_exact_result_bytes(
     }
 }
 
-fn validate_result_range(
+pub(crate) fn validate_result_range(
     value: &[u8],
     minimum: usize,
     maximum: usize,
@@ -1501,11 +1503,14 @@ fn validate_result_range(
     }
 }
 
-fn encode_error<E>(_error: minicbor::encode::Error<E>) -> NativeReceiveErrorCodeV2 {
+pub(crate) fn encode_error<E>(_error: minicbor::encode::Error<E>) -> NativeReceiveErrorCodeV2 {
     NativeReceiveErrorCodeV2::InternalFailure
 }
 
-fn expect_map(decoder: &mut Decoder<'_>, expected: usize) -> Result<(), NativeReceiveErrorCodeV2> {
+pub(crate) fn expect_map(
+    decoder: &mut Decoder<'_>,
+    expected: usize,
+) -> Result<(), NativeReceiveErrorCodeV2> {
     let length = decoder
         .map()
         .map_err(|_| NativeReceiveErrorCodeV2::NoncanonicalEncoding)?
@@ -1533,7 +1538,10 @@ fn expect_array_max(
     }
 }
 
-fn expect_key(decoder: &mut Decoder<'_>, expected: u8) -> Result<(), NativeReceiveErrorCodeV2> {
+pub(crate) fn expect_key(
+    decoder: &mut Decoder<'_>,
+    expected: u8,
+) -> Result<(), NativeReceiveErrorCodeV2> {
     let actual = decoder
         .u8()
         .map_err(|_| NativeReceiveErrorCodeV2::NoncanonicalEncoding)?;
@@ -1544,14 +1552,14 @@ fn expect_key(decoder: &mut Decoder<'_>, expected: u8) -> Result<(), NativeRecei
     }
 }
 
-fn decode_exact_bytes(
+pub(crate) fn decode_exact_bytes(
     decoder: &mut Decoder<'_>,
     expected: usize,
 ) -> Result<Vec<u8>, NativeReceiveErrorCodeV2> {
     decode_bounded_bytes(decoder, expected, expected)
 }
 
-fn decode_bounded_bytes(
+pub(crate) fn decode_bounded_bytes(
     decoder: &mut Decoder<'_>,
     minimum: usize,
     maximum: usize,
@@ -1571,7 +1579,7 @@ fn zeroize_entries(entries: &mut [NativeStorageEntryV2]) {
     }
 }
 
-fn preflight_cbor(input: &[u8]) -> Result<(), NativeReceiveErrorCodeV2> {
+pub(crate) fn preflight_cbor(input: &[u8]) -> Result<(), NativeReceiveErrorCodeV2> {
     let mut scanner = CborPreflight {
         input,
         position: 0,

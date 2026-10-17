@@ -5,6 +5,7 @@ use crate::snapshot_storage::SnapshotOpenMlsProvider;
 use openmls::framing::errors::{MessageDecryptionError, SecretTreeError};
 use zeroize::Zeroizing;
 type Error = MlsErrorCode;
+pub(crate) mod external;
 
 pub(crate) struct Context {
     pub group_id: Vec<u8>,
@@ -199,6 +200,83 @@ fn digest(provider: &SnapshotOpenMlsProvider, gid: &[u8]) -> Result<Vec<u8>, Err
     let entries = Entries(provider.storage().snapshot_entries(gid));
     bounded_entries(&entries.0)?;
     group_state_digest_from_entries(gid, &entries.0, 1).map_err(|_| Error::InvalidStorageSnapshot)
+}
+pub(crate) fn export_group_info(
+    context: Context,
+    signer_bytes: Vec<u8>,
+    expected_local_leaf: MlsRosterLeafV1,
+) -> Result<ExportGroupInfoWithStorageResult, Error> {
+    use crate::external_resync::{self as public_core, public::validate_snapshot};
+    let signer_bytes = Zeroizing::new(signer_bytes);
+    if signer_bytes.is_empty() || signer_bytes.len() > 4096 {
+        return Err(Error::LimitExceeded);
+    }
+    let loaded = load(context)?;
+    if !loaded.group.is_active() {
+        return Err(Error::InactiveGroup);
+    }
+    if loaded.local.pending.is_some() {
+        return Err(Error::PendingCommitExists);
+    }
+    let signer = signer_from_bytes(signer_bytes.to_vec()).map_err(|_| Error::InvalidSigner)?;
+    ensure_local_signer(&loaded.group, &signer).map_err(|_| Error::InvalidSigner)?;
+    let local_leaf = loaded
+        .local
+        .current
+        .leaves
+        .iter()
+        .find(|l| l.leaf_index == loaded.group.own_leaf_index().u32())
+        .ok_or(Error::LocalLeafMismatch)?;
+    if local_leaf != &expected_local_leaf {
+        return Err(Error::LocalLeafMismatch);
+    }
+    let group_info = loaded
+        .group
+        .export_group_info(loaded.provider.crypto(), &signer, true)
+        .map_err(|_| Error::MlsProtocolRejected)?
+        .tls_serialize_detached()
+        .map_err(|_| Error::InternalFailure)?;
+    let group_info_sha256 = Sha256::digest(&group_info).to_vec();
+    // Apply exactly the public publication profile, including strict leaf lifetime.
+    validate_snapshot(&public_core::SnapshotRequest {
+        profile: public_core::PROFILE,
+        group_info: group_info.clone(),
+        sha256: group_info_sha256.clone(),
+        expected: public_core::ExpectedState {
+            group_id: loaded.local.current.group_id.clone(),
+            epoch: loaded.local.current.epoch,
+            roster_sha256: loaded.local.current.digest_sha256.clone(),
+        },
+        expected_signer: public_core::Leaf {
+            index: local_leaf.leaf_index,
+            identity: local_leaf.credential_identity.clone(),
+            signature_key: local_leaf.signature_public_key.clone(),
+        },
+    })
+    .map_err(|e| match e {
+        public_core::Error::LimitExceeded => Error::LimitExceeded,
+        public_core::Error::UnsupportedProfile => Error::UnsupportedProfile,
+        public_core::Error::InternalFailure => Error::InternalFailure,
+        _ => Error::MlsProtocolRejected,
+    })?;
+    // Export is read-only, including installation-global entries. Fail closed if
+    // a future dependency unexpectedly turns it into a mutating operation.
+    let updates = loaded.provider.into_storage().into_updates();
+    if !updates.upserts.is_empty() || !updates.deletes.is_empty() {
+        let mut updates = updates;
+        for (_, value) in &mut updates.upserts {
+            value.zeroize();
+        }
+        return Err(Error::InternalFailure);
+    }
+    Ok(ExportGroupInfoWithStorageResult {
+        group_info,
+        group_info_sha256,
+        signer: expected_local_leaf,
+        current_roster: loaded.local.current,
+        base_group_state_sha256: loaded.base,
+        effective_retention: loaded.local.retention,
+    })
 }
 fn finish(loaded: Loaded, previous: MlsRosterSummaryV1) -> Result<Mutation, Error> {
     loaded.local.save(loaded.provider.storage())?;
@@ -881,6 +959,7 @@ fn receive_inner(input: ReceiveInput) -> Result<Received, Error> {
 
 #[cfg(test)]
 mod tests {
+    mod external_tests;
     use super::*;
     use crate::api::keys::{MlsSignatureKeyPair, serialize_signer};
     use crate::api::storage::create_key_package_with_storage;
@@ -1077,6 +1156,88 @@ mod tests {
             }),
         )
         .unwrap()
+    }
+    #[test]
+    fn current_group_info_export_is_strict_and_read_only() {
+        let (mut a, b) = pair(4);
+        let leaf = a.roster.leaves[0].clone();
+        let before = context(&a).expected_base_sha256.clone();
+        let c = context(&a);
+        let boundary = MlsGroupOperationContext {
+            group_id: c.group_id.clone(),
+            incarnation_id: c.incarnation_id.clone(),
+            expected_current_state: c.expected_current.clone(),
+            expected_base_group_state_sha256: c.expected_base_sha256.clone(),
+            expected_retention: c.expected_retention,
+            storage_entries: c.entries.clone(),
+            storage_format_version: c.storage_format,
+        };
+        let ExportGroupInfoWithStorageOutcome::Success(export) =
+            export_group_info_with_storage(boundary, a.signer.to_vec(), leaf.clone())
+        else {
+            panic!("current export failed");
+        };
+        assert_eq!(export.current_roster, a.roster);
+        assert_eq!(export.signer, leaf);
+        assert_eq!(export.base_group_state_sha256, before);
+        assert_eq!(export.effective_retention, 4);
+        assert_eq!(
+            export.group_info_sha256,
+            Sha256::digest(&export.group_info).to_vec()
+        );
+        assert_eq!(
+            export_group_info(context(&a), a.signer.to_vec(), leaf.clone())
+                .unwrap()
+                .group_info,
+            export.group_info
+        );
+        assert!(matches!(
+            export_group_info(context(&a), b.signer.to_vec(), leaf.clone()),
+            Err(Error::InvalidSigner)
+        ));
+        assert!(matches!(
+            export_group_info(context(&a), a.signer.to_vec(), b.roster.leaves[1].clone()),
+            Err(Error::LocalLeafMismatch)
+        ));
+        for (field, expected_error) in [
+            (0, Error::BaseStateMismatch),
+            (1, Error::PreviousEpochMismatch),
+            (2, Error::PreviousRosterMismatch),
+            (3, Error::GroupMismatch),
+            (4, Error::ConfigurationMismatch),
+        ] {
+            let mut c = context(&a);
+            match field {
+                0 => c.expected_base_sha256[0] ^= 1,
+                1 => c.expected_current.epoch += 1,
+                2 => c.expected_current.digest_sha256[0] ^= 1,
+                3 => c.incarnation_id[0] ^= 1,
+                _ => c.expected_retention = 2,
+            }
+            assert_eq!(
+                export_group_info(c, a.signer.to_vec(), leaf.clone()).err(),
+                Some(expected_error),
+                "mismatch field {field}"
+            );
+        }
+        let mut absent = context(&a);
+        zeroize_entry_values(&mut absent.entries);
+        absent.entries.clear();
+        absent.expected_base_sha256 = group_state_digest_from_entries(GID, &[], 1).unwrap();
+        assert!(matches!(
+            export_group_info(absent, a.signer.to_vec(), leaf.clone()),
+            Err(Error::GroupStateUnavailable)
+        ));
+        assert_eq!(context(&a).expected_base_sha256, before);
+        let pending = self_prepare(&a, 88);
+        mutate(&mut a, &pending.mutation);
+        let pending_before = context(&a).expected_base_sha256.clone();
+        assert!(matches!(
+            export_group_info(context(&a), a.signer.to_vec(), leaf),
+            Err(Error::PendingCommitExists)
+        ));
+        assert_eq!(context(&a).expected_base_sha256, pending_before);
+        assert!(inspect_pending(context(&a)).unwrap().is_some());
     }
     fn incoming(
         p: &Peer,

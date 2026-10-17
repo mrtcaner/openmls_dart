@@ -1,0 +1,15 @@
+[workspace]
+members = ["openmls"]
+resolver = "2"
+
+# Packaging-only resolution of the original workspace declarations. All git
+# sources use the existing package source identity; rust/Cargo.lock pins SHA.
+[workspace.dependencies]
+tls_codec = { version = "0.4.2", features = ["derive", "serde", "mls"] }
+openmls_traits = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
+openmls_rust_crypto = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
+openmls_basic_credential = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
+openmls_memory_storage = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
+openmls_sqlite_storage = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
+openmls_libcrux_crypto = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }
+openmls_test = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.8.1" }

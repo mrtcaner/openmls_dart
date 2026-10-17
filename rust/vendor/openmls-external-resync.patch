@@ -1,0 +1,79 @@
+diff --git a/src/group/mls_group/commit_builder/external_commits.rs b/src/group/mls_group/commit_builder/external_commits.rs
+--- a/src/group/mls_group/commit_builder/external_commits.rs
++++ b/src/group/mls_group/commit_builder/external_commits.rs
+@@ -72,6 +72,7 @@ pub struct ExternalCommitBuilder {
+     config: MlsGroupJoinConfig,
+     validate_lifetimes: LeafNodeLifetimePolicy,
+     aad: Vec<u8>,
++    resync_leaf: Option<LeafNodeIndex>,
+ }
+ 
+ impl MlsGroup {
+@@ -82,6 +83,15 @@ impl MlsGroup {
+ }
+ 
+ impl ExternalCommitBuilder {
++    /// Select exactly one existing leaf to replace during external resync.
++    ///
++    /// The application MUST authenticate that the new credential/key is an
++    /// authorized successor for this leaf. This method does not authenticate
++    /// business identity. Without an explicit leaf, same-key behavior is unchanged.
++    pub fn with_resync_leaf(mut self, leaf: LeafNodeIndex) -> Self {
++        self.resync_leaf = Some(leaf);
++        self
++    }
+     /// Creates a new [`ExternalCommitBuilder`] with default values.
+     pub fn new() -> Self {
+         Self::default()
+@@ -148,6 +158,7 @@ impl ExternalCommitBuilder {
+             mut config,
+             aad,
+             validate_lifetimes,
++            resync_leaf,
+         } = self;
+ 
+         // Build the ratchet tree
+@@ -246,13 +257,22 @@ impl ExternalCommitBuilder {
+         // If there is a group member in the group with the same identity as us,
+         // commit a remove proposal.
+         let our_signature_key = credential_with_key.signature_key.as_slice();
+-        let remove_proposal = public_group.members().find_map(|member| {
+-            (member.signature_key == our_signature_key).then_some(Proposal::remove(
+-                RemoveProposal {
+-                    removed: member.index,
+-                },
+-            ))
+-        });
++        if resync_leaf.is_some_and(|index| !public_group.members().any(|m| m.index == index)) {
++            return Err(ExternalCommitBuilderError::LibraryError(
++                LibraryError::custom("Explicit resync leaf does not exist"),
++            ));
++        }
++        let remove_proposal = resync_leaf
++            .map(|removed| Proposal::remove(RemoveProposal { removed }))
++            .or_else(|| {
++                public_group.members().find_map(|member| {
++                    (member.signature_key == our_signature_key).then_some(Proposal::remove(
++                        RemoveProposal {
++                            removed: member.index,
++                        },
++                    ))
++                })
++            });
+ 
+         let inline_proposals = inline_proposals
+             .chain(remove_proposal)
+diff --git a/src/messages/group_info.rs b/src/messages/group_info.rs
+--- a/src/messages/group_info.rs
++++ b/src/messages/group_info.rs
+@@ -189,6 +189,10 @@ impl TlsSerializeTrait for GroupInfo {
+ }
+ 
+ impl GroupInfo {
++    /// Signer index in the ratchet tree after GroupInfo signature verification.
++    pub fn signer(&self) -> LeafNodeIndex {
++        self.payload.signer
++    }
+     /// Returns the group context.
+     pub fn group_context(&self) -> &GroupContext {
+         &self.payload.group_context

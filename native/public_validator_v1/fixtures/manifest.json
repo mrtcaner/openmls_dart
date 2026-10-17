@@ -1,0 +1,68 @@
+[
+  {
+    "code": 0,
+    "name": "snapshot_ok",
+    "requestSha256": "98bd98ea8e4d7bb950eb6295d6529fde160f8c89e55c2c69b7b8a19f1acb148b",
+    "responseSha256": "f6c635a807540e49e7ac050735337c4ae2cd25ed627695cff94c415f2c38ca37"
+  },
+  {
+    "code": 0,
+    "name": "external_successor_ok",
+    "requestSha256": "089b658a2df2c6f0dc5a2c80fd1f4a1195f10600d0c59698c93b023fde0bbb11",
+    "responseSha256": "be95f77750272dec90b69aa1826c4295cb3e8ade9a511dfd0573c668ffdca809"
+  },
+  {
+    "code": 0,
+    "name": "stable_credential_second_replacement",
+    "requestSha256": "a5b9d74a724c6fea7d841428c71c08a1542aef6d08bb1e4ce3550fc7041648bd",
+    "responseSha256": "3cef7768a97bdf152beb8d31ed050a4765658b780808a796c4c259e607741299"
+  },
+  {
+    "code": 0,
+    "name": "stable_credential_multileaf",
+    "requestSha256": "7e12e67f0def3e1ebbf48eed8229441aee45434e6f3557b0d29838a80ea90285",
+    "responseSha256": "744c81561600adebfe082a560e6798a678770011e5205f89afad041ddba176aa"
+  },
+  {
+    "code": 24,
+    "name": "unchanged_identity_collision",
+    "requestSha256": "a2783f51a00981374525f295af092bf8c17d1a7888a8fe54725f008d9b23e46c",
+    "responseSha256": "3aeb54b4169b55525eed9a59d07d2ba4631da39252ed48f676517bd0a87e3db8"
+  },
+  {
+    "code": 24,
+    "name": "unchanged_key_collision",
+    "requestSha256": "38452dec8075bb779fceae5a6ef364fdad4d9fc993281e0e7c9f52784af19c4c",
+    "responseSha256": "336d2fe3070c2d2c6b14068bb5f22d7ef70a75b42b73549d83e0fcfbbc289e78"
+  },
+  {
+    "code": 24,
+    "name": "reused_old_key",
+    "requestSha256": "09ae74443f3380b772cc82ffa1b965e510740e0c50e54918682e3e67213dfcbd",
+    "responseSha256": "1497d1bd59b8aa8c37a7b9aa37c4d12e4feceaf68afac538c4a50512188d8d53"
+  },
+  {
+    "code": 23,
+    "name": "wrong_new_key",
+    "requestSha256": "d06211c173230014535abbd790f18a42224db02cc707d65de1b7d3cbad2e1974",
+    "responseSha256": "1fcc06245716eef9d100a601d3dfb043faa4b9762bc95136d454860ccff4f995"
+  },
+  {
+    "code": 24,
+    "name": "wrong_old_leaf",
+    "requestSha256": "3526e85d18ccbe0e33b41be64b41e5b0b8a89f33f085b6f8a665bb91fdeb127b",
+    "responseSha256": "011ecb944bc76e3a585810908f11b34ecaa3c709824b19e652735b67f7c375ff"
+  },
+  {
+    "code": 6,
+    "name": "empty_aad",
+    "requestSha256": "7adb93b21df8a4cf6afdcbb7883b974b1b0877917fd5b3def2fd351d90233cbe",
+    "responseSha256": "b2b64cdcc12c917bbadc502405542043596c9a4d1c72d668c9df812daa3404e5"
+  },
+  {
+    "code": 31,
+    "name": "bad_signature",
+    "requestSha256": "438a60b295ee7e24f7a4ae7d2dcba711f100ab8b8fee60cb2539445f06119d64",
+    "responseSha256": "65a4d77801b81192b8dc2367c9f8b56f9502c33862116a786d9e9b9be2c72a1a"
+  }
+]

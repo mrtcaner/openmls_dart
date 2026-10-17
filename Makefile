@@ -17,6 +17,7 @@ RUSTUP ?= rustup
 CARGO_CLIPPY ?= $(CARGO) clippy
 CARGO_NDK ?= $(CARGO) ndk
 RUSTFMT ?= rustfmt
+RUSTFMT_EDITION ?= 2024
 CARGO_AUDIT ?= cargo-audit
 CARGO_DENY ?= cargo-deny
 WASM_PACK ?= wasm-pack
@@ -251,6 +252,17 @@ codegen:
 regen: codegen
 
 .PHONY: native-receive-v2-vectors native-receive-v2-apple native-receive-v2-android
+.PHONY: native-receive-v3-adapter-fixture native-receive-v3-apple-artifact
+native-receive-v3-adapter-fixture:
+	MLS_N3B_ADAPTER_FIXTURES="$(CURDIR)/.buildlog/external-resync-r0-20261016/n3b-artifacts/fixtures" $(CARGO) test --manifest-path rust/Cargo.toml --lib export_frame3_adapter_fixture -- --ignored --nocapture
+
+native-receive-v3-apple-artifact:
+	sh native/receive_v3/apple/run_artifact_harness.sh
+
+.PHONY: native-receive-v3-inspection-fixtures
+native-receive-v3-inspection-fixtures:
+	MLS_N3B_ADAPTER_FIXTURES="$(CURDIR)/.buildlog/external-resync-r0-20261016/n3b-artifacts/fixtures" $(CARGO) test --manifest-path rust/Cargo.toml --lib export_frame3_inspection_fixtures -- --ignored --nocapture
+
 native-receive-v2-vectors:
 	MLS_EXPORT_NATIVE_V2=1 $(MAKE) rust-test
 
@@ -310,8 +322,41 @@ build-example-web: build-web
 rust-check:
 	$(CARGO) check --manifest-path rust/Cargo.toml $(ARGS)
 
+test-public-validator:
+	$(CARGO) test --manifest-path rust/Cargo.toml external_resync -- --nocapture
+
+.PHONY: test-public-validator build-public-validator export-public-validator-fixtures test-public-validator-host
+export-public-validator-fixtures:
+	MLS_EXPORT_PUBLIC_VALIDATOR=1 $(CARGO) test --manifest-path rust/Cargo.toml external_resync::tests::export_interop_vectors_when_requested -- --exact
+
+test-public-validator-host: build-public-validator
+	@mkdir -p .buildlog/public-validator-host
+	@set -eu; for request in native/public_validator_v1/fixtures/*.request.bin; do \
+		name=$$(basename "$$request" .request.bin); \
+		rust/target/release/openmls_public_validator < "$$request" > ".buildlog/public-validator-host/$$name.response.bin" 2> ".buildlog/public-validator-host/$$name.stderr"; \
+		cmp "native/public_validator_v1/fixtures/$$name.response.bin" ".buildlog/public-validator-host/$$name.response.bin"; \
+		test ! -s ".buildlog/public-validator-host/$$name.stderr"; \
+		echo "PASS $$name (exact response, exit 0, empty stderr)"; \
+	done
+
+build-public-validator:
+	$(CARGO) build --manifest-path rust/Cargo.toml --bin openmls_public_validator --release $(ARGS)
+
+.PHONY: measure-external-resync
+measure-external-resync:
+	MLS_N3A_OUTPUT="$(CURDIR)/.buildlog/external-resync-r0-20261016/n3a" $(CARGO) test --manifest-path rust/Cargo.toml --release api::group_e2ee::runtime::tests::external_tests::resource_tests::measure_bounded_external_resources -- --exact --ignored --nocapture --test-threads=1
+
+.PHONY: build-public-validator-linux
+PUBLIC_VALIDATOR_PLATFORMS ?= linux/amd64 linux/arm64
+PUBLIC_VALIDATOR_LINUX_OUTPUT ?= .buildlog/external-resync-r0-20261016/n3a/linux
+build-public-validator-linux:
+	@set -eu; for platform in $(PUBLIC_VALIDATOR_PLATFORMS); do \
+		arch=$${platform#linux/}; \
+		docker buildx build --platform "$$platform" --file native/public_validator_v1/linux/Dockerfile --build-arg SOURCE_BASE_REVISION=$$(git rev-parse HEAD) --output "type=local,dest=$(PUBLIC_VALIDATOR_LINUX_OUTPUT)/$$arch" --progress plain .; \
+	done
+
 rust-test:
-	$(CARGO) test --manifest-path rust/Cargo.toml
+	$(CARGO) test --manifest-path rust/Cargo.toml $(ARGS)
 
 # Lint hand-written Rust with clippy; warnings are errors so CI fails on any lint.
 # --all-targets covers the lib, its tests, and examples of this crate.
@@ -322,7 +367,7 @@ rust-clippy:
 
 rust-format-files:
 	@test -n "$(ARGS)" || (echo 'Pass Rust file paths with ARGS="..."' && exit 1)
-	$(RUSTFMT) --edition 2024 $(ARGS)
+	$(RUSTFMT) --edition $(RUSTFMT_EDITION) $(ARGS)
 
 rust-tree:
 	$(CARGO) tree --manifest-path rust/Cargo.toml $(ARGS)
@@ -477,6 +522,11 @@ analyze:
 
 format:
 	$(DART) format . $(ARGS)
+
+.PHONY: dart-format-files
+dart-format-files:
+	@test -n "$(ARGS)" || (echo 'Pass Dart file paths in ARGS' && exit 1)
+	$(DART) format $(ARGS)
 
 format-check:
 	$(DART) format --set-exit-if-changed . $(ARGS)

@@ -1,0 +1,12 @@
+**
+!Makefile
+!rust
+!rust/Cargo.toml
+!rust/Cargo.lock
+!rust/LICENSE
+!rust/src
+!rust/src/**
+!rust/examples
+!rust/examples/**
+!rust/vendor
+!rust/vendor/**

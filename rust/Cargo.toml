@@ -1,6 +1,6 @@
 [package]
 name = "openmls_frb"
-version = "4.0.1"
+version = "4.1.0"
 edition = "2024"
 rust-version = "1.88"
 description = "Dart wrapper for OpenMLS — a Rust implementation of the Messaging Layer Security (MLS) protocol (RFC 9420)"
@@ -80,3 +80,6 @@ unexpected_cfgs = { level = "warn", check-cfg = ["cfg(frb_expand)"] }
 # Hand-written code denies unsafe by default. The generated FRB bridge is the
 # only module that opts out (with an explicit allow in lib.rs).
 unsafe_code = "deny"
+
+[patch."https://github.com/openmls/openmls"]
+openmls = { path = "vendor/openmls" }

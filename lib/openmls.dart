@@ -53,6 +53,7 @@ export 'src/rust/api/account_envelope/types.dart'
         AccountEnvelopeResetReasonV1;
 export 'src/rust/api/config.dart';
 export 'src/rust/api/credential.dart';
+export 'src/rust/api/external_resync.dart';
 export 'src/rust/api/group_e2ee.dart';
 export 'src/rust/api/keys.dart';
 export 'src/rust/api/message.dart';

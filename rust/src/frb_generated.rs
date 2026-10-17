@@ -41,7 +41,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueNom,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1683218154;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 903231093;
 
 // Section: executor
 
@@ -563,6 +563,40 @@ fn wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme_impl(
         },
     )
 }
+fn wire__crate__api__external_resync__accept_external_commit_with_storage_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    target: impl CstDecode<crate::api::external_resync::MlsExternalTargetContextV1>,
+    candidate_bytes: impl CstDecode<Vec<u8>>,
+    expected_candidate_sha256: impl CstDecode<Vec<u8>>,
+    acceptance: impl CstDecode<crate::api::external_resync::MlsExternalCommitAcceptanceV1>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "accept_external_commit_with_storage",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_target = target.cst_decode();
+            let api_candidate_bytes = candidate_bytes.cst_decode();
+            let api_expected_candidate_sha256 = expected_candidate_sha256.cst_decode();
+            let api_acceptance = acceptance.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::external_resync::accept_external_commit_with_storage(
+                            api_target,
+                            api_candidate_bytes,
+                            api_expected_candidate_sha256,
+                            api_acceptance,
+                        ),
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__group_e2ee__add_members_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
@@ -775,6 +809,37 @@ fn wire__crate__api__group_e2ee__discard_pending_commit_with_storage_impl(
         },
     )
 }
+fn wire__crate__api__group_e2ee__export_group_info_with_storage_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
+    signer_bytes: impl CstDecode<Vec<u8>>,
+    expected_local_leaf: impl CstDecode<crate::api::group_e2ee::MlsRosterLeafV1>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "export_group_info_with_storage",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_context = context.cst_decode();
+            let api_signer_bytes = signer_bytes.cst_decode();
+            let api_expected_local_leaf = expected_local_leaf.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::group_e2ee::export_group_info_with_storage(
+                            api_context,
+                            api_signer_bytes,
+                            api_expected_local_leaf,
+                        ),
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__group_e2ee__get_pending_commit_with_storage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
@@ -813,6 +878,34 @@ fn wire__crate__api__init__init_openmls_impl(
                 let output_ok = crate::api::init::init_openmls(api__library_path)?;
                 Ok(output_ok)
             })())
+        },
+    )
+}
+fn wire__crate__api__external_resync__inspect_external_commit_candidate_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    candidate_bytes: impl CstDecode<Vec<u8>>,
+    expected_candidate_sha256: impl CstDecode<Vec<u8>>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "inspect_external_commit_candidate",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_candidate_bytes = candidate_bytes.cst_decode();
+            let api_expected_candidate_sha256 = expected_candidate_sha256.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::external_resync::inspect_external_commit_candidate(
+                            api_candidate_bytes,
+                            api_expected_candidate_sha256,
+                        ),
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
         },
     )
 }
@@ -1057,6 +1150,70 @@ fn wire__crate__api__storage__mls_storage_format_version_impl(
                     Result::<_, ()>::Ok(crate::api::storage::mls_storage_format_version())?;
                 Ok(output_ok)
             })())
+        },
+    )
+}
+fn wire__crate__api__external_resync__prepare_external_commit_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    input: impl CstDecode<crate::api::external_resync::MlsExternalPreparationV1>,
+    signer_bytes: impl CstDecode<Vec<u8>>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "prepare_external_commit",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_input = input.cst_decode();
+            let api_signer_bytes = signer_bytes.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::external_resync::prepare_external_commit(
+                            api_input,
+                            api_signer_bytes,
+                        ))?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__external_resync__process_external_commit_with_storage_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    context: impl CstDecode<crate::api::group_e2ee::MlsGroupOperationContext>,
+    commit: impl CstDecode<Vec<u8>>,
+    expected_aad: impl CstDecode<Vec<u8>>,
+    acceptance: impl CstDecode<crate::api::external_resync::MlsExternalCommitAcceptanceV1>,
+    expected_superseded_pending: impl CstDecode<Option<crate::api::group_e2ee::MlsPendingCommitBinding>>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "process_external_commit_with_storage",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_context = context.cst_decode();
+            let api_commit = commit.cst_decode();
+            let api_expected_aad = expected_aad.cst_decode();
+            let api_acceptance = acceptance.cst_decode();
+            let api_expected_superseded_pending = expected_superseded_pending.cst_decode();
+            move |context| {
+                transform_result_dco::<_, _, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::external_resync::process_external_commit_with_storage(
+                            api_context,
+                            api_commit,
+                            api_expected_aad,
+                            api_acceptance,
+                            api_expected_superseded_pending,
+                        ),
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
         },
     )
 }
@@ -1418,7 +1575,14 @@ impl CstDecode<crate::api::group_e2ee::MlsErrorCode> for i32 {
             40 => crate::api::group_e2ee::MlsErrorCode::LocalMetadataMissing,
             41 => crate::api::group_e2ee::MlsErrorCode::UnsupportedRetention,
             42 => crate::api::group_e2ee::MlsErrorCode::WireHashMismatch,
-            43 => crate::api::group_e2ee::MlsErrorCode::InternalFailure,
+            43 => crate::api::group_e2ee::MlsErrorCode::ExternalCandidateInvalid,
+            44 => crate::api::group_e2ee::MlsErrorCode::ExternalCandidateMismatch,
+            45 => crate::api::group_e2ee::MlsErrorCode::ExternalTargetStateExists,
+            46 => crate::api::group_e2ee::MlsErrorCode::ExternalAcceptanceMismatch,
+            47 => crate::api::group_e2ee::MlsErrorCode::ExternalOwnCommit,
+            48 => crate::api::group_e2ee::MlsErrorCode::ExternalDeltaMismatch,
+            49 => crate::api::group_e2ee::MlsErrorCode::ExternalLifecycleMismatch,
+            50 => crate::api::group_e2ee::MlsErrorCode::InternalFailure,
             _ => unreachable!("Invalid variant for MlsErrorCode: {}", self),
         }
     }
@@ -1568,6 +1732,55 @@ impl SseDecode for String {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <Vec<u8>>::sse_decode(deserializer);
         return String::from_utf8(inner).unwrap();
+    }
+}
+
+impl SseDecode for crate::api::external_resync::AcceptExternalCommitOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::external_resync::AcceptExternalCommitResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::external_resync::AcceptExternalCommitOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::external_resync::AcceptExternalCommitOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::external_resync::AcceptExternalCommitResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_candidateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_localLeaf = <crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(deserializer);
+        let mut var_resultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
+        let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
+        return crate::api::external_resync::AcceptExternalCommitResult {
+            candidate_sha256: var_candidateSha256,
+            local_leaf: var_localLeaf,
+            resulting_roster: var_resultingRoster,
+            resulting_group_state_sha256: var_resultingGroupStateSha256,
+            effective_retention: var_effectiveRetention,
+            storage_batch: var_storageBatch,
+        };
     }
 }
 
@@ -1990,6 +2203,82 @@ impl SseDecode for crate::api::account_envelope::bridge::ExpectedContextInvitati
     }
 }
 
+impl SseDecode for crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::ExportGroupInfoWithStorageResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::group_e2ee::ExportGroupInfoWithStorageResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_groupInfo = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_groupInfoSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_currentRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_signer = <crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(deserializer);
+        let mut var_baseGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
+        return crate::api::group_e2ee::ExportGroupInfoWithStorageResult {
+            group_info: var_groupInfo,
+            group_info_sha256: var_groupInfoSha256,
+            current_roster: var_currentRoster,
+            signer: var_signer,
+            base_group_state_sha256: var_baseGroupStateSha256,
+            effective_retention: var_effectiveRetention,
+        };
+    }
+}
+
+impl SseDecode for crate::api::external_resync::ExternalCommitCandidateInfo {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_binding =
+            <crate::api::external_resync::MlsExternalCommitBindingV1>::sse_decode(deserializer);
+        let mut var_previousRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_proposedResultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_commit = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_groupInfo = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_candidateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_localLifecycleContextSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
+        return crate::api::external_resync::ExternalCommitCandidateInfo {
+            binding: var_binding,
+            previous_roster: var_previousRoster,
+            proposed_resulting_roster: var_proposedResultingRoster,
+            commit: var_commit,
+            group_info: var_groupInfo,
+            candidate_sha256: var_candidateSha256,
+            local_lifecycle_context_sha256: var_localLifecycleContextSha256,
+            effective_retention: var_effectiveRetention,
+        };
+    }
+}
+
 impl SseDecode for crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2030,6 +2319,34 @@ impl SseDecode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_i32::<NativeEndian>().unwrap()
+    }
+}
+
+impl SseDecode for crate::api::external_resync::InspectExternalCommitCandidateOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::external_resync::ExternalCommitCandidateInfo>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::external_resync::InspectExternalCommitCandidateOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::external_resync::InspectExternalCommitCandidateOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -2365,7 +2682,14 @@ impl SseDecode for crate::api::group_e2ee::MlsErrorCode {
             40 => crate::api::group_e2ee::MlsErrorCode::LocalMetadataMissing,
             41 => crate::api::group_e2ee::MlsErrorCode::UnsupportedRetention,
             42 => crate::api::group_e2ee::MlsErrorCode::WireHashMismatch,
-            43 => crate::api::group_e2ee::MlsErrorCode::InternalFailure,
+            43 => crate::api::group_e2ee::MlsErrorCode::ExternalCandidateInvalid,
+            44 => crate::api::group_e2ee::MlsErrorCode::ExternalCandidateMismatch,
+            45 => crate::api::group_e2ee::MlsErrorCode::ExternalTargetStateExists,
+            46 => crate::api::group_e2ee::MlsErrorCode::ExternalAcceptanceMismatch,
+            47 => crate::api::group_e2ee::MlsErrorCode::ExternalOwnCommit,
+            48 => crate::api::group_e2ee::MlsErrorCode::ExternalDeltaMismatch,
+            49 => crate::api::group_e2ee::MlsErrorCode::ExternalLifecycleMismatch,
+            50 => crate::api::group_e2ee::MlsErrorCode::InternalFailure,
             _ => unreachable!("Invalid variant for MlsErrorCode: {}", inner),
         };
     }
@@ -2381,6 +2705,107 @@ impl SseDecode for crate::api::group_e2ee::MlsExpectedRosterStateV1 {
             group_id: var_groupId,
             epoch: var_epoch,
             digest_sha256: var_digestSha256,
+        };
+    }
+}
+
+impl SseDecode for crate::api::external_resync::MlsExternalCommitAcceptanceV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_binding =
+            <crate::api::external_resync::MlsExternalCommitBindingV1>::sse_decode(deserializer);
+        let mut var_resultingState =
+            <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_decode(deserializer);
+        return crate::api::external_resync::MlsExternalCommitAcceptanceV1 {
+            binding: var_binding,
+            resulting_state: var_resultingState,
+        };
+    }
+}
+
+impl SseDecode for crate::api::external_resync::MlsExternalCommitBindingV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_candidateId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_incarnationId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_transition =
+            <crate::api::group_e2ee::MlsTransitionContext>::sse_decode(deserializer);
+        let mut var_previousState =
+            <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_decode(deserializer);
+        let mut var_oldLeaf = <crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(deserializer);
+        let mut var_author = <crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(deserializer);
+        let mut var_inputGroupInfoSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_commitSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_aadSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_resultingGroupInfoSha256 = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::external_resync::MlsExternalCommitBindingV1 {
+            candidate_id: var_candidateId,
+            incarnation_id: var_incarnationId,
+            transition: var_transition,
+            previous_state: var_previousState,
+            old_leaf: var_oldLeaf,
+            author: var_author,
+            input_group_info_sha256: var_inputGroupInfoSha256,
+            commit_sha256: var_commitSha256,
+            aad_sha256: var_aadSha256,
+            resulting_group_info_sha256: var_resultingGroupInfoSha256,
+        };
+    }
+}
+
+impl SseDecode for crate::api::external_resync::MlsExternalPreparationV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_candidateId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_incarnationId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_transition =
+            <crate::api::group_e2ee::MlsTransitionContext>::sse_decode(deserializer);
+        let mut var_localLifecycleContextSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_inputGroupInfo = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_inputGroupInfoSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_expectedPreviousState =
+            <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_decode(deserializer);
+        let mut var_expectedSnapshotSigner =
+            <crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(deserializer);
+        let mut var_authorizedOldLeaf =
+            <crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(deserializer);
+        let mut var_authorizedNewCredentialIdentity = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_authorizedNewSignaturePublicKey = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_aad = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_retention = <u32>::sse_decode(deserializer);
+        return crate::api::external_resync::MlsExternalPreparationV1 {
+            candidate_id: var_candidateId,
+            incarnation_id: var_incarnationId,
+            transition: var_transition,
+            local_lifecycle_context_sha256: var_localLifecycleContextSha256,
+            input_group_info: var_inputGroupInfo,
+            input_group_info_sha256: var_inputGroupInfoSha256,
+            expected_previous_state: var_expectedPreviousState,
+            expected_snapshot_signer: var_expectedSnapshotSigner,
+            authorized_old_leaf: var_authorizedOldLeaf,
+            authorized_new_credential_identity: var_authorizedNewCredentialIdentity,
+            authorized_new_signature_public_key: var_authorizedNewSignaturePublicKey,
+            aad: var_aad,
+            retention: var_retention,
+        };
+    }
+}
+
+impl SseDecode for crate::api::external_resync::MlsExternalTargetContextV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_incarnationId = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_localLifecycleContextSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_storageEntries =
+            <Vec<crate::api::storage::MlsStorageEntry>>::sse_decode(deserializer);
+        let mut var_storageFormatVersion = <u32>::sse_decode(deserializer);
+        return crate::api::external_resync::MlsExternalTargetContextV1 {
+            group_id: var_groupId,
+            incarnation_id: var_incarnationId,
+            local_lifecycle_context_sha256: var_localLifecycleContextSha256,
+            storage_entries: var_storageEntries,
+            storage_format_version: var_storageFormatVersion,
         };
     }
 }
@@ -2604,6 +3029,19 @@ impl SseDecode for Option<crate::api::account_envelope::types::AccountEnvelopeRe
     }
 }
 
+impl SseDecode for Option<crate::api::group_e2ee::MlsPendingCommitBinding> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(
+                <crate::api::group_e2ee::MlsPendingCommitBinding>::sse_decode(deserializer),
+            );
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<crate::api::types::MlsProposalType> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2689,6 +3127,101 @@ impl SseDecode for crate::api::group_e2ee::PendingCommitWithStorageResult {
             preparation_base_group_state_sha256: var_preparationBaseGroupStateSha256,
             resulting_group_state_sha256: var_resultingGroupStateSha256,
             effective_retention: var_effectiveRetention,
+            storage_batch: var_storageBatch,
+        };
+    }
+}
+
+impl SseDecode for crate::api::external_resync::PrepareExternalCommitOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::external_resync::PrepareExternalCommitResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::external_resync::PrepareExternalCommitOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::external_resync::PrepareExternalCommitOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::external_resync::PrepareExternalCommitResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_candidateBytes = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_info =
+            <crate::api::external_resync::ExternalCommitCandidateInfo>::sse_decode(deserializer);
+        return crate::api::external_resync::PrepareExternalCommitResult {
+            candidate_bytes: var_candidateBytes,
+            info: var_info,
+        };
+    }
+}
+
+impl SseDecode for crate::api::external_resync::ProcessExternalCommitOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::external_resync::ProcessExternalCommitResult>::sse_decode(
+                        deserializer,
+                    );
+                return crate::api::external_resync::ProcessExternalCommitOutcome::Success(
+                    var_field0,
+                );
+            }
+            1 => {
+                let mut var_field0 =
+                    <crate::api::group_e2ee::MlsErrorCode>::sse_decode(deserializer);
+                return crate::api::external_resync::ProcessExternalCommitOutcome::Failure(
+                    var_field0,
+                );
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::external_resync::ProcessExternalCommitResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_authenticatedSender =
+            <crate::api::group_e2ee::MlsRosterLeafV1>::sse_decode(deserializer);
+        let mut var_previousRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingRoster =
+            <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_decode(deserializer);
+        let mut var_resultingGroupStateSha256 = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_effectiveRetention = <u32>::sse_decode(deserializer);
+        let mut var_supersededPending =
+            <Option<crate::api::group_e2ee::MlsPendingCommitBinding>>::sse_decode(deserializer);
+        let mut var_storageBatch = <crate::api::storage::MlsStorageBatch>::sse_decode(deserializer);
+        return crate::api::external_resync::ProcessExternalCommitResult {
+            authenticated_sender: var_authenticatedSender,
+            previous_roster: var_previousRoster,
+            resulting_roster: var_resultingRoster,
+            resulting_group_state_sha256: var_resultingGroupStateSha256,
+            effective_retention: var_effectiveRetention,
+            superseded_pending: var_supersededPending,
             storage_batch: var_storageBatch,
         };
     }
@@ -2982,6 +3515,60 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<MlsSignatureKeyPair>> for MlsS
     }
 }
 
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::AcceptExternalCommitOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::external_resync::AcceptExternalCommitOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::external_resync::AcceptExternalCommitOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::AcceptExternalCommitOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::AcceptExternalCommitOutcome>
+    for crate::api::external_resync::AcceptExternalCommitOutcome
+{
+    fn into_into_dart(self) -> crate::api::external_resync::AcceptExternalCommitOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::AcceptExternalCommitResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.candidate_sha256.into_into_dart().into_dart(),
+            self.local_leaf.into_into_dart().into_dart(),
+            self.resulting_roster.into_into_dart().into_dart(),
+            self.resulting_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
+            self.storage_batch.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::AcceptExternalCommitResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::AcceptExternalCommitResult>
+    for crate::api::external_resync::AcceptExternalCommitResult
+{
+    fn into_into_dart(self) -> crate::api::external_resync::AcceptExternalCommitResult {
+        self
+    }
+}
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart
     for crate::api::account_envelope::types::AccountEnvelopeActivationKindV1
@@ -3625,6 +4212,87 @@ impl
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome>
+    for crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::ExportGroupInfoWithStorageResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.group_info.into_into_dart().into_dart(),
+            self.group_info_sha256.into_into_dart().into_dart(),
+            self.current_roster.into_into_dart().into_dart(),
+            self.signer.into_into_dart().into_dart(),
+            self.base_group_state_sha256.into_into_dart().into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::group_e2ee::ExportGroupInfoWithStorageResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::ExportGroupInfoWithStorageResult>
+    for crate::api::group_e2ee::ExportGroupInfoWithStorageResult
+{
+    fn into_into_dart(self) -> crate::api::group_e2ee::ExportGroupInfoWithStorageResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::ExternalCommitCandidateInfo {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.binding.into_into_dart().into_dart(),
+            self.previous_roster.into_into_dart().into_dart(),
+            self.proposed_resulting_roster.into_into_dart().into_dart(),
+            self.commit.into_into_dart().into_dart(),
+            self.group_info.into_into_dart().into_dart(),
+            self.candidate_sha256.into_into_dart().into_dart(),
+            self.local_lifecycle_context_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::ExternalCommitCandidateInfo
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::ExternalCommitCandidateInfo>
+    for crate::api::external_resync::ExternalCommitCandidateInfo
+{
+    fn into_into_dart(self) -> crate::api::external_resync::ExternalCommitCandidateInfo {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart
     for crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1
 {
@@ -3671,6 +4339,37 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::GetPendingCommitW
     for crate::api::group_e2ee::GetPendingCommitWithStorageOutcome
 {
     fn into_into_dart(self) -> crate::api::group_e2ee::GetPendingCommitWithStorageOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::external_resync::InspectExternalCommitCandidateOutcome
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::external_resync::InspectExternalCommitCandidateOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::external_resync::InspectExternalCommitCandidateOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::InspectExternalCommitCandidateOutcome
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::external_resync::InspectExternalCommitCandidateOutcome,
+    > for crate::api::external_resync::InspectExternalCommitCandidateOutcome
+{
+    fn into_into_dart(self) -> crate::api::external_resync::InspectExternalCommitCandidateOutcome {
         self
     }
 }
@@ -3986,7 +4685,14 @@ impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::MlsErrorCode {
             Self::LocalMetadataMissing => 40.into_dart(),
             Self::UnsupportedRetention => 41.into_dart(),
             Self::WireHashMismatch => 42.into_dart(),
-            Self::InternalFailure => 43.into_dart(),
+            Self::ExternalCandidateInvalid => 43.into_dart(),
+            Self::ExternalCandidateMismatch => 44.into_dart(),
+            Self::ExternalTargetStateExists => 45.into_dart(),
+            Self::ExternalAcceptanceMismatch => 46.into_dart(),
+            Self::ExternalOwnCommit => 47.into_dart(),
+            Self::ExternalDeltaMismatch => 48.into_dart(),
+            Self::ExternalLifecycleMismatch => 49.into_dart(),
+            Self::InternalFailure => 50.into_dart(),
             _ => unreachable!(),
         }
     }
@@ -4021,6 +4727,122 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::MlsExpectedRoster
     for crate::api::group_e2ee::MlsExpectedRosterStateV1
 {
     fn into_into_dart(self) -> crate::api::group_e2ee::MlsExpectedRosterStateV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::MlsExternalCommitAcceptanceV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.binding.into_into_dart().into_dart(),
+            self.resulting_state.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::MlsExternalCommitAcceptanceV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::MlsExternalCommitAcceptanceV1>
+    for crate::api::external_resync::MlsExternalCommitAcceptanceV1
+{
+    fn into_into_dart(self) -> crate::api::external_resync::MlsExternalCommitAcceptanceV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::MlsExternalCommitBindingV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.candidate_id.into_into_dart().into_dart(),
+            self.incarnation_id.into_into_dart().into_dart(),
+            self.transition.into_into_dart().into_dart(),
+            self.previous_state.into_into_dart().into_dart(),
+            self.old_leaf.into_into_dart().into_dart(),
+            self.author.into_into_dart().into_dart(),
+            self.input_group_info_sha256.into_into_dart().into_dart(),
+            self.commit_sha256.into_into_dart().into_dart(),
+            self.aad_sha256.into_into_dart().into_dart(),
+            self.resulting_group_info_sha256
+                .into_into_dart()
+                .into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::MlsExternalCommitBindingV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::MlsExternalCommitBindingV1>
+    for crate::api::external_resync::MlsExternalCommitBindingV1
+{
+    fn into_into_dart(self) -> crate::api::external_resync::MlsExternalCommitBindingV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::MlsExternalPreparationV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.candidate_id.into_into_dart().into_dart(),
+            self.incarnation_id.into_into_dart().into_dart(),
+            self.transition.into_into_dart().into_dart(),
+            self.local_lifecycle_context_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.input_group_info.into_into_dart().into_dart(),
+            self.input_group_info_sha256.into_into_dart().into_dart(),
+            self.expected_previous_state.into_into_dart().into_dart(),
+            self.expected_snapshot_signer.into_into_dart().into_dart(),
+            self.authorized_old_leaf.into_into_dart().into_dart(),
+            self.authorized_new_credential_identity
+                .into_into_dart()
+                .into_dart(),
+            self.authorized_new_signature_public_key
+                .into_into_dart()
+                .into_dart(),
+            self.aad.into_into_dart().into_dart(),
+            self.retention.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::MlsExternalPreparationV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::MlsExternalPreparationV1>
+    for crate::api::external_resync::MlsExternalPreparationV1
+{
+    fn into_into_dart(self) -> crate::api::external_resync::MlsExternalPreparationV1 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::MlsExternalTargetContextV1 {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.group_id.into_into_dart().into_dart(),
+            self.incarnation_id.into_into_dart().into_dart(),
+            self.local_lifecycle_context_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.storage_entries.into_into_dart().into_dart(),
+            self.storage_format_version.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::MlsExternalTargetContextV1
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::MlsExternalTargetContextV1>
+    for crate::api::external_resync::MlsExternalTargetContextV1
+{
+    fn into_into_dart(self) -> crate::api::external_resync::MlsExternalTargetContextV1 {
         self
     }
 }
@@ -4353,6 +5175,109 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::group_e2ee::PendingCommitWith
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::PrepareExternalCommitOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::external_resync::PrepareExternalCommitOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::external_resync::PrepareExternalCommitOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::PrepareExternalCommitOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::PrepareExternalCommitOutcome>
+    for crate::api::external_resync::PrepareExternalCommitOutcome
+{
+    fn into_into_dart(self) -> crate::api::external_resync::PrepareExternalCommitOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::PrepareExternalCommitResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.candidate_bytes.into_into_dart().into_dart(),
+            self.info.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::PrepareExternalCommitResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::PrepareExternalCommitResult>
+    for crate::api::external_resync::PrepareExternalCommitResult
+{
+    fn into_into_dart(self) -> crate::api::external_resync::PrepareExternalCommitResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::ProcessExternalCommitOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::external_resync::ProcessExternalCommitOutcome::Success(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::external_resync::ProcessExternalCommitOutcome::Failure(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::ProcessExternalCommitOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::ProcessExternalCommitOutcome>
+    for crate::api::external_resync::ProcessExternalCommitOutcome
+{
+    fn into_into_dart(self) -> crate::api::external_resync::ProcessExternalCommitOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::external_resync::ProcessExternalCommitResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.authenticated_sender.into_into_dart().into_dart(),
+            self.previous_roster.into_into_dart().into_dart(),
+            self.resulting_roster.into_into_dart().into_dart(),
+            self.resulting_group_state_sha256
+                .into_into_dart()
+                .into_dart(),
+            self.effective_retention.into_into_dart().into_dart(),
+            self.superseded_pending.into_into_dart().into_dart(),
+            self.storage_batch.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::external_resync::ProcessExternalCommitResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::external_resync::ProcessExternalCommitResult>
+    for crate::api::external_resync::ProcessExternalCommitResult
+{
+    fn into_into_dart(self) -> crate::api::external_resync::ProcessExternalCommitResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::group_e2ee::ProcessMessageWithStorageOutcome {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -4609,6 +5534,39 @@ impl SseEncode for String {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<u8>>::sse_encode(self.into_bytes(), serializer);
+    }
+}
+
+impl SseEncode for crate::api::external_resync::AcceptExternalCommitOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::external_resync::AcceptExternalCommitOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::external_resync::AcceptExternalCommitResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::external_resync::AcceptExternalCommitOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::external_resync::AcceptExternalCommitResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.candidate_sha256, serializer);
+        <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(self.local_leaf, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
+        <Vec<u8>>::sse_encode(self.resulting_group_state_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
+        <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
     }
 }
 
@@ -4932,6 +5890,59 @@ impl SseEncode for crate::api::account_envelope::bridge::ExpectedContextInvitati
     }
 }
 
+impl SseEncode for crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::group_e2ee::ExportGroupInfoWithStorageResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::group_e2ee::ExportGroupInfoWithStorageResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.group_info, serializer);
+        <Vec<u8>>::sse_encode(self.group_info_sha256, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.current_roster, serializer);
+        <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(self.signer, serializer);
+        <Vec<u8>>::sse_encode(self.base_group_state_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
+    }
+}
+
+impl SseEncode for crate::api::external_resync::ExternalCommitCandidateInfo {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::external_resync::MlsExternalCommitBindingV1>::sse_encode(
+            self.binding,
+            serializer,
+        );
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.previous_roster, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(
+            self.proposed_resulting_roster,
+            serializer,
+        );
+        <Vec<u8>>::sse_encode(self.commit, serializer);
+        <Vec<u8>>::sse_encode(self.group_info, serializer);
+        <Vec<u8>>::sse_encode(self.candidate_sha256, serializer);
+        <Vec<u8>>::sse_encode(self.local_lifecycle_context_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
+    }
+}
+
 impl SseEncode for crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -4962,6 +5973,27 @@ impl SseEncode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_i32::<NativeEndian>(self).unwrap();
+    }
+}
+
+impl SseEncode for crate::api::external_resync::InspectExternalCommitCandidateOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::external_resync::InspectExternalCommitCandidateOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::external_resync::ExternalCommitCandidateInfo>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::external_resync::InspectExternalCommitCandidateOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -5216,7 +6248,14 @@ impl SseEncode for crate::api::group_e2ee::MlsErrorCode {
                 crate::api::group_e2ee::MlsErrorCode::LocalMetadataMissing => 40,
                 crate::api::group_e2ee::MlsErrorCode::UnsupportedRetention => 41,
                 crate::api::group_e2ee::MlsErrorCode::WireHashMismatch => 42,
-                crate::api::group_e2ee::MlsErrorCode::InternalFailure => 43,
+                crate::api::group_e2ee::MlsErrorCode::ExternalCandidateInvalid => 43,
+                crate::api::group_e2ee::MlsErrorCode::ExternalCandidateMismatch => 44,
+                crate::api::group_e2ee::MlsErrorCode::ExternalTargetStateExists => 45,
+                crate::api::group_e2ee::MlsErrorCode::ExternalAcceptanceMismatch => 46,
+                crate::api::group_e2ee::MlsErrorCode::ExternalOwnCommit => 47,
+                crate::api::group_e2ee::MlsErrorCode::ExternalDeltaMismatch => 48,
+                crate::api::group_e2ee::MlsErrorCode::ExternalLifecycleMismatch => 49,
+                crate::api::group_e2ee::MlsErrorCode::InternalFailure => 50,
                 _ => {
                     unimplemented!("");
                 }
@@ -5232,6 +6271,75 @@ impl SseEncode for crate::api::group_e2ee::MlsExpectedRosterStateV1 {
         <Vec<u8>>::sse_encode(self.group_id, serializer);
         <u64>::sse_encode(self.epoch, serializer);
         <Vec<u8>>::sse_encode(self.digest_sha256, serializer);
+    }
+}
+
+impl SseEncode for crate::api::external_resync::MlsExternalCommitAcceptanceV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::external_resync::MlsExternalCommitBindingV1>::sse_encode(
+            self.binding,
+            serializer,
+        );
+        <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_encode(
+            self.resulting_state,
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::external_resync::MlsExternalCommitBindingV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.candidate_id, serializer);
+        <Vec<u8>>::sse_encode(self.incarnation_id, serializer);
+        <crate::api::group_e2ee::MlsTransitionContext>::sse_encode(self.transition, serializer);
+        <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_encode(
+            self.previous_state,
+            serializer,
+        );
+        <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(self.old_leaf, serializer);
+        <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(self.author, serializer);
+        <Vec<u8>>::sse_encode(self.input_group_info_sha256, serializer);
+        <Vec<u8>>::sse_encode(self.commit_sha256, serializer);
+        <Vec<u8>>::sse_encode(self.aad_sha256, serializer);
+        <Vec<u8>>::sse_encode(self.resulting_group_info_sha256, serializer);
+    }
+}
+
+impl SseEncode for crate::api::external_resync::MlsExternalPreparationV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.candidate_id, serializer);
+        <Vec<u8>>::sse_encode(self.incarnation_id, serializer);
+        <crate::api::group_e2ee::MlsTransitionContext>::sse_encode(self.transition, serializer);
+        <Vec<u8>>::sse_encode(self.local_lifecycle_context_sha256, serializer);
+        <Vec<u8>>::sse_encode(self.input_group_info, serializer);
+        <Vec<u8>>::sse_encode(self.input_group_info_sha256, serializer);
+        <crate::api::group_e2ee::MlsExpectedRosterStateV1>::sse_encode(
+            self.expected_previous_state,
+            serializer,
+        );
+        <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(
+            self.expected_snapshot_signer,
+            serializer,
+        );
+        <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(self.authorized_old_leaf, serializer);
+        <Vec<u8>>::sse_encode(self.authorized_new_credential_identity, serializer);
+        <Vec<u8>>::sse_encode(self.authorized_new_signature_public_key, serializer);
+        <Vec<u8>>::sse_encode(self.aad, serializer);
+        <u32>::sse_encode(self.retention, serializer);
+    }
+}
+
+impl SseEncode for crate::api::external_resync::MlsExternalTargetContextV1 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.group_id, serializer);
+        <Vec<u8>>::sse_encode(self.incarnation_id, serializer);
+        <Vec<u8>>::sse_encode(self.local_lifecycle_context_sha256, serializer);
+        <Vec<crate::api::storage::MlsStorageEntry>>::sse_encode(self.storage_entries, serializer);
+        <u32>::sse_encode(self.storage_format_version, serializer);
     }
 }
 
@@ -5406,6 +6514,16 @@ impl SseEncode for Option<crate::api::account_envelope::types::AccountEnvelopeRe
     }
 }
 
+impl SseEncode for Option<crate::api::group_e2ee::MlsPendingCommitBinding> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::group_e2ee::MlsPendingCommitBinding>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<crate::api::types::MlsProposalType> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -5472,6 +6590,77 @@ impl SseEncode for crate::api::group_e2ee::PendingCommitWithStorageResult {
         <Vec<u8>>::sse_encode(self.preparation_base_group_state_sha256, serializer);
         <Vec<u8>>::sse_encode(self.resulting_group_state_sha256, serializer);
         <u32>::sse_encode(self.effective_retention, serializer);
+        <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
+    }
+}
+
+impl SseEncode for crate::api::external_resync::PrepareExternalCommitOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::external_resync::PrepareExternalCommitOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::external_resync::PrepareExternalCommitResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::external_resync::PrepareExternalCommitOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::external_resync::PrepareExternalCommitResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.candidate_bytes, serializer);
+        <crate::api::external_resync::ExternalCommitCandidateInfo>::sse_encode(
+            self.info, serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::external_resync::ProcessExternalCommitOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::external_resync::ProcessExternalCommitOutcome::Success(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::external_resync::ProcessExternalCommitResult>::sse_encode(
+                    field0, serializer,
+                );
+            }
+            crate::api::external_resync::ProcessExternalCommitOutcome::Failure(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <crate::api::group_e2ee::MlsErrorCode>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::external_resync::ProcessExternalCommitResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::group_e2ee::MlsRosterLeafV1>::sse_encode(
+            self.authenticated_sender,
+            serializer,
+        );
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.previous_roster, serializer);
+        <crate::api::group_e2ee::MlsRosterSummaryV1>::sse_encode(self.resulting_roster, serializer);
+        <Vec<u8>>::sse_encode(self.resulting_group_state_sha256, serializer);
+        <u32>::sse_encode(self.effective_retention, serializer);
+        <Option<crate::api::group_e2ee::MlsPendingCommitBinding>>::sse_encode(
+            self.superseded_pending,
+            serializer,
+        );
         <crate::api::storage::MlsStorageBatch>::sse_encode(self.storage_batch, serializer);
     }
 }
@@ -5764,6 +6953,43 @@ mod io {
             String::from_utf8(vec).unwrap()
         }
     }
+    impl CstDecode<crate::api::external_resync::AcceptExternalCommitOutcome>
+        for wire_cst_accept_external_commit_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::AcceptExternalCommitOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::external_resync::AcceptExternalCommitOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::external_resync::AcceptExternalCommitOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::AcceptExternalCommitResult>
+        for wire_cst_accept_external_commit_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::AcceptExternalCommitResult {
+            crate::api::external_resync::AcceptExternalCommitResult {
+                candidate_sha256: self.candidate_sha256.cst_decode(),
+                local_leaf: self.local_leaf.cst_decode(),
+                resulting_roster: self.resulting_roster.cst_decode(),
+                resulting_group_state_sha256: self.resulting_group_state_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
+                storage_batch: self.storage_batch.cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeErrorV1>
         for wire_cst_account_envelope_error_v_1
     {
@@ -5864,6 +7090,16 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::external_resync::AcceptExternalCommitResult>
+        for *mut wire_cst_accept_external_commit_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::AcceptExternalCommitResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::external_resync::AcceptExternalCommitResult>::cst_decode(*wrap)
+                .into()
+        }
+    }
     impl
         CstDecode<
             crate::api::account_envelope::bridge::AccountEnvelopePrivateBundleAuthorityInputV1,
@@ -5957,6 +7193,26 @@ mod io {
             .into()
         }
     }
+    impl CstDecode<crate::api::group_e2ee::ExportGroupInfoWithStorageResult>
+        for *mut wire_cst_export_group_info_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::ExportGroupInfoWithStorageResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::group_e2ee::ExportGroupInfoWithStorageResult>::cst_decode(*wrap)
+                .into()
+        }
+    }
+    impl CstDecode<crate::api::external_resync::ExternalCommitCandidateInfo>
+        for *mut wire_cst_external_commit_candidate_info
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::ExternalCommitCandidateInfo {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::external_resync::ExternalCommitCandidateInfo>::cst_decode(*wrap)
+                .into()
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::JoinGroupWithStorageResult>
         for *mut wire_cst_join_group_with_storage_result
     {
@@ -6013,6 +7269,38 @@ mod io {
         fn cst_decode(self) -> crate::api::group_e2ee::MlsExpectedRosterStateV1 {
             let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
             CstDecode::<crate::api::group_e2ee::MlsExpectedRosterStateV1>::cst_decode(*wrap).into()
+        }
+    }
+    impl CstDecode<crate::api::external_resync::MlsExternalCommitAcceptanceV1>
+        for *mut wire_cst_mls_external_commit_acceptance_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalCommitAcceptanceV1 {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::external_resync::MlsExternalCommitAcceptanceV1>::cst_decode(
+                *wrap,
+            )
+            .into()
+        }
+    }
+    impl CstDecode<crate::api::external_resync::MlsExternalPreparationV1>
+        for *mut wire_cst_mls_external_preparation_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalPreparationV1 {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::external_resync::MlsExternalPreparationV1>::cst_decode(*wrap)
+                .into()
+        }
+    }
+    impl CstDecode<crate::api::external_resync::MlsExternalTargetContextV1>
+        for *mut wire_cst_mls_external_target_context_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalTargetContextV1 {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::external_resync::MlsExternalTargetContextV1>::cst_decode(*wrap)
+                .into()
         }
     }
     impl CstDecode<crate::api::config::MlsGroupConfig> for *mut wire_cst_mls_group_config {
@@ -6077,6 +7365,26 @@ mod io {
         fn cst_decode(self) -> crate::api::group_e2ee::PendingCommitWithStorageResult {
             let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
             CstDecode::<crate::api::group_e2ee::PendingCommitWithStorageResult>::cst_decode(*wrap)
+                .into()
+        }
+    }
+    impl CstDecode<crate::api::external_resync::PrepareExternalCommitResult>
+        for *mut wire_cst_prepare_external_commit_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::PrepareExternalCommitResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::external_resync::PrepareExternalCommitResult>::cst_decode(*wrap)
+                .into()
+        }
+    }
+    impl CstDecode<crate::api::external_resync::ProcessExternalCommitResult>
+        for *mut wire_cst_process_external_commit_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::ProcessExternalCommitResult {
+            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
+            CstDecode::<crate::api::external_resync::ProcessExternalCommitResult>::cst_decode(*wrap)
                 .into()
         }
     }
@@ -6271,6 +7579,60 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome>
+        for wire_cst_export_group_info_with_storage_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::ExportGroupInfoWithStorageResult>
+        for wire_cst_export_group_info_with_storage_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::ExportGroupInfoWithStorageResult {
+            crate::api::group_e2ee::ExportGroupInfoWithStorageResult {
+                group_info: self.group_info.cst_decode(),
+                group_info_sha256: self.group_info_sha256.cst_decode(),
+                current_roster: self.current_roster.cst_decode(),
+                signer: self.signer.cst_decode(),
+                base_group_state_sha256: self.base_group_state_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::ExternalCommitCandidateInfo>
+        for wire_cst_external_commit_candidate_info
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::ExternalCommitCandidateInfo {
+            crate::api::external_resync::ExternalCommitCandidateInfo {
+                binding: self.binding.cst_decode(),
+                previous_roster: self.previous_roster.cst_decode(),
+                proposed_resulting_roster: self.proposed_resulting_roster.cst_decode(),
+                commit: self.commit.cst_decode(),
+                group_info: self.group_info.cst_decode(),
+                candidate_sha256: self.candidate_sha256.cst_decode(),
+                local_lifecycle_context_sha256: self.local_lifecycle_context_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1>
         for wire_cst_generate_account_envelope_key_bundle_output_v_1
     {
@@ -6299,6 +7661,28 @@ mod io {
                 1 => {
                     let ans = unsafe { self.kind.Failure };
                     crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::InspectExternalCommitCandidateOutcome>
+        for wire_cst_inspect_external_commit_candidate_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::InspectExternalCommitCandidateOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::external_resync::InspectExternalCommitCandidateOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::external_resync::InspectExternalCommitCandidateOutcome::Failure(
                         ans.field0.cst_decode(),
                     )
                 }
@@ -6541,6 +7925,76 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::external_resync::MlsExternalCommitAcceptanceV1>
+        for wire_cst_mls_external_commit_acceptance_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalCommitAcceptanceV1 {
+            crate::api::external_resync::MlsExternalCommitAcceptanceV1 {
+                binding: self.binding.cst_decode(),
+                resulting_state: self.resulting_state.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::MlsExternalCommitBindingV1>
+        for wire_cst_mls_external_commit_binding_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalCommitBindingV1 {
+            crate::api::external_resync::MlsExternalCommitBindingV1 {
+                candidate_id: self.candidate_id.cst_decode(),
+                incarnation_id: self.incarnation_id.cst_decode(),
+                transition: self.transition.cst_decode(),
+                previous_state: self.previous_state.cst_decode(),
+                old_leaf: self.old_leaf.cst_decode(),
+                author: self.author.cst_decode(),
+                input_group_info_sha256: self.input_group_info_sha256.cst_decode(),
+                commit_sha256: self.commit_sha256.cst_decode(),
+                aad_sha256: self.aad_sha256.cst_decode(),
+                resulting_group_info_sha256: self.resulting_group_info_sha256.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::MlsExternalPreparationV1>
+        for wire_cst_mls_external_preparation_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalPreparationV1 {
+            crate::api::external_resync::MlsExternalPreparationV1 {
+                candidate_id: self.candidate_id.cst_decode(),
+                incarnation_id: self.incarnation_id.cst_decode(),
+                transition: self.transition.cst_decode(),
+                local_lifecycle_context_sha256: self.local_lifecycle_context_sha256.cst_decode(),
+                input_group_info: self.input_group_info.cst_decode(),
+                input_group_info_sha256: self.input_group_info_sha256.cst_decode(),
+                expected_previous_state: self.expected_previous_state.cst_decode(),
+                expected_snapshot_signer: self.expected_snapshot_signer.cst_decode(),
+                authorized_old_leaf: self.authorized_old_leaf.cst_decode(),
+                authorized_new_credential_identity: self
+                    .authorized_new_credential_identity
+                    .cst_decode(),
+                authorized_new_signature_public_key: self
+                    .authorized_new_signature_public_key
+                    .cst_decode(),
+                aad: self.aad.cst_decode(),
+                retention: self.retention.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::MlsExternalTargetContextV1>
+        for wire_cst_mls_external_target_context_v_1
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalTargetContextV1 {
+            crate::api::external_resync::MlsExternalTargetContextV1 {
+                group_id: self.group_id.cst_decode(),
+                incarnation_id: self.incarnation_id.cst_decode(),
+                local_lifecycle_context_sha256: self.local_lifecycle_context_sha256.cst_decode(),
+                storage_entries: self.storage_entries.cst_decode(),
+                storage_format_version: self.storage_format_version.cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::config::MlsGroupConfig> for wire_cst_mls_group_config {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> crate::api::config::MlsGroupConfig {
@@ -6681,6 +8135,77 @@ mod io {
             }
         }
     }
+    impl CstDecode<crate::api::external_resync::PrepareExternalCommitOutcome>
+        for wire_cst_prepare_external_commit_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::PrepareExternalCommitOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::external_resync::PrepareExternalCommitOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::external_resync::PrepareExternalCommitOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::PrepareExternalCommitResult>
+        for wire_cst_prepare_external_commit_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::PrepareExternalCommitResult {
+            crate::api::external_resync::PrepareExternalCommitResult {
+                candidate_bytes: self.candidate_bytes.cst_decode(),
+                info: self.info.cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::ProcessExternalCommitOutcome>
+        for wire_cst_process_external_commit_outcome
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::ProcessExternalCommitOutcome {
+            match self.tag {
+                0 => {
+                    let ans = unsafe { self.kind.Success };
+                    crate::api::external_resync::ProcessExternalCommitOutcome::Success(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                1 => {
+                    let ans = unsafe { self.kind.Failure };
+                    crate::api::external_resync::ProcessExternalCommitOutcome::Failure(
+                        ans.field0.cst_decode(),
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::ProcessExternalCommitResult>
+        for wire_cst_process_external_commit_result
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::ProcessExternalCommitResult {
+            crate::api::external_resync::ProcessExternalCommitResult {
+                authenticated_sender: self.authenticated_sender.cst_decode(),
+                previous_roster: self.previous_roster.cst_decode(),
+                resulting_roster: self.resulting_roster.cst_decode(),
+                resulting_group_state_sha256: self.resulting_group_state_sha256.cst_decode(),
+                effective_retention: self.effective_retention.cst_decode(),
+                superseded_pending: self.superseded_pending.cst_decode(),
+                storage_batch: self.storage_batch.cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::group_e2ee::ProcessMessageWithStorageOutcome>
         for wire_cst_process_message_with_storage_outcome
     {
@@ -6802,6 +8327,36 @@ mod io {
                 verified_public_bundle: self.verified_public_bundle.cst_decode(),
                 verified_summary: self.verified_summary.cst_decode(),
             }
+        }
+    }
+    impl NewWithNullPtr for wire_cst_accept_external_commit_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: AcceptExternalCommitOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_accept_external_commit_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_accept_external_commit_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                candidate_sha256: core::ptr::null_mut(),
+                local_leaf: Default::default(),
+                resulting_roster: Default::default(),
+                resulting_group_state_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
+                storage_batch: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_accept_external_commit_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
         }
     }
     impl NewWithNullPtr for wire_cst_account_envelope_error_v_1 {
@@ -7050,6 +8605,55 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
+    impl NewWithNullPtr for wire_cst_export_group_info_with_storage_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: ExportGroupInfoWithStorageOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_export_group_info_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_export_group_info_with_storage_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                group_info: core::ptr::null_mut(),
+                group_info_sha256: core::ptr::null_mut(),
+                current_roster: Default::default(),
+                signer: Default::default(),
+                base_group_state_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_export_group_info_with_storage_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_external_commit_candidate_info {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                binding: Default::default(),
+                previous_roster: Default::default(),
+                proposed_resulting_roster: Default::default(),
+                commit: core::ptr::null_mut(),
+                group_info: core::ptr::null_mut(),
+                candidate_sha256: core::ptr::null_mut(),
+                local_lifecycle_context_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_external_commit_candidate_info {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
     impl NewWithNullPtr for wire_cst_generate_account_envelope_key_bundle_output_v_1 {
         fn new_with_null_ptr() -> Self {
             Self {
@@ -7071,6 +8675,19 @@ mod io {
         }
     }
     impl Default for wire_cst_get_pending_commit_with_storage_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_inspect_external_commit_candidate_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: InspectExternalCommitCandidateOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_inspect_external_commit_candidate_outcome {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -7214,6 +8831,80 @@ mod io {
         }
     }
     impl Default for wire_cst_mls_expected_roster_state_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_external_commit_acceptance_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                binding: Default::default(),
+                resulting_state: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_external_commit_acceptance_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_external_commit_binding_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                candidate_id: core::ptr::null_mut(),
+                incarnation_id: core::ptr::null_mut(),
+                transition: Default::default(),
+                previous_state: Default::default(),
+                old_leaf: Default::default(),
+                author: Default::default(),
+                input_group_info_sha256: core::ptr::null_mut(),
+                commit_sha256: core::ptr::null_mut(),
+                aad_sha256: core::ptr::null_mut(),
+                resulting_group_info_sha256: core::ptr::null_mut(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_external_commit_binding_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_external_preparation_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                candidate_id: core::ptr::null_mut(),
+                incarnation_id: core::ptr::null_mut(),
+                transition: Default::default(),
+                local_lifecycle_context_sha256: core::ptr::null_mut(),
+                input_group_info: core::ptr::null_mut(),
+                input_group_info_sha256: core::ptr::null_mut(),
+                expected_previous_state: Default::default(),
+                expected_snapshot_signer: Default::default(),
+                authorized_old_leaf: Default::default(),
+                authorized_new_credential_identity: core::ptr::null_mut(),
+                authorized_new_signature_public_key: core::ptr::null_mut(),
+                aad: core::ptr::null_mut(),
+                retention: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_external_preparation_v_1 {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_mls_external_target_context_v_1 {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                group_id: core::ptr::null_mut(),
+                incarnation_id: core::ptr::null_mut(),
+                local_lifecycle_context_sha256: core::ptr::null_mut(),
+                storage_entries: core::ptr::null_mut(),
+                storage_format_version: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_mls_external_target_context_v_1 {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -7380,6 +9071,63 @@ mod io {
         }
     }
     impl Default for wire_cst_pending_commit_with_storage_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_prepare_external_commit_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: PrepareExternalCommitOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_prepare_external_commit_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_prepare_external_commit_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                candidate_bytes: core::ptr::null_mut(),
+                info: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_prepare_external_commit_result {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_process_external_commit_outcome {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                tag: -1,
+                kind: ProcessExternalCommitOutcomeKind { nil__: () },
+            }
+        }
+    }
+    impl Default for wire_cst_process_external_commit_outcome {
+        fn default() -> Self {
+            Self::new_with_null_ptr()
+        }
+    }
+    impl NewWithNullPtr for wire_cst_process_external_commit_result {
+        fn new_with_null_ptr() -> Self {
+            Self {
+                authenticated_sender: Default::default(),
+                previous_roster: Default::default(),
+                resulting_roster: Default::default(),
+                resulting_group_state_sha256: core::ptr::null_mut(),
+                effective_retention: Default::default(),
+                superseded_pending: core::ptr::null_mut(),
+                storage_batch: Default::default(),
+            }
+        }
+    }
+    impl Default for wire_cst_process_external_commit_result {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -7648,6 +9396,23 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__external_resync__accept_external_commit_with_storage(
+        port_: i64,
+        target: *mut wire_cst_mls_external_target_context_v_1,
+        candidate_bytes: *mut wire_cst_list_prim_u_8_loose,
+        expected_candidate_sha256: *mut wire_cst_list_prim_u_8_loose,
+        acceptance: *mut wire_cst_mls_external_commit_acceptance_v_1,
+    ) {
+        wire__crate__api__external_resync__accept_external_commit_with_storage_impl(
+            port_,
+            target,
+            candidate_bytes,
+            expected_candidate_sha256,
+            acceptance,
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__add_members_with_storage(
         port_: i64,
         context: *mut wire_cst_mls_group_operation_context,
@@ -7760,6 +9525,21 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__export_group_info_with_storage(
+        port_: i64,
+        context: *mut wire_cst_mls_group_operation_context,
+        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
+        expected_local_leaf: *mut wire_cst_mls_roster_leaf_v_1,
+    ) {
+        wire__crate__api__group_e2ee__export_group_info_with_storage_impl(
+            port_,
+            context,
+            signer_bytes,
+            expected_local_leaf,
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__group_e2ee__get_pending_commit_with_storage(
         port_: i64,
         context: *mut wire_cst_mls_group_operation_context,
@@ -7772,6 +9552,19 @@ mod io {
         _library_path: *mut wire_cst_list_prim_u_8_strict,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__init__init_openmls_impl(_library_path)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__external_resync__inspect_external_commit_candidate(
+        port_: i64,
+        candidate_bytes: *mut wire_cst_list_prim_u_8_loose,
+        expected_candidate_sha256: *mut wire_cst_list_prim_u_8_loose,
+    ) {
+        wire__crate__api__external_resync__inspect_external_commit_candidate_impl(
+            port_,
+            candidate_bytes,
+            expected_candidate_sha256,
+        )
     }
 
     #[unsafe(no_mangle)]
@@ -7876,6 +9669,34 @@ mod io {
     pub extern "C" fn frbgen_openmls_wire__crate__api__storage__mls_storage_format_version(
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__storage__mls_storage_format_version_impl()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__external_resync__prepare_external_commit(
+        port_: i64,
+        input: *mut wire_cst_mls_external_preparation_v_1,
+        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
+    ) {
+        wire__crate__api__external_resync__prepare_external_commit_impl(port_, input, signer_bytes)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_wire__crate__api__external_resync__process_external_commit_with_storage(
+        port_: i64,
+        context: *mut wire_cst_mls_group_operation_context,
+        commit: *mut wire_cst_list_prim_u_8_loose,
+        expected_aad: *mut wire_cst_list_prim_u_8_loose,
+        acceptance: *mut wire_cst_mls_external_commit_acceptance_v_1,
+        expected_superseded_pending: *mut wire_cst_mls_pending_commit_binding,
+    ) {
+        wire__crate__api__external_resync__process_external_commit_with_storage_impl(
+            port_,
+            context,
+            commit,
+            expected_aad,
+            acceptance,
+            expected_superseded_pending,
+        )
     }
 
     #[unsafe(no_mangle)]
@@ -8032,6 +9853,14 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_accept_external_commit_result(
+    ) -> *mut wire_cst_accept_external_commit_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_accept_external_commit_result::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_account_envelope_private_bundle_authority_input_v_1(
     ) -> *mut wire_cst_account_envelope_private_bundle_authority_input_v_1 {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(
@@ -8095,6 +9924,22 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_export_group_info_with_storage_result(
+    ) -> *mut wire_cst_export_group_info_with_storage_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_export_group_info_with_storage_result::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_external_commit_candidate_info(
+    ) -> *mut wire_cst_external_commit_candidate_info {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_external_commit_candidate_info::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_join_group_with_storage_result(
     ) -> *mut wire_cst_join_group_with_storage_result {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(
@@ -8139,6 +9984,30 @@ mod io {
     ) -> *mut wire_cst_mls_expected_roster_state_v_1 {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(
             wire_cst_mls_expected_roster_state_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_external_commit_acceptance_v_1(
+    ) -> *mut wire_cst_mls_external_commit_acceptance_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_external_commit_acceptance_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_external_preparation_v_1(
+    ) -> *mut wire_cst_mls_external_preparation_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_external_preparation_v_1::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_external_target_context_v_1(
+    ) -> *mut wire_cst_mls_external_target_context_v_1 {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_mls_external_target_context_v_1::new_with_null_ptr(),
         )
     }
 
@@ -8200,6 +10069,22 @@ mod io {
     ) -> *mut wire_cst_pending_commit_with_storage_result {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(
             wire_cst_pending_commit_with_storage_result::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_prepare_external_commit_result(
+    ) -> *mut wire_cst_prepare_external_commit_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_prepare_external_commit_result::new_with_null_ptr(),
+        )
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_process_external_commit_result(
+    ) -> *mut wire_cst_process_external_commit_result {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(
+            wire_cst_process_external_commit_result::new_with_null_ptr(),
         )
     }
 
@@ -8326,6 +10211,39 @@ mod io {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(ans)
     }
 
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_accept_external_commit_outcome {
+        tag: i32,
+        kind: AcceptExternalCommitOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union AcceptExternalCommitOutcomeKind {
+        Success: wire_cst_AcceptExternalCommitOutcome_Success,
+        Failure: wire_cst_AcceptExternalCommitOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_AcceptExternalCommitOutcome_Success {
+        field0: *mut wire_cst_accept_external_commit_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_AcceptExternalCommitOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_accept_external_commit_result {
+        candidate_sha256: *mut wire_cst_list_prim_u_8_strict,
+        local_leaf: wire_cst_mls_roster_leaf_v_1,
+        resulting_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
+        storage_batch: wire_cst_mls_storage_batch,
+    }
     #[repr(C)]
     #[derive(Clone, Copy)]
     pub struct wire_cst_account_envelope_error_v_1 {
@@ -8523,6 +10441,51 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_export_group_info_with_storage_outcome {
+        tag: i32,
+        kind: ExportGroupInfoWithStorageOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union ExportGroupInfoWithStorageOutcomeKind {
+        Success: wire_cst_ExportGroupInfoWithStorageOutcome_Success,
+        Failure: wire_cst_ExportGroupInfoWithStorageOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_ExportGroupInfoWithStorageOutcome_Success {
+        field0: *mut wire_cst_export_group_info_with_storage_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_ExportGroupInfoWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_export_group_info_with_storage_result {
+        group_info: *mut wire_cst_list_prim_u_8_strict,
+        group_info_sha256: *mut wire_cst_list_prim_u_8_strict,
+        current_roster: wire_cst_mls_roster_summary_v_1,
+        signer: wire_cst_mls_roster_leaf_v_1,
+        base_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_external_commit_candidate_info {
+        binding: wire_cst_mls_external_commit_binding_v_1,
+        previous_roster: wire_cst_mls_roster_summary_v_1,
+        proposed_resulting_roster: wire_cst_mls_roster_summary_v_1,
+        commit: *mut wire_cst_list_prim_u_8_strict,
+        group_info: *mut wire_cst_list_prim_u_8_strict,
+        candidate_sha256: *mut wire_cst_list_prim_u_8_strict,
+        local_lifecycle_context_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_generate_account_envelope_key_bundle_output_v_1 {
         private_bundle: *mut wire_cst_list_prim_u_8_strict,
     }
@@ -8547,6 +10510,29 @@ mod io {
     #[repr(C)]
     #[derive(Clone, Copy)]
     pub struct wire_cst_GetPendingCommitWithStorageOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_inspect_external_commit_candidate_outcome {
+        tag: i32,
+        kind: InspectExternalCommitCandidateOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union InspectExternalCommitCandidateOutcomeKind {
+        Success: wire_cst_InspectExternalCommitCandidateOutcome_Success,
+        Failure: wire_cst_InspectExternalCommitCandidateOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_InspectExternalCommitCandidateOutcome_Success {
+        field0: *mut wire_cst_external_commit_candidate_info,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_InspectExternalCommitCandidateOutcome_Failure {
         field0: i32,
     }
     #[repr(C)]
@@ -8712,6 +10698,52 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_external_commit_acceptance_v_1 {
+        binding: wire_cst_mls_external_commit_binding_v_1,
+        resulting_state: wire_cst_mls_expected_roster_state_v_1,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_external_commit_binding_v_1 {
+        candidate_id: *mut wire_cst_list_prim_u_8_strict,
+        incarnation_id: *mut wire_cst_list_prim_u_8_strict,
+        transition: wire_cst_mls_transition_context,
+        previous_state: wire_cst_mls_expected_roster_state_v_1,
+        old_leaf: wire_cst_mls_roster_leaf_v_1,
+        author: wire_cst_mls_roster_leaf_v_1,
+        input_group_info_sha256: *mut wire_cst_list_prim_u_8_strict,
+        commit_sha256: *mut wire_cst_list_prim_u_8_strict,
+        aad_sha256: *mut wire_cst_list_prim_u_8_strict,
+        resulting_group_info_sha256: *mut wire_cst_list_prim_u_8_strict,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_external_preparation_v_1 {
+        candidate_id: *mut wire_cst_list_prim_u_8_strict,
+        incarnation_id: *mut wire_cst_list_prim_u_8_strict,
+        transition: wire_cst_mls_transition_context,
+        local_lifecycle_context_sha256: *mut wire_cst_list_prim_u_8_strict,
+        input_group_info: *mut wire_cst_list_prim_u_8_strict,
+        input_group_info_sha256: *mut wire_cst_list_prim_u_8_strict,
+        expected_previous_state: wire_cst_mls_expected_roster_state_v_1,
+        expected_snapshot_signer: wire_cst_mls_roster_leaf_v_1,
+        authorized_old_leaf: wire_cst_mls_roster_leaf_v_1,
+        authorized_new_credential_identity: *mut wire_cst_list_prim_u_8_strict,
+        authorized_new_signature_public_key: *mut wire_cst_list_prim_u_8_strict,
+        aad: *mut wire_cst_list_prim_u_8_strict,
+        retention: u32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_mls_external_target_context_v_1 {
+        group_id: *mut wire_cst_list_prim_u_8_strict,
+        incarnation_id: *mut wire_cst_list_prim_u_8_strict,
+        local_lifecycle_context_sha256: *mut wire_cst_list_prim_u_8_strict,
+        storage_entries: *mut wire_cst_list_mls_storage_entry,
+        storage_format_version: u32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
     pub struct wire_cst_mls_group_config {
         ciphersuite: i32,
         wire_format_policy: i32,
@@ -8804,6 +10836,69 @@ mod io {
         preparation_base_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
         resulting_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
         effective_retention: u32,
+        storage_batch: wire_cst_mls_storage_batch,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_prepare_external_commit_outcome {
+        tag: i32,
+        kind: PrepareExternalCommitOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union PrepareExternalCommitOutcomeKind {
+        Success: wire_cst_PrepareExternalCommitOutcome_Success,
+        Failure: wire_cst_PrepareExternalCommitOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_PrepareExternalCommitOutcome_Success {
+        field0: *mut wire_cst_prepare_external_commit_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_PrepareExternalCommitOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_prepare_external_commit_result {
+        candidate_bytes: *mut wire_cst_list_prim_u_8_strict,
+        info: wire_cst_external_commit_candidate_info,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_process_external_commit_outcome {
+        tag: i32,
+        kind: ProcessExternalCommitOutcomeKind,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub union ProcessExternalCommitOutcomeKind {
+        Success: wire_cst_ProcessExternalCommitOutcome_Success,
+        Failure: wire_cst_ProcessExternalCommitOutcome_Failure,
+        nil__: (),
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_ProcessExternalCommitOutcome_Success {
+        field0: *mut wire_cst_process_external_commit_result,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_ProcessExternalCommitOutcome_Failure {
+        field0: i32,
+    }
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct wire_cst_process_external_commit_result {
+        authenticated_sender: wire_cst_mls_roster_leaf_v_1,
+        previous_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_roster: wire_cst_mls_roster_summary_v_1,
+        resulting_group_state_sha256: *mut wire_cst_list_prim_u_8_strict,
+        effective_retention: u32,
+        superseded_pending: *mut wire_cst_mls_pending_commit_binding,
         storage_batch: wire_cst_mls_storage_batch,
     }
     #[repr(C)]
@@ -8955,6 +11050,47 @@ mod web {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> String {
             self
+        }
+    }
+    impl CstDecode<crate::api::external_resync::AcceptExternalCommitOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::AcceptExternalCommitOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::external_resync::AcceptExternalCommitOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::external_resync::AcceptExternalCommitOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::AcceptExternalCommitResult>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::AcceptExternalCommitResult {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                6,
+                "Expected 6 elements, got {}",
+                self_.length()
+            );
+            crate::api::external_resync::AcceptExternalCommitResult {
+                candidate_sha256: self_.get(0).cst_decode(),
+                local_leaf: self_.get(1).cst_decode(),
+                resulting_roster: self_.get(2).cst_decode(),
+                resulting_group_state_sha256: self_.get(3).cst_decode(),
+                effective_retention: self_.get(4).cst_decode(),
+                storage_batch: self_.get(5).cst_decode(),
+            }
         }
     }
     impl CstDecode<crate::api::account_envelope::types::AccountEnvelopeErrorV1>
@@ -9331,6 +11467,73 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::group_e2ee::ExportGroupInfoWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::group_e2ee::ExportGroupInfoWithStorageResult>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::group_e2ee::ExportGroupInfoWithStorageResult {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                6,
+                "Expected 6 elements, got {}",
+                self_.length()
+            );
+            crate::api::group_e2ee::ExportGroupInfoWithStorageResult {
+                group_info: self_.get(0).cst_decode(),
+                group_info_sha256: self_.get(1).cst_decode(),
+                current_roster: self_.get(2).cst_decode(),
+                signer: self_.get(3).cst_decode(),
+                base_group_state_sha256: self_.get(4).cst_decode(),
+                effective_retention: self_.get(5).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::ExternalCommitCandidateInfo>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::ExternalCommitCandidateInfo {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                8,
+                "Expected 8 elements, got {}",
+                self_.length()
+            );
+            crate::api::external_resync::ExternalCommitCandidateInfo {
+                binding: self_.get(0).cst_decode(),
+                previous_roster: self_.get(1).cst_decode(),
+                proposed_resulting_roster: self_.get(2).cst_decode(),
+                commit: self_.get(3).cst_decode(),
+                group_info: self_.get(4).cst_decode(),
+                candidate_sha256: self_.get(5).cst_decode(),
+                local_lifecycle_context_sha256: self_.get(6).cst_decode(),
+                effective_retention: self_.get(7).cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::account_envelope::bridge::GenerateAccountEnvelopeKeyBundleOutputV1>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -9364,6 +11567,23 @@ mod web {
                     self_.get(1).cst_decode(),
                 ),
                 1 => crate::api::group_e2ee::GetPendingCommitWithStorageOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::InspectExternalCommitCandidateOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::InspectExternalCommitCandidateOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::external_resync::InspectExternalCommitCandidateOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::external_resync::InspectExternalCommitCandidateOutcome::Failure(
                     self_.get(1).cst_decode(),
                 ),
                 _ => unreachable!(),
@@ -9663,6 +11883,108 @@ mod web {
             }
         }
     }
+    impl CstDecode<crate::api::external_resync::MlsExternalCommitAcceptanceV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalCommitAcceptanceV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                2,
+                "Expected 2 elements, got {}",
+                self_.length()
+            );
+            crate::api::external_resync::MlsExternalCommitAcceptanceV1 {
+                binding: self_.get(0).cst_decode(),
+                resulting_state: self_.get(1).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::MlsExternalCommitBindingV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalCommitBindingV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                10,
+                "Expected 10 elements, got {}",
+                self_.length()
+            );
+            crate::api::external_resync::MlsExternalCommitBindingV1 {
+                candidate_id: self_.get(0).cst_decode(),
+                incarnation_id: self_.get(1).cst_decode(),
+                transition: self_.get(2).cst_decode(),
+                previous_state: self_.get(3).cst_decode(),
+                old_leaf: self_.get(4).cst_decode(),
+                author: self_.get(5).cst_decode(),
+                input_group_info_sha256: self_.get(6).cst_decode(),
+                commit_sha256: self_.get(7).cst_decode(),
+                aad_sha256: self_.get(8).cst_decode(),
+                resulting_group_info_sha256: self_.get(9).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::MlsExternalPreparationV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalPreparationV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                13,
+                "Expected 13 elements, got {}",
+                self_.length()
+            );
+            crate::api::external_resync::MlsExternalPreparationV1 {
+                candidate_id: self_.get(0).cst_decode(),
+                incarnation_id: self_.get(1).cst_decode(),
+                transition: self_.get(2).cst_decode(),
+                local_lifecycle_context_sha256: self_.get(3).cst_decode(),
+                input_group_info: self_.get(4).cst_decode(),
+                input_group_info_sha256: self_.get(5).cst_decode(),
+                expected_previous_state: self_.get(6).cst_decode(),
+                expected_snapshot_signer: self_.get(7).cst_decode(),
+                authorized_old_leaf: self_.get(8).cst_decode(),
+                authorized_new_credential_identity: self_.get(9).cst_decode(),
+                authorized_new_signature_public_key: self_.get(10).cst_decode(),
+                aad: self_.get(11).cst_decode(),
+                retention: self_.get(12).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::MlsExternalTargetContextV1>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::MlsExternalTargetContextV1 {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                5,
+                "Expected 5 elements, got {}",
+                self_.length()
+            );
+            crate::api::external_resync::MlsExternalTargetContextV1 {
+                group_id: self_.get(0).cst_decode(),
+                incarnation_id: self_.get(1).cst_decode(),
+                local_lifecycle_context_sha256: self_.get(2).cst_decode(),
+                storage_entries: self_.get(3).cst_decode(),
+                storage_format_version: self_.get(4).cst_decode(),
+            }
+        }
+    }
     impl CstDecode<crate::api::config::MlsGroupConfig>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -9908,6 +12230,85 @@ mod web {
                 resulting_group_state_sha256: self_.get(7).cst_decode(),
                 effective_retention: self_.get(8).cst_decode(),
                 storage_batch: self_.get(9).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::PrepareExternalCommitOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::PrepareExternalCommitOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::external_resync::PrepareExternalCommitOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::external_resync::PrepareExternalCommitOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::PrepareExternalCommitResult>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::PrepareExternalCommitResult {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                2,
+                "Expected 2 elements, got {}",
+                self_.length()
+            );
+            crate::api::external_resync::PrepareExternalCommitResult {
+                candidate_bytes: self_.get(0).cst_decode(),
+                info: self_.get(1).cst_decode(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::ProcessExternalCommitOutcome>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::ProcessExternalCommitOutcome {
+            let self_ = self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Array>();
+            match self_.get(0).unchecked_into_f64() as _ {
+                0 => crate::api::external_resync::ProcessExternalCommitOutcome::Success(
+                    self_.get(1).cst_decode(),
+                ),
+                1 => crate::api::external_resync::ProcessExternalCommitOutcome::Failure(
+                    self_.get(1).cst_decode(),
+                ),
+                _ => unreachable!(),
+            }
+        }
+    }
+    impl CstDecode<crate::api::external_resync::ProcessExternalCommitResult>
+        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+    {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> crate::api::external_resync::ProcessExternalCommitResult {
+            let self_ = self
+                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+                .unwrap();
+            assert_eq!(
+                self_.length(),
+                7,
+                "Expected 7 elements, got {}",
+                self_.length()
+            );
+            crate::api::external_resync::ProcessExternalCommitResult {
+                authenticated_sender: self_.get(0).cst_decode(),
+                previous_roster: self_.get(1).cst_decode(),
+                resulting_roster: self_.get(2).cst_decode(),
+                resulting_group_state_sha256: self_.get(3).cst_decode(),
+                effective_retention: self_.get(4).cst_decode(),
+                superseded_pending: self_.get(5).cst_decode(),
+                storage_batch: self_.get(6).cst_decode(),
             }
         }
     }
@@ -10461,6 +12862,23 @@ mod web {
     }
 
     #[wasm_bindgen]
+    pub fn wire__crate__api__external_resync__accept_external_commit_with_storage(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        target: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        candidate_bytes: Box<[u8]>,
+        expected_candidate_sha256: Box<[u8]>,
+        acceptance: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+    ) {
+        wire__crate__api__external_resync__accept_external_commit_with_storage_impl(
+            port_,
+            target,
+            candidate_bytes,
+            expected_candidate_sha256,
+            acceptance,
+        )
+    }
+
+    #[wasm_bindgen]
     pub fn wire__crate__api__group_e2ee__add_members_with_storage(
         port_: flutter_rust_bridge::for_generated::MessagePort,
         context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
@@ -10573,6 +12991,21 @@ mod web {
     }
 
     #[wasm_bindgen]
+    pub fn wire__crate__api__group_e2ee__export_group_info_with_storage(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        signer_bytes: Box<[u8]>,
+        expected_local_leaf: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+    ) {
+        wire__crate__api__group_e2ee__export_group_info_with_storage_impl(
+            port_,
+            context,
+            signer_bytes,
+            expected_local_leaf,
+        )
+    }
+
+    #[wasm_bindgen]
     pub fn wire__crate__api__group_e2ee__get_pending_commit_with_storage(
         port_: flutter_rust_bridge::for_generated::MessagePort,
         context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
@@ -10585,6 +13018,19 @@ mod web {
         _library_path: String,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__init__init_openmls_impl(_library_path)
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__external_resync__inspect_external_commit_candidate(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        candidate_bytes: Box<[u8]>,
+        expected_candidate_sha256: Box<[u8]>,
+    ) {
+        wire__crate__api__external_resync__inspect_external_commit_candidate_impl(
+            port_,
+            candidate_bytes,
+            expected_candidate_sha256,
+        )
     }
 
     #[wasm_bindgen]
@@ -10689,6 +13135,34 @@ mod web {
     pub fn wire__crate__api__storage__mls_storage_format_version(
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__storage__mls_storage_format_version_impl()
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__external_resync__prepare_external_commit(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        input: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        signer_bytes: Box<[u8]>,
+    ) {
+        wire__crate__api__external_resync__prepare_external_commit_impl(port_, input, signer_bytes)
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__external_resync__process_external_commit_with_storage(
+        port_: flutter_rust_bridge::for_generated::MessagePort,
+        context: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        commit: Box<[u8]>,
+        expected_aad: Box<[u8]>,
+        acceptance: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        expected_superseded_pending: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+    ) {
+        wire__crate__api__external_resync__process_external_commit_with_storage_impl(
+            port_,
+            context,
+            commit,
+            expected_aad,
+            acceptance,
+            expected_superseded_pending,
+        )
     }
 
     #[wasm_bindgen]

@@ -15,6 +15,18 @@ part 'group_e2ee.freezed.dart';
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `JoinedGroupState`, `StrictJoinedGroupState`, `StrictReceiveErrorKind`, `StrictReceiveError`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
 
+/// Export only an active, non-pending, exactly matched current state. This does
+/// not grant publication authority or bypass caller lifecycle/transaction fencing.
+Future<ExportGroupInfoWithStorageOutcome> exportGroupInfoWithStorage({
+  required MlsGroupOperationContext context,
+  required List<int> signerBytes,
+  required MlsRosterLeafV1 expectedLocalLeaf,
+}) => RustLib.instance.api.crateApiGroupE2EeExportGroupInfoWithStorage(
+  context: context,
+  signerBytes: signerBytes,
+  expectedLocalLeaf: expectedLocalLeaf,
+);
+
 /// Create caller-owned initialization state. Product send-readiness is granted
 /// by the caller only after authenticated canonical initialization acceptance.
 Future<CreateGroupWithStorageOutcome> createGroupWithStorage({
@@ -300,6 +312,59 @@ class DiscardPendingCommitWithStorageResult {
           resultingGroupStateSha256 == other.resultingGroupStateSha256 &&
           effectiveRetention == other.effectiveRetention &&
           storageBatch == other.storageBatch;
+}
+
+@freezed
+sealed class ExportGroupInfoWithStorageOutcome
+    with _$ExportGroupInfoWithStorageOutcome {
+  const ExportGroupInfoWithStorageOutcome._();
+
+  const factory ExportGroupInfoWithStorageOutcome.success(
+    ExportGroupInfoWithStorageResult field0,
+  ) = ExportGroupInfoWithStorageOutcome_Success;
+  const factory ExportGroupInfoWithStorageOutcome.failure(MlsErrorCode field0) =
+      ExportGroupInfoWithStorageOutcome_Failure;
+}
+
+/// Read-only signed publication of the exact current caller-owned group state.
+/// No mutation batch is produced; the caller fences the snapshot/publication.
+class ExportGroupInfoWithStorageResult {
+  final Uint8List groupInfo;
+  final Uint8List groupInfoSha256;
+  final MlsRosterSummaryV1 currentRoster;
+  final MlsRosterLeafV1 signer;
+  final Uint8List baseGroupStateSha256;
+  final int effectiveRetention;
+
+  const ExportGroupInfoWithStorageResult({
+    required this.groupInfo,
+    required this.groupInfoSha256,
+    required this.currentRoster,
+    required this.signer,
+    required this.baseGroupStateSha256,
+    required this.effectiveRetention,
+  });
+
+  @override
+  int get hashCode =>
+      groupInfo.hashCode ^
+      groupInfoSha256.hashCode ^
+      currentRoster.hashCode ^
+      signer.hashCode ^
+      baseGroupStateSha256.hashCode ^
+      effectiveRetention.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ExportGroupInfoWithStorageResult &&
+          runtimeType == other.runtimeType &&
+          groupInfo == other.groupInfo &&
+          groupInfoSha256 == other.groupInfoSha256 &&
+          currentRoster == other.currentRoster &&
+          signer == other.signer &&
+          baseGroupStateSha256 == other.baseGroupStateSha256 &&
+          effectiveRetention == other.effectiveRetention;
 }
 
 @freezed
@@ -596,6 +661,13 @@ enum MlsErrorCode {
   localMetadataMissing,
   unsupportedRetention,
   wireHashMismatch,
+  externalCandidateInvalid,
+  externalCandidateMismatch,
+  externalTargetStateExists,
+  externalAcceptanceMismatch,
+  externalOwnCommit,
+  externalDeltaMismatch,
+  externalLifecycleMismatch,
   internalFailure,
 }
 

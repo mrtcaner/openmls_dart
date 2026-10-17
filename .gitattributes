@@ -9,3 +9,6 @@ assets/THIRD_PARTY_NOTICES.txt -text
 # and no trailing newline. Disable Git EOL conversion so that invariant also
 # holds on Windows.
 .fvmrc -text
+
+# Preserve reviewed upstream source and patch bytes, including context whitespace.
+rust/vendor/** -text -whitespace

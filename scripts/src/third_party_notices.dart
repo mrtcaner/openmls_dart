@@ -254,7 +254,7 @@ Map<String, CrateNotice> loadCrateNotices({
     if (!linkedCrates.contains(id)) continue;
 
     final manifestPath = package['manifest_path'] as String;
-    if (isWithin(workspaceRoot, manifestPath)) {
+    if (isFirstPartyManifest(workspaceRoot, manifestPath)) {
       ownCrates.add(id);
       continue;
     }
@@ -306,6 +306,11 @@ Map<String, CrateNotice> loadCrateNotices({
 
   return notices;
 }
+
+/// Vendored dependencies remain third parties even when located in our workspace.
+bool isFirstPartyManifest(String workspaceRoot, String manifestPath) =>
+    isWithin(workspaceRoot, manifestPath) &&
+    !isWithin('$workspaceRoot${Platform.pathSeparator}vendor', manifestPath);
 
 /// Whether [child] lives under directory [parent]. Both must be absolute.
 bool isWithin(String parent, String child) {

@@ -420,6 +420,147 @@ void main() {
     });
 
     test(
+      'external candidate promotes separately and uses strict generated APIs',
+      () async {
+        final (a, b) = await _pair();
+        final replacement = _Peer(
+          'b',
+          2,
+        ); // stable credential, freshly generated key
+        final before = a.store.fingerprint;
+        final exported =
+            (await exportGroupInfoWithStorage(
+                      context: a.context,
+                      signerBytes: a.identity.signerBytes,
+                      expectedLocalLeaf: a.leaf,
+                    )
+                    as ExportGroupInfoWithStorageOutcome_Success)
+                .field0;
+        final externalAad = Uint8List.fromList(
+          utf8.encode('synthetic exact external AAD4'),
+        );
+        final lifecycle = Uint8List.fromList(List.filled(32, 77));
+        final prepared =
+            (await prepareExternalCommit(
+                      input: MlsExternalPreparationV1(
+                        candidateId: Uint8List.fromList(List.filled(16, 31)),
+                        incarnationId: _incarnation,
+                        transition: _transition(),
+                        localLifecycleContextSha256: lifecycle,
+                        inputGroupInfo: exported.groupInfo,
+                        inputGroupInfoSha256: exported.groupInfoSha256,
+                        expectedPreviousState: _expected(a.roster),
+                        expectedSnapshotSigner: exported.signer,
+                        authorizedOldLeaf: b.leaf,
+                        authorizedNewCredentialIdentity:
+                            replacement.identity.credentialIdentity,
+                        authorizedNewSignaturePublicKey:
+                            replacement.identity.publicKey,
+                        aad: externalAad,
+                        retention: 2,
+                      ),
+                      signerBytes: replacement.identity.signerBytes,
+                    )
+                    as PrepareExternalCommitOutcome_Success)
+                .field0;
+        try {
+          expect(a.store.fingerprint, before);
+          expect(replacement.store.snapshot, isEmpty);
+          final info =
+              (await inspectExternalCommitCandidate(
+                        candidateBytes: prepared.candidateBytes,
+                        expectedCandidateSha256: prepared.info.candidateSha256,
+                      )
+                      as InspectExternalCommitCandidateOutcome_Success)
+                  .field0;
+          expect(info.commit, orderedEquals(prepared.info.commit));
+          expect(
+            info.binding.oldLeaf.credentialIdentity,
+            orderedEquals(info.binding.author.credentialIdentity),
+          );
+          final acceptance = MlsExternalCommitAcceptanceV1(
+            binding: info.binding,
+            resultingState: _expected(info.proposedResultingRoster),
+          );
+          MlsExternalTargetContextV1 target() => MlsExternalTargetContextV1(
+            groupId: _gid,
+            incarnationId: _incarnation,
+            localLifecycleContextSha256: lifecycle,
+            storageEntries: replacement.store.forGroup(_gid),
+            storageFormatVersion: 1,
+          );
+          final promoted =
+              (await acceptExternalCommitWithStorage(
+                        target: target(),
+                        candidateBytes: prepared.candidateBytes,
+                        expectedCandidateSha256: info.candidateSha256,
+                        acceptance: acceptance,
+                      )
+                      as AcceptExternalCommitOutcome_Success)
+                  .field0;
+          replacement.apply(
+            promoted.storageBatch,
+            promoted.resultingRoster,
+            promoted.resultingGroupStateSha256,
+          );
+          final received =
+              (await processExternalCommitWithStorage(
+                        context: a.context,
+                        commit: info.commit,
+                        expectedAad: externalAad,
+                        acceptance: acceptance,
+                      )
+                      as ProcessExternalCommitOutcome_Success)
+                  .field0;
+          a.apply(
+            received.storageBatch,
+            received.resultingRoster,
+            received.resultingGroupStateSha256,
+          );
+          final message = await replacement.send(
+            'after native external promotion',
+          );
+          expect(
+            utf8.decode((await a.receive(message)).applicationMessage!),
+            'after native external promotion',
+          );
+          expect(
+            utf8.decode(
+              (await replacement.receive(
+                await a.send('reply'),
+              )).applicationMessage!,
+            ),
+            'reply',
+          );
+          final advanced = replacement.store.fingerprint;
+          expect(
+            await acceptExternalCommitWithStorage(
+              target: target(),
+              candidateBytes: prepared.candidateBytes,
+              expectedCandidateSha256: info.candidateSha256,
+              acceptance: acceptance,
+            ),
+            const AcceptExternalCommitOutcome.failure(
+              MlsErrorCode.externalTargetStateExists,
+            ),
+          );
+          expect(replacement.store.fingerprint, advanced);
+        } finally {
+          prepared.candidateBytes.fillRange(
+            0,
+            prepared.candidateBytes.length,
+            0,
+          );
+          replacement.identity.signerBytes.fillRange(
+            0,
+            replacement.identity.signerBytes.length,
+            0,
+          );
+        }
+      },
+    );
+
+    test(
       'Welcome requires exact retained KeyPackage hash before consuming it',
       () async {
         final a = _Peer('a', 2);

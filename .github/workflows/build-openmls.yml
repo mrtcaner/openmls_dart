@@ -17,15 +17,10 @@
 #   to main WITHOUT bumping the crate, then a deliberate release bumps
 #   rust/Cargo.toml and pushes the matching tag, which builds and publishes the
 #   native binaries.
-# - Manual dispatch (workflow_dispatch) - a retry path for a build that failed
-#   AFTER its tag was already pushed. It reads the crate version from
-#   rust/Cargo.toml on the DISPATCHED ref (whatever ref you dispatch on, not
-#   necessarily the default branch). Note: dispatch cannot bootstrap a brand-new
-#   release — `check-release` skips the whole run once the release for that crate
-#   version exists, and the `protect-release-tags` ruleset blocks this workflow
-#   from creating the tag itself. To (re)build a version, push the signed tag via
-#   `make release-frb`; to rebuild an already-released version, delete its
-#   GitHub Release and tag first.
+# - Manual dispatch (workflow_dispatch) builds the dispatched ref for review.
+#   It retains verified archives/checksums as workflow artifacts but does NOT
+#   publish a release, create a tag, or publish provenance attestations.
+#   Existing released versions remain skipped by check-release.
 #
 # The tag name must equal `openmls_frb-<crate version in rust/Cargo.toml>`
 # (validated below). The GitHub Release is created on that same tag, so the tag
@@ -37,6 +32,7 @@
 name: Build openmls FRB Libraries
 
 on:
+  # Manual runs produce reviewable artifacts only; publication requires a tag.
   workflow_dispatch:
   push:
     tags:
@@ -384,14 +380,9 @@ jobs:
       - build-wasm
     if: needs.check-release.outputs.skip != 'true'
     runs-on: ubuntu-latest
-    # Supply-chain gate: publishing the consumer-downloaded native binaries
-    # requires a human to approve the `native-build` environment deployment.
-    # This mirrors publish.yml's `pub.dev` environment and is the ONLY control
-    # that also covers the workflow_dispatch trigger — a tag ruleset cannot gate
-    # a dispatch-triggered run. Configure required reviewers at
-    # Settings → Environments → native-build; until then the gate is inactive
-    # (the environment auto-creates with no protection and does not block).
-    # See .github/rulesets/README.md.
+    # Optional environment approval in addition to the tag publication boundary.
+    # Manual dispatch never publishes, even if this environment has no reviewers.
+    # See .github/rulesets/README.md for deployment protection configuration.
     environment: native-build
     env:
       VERSION: ${{ needs.check-release.outputs.version }}
@@ -509,19 +500,30 @@ jobs:
       # resulting bundle is attached to the release below so consumers can
       # verify fully offline (see SECURITY.md → Authenticity).
       - name: Attest build provenance
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         id: attest
         uses: actions/attest-build-provenance@v4
         with:
           subject-checksums: release-archives/openmls_frb-${{ env.VERSION }}-checksums.sha256
 
       - name: Attach attestation bundle to release assets
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         env:
           BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}
         run: |
           cp "$BUNDLE_PATH" "release-archives/openmls_frb-${VERSION}.sigstore.jsonl"
           ls -lh "release-archives/openmls_frb-${VERSION}.sigstore.jsonl"
 
+      - name: Retain checked archives for review
+        uses: actions/upload-artifact@v7
+        with:
+          name: openmls_frb-${{ env.VERSION }}-review-archives
+          path: release-archives/
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Create Release
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
