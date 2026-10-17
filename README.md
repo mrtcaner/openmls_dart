@@ -57,9 +57,11 @@ Flutter host tests resolve the library from Flutter’s generated `NativeAssetsM
 
 ## Caller-owned transaction boundary
 
-Version `4.0.1` uses native receive contract/profile 2. This is a breaking
+Version `4.0.1` introduced native receive contract/profile 2. This was a breaking
 API and lifecycle change. Existing zero-retention groups are not migrated
 automatically; initialize fresh groups under the coordinated consumer migration.
+Version `4.1.0` preserves that profile and the frame 2 API, adding frame 3 for
+external resync and pending-binding inspection.
 
 Each operation follows the same rule:
 
@@ -172,7 +174,7 @@ and mechanical platform harnesses are under `native/receive_v2/`.
 The caller still owns cross-process serialization and one atomic storage batch,
 deduplication, plaintext handoff and settlement transaction.
 
-### External resync (4.1.0 release candidate)
+### External resync (4.1.0)
 
 Current GroupInfo export, inactive external candidate preparation/inspection,
 exact-acceptance promotion and explicit external Commit receive share the same
@@ -188,8 +190,11 @@ See [the native contract](native/receive_v3/README.md) and
 cannot replace members' secret-dependent MLS verification. iOS extension runtime
 acceptance is separate from host ABI and release archive build evidence.
 
-The native 4.1.0 release candidate is not yet published. Dart package metadata
-remains at the previous release until the complete native distribution is verified.
+The complete [native 4.1.0 distribution](https://github.com/mrtcaner/openmls_dart/releases/tag/openmls_frb-4.1.0)
+is published from commit `8229eebfdad0801f6fc8095b0d3c39d84727ef50`, with
+checksums, an artifact report, and source-bound provenance. Dart package version
+`4.1.0` selects these archives through the unchanged native version in
+`rust/Cargo.toml`. Distribution remains GitHub-only; no pub.dev publication.
 
 ### Ordering and rejection
 
